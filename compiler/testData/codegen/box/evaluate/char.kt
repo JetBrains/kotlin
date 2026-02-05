@@ -7,7 +7,7 @@ package test
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Ann(val c1: Int)
 
-@Ann('a' - 'a') class MyClass
+@Ann(<!EVALUATED("0")!>'a' - 'a'<!>) class MyClass
 
 fun box(): String {
     val annotation = MyClass::class.java.getAnnotation(Ann::class.java)!!

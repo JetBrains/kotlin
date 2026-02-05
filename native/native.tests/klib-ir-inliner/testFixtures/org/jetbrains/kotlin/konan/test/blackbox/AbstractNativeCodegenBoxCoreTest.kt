@@ -103,7 +103,7 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
             }
         }
 
-        forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
+        forTestsMatching("compiler/testData/codegen/box/evaluate/*") {
             defaultDirectives {
                 +FIR_DUMP
                 +RENDER_FIR_DECLARATION_ATTRIBUTES

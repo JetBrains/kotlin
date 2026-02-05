@@ -11,10 +11,10 @@ annotation class Ann(
 )
 
 @Ann(
-    p1 = java.lang.Integer.MAX_VALUE + 1,
-    p2 = 1 + 1,
-    p4 = 1 + 1,
-    p5 = 1.toInt() + 1.toInt()
+    p1 = <!EVALUATED("-2147483648")!>java.lang.Integer.MAX_VALUE + 1<!>,
+    p2 = <!EVALUATED("2")!>1 + 1<!>,
+    p4 = <!EVALUATED("2")!>1 + 1<!>,
+    p5 = <!EVALUATED("2")!>1.toInt() + 1.toInt()<!>
 ) class MyClass
 
 fun box(): String {

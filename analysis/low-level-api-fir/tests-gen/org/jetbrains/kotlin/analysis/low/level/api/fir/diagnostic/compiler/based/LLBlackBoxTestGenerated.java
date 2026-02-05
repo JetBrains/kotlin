@@ -22030,9 +22030,45 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("annotationClassWithInner.kt")
+    public void testAnnotationClassWithInner() {
+      runTest("compiler/testData/codegen/box/evaluate/annotationClassWithInner.kt");
+    }
+
+    @Test
+    @TestMetadata("booleanOperations.kt")
+    public void testBooleanOperations() {
+      runTest("compiler/testData/codegen/box/evaluate/booleanOperations.kt");
+    }
+
+    @Test
+    @TestMetadata("byteOperations.kt")
+    public void testByteOperations() {
+      runTest("compiler/testData/codegen/box/evaluate/byteOperations.kt");
+    }
+
+    @Test
     @TestMetadata("char.kt")
     public void testChar() {
       runTest("compiler/testData/codegen/box/evaluate/char.kt");
+    }
+
+    @Test
+    @TestMetadata("charOperations.kt")
+    public void testCharOperations() {
+      runTest("compiler/testData/codegen/box/evaluate/charOperations.kt");
+    }
+
+    @Test
+    @TestMetadata("complexBooleanConstant.kt")
+    public void testComplexBooleanConstant() {
+      runTest("compiler/testData/codegen/box/evaluate/complexBooleanConstant.kt");
+    }
+
+    @Test
+    @TestMetadata("cornerCaseInFloat.kt")
+    public void testCornerCaseInFloat() {
+      runTest("compiler/testData/codegen/box/evaluate/cornerCaseInFloat.kt");
     }
 
     @Test
@@ -22042,9 +22078,51 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("doubleOperations.kt")
+    public void testDoubleOperations() {
+      runTest("compiler/testData/codegen/box/evaluate/doubleOperations.kt");
+    }
+
+    @Test
+    @TestMetadata("enumRecursiveName.kt")
+    public void testEnumRecursiveName() {
+      runTest("compiler/testData/codegen/box/evaluate/enumRecursiveName.kt");
+    }
+
+    @Test
+    @TestMetadata("enumWithDifferentFileOrder.kt")
+    public void testEnumWithDifferentFileOrder() {
+      runTest("compiler/testData/codegen/box/evaluate/enumWithDifferentFileOrder.kt");
+    }
+
+    @Test
+    @TestMetadata("floatOperations.kt")
+    public void testFloatOperations() {
+      runTest("compiler/testData/codegen/box/evaluate/floatOperations.kt");
+    }
+
+    @Test
     @TestMetadata("floorDiv.kt")
     public void testFloorDiv() {
       runTest("compiler/testData/codegen/box/evaluate/floorDiv.kt");
+    }
+
+    @Test
+    @TestMetadata("inJavaLangPackage.kt")
+    public void testInJavaLangPackage() {
+      runTest("compiler/testData/codegen/box/evaluate/inJavaLangPackage.kt");
+    }
+
+    @Test
+    @TestMetadata("inJavaPackage.kt")
+    public void testInJavaPackage() {
+      runTest("compiler/testData/codegen/box/evaluate/inJavaPackage.kt");
+    }
+
+    @Test
+    @TestMetadata("intOperations.kt")
+    public void testIntOperations() {
+      runTest("compiler/testData/codegen/box/evaluate/intOperations.kt");
     }
 
     @Test
@@ -22054,9 +22132,75 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("jsFloatDoubleToString.kt")
+    public void testJsFloatDoubleToString() {
+      runTest("compiler/testData/codegen/box/evaluate/jsFloatDoubleToString.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmFloatDoubleToString.kt")
+    public void testJvmFloatDoubleToString() {
+      runTest("compiler/testData/codegen/box/evaluate/jvmFloatDoubleToString.kt");
+    }
+
+    @Test
+    @TestMetadata("kt53480.kt")
+    public void testKt53480() {
+      runTest("compiler/testData/codegen/box/evaluate/kt53480.kt");
+    }
+
+    @Test
+    @TestMetadata("kt55108.kt")
+    public void testKt55108() {
+      runTest("compiler/testData/codegen/box/evaluate/kt55108.kt");
+    }
+
+    @Test
+    @TestMetadata("kt55866.kt")
+    public void testKt55866() {
+      runTest("compiler/testData/codegen/box/evaluate/kt55866.kt");
+    }
+
+    @Test
+    @TestMetadata("kt55912.kt")
+    public void testKt55912() {
+      runTest("compiler/testData/codegen/box/evaluate/kt55912.kt");
+    }
+
+    @Test
+    @TestMetadata("kt56215.kt")
+    public void testKt56215() {
+      runTest("compiler/testData/codegen/box/evaluate/kt56215.kt");
+    }
+
+    @Test
+    @TestMetadata("kt57028.kt")
+    public void testKt57028() {
+      runTest("compiler/testData/codegen/box/evaluate/kt57028.kt");
+    }
+
+    @Test
+    @TestMetadata("kt57313.kt")
+    public void testKt57313() {
+      runTest("compiler/testData/codegen/box/evaluate/kt57313.kt");
+    }
+
+    @Test
+    @TestMetadata("kt58005.kt")
+    public void testKt58005() {
+      runTest("compiler/testData/codegen/box/evaluate/kt58005.kt");
+    }
+
+    @Test
     @TestMetadata("kt9443.kt")
     public void testKt9443() {
       runTest("compiler/testData/codegen/box/evaluate/kt9443.kt");
+    }
+
+    @Test
+    @TestMetadata("longOperations.kt")
+    public void testLongOperations() {
+      runTest("compiler/testData/codegen/box/evaluate/longOperations.kt");
     }
 
     @Test
@@ -22096,6 +22240,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("objectConstValInAnnotationArgument.kt")
+    public void testObjectConstValInAnnotationArgument() {
+      runTest("compiler/testData/codegen/box/evaluate/objectConstValInAnnotationArgument.kt");
+    }
+
+    @Test
     @TestMetadata("parenthesized.kt")
     public void testParenthesized() {
       runTest("compiler/testData/codegen/box/evaluate/parenthesized.kt");
@@ -22108,15 +22258,81 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("referenceNameFromStaticInDifferentModule.kt")
+    public void testReferenceNameFromStaticInDifferentModule() {
+      runTest("compiler/testData/codegen/box/evaluate/referenceNameFromStaticInDifferentModule.kt");
+    }
+
+    @Test
     @TestMetadata("rem.kt")
     public void testRem() {
       runTest("compiler/testData/codegen/box/evaluate/rem.kt");
     }
 
     @Test
+    @TestMetadata("shortOperations.kt")
+    public void testShortOperations() {
+      runTest("compiler/testData/codegen/box/evaluate/shortOperations.kt");
+    }
+
+    @Test
     @TestMetadata("simpleCallBinary.kt")
     public void testSimpleCallBinary() {
       runTest("compiler/testData/codegen/box/evaluate/simpleCallBinary.kt");
+    }
+
+    @Test
+    @TestMetadata("stdlibConst.kt")
+    public void testStdlibConst() {
+      runTest("compiler/testData/codegen/box/evaluate/stdlibConst.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenation.kt")
+    public void testStringConcatenation() {
+      runTest("compiler/testData/codegen/box/evaluate/stringConcatenation.kt");
+    }
+
+    @Test
+    @TestMetadata("stringConcatenationWithObject.kt")
+    public void testStringConcatenationWithObject() {
+      runTest("compiler/testData/codegen/box/evaluate/stringConcatenationWithObject.kt");
+    }
+
+    @Test
+    @TestMetadata("stringOperations.kt")
+    public void testStringOperations() {
+      runTest("compiler/testData/codegen/box/evaluate/stringOperations.kt");
+    }
+
+    @Test
+    @TestMetadata("thisPlusString.kt")
+    public void testThisPlusString() {
+      runTest("compiler/testData/codegen/box/evaluate/thisPlusString.kt");
+    }
+
+    @Test
+    @TestMetadata("thisPlusStringWithObject.kt")
+    public void testThisPlusStringWithObject() {
+      runTest("compiler/testData/codegen/box/evaluate/thisPlusStringWithObject.kt");
+    }
+
+    @Test
+    @TestMetadata("ubyteOperations.kt")
+    public void testUbyteOperations() {
+      runTest("compiler/testData/codegen/box/evaluate/ubyteOperations.kt");
+    }
+
+    @Test
+    @TestMetadata("uintOperations.kt")
+    public void testUintOperations() {
+      runTest("compiler/testData/codegen/box/evaluate/uintOperations.kt");
+    }
+
+    @Test
+    @TestMetadata("ulongOperations.kt")
+    public void testUlongOperations() {
+      runTest("compiler/testData/codegen/box/evaluate/ulongOperations.kt");
     }
 
     @Test
@@ -22129,6 +22345,228 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     @TestMetadata("unaryPlus.kt")
     public void testUnaryPlus() {
       runTest("compiler/testData/codegen/box/evaluate/unaryPlus.kt");
+    }
+
+    @Test
+    @TestMetadata("unsignedConst.kt")
+    public void testUnsignedConst() {
+      runTest("compiler/testData/codegen/box/evaluate/unsignedConst.kt");
+    }
+
+    @Test
+    @TestMetadata("useCorrectToString.kt")
+    public void testUseCorrectToString() {
+      runTest("compiler/testData/codegen/box/evaluate/useCorrectToString.kt");
+    }
+
+    @Test
+    @TestMetadata("ushortOperations.kt")
+    public void testUshortOperations() {
+      runTest("compiler/testData/codegen/box/evaluate/ushortOperations.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/evaluate/constEvaluationFromJavaWorld")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ConstEvaluationFromJavaWorld {
+      @Test
+      @TestMetadata("accessComplexConst.kt")
+      public void testAccessComplexConst() {
+        runTest("compiler/testData/codegen/box/evaluate/constEvaluationFromJavaWorld/accessComplexConst.kt");
+      }
+
+      @Test
+      @TestMetadata("accessTopLevelConst.kt")
+      public void testAccessTopLevelConst() {
+        runTest("compiler/testData/codegen/box/evaluate/constEvaluationFromJavaWorld/accessTopLevelConst.kt");
+      }
+
+      @Test
+      @TestMetadata("accessTopLevelConstWithCustomFileName.kt")
+      public void testAccessTopLevelConstWithCustomFileName() {
+        runTest("compiler/testData/codegen/box/evaluate/constEvaluationFromJavaWorld/accessTopLevelConstWithCustomFileName.kt");
+      }
+
+      @Test
+      public void testAllFilesPresentInConstEvaluationFromJavaWorld() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/evaluate/constEvaluationFromJavaWorld"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("differentTypes.kt")
+      public void testDifferentTypes() {
+        runTest("compiler/testData/codegen/box/evaluate/constEvaluationFromJavaWorld/differentTypes.kt");
+      }
+
+      @Test
+      @TestMetadata("kt57802_1.kt")
+      public void testKt57802_1() {
+        runTest("compiler/testData/codegen/box/evaluate/constEvaluationFromJavaWorld/kt57802_1.kt");
+      }
+
+      @Test
+      @TestMetadata("kt57802_2.kt")
+      public void testKt57802_2() {
+        runTest("compiler/testData/codegen/box/evaluate/constEvaluationFromJavaWorld/kt57802_2.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/evaluate/intrinsicConst")
+    @TestDataPath("$PROJECT_ROOT")
+    public class IntrinsicConst {
+      @Test
+      public void testAllFilesPresentInIntrinsicConst() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/evaluate/intrinsicConst"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("constTrim.kt")
+      public void testConstTrim() {
+        runTest("compiler/testData/codegen/box/evaluate/intrinsicConst/constTrim.kt");
+      }
+
+      @Test
+      @TestMetadata("enumName.kt")
+      public void testEnumName() {
+        runTest("compiler/testData/codegen/box/evaluate/intrinsicConst/enumName.kt");
+      }
+
+      @Test
+      @TestMetadata("enumNameWithInit.kt")
+      public void testEnumNameWithInit() {
+        runTest("compiler/testData/codegen/box/evaluate/intrinsicConst/enumNameWithInit.kt");
+      }
+
+      @Test
+      @TestMetadata("equals_after.kt")
+      public void testEquals_after() {
+        runTest("compiler/testData/codegen/box/evaluate/intrinsicConst/equals_after.kt");
+      }
+
+      @Test
+      @TestMetadata("kCallableName.kt")
+      public void testKCallableName() {
+        runTest("compiler/testData/codegen/box/evaluate/intrinsicConst/kCallableName.kt");
+      }
+
+      @Test
+      @TestMetadata("kCallableNameWithSideEffect.kt")
+      public void testKCallableNameWithSideEffect() {
+        runTest("compiler/testData/codegen/box/evaluate/intrinsicConst/kCallableNameWithSideEffect.kt");
+      }
+
+      @Test
+      @TestMetadata("kt53272.kt")
+      public void testKt53272() {
+        runTest("compiler/testData/codegen/box/evaluate/intrinsicConst/kt53272.kt");
+      }
+
+      @Test
+      @TestMetadata("kt58717.kt")
+      public void testKt58717() {
+        runTest("compiler/testData/codegen/box/evaluate/intrinsicConst/kt58717.kt");
+      }
+
+      @Test
+      @TestMetadata("nullableEnumName.kt")
+      public void testNullableEnumName() {
+        runTest("compiler/testData/codegen/box/evaluate/intrinsicConst/nullableEnumName.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/evaluate/serialization")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Serialization {
+      @Test
+      @TestMetadata("actualAnnotationOnFakeOverride.kt")
+      public void testActualAnnotationOnFakeOverride() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/actualAnnotationOnFakeOverride.kt");
+      }
+
+      @Test
+      public void testAllFilesPresentInSerialization() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/evaluate/serialization"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("annotationInArguments.kt")
+      public void testAnnotationInArguments() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/annotationInArguments.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationOnFakeOverride.kt")
+      public void testAnnotationOnFakeOverride() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/annotationOnFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationOnFakeOverrideProperty.kt")
+      public void testAnnotationOnFakeOverrideProperty() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/annotationOnFakeOverrideProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationOnFakeOverrideWithJava.kt")
+      public void testAnnotationOnFakeOverrideWithJava() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/annotationOnFakeOverrideWithJava.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationOnParameterOnFakeOverride.kt")
+      public void testAnnotationOnParameterOnFakeOverride() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/annotationOnParameterOnFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationOnSecondParameterOnFakeOverride.kt")
+      public void testAnnotationOnSecondParameterOnFakeOverride() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/annotationOnSecondParameterOnFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationOnTypeOnFakeOverride.kt")
+      public void testAnnotationOnTypeOnFakeOverride() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/annotationOnTypeOnFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationSerialization.kt")
+      public void testAnnotationSerialization() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/annotationSerialization.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationWithArray.kt")
+      public void testAnnotationWithArray() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/annotationWithArray.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationWithDefaultValueOnFakeOverride.kt")
+      public void testAnnotationWithDefaultValueOnFakeOverride() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/annotationWithDefaultValueOnFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("annotationWithDefaults.kt")
+      public void testAnnotationWithDefaults() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/annotationWithDefaults.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedTypeAnnotation.kt")
+      public void testNestedTypeAnnotation() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/nestedTypeAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("typeAnnotation.kt")
+      public void testTypeAnnotation() {
+        runTest("compiler/testData/codegen/box/evaluate/serialization/typeAnnotation.kt");
+      }
     }
   }
 
@@ -37050,454 +37488,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       @TestMetadata("serializableWithBridge.kt")
       public void testSerializableWithBridge() {
         runTest("compiler/testData/codegen/box/invokedynamic/serializable/serializableWithBridge.kt");
-      }
-    }
-  }
-
-  @Nested
-  @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter")
-  @TestDataPath("$PROJECT_ROOT")
-  public class InvolvesIrInterpreter {
-    @Test
-    public void testAllFilesPresentInInvolvesIrInterpreter() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("annotationClassWithInner.kt")
-    public void testAnnotationClassWithInner() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/annotationClassWithInner.kt");
-    }
-
-    @Test
-    @TestMetadata("booleanOperations.kt")
-    public void testBooleanOperations() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/booleanOperations.kt");
-    }
-
-    @Test
-    @TestMetadata("byteOperations.kt")
-    public void testByteOperations() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/byteOperations.kt");
-    }
-
-    @Test
-    @TestMetadata("charOperations.kt")
-    public void testCharOperations() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/charOperations.kt");
-    }
-
-    @Test
-    @TestMetadata("complexBooleanConstant.kt")
-    public void testComplexBooleanConstant() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/complexBooleanConstant.kt");
-    }
-
-    @Test
-    @TestMetadata("cornerCaseInFloat.kt")
-    public void testCornerCaseInFloat() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/cornerCaseInFloat.kt");
-    }
-
-    @Test
-    @TestMetadata("doubleOperations.kt")
-    public void testDoubleOperations() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/doubleOperations.kt");
-    }
-
-    @Test
-    @TestMetadata("enumRecursiveName.kt")
-    public void testEnumRecursiveName() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/enumRecursiveName.kt");
-    }
-
-    @Test
-    @TestMetadata("enumWithDifferentFileOrder.kt")
-    public void testEnumWithDifferentFileOrder() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/enumWithDifferentFileOrder.kt");
-    }
-
-    @Test
-    @TestMetadata("floatOperations.kt")
-    public void testFloatOperations() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/floatOperations.kt");
-    }
-
-    @Test
-    @TestMetadata("inJavaLangPackage.kt")
-    public void testInJavaLangPackage() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/inJavaLangPackage.kt");
-    }
-
-    @Test
-    @TestMetadata("inJavaPackage.kt")
-    public void testInJavaPackage() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/inJavaPackage.kt");
-    }
-
-    @Test
-    @TestMetadata("intOperations.kt")
-    public void testIntOperations() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/intOperations.kt");
-    }
-
-    @Test
-    @TestMetadata("jsFloatDoubleToString.kt")
-    public void testJsFloatDoubleToString() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/jsFloatDoubleToString.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmFloatDoubleToString.kt")
-    public void testJvmFloatDoubleToString() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/jvmFloatDoubleToString.kt");
-    }
-
-    @Test
-    @TestMetadata("kt53480.kt")
-    public void testKt53480() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt53480.kt");
-    }
-
-    @Test
-    @TestMetadata("kt55108.kt")
-    public void testKt55108() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt55108.kt");
-    }
-
-    @Test
-    @TestMetadata("kt55866.kt")
-    public void testKt55866() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt55866.kt");
-    }
-
-    @Test
-    @TestMetadata("kt55912.kt")
-    public void testKt55912() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt55912.kt");
-    }
-
-    @Test
-    @TestMetadata("kt56215.kt")
-    public void testKt56215() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt56215.kt");
-    }
-
-    @Test
-    @TestMetadata("kt57028.kt")
-    public void testKt57028() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt57028.kt");
-    }
-
-    @Test
-    @TestMetadata("kt57313.kt")
-    public void testKt57313() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt57313.kt");
-    }
-
-    @Test
-    @TestMetadata("kt58005.kt")
-    public void testKt58005() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt58005.kt");
-    }
-
-    @Test
-    @TestMetadata("longOperations.kt")
-    public void testLongOperations() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/longOperations.kt");
-    }
-
-    @Test
-    @TestMetadata("objectConstValInAnnotationArgument.kt")
-    public void testObjectConstValInAnnotationArgument() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/objectConstValInAnnotationArgument.kt");
-    }
-
-    @Test
-    @TestMetadata("referenceNameFromStaticInDifferentModule.kt")
-    public void testReferenceNameFromStaticInDifferentModule() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/referenceNameFromStaticInDifferentModule.kt");
-    }
-
-    @Test
-    @TestMetadata("shortOperations.kt")
-    public void testShortOperations() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/shortOperations.kt");
-    }
-
-    @Test
-    @TestMetadata("stdlibConst.kt")
-    public void testStdlibConst() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/stdlibConst.kt");
-    }
-
-    @Test
-    @TestMetadata("stringConcatenation.kt")
-    public void testStringConcatenation() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/stringConcatenation.kt");
-    }
-
-    @Test
-    @TestMetadata("stringConcatenationWithObject.kt")
-    public void testStringConcatenationWithObject() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/stringConcatenationWithObject.kt");
-    }
-
-    @Test
-    @TestMetadata("stringOperations.kt")
-    public void testStringOperations() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/stringOperations.kt");
-    }
-
-    @Test
-    @TestMetadata("thisPlusString.kt")
-    public void testThisPlusString() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/thisPlusString.kt");
-    }
-
-    @Test
-    @TestMetadata("thisPlusStringWithObject.kt")
-    public void testThisPlusStringWithObject() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/thisPlusStringWithObject.kt");
-    }
-
-    @Test
-    @TestMetadata("ubyteOperations.kt")
-    public void testUbyteOperations() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/ubyteOperations.kt");
-    }
-
-    @Test
-    @TestMetadata("uintOperations.kt")
-    public void testUintOperations() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/uintOperations.kt");
-    }
-
-    @Test
-    @TestMetadata("ulongOperations.kt")
-    public void testUlongOperations() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/ulongOperations.kt");
-    }
-
-    @Test
-    @TestMetadata("unsignedConst.kt")
-    public void testUnsignedConst() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/unsignedConst.kt");
-    }
-
-    @Test
-    @TestMetadata("useCorrectToString.kt")
-    public void testUseCorrectToString() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/useCorrectToString.kt");
-    }
-
-    @Test
-    @TestMetadata("ushortOperations.kt")
-    public void testUshortOperations() {
-      runTest("compiler/testData/codegen/box/involvesIrInterpreter/ushortOperations.kt");
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ConstEvaluationFromJavaWorld {
-      @Test
-      @TestMetadata("accessComplexConst.kt")
-      public void testAccessComplexConst() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld/accessComplexConst.kt");
-      }
-
-      @Test
-      @TestMetadata("accessTopLevelConst.kt")
-      public void testAccessTopLevelConst() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld/accessTopLevelConst.kt");
-      }
-
-      @Test
-      @TestMetadata("accessTopLevelConstWithCustomFileName.kt")
-      public void testAccessTopLevelConstWithCustomFileName() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld/accessTopLevelConstWithCustomFileName.kt");
-      }
-
-      @Test
-      public void testAllFilesPresentInConstEvaluationFromJavaWorld() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld"), Pattern.compile("^(.+)\\.kt$"), null, true);
-      }
-
-      @Test
-      @TestMetadata("differentTypes.kt")
-      public void testDifferentTypes() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld/differentTypes.kt");
-      }
-
-      @Test
-      @TestMetadata("kt57802_1.kt")
-      public void testKt57802_1() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld/kt57802_1.kt");
-      }
-
-      @Test
-      @TestMetadata("kt57802_2.kt")
-      public void testKt57802_2() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/constEvaluationFromJavaWorld/kt57802_2.kt");
-      }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst")
-    @TestDataPath("$PROJECT_ROOT")
-    public class IntrinsicConst {
-      @Test
-      public void testAllFilesPresentInIntrinsicConst() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst"), Pattern.compile("^(.+)\\.kt$"), null, true);
-      }
-
-      @Test
-      @TestMetadata("constTrim.kt")
-      public void testConstTrim() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/constTrim.kt");
-      }
-
-      @Test
-      @TestMetadata("enumName.kt")
-      public void testEnumName() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/enumName.kt");
-      }
-
-      @Test
-      @TestMetadata("enumNameWithInit.kt")
-      public void testEnumNameWithInit() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/enumNameWithInit.kt");
-      }
-
-      @Test
-      @TestMetadata("equals_after.kt")
-      public void testEquals_after() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/equals_after.kt");
-      }
-
-      @Test
-      @TestMetadata("kCallableName.kt")
-      public void testKCallableName() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kCallableName.kt");
-      }
-
-      @Test
-      @TestMetadata("kCallableNameWithSideEffect.kt")
-      public void testKCallableNameWithSideEffect() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kCallableNameWithSideEffect.kt");
-      }
-
-      @Test
-      @TestMetadata("kt53272.kt")
-      public void testKt53272() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kt53272.kt");
-      }
-
-      @Test
-      @TestMetadata("kt58717.kt")
-      public void testKt58717() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kt58717.kt");
-      }
-
-      @Test
-      @TestMetadata("nullableEnumName.kt")
-      public void testNullableEnumName() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/nullableEnumName.kt");
-      }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/serialization")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Serialization {
-      @Test
-      @TestMetadata("actualAnnotationOnFakeOverride.kt")
-      public void testActualAnnotationOnFakeOverride() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/actualAnnotationOnFakeOverride.kt");
-      }
-
-      @Test
-      public void testAllFilesPresentInSerialization() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/serialization"), Pattern.compile("^(.+)\\.kt$"), null, true);
-      }
-
-      @Test
-      @TestMetadata("annotationInArguments.kt")
-      public void testAnnotationInArguments() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationInArguments.kt");
-      }
-
-      @Test
-      @TestMetadata("annotationOnFakeOverride.kt")
-      public void testAnnotationOnFakeOverride() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnFakeOverride.kt");
-      }
-
-      @Test
-      @TestMetadata("annotationOnFakeOverrideProperty.kt")
-      public void testAnnotationOnFakeOverrideProperty() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnFakeOverrideProperty.kt");
-      }
-
-      @Test
-      @TestMetadata("annotationOnFakeOverrideWithJava.kt")
-      public void testAnnotationOnFakeOverrideWithJava() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnFakeOverrideWithJava.kt");
-      }
-
-      @Test
-      @TestMetadata("annotationOnParameterOnFakeOverride.kt")
-      public void testAnnotationOnParameterOnFakeOverride() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnParameterOnFakeOverride.kt");
-      }
-
-      @Test
-      @TestMetadata("annotationOnSecondParameterOnFakeOverride.kt")
-      public void testAnnotationOnSecondParameterOnFakeOverride() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnSecondParameterOnFakeOverride.kt");
-      }
-
-      @Test
-      @TestMetadata("annotationOnTypeOnFakeOverride.kt")
-      public void testAnnotationOnTypeOnFakeOverride() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationOnTypeOnFakeOverride.kt");
-      }
-
-      @Test
-      @TestMetadata("annotationSerialization.kt")
-      public void testAnnotationSerialization() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationSerialization.kt");
-      }
-
-      @Test
-      @TestMetadata("annotationWithArray.kt")
-      public void testAnnotationWithArray() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationWithArray.kt");
-      }
-
-      @Test
-      @TestMetadata("annotationWithDefaultValueOnFakeOverride.kt")
-      public void testAnnotationWithDefaultValueOnFakeOverride() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationWithDefaultValueOnFakeOverride.kt");
-      }
-
-      @Test
-      @TestMetadata("annotationWithDefaults.kt")
-      public void testAnnotationWithDefaults() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationWithDefaults.kt");
-      }
-
-      @Test
-      @TestMetadata("nestedTypeAnnotation.kt")
-      public void testNestedTypeAnnotation() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/nestedTypeAnnotation.kt");
-      }
-
-      @Test
-      @TestMetadata("typeAnnotation.kt")
-      public void testTypeAnnotation() {
-        runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/typeAnnotation.kt");
       }
     }
   }

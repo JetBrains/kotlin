@@ -13,12 +13,12 @@ annotation class Ann(
 )
 
 @Ann(
-        p1 = java.lang.Byte.MAX_VALUE + 1,
-        p2 = java.lang.Short.MAX_VALUE + 1,
-        p3 = java.lang.Integer.MAX_VALUE + 1,
-        p4 = java.lang.Integer.MAX_VALUE + 1,
-        p5 = java.lang.Integer.MAX_VALUE + 1.toLong(),
-        p6 = java.lang.Long.MAX_VALUE + 1
+        p1 = <!EVALUATED("128")!>java.lang.Byte.MAX_VALUE + 1<!>,
+        p2 = <!EVALUATED("32768")!>java.lang.Short.MAX_VALUE + 1<!>,
+        p3 = <!EVALUATED("-2147483648")!>java.lang.Integer.MAX_VALUE + 1<!>,
+        p4 = <!EVALUATED("-2147483648")!>java.lang.Integer.MAX_VALUE + 1<!>,
+        p5 = <!EVALUATED("2147483648")!>java.lang.Integer.MAX_VALUE + 1.toLong()<!>,
+        p6 = <!EVALUATED("-9223372036854775808")!>java.lang.Long.MAX_VALUE + 1<!>
 ) class MyClass
 
 fun box(): String {
