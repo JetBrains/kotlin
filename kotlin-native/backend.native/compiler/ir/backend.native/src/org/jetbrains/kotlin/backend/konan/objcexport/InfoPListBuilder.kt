@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.konan.config.bundleId
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.Name
 
@@ -160,7 +161,7 @@ internal class InfoPListBuilder(
         mainPackageGuesser: MainPackageGuesser,
         moduleDescriptor: ModuleDescriptor,
     ): String {
-        val deprecatedBundleIdOption = configuration[KonanConfigKeys.BUNDLE_ID]
+        val deprecatedBundleIdOption = configuration.bundleId
         val bundleIdOption = configuration[BinaryOptions.bundleId]
         if (deprecatedBundleIdOption != null && bundleIdOption != null && deprecatedBundleIdOption != bundleIdOption) {
             configuration.report(

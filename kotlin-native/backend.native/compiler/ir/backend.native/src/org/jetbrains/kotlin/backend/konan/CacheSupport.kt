@@ -16,7 +16,11 @@ import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.backend.common.serialization.fileEntry
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
+import org.jetbrains.kotlin.konan.config.filesToCache
+import org.jetbrains.kotlin.konan.config.optimization
+import org.jetbrains.kotlin.konan.config.preLinkCaches
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -149,9 +153,9 @@ class CacheSupport(
         if (libraryCache is CachedLibraries.Cache.Monolithic)
             null
         else {
-            val filesToCache = configuration.get(KonanConfigKeys.FILES_TO_CACHE)
+            val filesToCache = configuration.filesToCache
 
-            val strategy = if (filesToCache.isNullOrEmpty())
+            val strategy = if (filesToCache.isEmpty())
                 CacheDeserializationStrategy.WholeModule
             else
                 CacheDeserializationStrategy.MultipleFiles(filesToCache, libraryToAddToCache.getFileFqNames(filesToCache))
@@ -160,7 +164,7 @@ class CacheSupport(
     }
 
     internal val preLinkCaches: Boolean =
-            configuration.get(KonanConfigKeys.PRE_LINK_CACHES, false)
+            configuration.preLinkCaches
 
     companion object {
         fun cacheFileId(fqName: String, filePath: String) =
@@ -202,7 +206,7 @@ class CacheSupport(
         }
 
         if ((libraryToCache != null || cachedLibraries.hasDynamicCaches || cachedLibraries.hasStaticCaches)
-                && configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)) {
+                && configuration.optimization) {
             configuration.reportCompilationError("Cache cannot be used in optimized compilation")
         }
     }

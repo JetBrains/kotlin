@@ -104,7 +104,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
             configuration.verifyCompiler = it == "true"
         }
         configuration.fakeOverrideValidator = arguments.fakeOverrideValidator
-        arguments.konanDataDir?.let { configuration.put(KonanConfigKeys.KONAN_DATA_DIR, it) }
+        arguments.konanDataDir?.let { configuration.konanDataDir = it }
 
         configuration.checkDependencies = arguments.checkDependencies
         arguments.writeDependenciesOfProducedKlibTo?.let {

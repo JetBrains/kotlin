@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.konan.config.saveLlvmIr
+import org.jetbrains.kotlin.konan.config.verifyBitcode
 import java.io.File
 
 /**
@@ -30,7 +32,7 @@ interface LlvmIrHolder {
  */
 private fun <Data, Context : NativeBackendPhaseContext> createLlvmDumperAction(): Action<Data, Context> =
         fun(state: ActionState, data: Data, context: Context) {
-            if (state.phase.name in context.config.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR)) {
+            if (state.phase.name in context.config.configuration.saveLlvmIr) {
                 val llvmModule = findLlvmModule(data, context)
                 if (llvmModule == null) {
                     context.messageCollector.report(
@@ -58,7 +60,7 @@ private fun <Data, Context : NativeBackendPhaseContext> createLlvmDumperAction()
  */
 private fun <Data, Context : NativeBackendPhaseContext> createLlvmVerifierAction(): Action<Data, Context> =
         fun(actionState: ActionState, data: Data, context: Context) {
-            if (!context.config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE)) {
+            if (!context.config.configuration.verifyBitcode) {
                 return
             }
             val llvmModule = findLlvmModule(data, context)
