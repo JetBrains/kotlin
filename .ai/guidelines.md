@@ -17,10 +17,66 @@ Note: The IntelliJ Kotlin plugin is in a separate repository (JetBrains/intellij
 ## Build Commands
 
 ```bash
-# Generate test sources (run after adding new test data files)
+# Tests (run after adding new test data files)
 ./gradlew generateTests
+
+# FIR: Generate checker components and FIR/IDE diagnostics
+./gradlew :compiler:fir:checkers:generateCheckersComponents
+
+# FIR tree
+./gradlew :compiler:fir:tree:generateTree
+
+# IR tree
+./gradlew :compiler:ir.tree:generateTree
+
+# Compiler CLI arguments (Common/JS/JVM/Wasm/Native/Metadata)
+./gradlew :compiler:cli:cli-base:generateCliArguments
+
+# Compiler configuration keys (run in each module that declares them)
+./gradlew :compiler:config:generateConfigurationKeys \
+          :compiler:config.jvm:generateConfigurationKeys \
+          :compiler:frontend.common:generateConfigurationKeys \
+          :compiler:ir:backend.native:generateConfigurationKeys \
+          :js:js.config:generateConfigurationKeys \
+          :wasm:wasm.frontend:generateConfigurationKeys \
+          :compiler:cli:cli-base:generateConfigurationKeys
+
+# Kotlin lexers (JFlex): new KMP lexers
+./gradlew :compiler:multiplatform-parsing:generateKotlinLexer :compiler:multiplatform-parsing:generateKDocLexer
+# Legacy PSI parser lexer (only if you modify old lexer grammars)
+./gradlew :compiler:psi:parser:lexer
+
+# Other generators (run as needed)
+./gradlew :generators:generateBuiltins \
+          :generators:generateWasmIntrinsics \
+          :generators:generateNativeInteropRuntime \
+          :generators:generateProtoBuf \
+          :generators:generateProtoBufCompare \
+          :generators:generateGradleCompilerTypes \
+          :generators:generateGradleOptions \
+          :generators:generateUnsupportedGradleLanguageVersionsMetadata \
+          :generators:generateKeywordStrings \
+          :generators:generateOperationsMap \
+          :generators:generateInterpreterMap
 ```
- 
+
+### Notes
+- In IntelliJ, there is a Run Configuration: "Generators -> Generate FIR Checker Components and FIR/IDE Diagnostics" for FIR diagnostics/checkers.
+- Some generator tasks run automatically as part of build in relevant modules; prefer running them explicitly when you modify their inputs.
+
+## Generated Code Policy
+
+- Do NOT edit generated sources manually. Instead, change generator inputs and re-run the appropriate generator task from the list above.
+- Typical generated locations/patterns to avoid editing directly:
+  - gen/ and src/gen/ directories within modules
+  - tests-gen/ directories
+  - Files containing a header like: "This file was generated automatically"
+  - Generated FIR/IR tree files and generated CLI argument classes
+- FIR diagnostics specifics:
+  - Add/modify diagnostics in the lists under compiler/fir/checkers/checkers-component-generator/src/org/jetbrains/kotlin/fir/checkers/generator/diagnostics
+  - Then run: ./gradlew :compiler:fir:checkers:generateCheckersComponents
+  - Diagnostic messages are edited manually in FirErrorsDefaultMessages (and platform-specific counterparts), as described in compiler/fir/checkers/module.md
+
 ## Common Pitfalls
 
 - Don't modify `*Generated.java` test files directly - regenerate them with `generateTests` Gradle task
