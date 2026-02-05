@@ -29,7 +29,7 @@ internal class BtaApiGenerator(
         val mainFileAppendable = createGeneratedFileAppendable()
         val mainFile = FileSpec.builder(targetPackage, className).apply {
             interfaceType(className) {
-                addKdoc(KDOC_SINCE_2_3_0)
+                addKdoc(levelsSince[level.name] ?: error("Level ${level.name} is missing in levelSince map"))
                 if (level.name in experimentalLevelNames) {
                     addAnnotation(ANNOTATION_EXPERIMENTAL)
                 }
@@ -44,11 +44,16 @@ internal class BtaApiGenerator(
                 val argumentTypeName = ClassName(targetPackage, className, argument)
                 if (parentClass == null) {
                     addToArgumentStringsFun()
-                    maybeAddApplyArgumentStringsFun(deprecated = true)
+                    if (levelsSince[level.name] == KDOC_SINCE_2_3_0) {
+                        addApplyArgumentStringsFun(deprecated = true)
+                    }
                 }
                 interfaceType("Builder") {
-                    addKdoc("A builder for [$className].\n\n@since 2.3.20")
-                    generateGetPutFunctions(argumentTypeName)
+                    addKdoc("A builder for [$className].")
+                    if (levelsSince[level.name] == KDOC_SINCE_2_3_0) {
+                        addKdoc("\n\n@since 2.3.20")
+                    }
+                    generateGetPutFunctions(argumentTypeName, level)
                     if (level.isLeaf()) {
                         function("build") {
                             addKdoc("Constructs a new immutable [$className] instance with the options set in this builder.")
@@ -57,14 +62,14 @@ internal class BtaApiGenerator(
                         }
                     }
                     if (parentClass == null) {
-                        maybeAddApplyArgumentStringsFun()
+                        addApplyArgumentStringsFun()
                     } else {
                         addSuperinterface(parentClass.nestedClass("Builder"))
                     }
                 }
-                generateGetPutFunctions(argumentTypeName, deprecateSet = true)
+                generateGetPutFunctions(argumentTypeName, level, deprecateSet = true)
                 addType(TypeSpec.companionObjectBuilder().apply {
-                    generateOptions(level.transformApiArguments(), argumentTypeName)
+                    generateOptions(level.transformApiArguments(), argumentTypeName, level)
                 }.build())
             }
         }.build()
@@ -76,6 +81,7 @@ internal class BtaApiGenerator(
     private fun TypeSpec.Builder.generateOptions(
         arguments: Collection<BtaCompilerArgument<*>>,
         argumentTypeName: ClassName,
+        level: KotlinCompilerArgumentsLevel,
     ) {
         val enumsToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
         val enumsExperimental = mutableMapOf<KClass<*>, Boolean>()
@@ -95,7 +101,7 @@ internal class BtaApiGenerator(
                 val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
                 @Suppress("UNCHECKED_CAST")
                 enumConstants as List<WithStringRepresentation>
-                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants)
+                enumsToGenerate[type] = generateEnumTypeBuilder(enumConstants, level)
                 if (type !in enumsExperimental && experimental) {
                     enumsExperimental[type] = true
                 } else if (type in enumsExperimental && !experimental) {
@@ -192,13 +198,18 @@ internal class BtaApiGenerator(
 
     fun <T> generateEnumTypeBuilder(
         sourceEnum: Collection<T>,
+        level: KotlinCompilerArgumentsLevel,
     ): TypeSpec.Builder where T : Enum<*>, T : WithStringRepresentation {
         val className = sourceEnum.first()::class.toBtaEnumClassName()
         return TypeSpec.enumBuilder(className).apply {
             property<String>("stringValue") {
                 initializer("stringValue")
             }
-            addKdoc("$KDOC_SINCE ${btaEnumVersionMap.getValue(className).releaseName}")
+            if (btaEnumVersionMap.contains(className)) {
+                addKdoc("$KDOC_SINCE ${btaEnumVersionMap.getValue(className).releaseName}")
+            } else {
+                addKdoc(levelsSince[level.name] ?: error("Level ${level.name} is missing in levelSince map"))
+            }
             primaryConstructor(FunSpec.constructorBuilder().addParameter("stringValue", String::class).build())
             val nameAccessor = WithStringRepresentation::stringRepresentation
             sourceEnum.forEach {
@@ -220,7 +231,7 @@ internal class BtaApiGenerator(
         outputs += Path(enumFile.relativePath) to enumFileAppendable.toString()
     }
 
-    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, deprecateSet: Boolean = false) {
+    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, level: KotlinCompilerArgumentsLevel, deprecateSet: Boolean = false) {
         function("get") {
             addKdoc(KDOC_OPTIONS_GET)
             addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
@@ -229,16 +240,17 @@ internal class BtaApiGenerator(
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
         }
-        function("set") {
-            maybeAddMutabilityDeprecationAnnotation(deprecateSet)
-            addKdoc(KDOC_OPTIONS_SET)
-            addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
-            val typeParameter = TypeVariableName("V")
-            addTypeVariable(typeParameter)
-            addParameter("key", parameter.parameterizedBy(typeParameter))
-            addParameter("value", typeParameter)
+        if (levelsSince[level.name] == KDOC_SINCE_2_3_0 || !deprecateSet) {
+            function("set") {
+                maybeAddMutabilityDeprecationAnnotation(deprecateSet)
+                addKdoc(KDOC_OPTIONS_SET)
+                addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
+                val typeParameter = TypeVariableName("V")
+                addTypeVariable(typeParameter)
+                addParameter("key", parameter.parameterizedBy(typeParameter))
+                addParameter("value", typeParameter)
+            }
         }
-
         function("contains") {
             addKdoc(KDOC_OPTIONS_CONTAINS)
             addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
@@ -288,7 +300,7 @@ private fun FunSpec.Builder.addParameterIf(name: String, type: ClassName, condit
     return this
 }
 
-private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(deprecated: Boolean = false) {
+private fun TypeSpec.Builder.addApplyArgumentStringsFun(deprecated: Boolean = false) {
     function("applyArgumentStrings") {
         maybeAddMutabilityDeprecationAnnotation(deprecated)
         addKdoc("Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.")
