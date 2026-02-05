@@ -115,38 +115,40 @@ open class FirKaptAnalysisHandlerExtension(
 
         if (!options.mode.runAnnotationProcessing) return true
 
-        val processors = loadProcessors()
-        if (processors.processors.isEmpty()) return true
+        createProcessorLoader().use { processorLoader ->
+            val processors = processorLoader.loadProcessors()
+            if (processors.processors.isEmpty()) return true
 
-        val kaptContext = KaptContext(options, false, logger)
+            val kaptContext = KaptContext(options, false, logger)
 
-        fun handleKaptError(error: KaptError): Boolean {
-            val cause = error.cause
+            fun handleKaptError(error: KaptError): Boolean {
+                val cause = error.cause
 
-            if (cause != null) {
-                kaptContext.logger.exception(cause)
+                if (cause != null) {
+                    kaptContext.logger.exception(cause)
+                }
+
+                return false
             }
 
-            return false
-        }
+            try {
+                runAnnotationProcessing(kaptContext, processors)
+            } catch (error: KaptBaseError) {
+                val kind = when (error.kind) {
+                    KaptBaseError.Kind.EXCEPTION -> KaptError.Kind.EXCEPTION
+                    KaptBaseError.Kind.ERROR_RAISED -> KaptError.Kind.ERROR_RAISED
+                }
 
-        try {
-            runAnnotationProcessing(kaptContext, processors)
-        } catch (error: KaptBaseError) {
-            val kind = when (error.kind) {
-                KaptBaseError.Kind.EXCEPTION -> KaptError.Kind.EXCEPTION
-                KaptBaseError.Kind.ERROR_RAISED -> KaptError.Kind.ERROR_RAISED
+                val cause = error.cause
+                return handleKaptError(if (cause != null) KaptError(kind, cause) else KaptError(kind))
+            } catch (error: KaptError) {
+                return handleKaptError(error)
+            } catch (thr: Throwable) {
+                kaptContext.logger.exception(thr)
+                return false
+            } finally {
+                kaptContext.close()
             }
-
-            val cause = error.cause
-            return handleKaptError(if (cause != null) KaptError(kind, cause) else KaptError(kind))
-        } catch (error: KaptError) {
-            return handleKaptError(error)
-        } catch (thr: Throwable) {
-            kaptContext.logger.exception(thr)
-            return false
-        } finally {
-            kaptContext.close()
         }
 
         return true
@@ -325,9 +327,8 @@ open class FirKaptAnalysisHandlerExtension(
         }
     }
 
-    protected open fun loadProcessors(): LoadedProcessors {
-        return EfficientProcessorLoader(options, logger).loadProcessors()
-    }
+    protected open fun createProcessorLoader(): ProcessorLoader =
+        EfficientProcessorLoader(options, logger)
 
     private fun KaptOptions.Builder.checkOptions(logger: KaptLogger, configuration: CompilerConfiguration): Boolean? {
         if (classesOutputDir == null && configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {

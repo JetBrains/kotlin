@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.kapt.FirKaptAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt.base.KaptOptions
 import org.jetbrains.kotlin.kapt.base.LoadedProcessors
+import org.jetbrains.kotlin.kapt.base.ProcessorLoader
 import org.jetbrains.kotlin.kapt.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt.javac.KaptJavaFileObject
@@ -120,10 +121,8 @@ class FirKaptExtensionForTests(
         override fun getSupportedAnnotationTypes() = supportedAnnotations.toSet()
     }
 
-    override fun loadProcessors() = LoadedProcessors(
-        listOf(IncrementalProcessor(processor, DeclaredProcType.NON_INCREMENTAL, logger)),
-        FirKaptExtensionForTests::class.java.classLoader
-    )
+    override fun createProcessorLoader(): ProcessorLoader =
+        TestProcessorLoader(processor, logger)
 
     override fun saveStubs(
         kaptContext: KaptContextForStubGeneration,
@@ -160,5 +159,18 @@ class FirKaptExtensionForTests(
         configuration.contentRoots += sourceFiles.map {
             KotlinSourceRoot(it.canonicalPath, isCommon = false, hmppModuleName = null)
         }
+    }
+
+    private class TestProcessorLoader(
+        private val processor: Processor,
+        private val logger: MessageCollectorBackedKaptLogger,
+    ) : ProcessorLoader {
+        override fun loadProcessors(parentClassLoader: ClassLoader): LoadedProcessors =
+            LoadedProcessors(
+                listOf(IncrementalProcessor(processor, DeclaredProcType.NON_INCREMENTAL, logger)),
+                FirKaptExtensionForTests::class.java.classLoader,
+            )
+
+        override fun close() {}
     }
 }
