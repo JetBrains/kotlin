@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.util
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -90,16 +93,13 @@ internal val swiftConsumerSource
     #endif
 """.trimIndent()
 
-// To access nested maps safely
-@Suppress("UNCHECKED_CAST")
-internal fun <T> Map<String, Any>.getNestedValue(key: String): T? {
-    return this[key] as? T
+internal fun JsonObject.getNestedList(key: String): List<JsonObject>? {
+    return this[key]?.jsonArray?.map { it.jsonObject }
 }
 
-internal fun parseJsonToMap(jsonFile: Path): Map<String, Any> {
+internal fun parseJsonToMap(jsonFile: Path): JsonObject {
     val jsonText = jsonFile.readText()
-    val typeToken = object : TypeToken<Map<String, Any>>() {}
-    return Gson().fromJson(jsonText, typeToken.type)
+    return Json.parseToJsonElement(jsonText).jsonObject
 }
 
 /**
@@ -142,16 +142,12 @@ private fun swiftSymbolgraphExtract(
  */
 private fun parseSymbolGraphNames(symbolGraphFile: File): Set<String> {
     val json = symbolGraphFile.readText()
-    val typeToken = object : TypeToken<Map<String, Any>>() {}
-    val graph = Gson().fromJson<Map<String, Any>>(json, typeToken.type)
+    val graph = Json.parseToJsonElement(json).jsonObject
 
-    @Suppress("UNCHECKED_CAST")
-    val symbols = graph["symbols"] as? List<Map<String, Any>> ?: return emptySet()
+    val symbols = graph["symbols"]?.jsonArray ?: return emptySet()
 
     return symbols.mapNotNull { symbol ->
-        @Suppress("UNCHECKED_CAST")
-        val names = symbol["names"] as? Map<String, Any>
-        names?.get("title") as? String
+        symbol.jsonObject["names"]?.jsonObject?.get("title")?.jsonPrimitive?.content
     }.toSet()
 }
 

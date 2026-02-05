@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
+import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -493,10 +494,10 @@ class SwiftExportIT : KGPBaseTest() {
                 val modulesFile = projectPath.resolve("build/SwiftExport/iosArm64/Debug/modules/Shared.json")
                 assertFileExists(modulesFile)
 
-                val modules = parseJsonToMap(modulesFile).getNestedValue<List<Map<String, Any>>>("modules")
+                val modules = parseJsonToMap(modulesFile).getNestedList("modules")
                 assertNotNull(modules)
 
-                val actualModules = modules.map { it["name"] as String }.toSet()
+                val actualModules = modules.map { it["name"]?.jsonPrimitive?.content ?: "" }.toSet()
 
                 assertEquals(
                     setOf("Shared", "SharedDepOne", "ExportedKotlinPackages", "KotlinRuntimeSupport"),
