@@ -68,8 +68,8 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::JvmEnvironmentConfigurator,
             ::JvmForeignAnnotationsConfigurator,
+            ::JvmEnvironmentConfigurator,
             ::ScriptingEnvironmentConfigurator
         )
 

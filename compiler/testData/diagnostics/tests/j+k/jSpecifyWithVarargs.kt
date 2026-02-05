@@ -21,7 +21,7 @@ public class JavaClass {
 // FILE: main.kt
 
 fun main() {
-    JavaClass.ofJetbrains(null) // this is green, because String! expected
+    JavaClass.ofJetbrains(<!NULL_FOR_NONNULL_TYPE!>null<!>) // this is also red, because ENABLE_FOREIGN_ANNOTATIONS is used
     JavaClass.ofJspecify(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>) // this is red
 }
 

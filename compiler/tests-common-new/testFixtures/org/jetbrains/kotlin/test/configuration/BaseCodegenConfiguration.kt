@@ -84,9 +84,9 @@ fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDebugTest(t
 
     useConfigurators(
         ::CommonEnvironmentConfigurator,
+        ::JvmForeignAnnotationsConfigurator,
         ::JvmEnvironmentConfigurator,
         ::ScriptingEnvironmentConfigurator,
-        ::JvmForeignAnnotationsConfigurator,
     )
 
     useAdditionalSourceProviders(

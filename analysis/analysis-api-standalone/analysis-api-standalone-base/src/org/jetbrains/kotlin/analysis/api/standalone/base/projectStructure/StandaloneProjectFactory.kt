@@ -68,7 +68,7 @@ import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.popLast
+import org.jetbrains.kotlin.utils.topologicalSort
 import org.picocontainer.PicoContainer
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -498,19 +498,11 @@ object StandaloneProjectFactory {
     }
 
     private fun withAllTransitiveDependencies(ktModules: List<KaModule>): List<KaModule> {
-        val visited = mutableSetOf<KaModule>()
-        val stack = ktModules.toMutableList()
-        while (stack.isNotEmpty()) {
-            val module = stack.popLast()
-            if (module in visited) continue
-            visited += module
-            for (dependency in module.allDependencies()) {
-                if (dependency !in visited) {
-                    stack += dependency
-                }
-            }
+        // here, the lists are reversed to ensure that in the result, the earlier module from `ktModules`
+        // will also appear earlier (ceteris paribus)
+        return topologicalSort(ktModules.reversed()) {
+            allDependencies().reversed()
         }
-        return visited.toList()
     }
 
     private fun KaModule.allDependencies(): List<KaModule> = buildList {

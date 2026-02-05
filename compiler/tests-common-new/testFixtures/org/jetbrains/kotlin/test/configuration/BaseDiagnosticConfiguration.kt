@@ -135,8 +135,8 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
 
     useConfigurators(
         ::CommonEnvironmentConfigurator,
-        ::JvmEnvironmentConfigurator,
         ::JvmForeignAnnotationsConfigurator,
+        ::JvmEnvironmentConfigurator,
         ::ScriptingEnvironmentConfigurator,
     )
 
