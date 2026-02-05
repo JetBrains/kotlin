@@ -19,14 +19,18 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
+import org.jetbrains.kotlin.fir.resolve.dfa.isLocalVariableStable
 import org.jetbrains.kotlin.fir.resolve.dfa.VariableStorage
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessComputer
 import org.jetbrains.kotlin.fir.withSession
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -70,6 +74,16 @@ internal class KaFirExpressionInformationProvider(
             val storage = VariableStorage(analysisSession.firSession)
             val realVariable = storage.get(firExpression, createReal = true, unwrapAlias = { it }) as? RealVariable ?: return false
             val smartcastStability = realVariable.getStability(flow, analysisSession.firSession)
+
+            // For local vars, RealVariable.getStability returns CAPTURED_VARIABLE by default.
+            // We need to check if the variable is actually stable using FirLocalVariableAssignmentAnalyzer.
+            if (smartcastStability == SmartcastStability.CAPTURED_VARIABLE) {
+                val property = realVariable.symbol.fir as? FirProperty ?: return false
+                val containingKtFunction = this.parents.filterIsInstance<KtFunction>().firstOrNull() ?: return false
+                val containingFunction = containingKtFunction.getOrBuildFirSafe<FirFunction>(analysisSession.resolutionFacade)
+                    ?: return false
+                return isLocalVariableStable(property, containingFunction)
+            }
 
             return smartcastStability == SmartcastStability.STABLE_VALUE
         }

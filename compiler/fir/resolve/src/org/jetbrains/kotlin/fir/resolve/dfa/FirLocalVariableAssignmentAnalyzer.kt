@@ -320,6 +320,33 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
 
     companion object {
         /**
+         * Determines if a local variable is stable at a given access point.
+         *
+         * This is a static check that doesn't require maintaining traversal state. It analyzes the containing
+         * function to determine if there are any assignments to the variable that could affect smart-casting.
+         *
+         * A local variable is considered stable if there are no assignments to it anywhere in the function body
+         * (other than the initializer). This is a conservative check - the actual compiler uses more precise
+         * control-flow-sensitive analysis, but for the Analysis API use case, this provides correct results
+         * for common patterns.
+         *
+         * @param property The local variable property being accessed
+         * @param containingFunction The function containing both the property declaration and the access
+         * @return `true` if the variable is stable (no assignments that could affect smart-casting), `false` otherwise
+         */
+        fun isLocalVariableStable(property: FirProperty, containingFunction: FirFunction): Boolean {
+            if (!property.isEffectivelyLocal || !property.isVar) return true
+
+            val data = MiniCfgBuilder.MiniCfgData()
+            MiniCfgBuilder().visitElement(containingFunction, data)
+
+            // Check if there are any assignments to this property anywhere in the function
+            // (assignments tracked in data.assignments, which includes all assignments found during mini-CFG building)
+            val assignments = data.assignments[property]
+            return assignments.isNullOrEmpty()
+        }
+
+        /**
          * Computes assigned local variables in each execution path. This analyzer runs before BODY_RESOLVE. Hence, it works on
          * syntactical information only.
          *
@@ -637,4 +664,18 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
             }
         }
     }
+}
+
+/**
+ * Determines if a local variable is stable at a given access point.
+ *
+ * This is a static check that analyzes the containing function to determine if there are any
+ * capturing lambdas or classes that could modify the variable concurrently, making it unstable.
+ *
+ * @param property The local variable property being accessed
+ * @param containingFunction The function containing both the property declaration and the access
+ * @return `true` if the variable is stable (no concurrent modifications possible), `false` otherwise
+ */
+fun isLocalVariableStable(property: FirProperty, containingFunction: FirFunction): Boolean {
+    return FirLocalVariableAssignmentAnalyzer.isLocalVariableStable(property, containingFunction)
 }

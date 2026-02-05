@@ -1,3 +1,0 @@
-expression: REFERENCE_EXPRESSION
-text: local
-isStable: true
