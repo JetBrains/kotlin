@@ -115,6 +115,12 @@ public class SymbolLightClassesParentingByPsiForSourceTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("delegateWithBoxedReturnType.kt")
+  public void testDelegateWithBoxedReturnType() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/delegateWithBoxedReturnType.kt");
+  }
+
+  @Test
   @TestMetadata("DelegatedProperty.kt")
   public void testDelegatedProperty() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/DelegatedProperty.kt");
