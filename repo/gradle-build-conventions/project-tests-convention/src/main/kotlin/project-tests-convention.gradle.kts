@@ -32,6 +32,7 @@ val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply 
 tasks.withType<Test>().configureEach {
     val disableTestsCache = providers.gradleProperty("kotlin.build.cache.tests.disabled").orElse("false")
     outputs.doNotCacheIf("Caching tests is manually disabled using `kotlin.build.cache.tests.disabled` property") { disableTestsCache.get() == "true" }
+    outputs.upToDateWhen { !disableTestsCache.orNull.toBoolean() }
     jvmArgumentProviders.add(provider)
     inputs.property("os.name", org.gradle.internal.os.OperatingSystem.current().name)
 
