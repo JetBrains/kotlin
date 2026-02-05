@@ -50,7 +50,7 @@ object NativeIrSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeSe
         return NativeSerializationArtifact(
             serializerOutput = serializerOutput,
             configuration = configuration,
-            diagnosticCollector = diagnosticCollector,
+            diagnosticsCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }
@@ -74,7 +74,7 @@ object NativeKlibWritingPhase : PipelinePhase<NativeSerializationArtifact, Nativ
         return NativeKlibSerializedArtifact(
             outputKlibPath = outputKlibPath,
             configuration = configuration,
-            diagnosticCollector = diagnosticCollector,
+            diagnosticsCollector = diagnosticCollector,
         )
     }
 }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  */
 class PipelineContext(
     val messageCollector: MessageCollector,
-    val diagnosticCollector: BaseDiagnosticsCollector,
+    val diagnosticsCollector: BaseDiagnosticsCollector,
     val performanceManager: PerformanceManager,
     val renderDiagnosticInternalName: Boolean,
     val kaptMode: Boolean

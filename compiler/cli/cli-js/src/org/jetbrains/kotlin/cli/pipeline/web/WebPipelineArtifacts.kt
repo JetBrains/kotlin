@@ -21,12 +21,12 @@ import java.io.File
 data class WebFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
-    override val diagnosticCollector: BaseDiagnosticsCollector,
+    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
     val hasErrors: Boolean,
 ) : FrontendPipelineArtifact() {
     override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): WebFrontendPipelineArtifact {
-        return copy(diagnosticCollector = newDiagnosticsCollector)
+        return copy(diagnosticsCollector = newDiagnosticsCollector)
     }
 
     override fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact {
@@ -38,7 +38,7 @@ data class JsFir2IrPipelineArtifact(
     override val result: Fir2IrActualizedResult,
     val frontendOutput: AllModulesFrontendOutput,
     val configuration: CompilerConfiguration,
-    override val diagnosticCollector: BaseDiagnosticsCollector,
+    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
     val hasErrors: Boolean,
 ) : Fir2IrPipelineArtifact()

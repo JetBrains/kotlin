@@ -25,11 +25,11 @@ data class JvmFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
     val environment: VfsBasedProjectEnvironment,
-    override val diagnosticCollector: BaseDiagnosticsCollector,
+    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
 ) : FrontendPipelineArtifact() {
     override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): JvmFrontendPipelineArtifact {
-        return copy(diagnosticCollector = newDiagnosticsCollector)
+        return copy(diagnosticsCollector = newDiagnosticsCollector)
     }
 
     override fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact {
@@ -41,7 +41,7 @@ data class JvmFir2IrPipelineArtifact(
     override val result: Fir2IrActualizedResult,
     val configuration: CompilerConfiguration,
     val environment: VfsBasedProjectEnvironment,
-    override val diagnosticCollector: BaseDiagnosticsCollector,
+    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
     val mainClassFqName: FqName?,
 ) : Fir2IrPipelineArtifact()
@@ -49,7 +49,7 @@ data class JvmFir2IrPipelineArtifact(
 data class JvmBackendPipelineArtifact(
     val configuration: CompilerConfiguration,
     val environment: VfsBasedProjectEnvironment,
-    val diagnosticCollector: BaseDiagnosticsCollector,
+    val diagnosticsCollector: BaseDiagnosticsCollector,
     val mainClassFqName: FqName?,
     val outputs: List<GenerationState>,
 ) : PipelineArtifact()

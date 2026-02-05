@@ -670,7 +670,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
 
             when (info) {
                 is FirCliBasedOutputArtifact<*> -> {
-                    val diagnosticsCollector = info.cliArtifact.diagnosticCollector
+                    val diagnosticsCollector = info.cliArtifact.diagnosticsCollector
                     val mode = if (info.cliArtifact is MetadataFrontendPipelineArtifact) {
                         KmpCompilationMode.METADATA
                     } else {

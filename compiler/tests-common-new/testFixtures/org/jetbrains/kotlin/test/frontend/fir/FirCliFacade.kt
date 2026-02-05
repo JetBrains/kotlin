@@ -41,7 +41,7 @@ abstract class FirCliFacade<Phase, OutputPipelineArtifact>(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val input = ConfigurationPipelineArtifact(
             configuration = configuration,
-            diagnosticCollector = DiagnosticsCollectorImpl(),
+            diagnosticsCollector = DiagnosticsCollectorImpl(),
             rootDisposable = testServices.compilerConfigurationProvider.testRootDisposable,
         )
 

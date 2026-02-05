@@ -104,7 +104,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
         val phaseConfig = PhaseConfig()
         val context = PipelineContext(
             input.messageCollector,
-            input.diagnosticCollector,
+            input.diagnosticsCollector,
             input.performanceManager,
             renderDiagnosticInternalName = input.arguments.renderInternalDiagnosticNames,
             kaptMode = isKaptMode(input.arguments)
@@ -124,7 +124,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
              * There might be a case when the pipeline is not executed fully, but it's not considered as a compilation error:
              *   if `-version` flag was passed
              */
-            if (e.definitelyCompilationError || input.messageCollector.hasErrors() || input.diagnosticCollector.hasErrors) {
+            if (e.definitelyCompilationError || input.messageCollector.hasErrors() || input.diagnosticsCollector.hasErrors) {
                 ExitCode.COMPILATION_ERROR
             } else {
                 ExitCode.OK

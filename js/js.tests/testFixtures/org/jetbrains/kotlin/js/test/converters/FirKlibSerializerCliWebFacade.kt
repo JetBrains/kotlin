@@ -46,7 +46,7 @@ class FirKlibSerializerCliWebFacade(
             "FirKlibSerializerCliWebFacade expects JsFir2IrPipelineArtifact as input"
         }
         val diagnosticReporter = DiagnosticsCollectorImpl()
-        val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter)
+        val input = cliArtifact.copy(diagnosticsCollector = diagnosticReporter)
 
         val output = if (firstTimeCompilation) {
             WebKlibSerializationPipelinePhase.executePhase(input)

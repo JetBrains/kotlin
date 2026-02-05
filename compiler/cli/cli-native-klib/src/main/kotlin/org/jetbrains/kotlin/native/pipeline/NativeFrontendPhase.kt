@@ -45,7 +45,7 @@ object NativeFrontendPhase : PipelinePhase<NativeConfigurationArtifact, NativeFr
             firOutput,
             configuration = configuration,
             environment = environment,
-            diagnosticCollector = diagnosticCollector,
+            diagnosticsCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }

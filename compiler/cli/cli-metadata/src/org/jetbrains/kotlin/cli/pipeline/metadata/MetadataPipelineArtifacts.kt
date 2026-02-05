@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 data class MetadataFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
-    override val diagnosticCollector: BaseDiagnosticsCollector,
+    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
 ) : FrontendPipelineArtifact() {
     override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): MetadataFrontendPipelineArtifact {
-        return copy(diagnosticCollector = newDiagnosticsCollector)
+        return copy(diagnosticsCollector = newDiagnosticsCollector)
     }
 
     override fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact {

@@ -56,7 +56,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
             configuration.messageCollector.report(INFO, configuration.toString())
         }
 
-        return ConfigurationPipelineArtifact(configuration, input.diagnosticCollector, input.rootDisposable)
+        return ConfigurationPipelineArtifact(configuration, input.diagnosticsCollector, input.rootDisposable)
     }
 
     protected abstract fun createMetadataVersion(versionArray: IntArray): BinaryVersion

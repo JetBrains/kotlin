@@ -113,7 +113,7 @@ class FirJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices) :
         tmpConfiguration.outputDir = outputFile.parentFile
         tmpConfiguration.outputName = outputFile.name.removeSuffix(".klib")
 
-        val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter, configuration = tmpConfiguration)
+        val input = cliArtifact.copy(diagnosticsCollector = diagnosticReporter, configuration = tmpConfiguration)
 
         WebKlibSerializationPipelinePhase.executePhase(input)
 

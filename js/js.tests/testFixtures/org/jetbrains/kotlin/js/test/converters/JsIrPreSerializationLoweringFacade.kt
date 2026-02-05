@@ -36,7 +36,7 @@ class JsIrPreSerializationLoweringFacade(
         // Attach a new empty diagnosticReporter to prevent double-reporting of diagnostics from Fir2IR phase.
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val diagnosticReporter = DiagnosticsCollectorImpl()
-        val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter)
+        val input = cliArtifact.copy(diagnosticsCollector = diagnosticReporter)
 
         val output = WebKlibInliningPipelinePhase.executePhase(input)
 

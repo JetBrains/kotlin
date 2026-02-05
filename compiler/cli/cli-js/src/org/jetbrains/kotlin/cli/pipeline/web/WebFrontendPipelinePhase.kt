@@ -102,7 +102,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 ktSourceFiles = groupedSources.commonSources + groupedSources.platformSources,
                 libraries = libraries,
                 friendLibraries = friendLibraries,
-                diagnosticsReporter = input.diagnosticCollector,
+                diagnosticsReporter = input.diagnosticsCollector,
                 performanceManager = configuration.perfManager,
                 incrementalDataProvider = configuration.incrementalDataProvider,
                 extensionStorage = extensionStorage,
@@ -129,7 +129,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 ktFiles = sourceFiles,
                 libraries = libraries,
                 friendLibraries = friendLibraries,
-                diagnosticsReporter = input.diagnosticCollector,
+                diagnosticsReporter = input.diagnosticsCollector,
                 incrementalDataProvider = configuration.incrementalDataProvider,
                 extensionStorage = extensionStorage,
                 useWasmPlatform = isWasm,
@@ -141,9 +141,9 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         return WebFrontendPipelineArtifact(
             analyzedOutput,
             configuration,
-            input.diagnosticCollector,
+            input.diagnosticsCollector,
             moduleStructure,
-            hasErrors = messageCollector.hasErrors() || input.diagnosticCollector.hasErrors,
+            hasErrors = messageCollector.hasErrors() || input.diagnosticsCollector.hasErrors,
         )
     }
 

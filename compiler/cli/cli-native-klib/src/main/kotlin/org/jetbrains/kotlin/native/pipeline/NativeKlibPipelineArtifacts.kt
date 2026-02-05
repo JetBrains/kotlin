@@ -20,18 +20,18 @@ import org.jetbrains.kotlin.native.NativeFirstStagePhaseContext
 data class NativeConfigurationArtifact(
     val configuration: CompilerConfiguration,
     val environment: KotlinCoreEnvironment,
-    val diagnosticCollector: BaseDiagnosticsCollector,
+    val diagnosticsCollector: BaseDiagnosticsCollector,
 ) : PipelineArtifact()
 
 data class NativeFrontendArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
     val environment: KotlinCoreEnvironment,
-    override val diagnosticCollector: BaseDiagnosticsCollector,
+    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val phaseContext: NativeFirstStagePhaseContext,
 ) : FrontendPipelineArtifact() {
     override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): NativeFrontendArtifact {
-        return copy(diagnosticCollector = newDiagnosticsCollector)
+        return copy(diagnosticsCollector = newDiagnosticsCollector)
     }
 
     override fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact {
@@ -43,7 +43,7 @@ data class NativeFir2IrArtifact(
     val fir2IrOutput: Fir2IrOutput,
     val configuration: CompilerConfiguration,
     val environment: KotlinCoreEnvironment,
-    override val diagnosticCollector: BaseDiagnosticsCollector,
+    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val phaseContext: NativeFirstStagePhaseContext,
 ) : Fir2IrPipelineArtifact() {
     override val result: Fir2IrActualizedResult
@@ -53,12 +53,12 @@ data class NativeFir2IrArtifact(
 data class NativeSerializationArtifact(
     val serializerOutput: SerializerOutput,
     val configuration: CompilerConfiguration,
-    val diagnosticCollector: BaseDiagnosticsCollector,
+    val diagnosticsCollector: BaseDiagnosticsCollector,
     val phaseContext: NativeFirstStagePhaseContext,
 ) : PipelineArtifact()
 
 data class NativeKlibSerializedArtifact(
     val outputKlibPath: String,
     val configuration: CompilerConfiguration,
-    val diagnosticCollector: BaseDiagnosticsCollector,
+    val diagnosticsCollector: BaseDiagnosticsCollector,
 ) : PipelineArtifact()

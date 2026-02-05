@@ -49,7 +49,7 @@ class WasmPreSerializationLoweringFacade(
                 require(cliArtifact is JsFir2IrPipelineArtifact) {
                     "Fir2IrCliBasedOutputArtifact should have JsFir2IrPipelineArtifact as cliArtifact, but has ${cliArtifact::class}"
                 }
-                val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter)
+                val input = cliArtifact.copy(diagnosticsCollector = diagnosticReporter)
 
                 if (diagnosticReporter.hasErrors) {
                     // Should errors be found by checkers, there's a chance that JsCodeOutlineLowering will throw an exception on unparseable code.

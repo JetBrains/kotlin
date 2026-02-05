@@ -22,7 +22,7 @@ object NativeMetadataSerializationPhase : PipelinePhase<NativeFrontendArtifact, 
         return NativeSerializationArtifact(
             serializerOutput = serializerOutput,
             configuration = configuration,
-            diagnosticCollector = diagnosticCollector,
+            diagnosticsCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }

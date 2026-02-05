@@ -202,7 +202,7 @@ open class FirKaptAnalysisHandlerExtension(
         val fir2IrOutput = JvmFir2IrPipelinePhase.executePhase(
             frontendOutput.copy(
                 // Ignore all other FE errors
-                diagnosticCollector = DiagnosticsCollectorImpl(),
+                diagnosticsCollector = DiagnosticsCollectorImpl(),
             ),
             emptyList(),
         ) ?: return null
@@ -223,7 +223,7 @@ open class FirKaptAnalysisHandlerExtension(
         configuration: CompilerConfiguration,
     ): Boolean {
         var reported = false
-        FirDiagnosticsCompilerResultsReporter.reportByFile(frontendOutput.diagnosticCollector) { diagnostic, location ->
+        FirDiagnosticsCompilerResultsReporter.reportByFile(frontendOutput.diagnosticsCollector) { diagnostic, location ->
             if (diagnostic.factory == FirSyntaxErrors.SYNTAX) {
                 FirDiagnosticsCompilerResultsReporter.reportDiagnosticToMessageCollector(
                     diagnostic,

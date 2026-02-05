@@ -30,18 +30,18 @@ data class ArgumentsPipelineArtifact<out A : CommonCompilerArguments>(
     val messageCollector: GroupingMessageCollector,
     val performanceManager: PerformanceManager,
 ) : PipelineArtifact() {
-    val diagnosticCollector: BaseDiagnosticsCollector = DiagnosticsCollectorImpl()
+    val diagnosticsCollector: BaseDiagnosticsCollector = DiagnosticsCollectorImpl()
 }
 
 data class ConfigurationPipelineArtifact(
     val configuration: CompilerConfiguration,
-    val diagnosticCollector: BaseDiagnosticsCollector,
+    val diagnosticsCollector: BaseDiagnosticsCollector,
     val rootDisposable: Disposable,
 ) : PipelineArtifact()
 
 abstract class FrontendPipelineArtifact : PipelineArtifact() {
     abstract val frontendOutput: AllModulesFrontendOutput
-    abstract val diagnosticCollector: BaseDiagnosticsCollector
+    abstract val diagnosticsCollector: BaseDiagnosticsCollector
     abstract val configuration: CompilerConfiguration
     abstract fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): FrontendPipelineArtifact
     abstract fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact
@@ -49,7 +49,7 @@ abstract class FrontendPipelineArtifact : PipelineArtifact() {
 
 abstract class Fir2IrPipelineArtifact : PipelineArtifact() {
     abstract val result: Fir2IrActualizedResult
-    abstract val diagnosticCollector: BaseDiagnosticsCollector
+    abstract val diagnosticsCollector: BaseDiagnosticsCollector
 }
 
 @Suppress("UNCHECKED_CAST")

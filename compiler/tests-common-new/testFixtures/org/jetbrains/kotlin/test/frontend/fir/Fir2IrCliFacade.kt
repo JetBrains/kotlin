@@ -62,5 +62,5 @@ class Fir2IrCliBasedOutputArtifact<A : Fir2IrPipelineArtifact>(val cliArtifact: 
     override val irMangler: KotlinMangler.IrMangler
         get() = cliArtifact.result.components.irMangler
     override val diagnosticReporter: BaseDiagnosticsCollector
-        get() = cliArtifact.diagnosticCollector
+        get() = cliArtifact.diagnosticsCollector
 }

@@ -30,14 +30,14 @@ abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext
             c: PipelineContext,
         ) {
             if (c.kaptMode) return
-            if (c.diagnosticCollector.hasErrors || c.messageCollector.hasErrors()) {
+            if (c.diagnosticsCollector.hasErrors || c.messageCollector.hasErrors()) {
                 throw PipelineStepException()
             }
         }
 
         fun reportDiagnosticsToMessageCollector(c: PipelineContext) {
             FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-                c.diagnosticCollector, c.messageCollector,
+                c.diagnosticsCollector, c.messageCollector,
                 c.renderDiagnosticInternalName
             )
         }

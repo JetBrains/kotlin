@@ -33,7 +33,7 @@ object NativeFir2IrPhase : PipelinePhase<NativeFrontendArtifact, NativeFir2IrArt
             fir2IrOutput = fir2IrResult,
             configuration = configuration,
             environment = environment,
-            diagnosticCollector = diagnosticCollector,
+            diagnosticsCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }
@@ -54,7 +54,7 @@ object NativePreSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeF
             fir2IrOutput = loweredResult,
             configuration = configuration,
             environment = environment,
-            diagnosticCollector = diagnosticCollector,
+            diagnosticsCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }

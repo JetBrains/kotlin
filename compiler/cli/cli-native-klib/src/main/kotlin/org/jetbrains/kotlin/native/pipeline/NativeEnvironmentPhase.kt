@@ -33,7 +33,7 @@ object NativeEnvironmentPhase : PipelinePhase<ConfigurationPipelineArtifact, Nat
         return NativeConfigurationArtifact(
             configuration = configuration,
             environment = environment,
-            diagnosticCollector = diagnosticCollector,
+            diagnosticsCollector = diagnosticCollector,
         )
     }
 }
