@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -66,11 +67,16 @@ fun generateAsCast(v: InstructionAdapter, type: IrType, asmType: Type, isSafe: B
 private fun generateNullCheckForNonSafeAs(v: InstructionAdapter, type: IrType, unifiedNullChecks: Boolean) {
     with(v) {
         dup()
-        val nonnull = Label()
-        ifnonnull(nonnull)
-        val exceptionClass = if (unifiedNullChecks) "java/lang/NullPointerException" else "kotlin/TypeCastException"
-        AsmUtil.genThrow(v, exceptionClass, "null cannot be cast to non-null type ${type.render()}")
-        mark(nonnull)
+        val message = "null cannot be cast to non-null type " + type.render()
+        if (unifiedNullChecks) {
+            aconst(message)
+            invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V", false)
+        } else {
+            val nonnull = Label()
+            ifnonnull(nonnull)
+            AsmUtil.genThrow(v, "kotlin/TypeCastException", message)
+            mark(nonnull)
+        }
     }
 }
 
