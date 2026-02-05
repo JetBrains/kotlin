@@ -27,7 +27,6 @@
 #include "llvm/Support/Error.h"
 #include "llvm/ExecutionEngine/Orc/LLJIT.h"
 #include "llvm/ExecutionEngine/Orc/LinkGraphLinkingLayer.h"
-#include "llvm/ExecutionEngine/Orc/IndirectionUtils.h"
 #include "llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h"
 #include "llvm/ExecutionEngine/Orc/Debugging/DebuggerSupportPlugin.h"
 #include "llvm/ExecutionEngine/Orc/MachOPlatform.h"
@@ -47,10 +46,9 @@ extern "C" {
 
 namespace kotlin::hot {
 
-/// Result of parsing an object file for hot reload symbols.
+/// Result of parsing an object file for hot reload.
 struct ParsedObjectFile {
     std::unique_ptr<llvm::MemoryBuffer> buffer;
-    std::vector<std::string> implSymbols;  // List of $hr_impl symbol names
 };
 
 struct KotlinObjectFile {
@@ -102,8 +100,6 @@ private:
 
     // Object loading helpers
     static std::optional<ParsedObjectFile> ParseObjectFile(std::string_view objectPath);
-    void EnsurePlaceholderStubs(const std::vector<std::string>& implSymbols, bool checkExisting) const;
-    void UpdateStubPointers(llvm::orc::JITDylib& JD, const std::vector<std::string>& implSymbols) const;
     bool LoadObjectFromPath(std::string_view objectPath) const;
 
     void AddDebugInfoRegistrationPlugin(llvm::orc::JITDylib& JD) const;
@@ -114,12 +110,8 @@ private:
     void InitializeObjCAdaptersFromJIT() const;
 #endif
 
-    // Legacy stub management (may be removed)
-    void CreateFunctionStubs(const std::unordered_map<std::string, llvm::orc::ExecutorAddr>& functions) const;
-    void ReplaceFunctionStubs(const std::unordered_map<std::string, llvm::orc::ExecutorAddr>& pairs) const;
-
     // Class/instance reloading
-    void ReloadClassesAndInstances(mm::ThreadData& currentThreadData, std::unordered_map<std::string, llvm::orc::ExecutorAddr> newClasses) const;
+    void ReloadClassesAndInstances(mm::ThreadData& currentThreadData, const std::unordered_map<std::string, llvm::orc::ExecutorAddr>& newClasses) const;
     void Perform(mm::ThreadData& currentThreadData) noexcept;
     static ObjHeader* PerformStateTransfer(mm::ThreadData& currentThreadData, ObjHeader* existingObject, const TypeInfo* newTypeInfo);
     std::vector<ObjHeader*> FindObjectsToReload(const TypeInfo* oldTypeInfo) const;
@@ -130,8 +122,7 @@ private:
     StatsCollector _statsCollector{};
     ObjectManager _objectManager{};
     std::unique_ptr<llvm::orc::LLJIT> _JIT{};
-    std::unique_ptr<llvm::orc::IndirectStubsManager> _ISM{};
-    std::unique_ptr<llvm::orc::LazyCallThroughManager> _LCTM{};
+    std::unique_ptr<llvm::orc::IndirectStubsManager> _ISM;
 };
 
 } // namespace kotlin::hot
