@@ -107,7 +107,7 @@ fun KlibLoaderResult.loadFriendLibraries(friendLibraryPaths: List<String>): List
 
     if (canonicalFriendLibraryPaths.isEmpty()) return emptyList()
 
-    val canonicalLibraryPathsToLibraries: Map<String, KotlinLibrary> = librariesStdlibFirst.associateBy { it.libraryFile.path }
+    val canonicalLibraryPathsToLibraries: Map<String, KotlinLibrary> = librariesStdlibFirst.associateBy { it.libraryFile.canonicalPath }
 
     return canonicalFriendLibraryPaths.mapNotNull { canonicalLibraryPathsToLibraries[it] }
 }
