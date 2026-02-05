@@ -1,0 +1,83 @@
+FILE: minus.kt
+    @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME|) public final annotation class Ann : R|kotlin/Annotation| {
+        public [ContainingClassKey=Ann] constructor([CorrespondingProperty=/Ann.p1] p1: R|kotlin/Byte|, [CorrespondingProperty=/Ann.p2] p2: R|kotlin/Short|, [CorrespondingProperty=/Ann.p3] p3: R|kotlin/Int|, [CorrespondingProperty=/Ann.p4] p4: R|kotlin/Long|, [CorrespondingProperty=/Ann.p5] p5: R|kotlin/Double|, [CorrespondingProperty=/Ann.p6] p6: R|kotlin/Float|): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val p1: R|kotlin/Byte| = R|<local>/p1|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Byte|
+
+        public final [IsFromPrimaryConstructor=true] val p2: R|kotlin/Short| = R|<local>/p2|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Short|
+
+        public final [IsFromPrimaryConstructor=true] val p3: R|kotlin/Int| = R|<local>/p3|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Int|
+
+        public final [IsFromPrimaryConstructor=true] val p4: R|kotlin/Long| = R|<local>/p4|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Long|
+
+        public final [IsFromPrimaryConstructor=true] val p5: R|kotlin/Double| = R|<local>/p5|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Double|
+
+        public final [IsFromPrimaryConstructor=true] val p6: R|kotlin/Float| = R|<local>/p6|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Float|
+
+    }
+    public final val prop1: R|kotlin/Byte| = Int(1).R|kotlin/Int.minus|(Int(1))
+        public get(): R|kotlin/Byte|
+    public final val prop2: R|kotlin/Short| = Int(1).R|kotlin/Int.minus|(Int(1))
+        public get(): R|kotlin/Short|
+    public final val prop3: R|kotlin/Int| = Int(1).R|kotlin/Int.minus|(Int(1))
+        public get(): R|kotlin/Int|
+    public final val prop4: R|kotlin/Long| = Int(1).R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.toLong|()
+        public get(): R|kotlin/Long|
+    public final val prop5: R|kotlin/Double| = Double(1.0).R|kotlin/Double.minus|(Double(1.0))
+        public get(): R|kotlin/Double|
+    public final val prop6: R|kotlin/Float| = Double(1.0).R|kotlin/Double.toFloat|().R|kotlin/Float.minus|(Double(1.0).R|kotlin/Double.toFloat|())
+        public get(): R|kotlin/Float|
+    @R|Ann|(p1 = Int(0), p2 = Int(0), p3 = Int(0), p4 = Long(0), p5 = Double(0.0), p6 = Float(0.0)) public final class MyClass : R|kotlin/Any| {
+        public [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval annotation: R|Ann| = <getClass>(Q|MyClass|).R|kotlin/jvm/java|<R|MyClass|>.R|SubstitutionOverride<java/lang/Class.getAnnotation: R|A!|>|<R|Ann!|>(<getClass>(Q|Ann|).R|kotlin/jvm/java|<R|Ann|>)!!
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.p1|, R|/prop1|) ->  {
+                ^box <strcat>(String(fail 1, expected = ), R|/prop1|, String(, actual = ), R|<local>/annotation|.R|/Ann.p1|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.p2|, R|/prop2|) ->  {
+                ^box <strcat>(String(fail 2, expected = ), R|/prop2|, String(, actual = ), R|<local>/annotation|.R|/Ann.p2|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.p3|, R|/prop3|) ->  {
+                ^box <strcat>(String(fail 3, expected = ), R|/prop3|, String(, actual = ), R|<local>/annotation|.R|/Ann.p3|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.p4|, R|/prop4|) ->  {
+                ^box <strcat>(String(fail 4, expected = ), R|/prop4|, String(, actual = ), R|<local>/annotation|.R|/Ann.p4|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.p5|, R|/prop5|) ->  {
+                ^box <strcat>(String(fail 5, expected = ), R|/prop5|, String(, actual = ), R|<local>/annotation|.R|/Ann.p5|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.p6|, R|/prop6|) ->  {
+                ^box <strcat>(String(fail 6, expected = ), R|/prop6|, String(, actual = ), R|<local>/annotation|.R|/Ann.p6|)
+            }
+        }
+
+        ^box String(OK)
+    }

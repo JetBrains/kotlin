@@ -1,0 +1,53 @@
+FILE: maxValueByte.kt
+    @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME|]) public final annotation class Ann : R|kotlin/Annotation| {
+        public [ContainingClassKey=Ann] constructor([CorrespondingProperty=/Ann.p1] p1: R|kotlin/Int|, [CorrespondingProperty=/Ann.p2] p2: R|kotlin/Byte|, [CorrespondingProperty=/Ann.p4] p4: R|kotlin/Int|, [CorrespondingProperty=/Ann.p5] p5: R|kotlin/Int|): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val p1: R|kotlin/Int| = R|<local>/p1|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Int|
+
+        public final [IsFromPrimaryConstructor=true] val p2: R|kotlin/Byte| = R|<local>/p2|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Byte|
+
+        public final [IsFromPrimaryConstructor=true] val p4: R|kotlin/Int| = R|<local>/p4|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Int|
+
+        public final [IsFromPrimaryConstructor=true] val p5: R|kotlin/Int| = R|<local>/p5|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Int|
+
+    }
+    @R|Ann|(p1 = Q|java/lang/Byte|.R|java/lang/Byte.MAX_VALUE*s|.R|kotlin/Byte.plus|(Int(1)) [evaluated = Int(128)], p2 = Int(1).R|kotlin/Int.plus|(Int(1)) [evaluated = Int(2)], p4 = Int(1).R|kotlin/Int.plus|(Int(1)) [evaluated = Int(2)], p5 = Int(1).R|kotlin/Int.toByte|().R|kotlin/Byte.plus|(Int(1)) [evaluated = Int(2)]) public final class MyClass : R|kotlin/Any| {
+        public [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval annotation: R|Ann| = <getClass>(Q|MyClass|).R|kotlin/jvm/java|<R|MyClass|>.R|SubstitutionOverride<java/lang/Class.getAnnotation: R|A!|>|<R|Ann!|>(<getClass>(Q|Ann|).R|kotlin/jvm/java|<R|Ann|>)!!
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.p1|, Int(128)) ->  {
+                ^box <strcat>(String(fail 1, expected = ), Int(128), String(, actual = ), R|<local>/annotation|.R|/Ann.p1|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.p2|, Int(2).R|kotlin/Int.toByte|()) ->  {
+                ^box <strcat>(String(fail 2, expected = ), Int(2), String(, actual = ), R|<local>/annotation|.R|/Ann.p2|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.p4|, Int(2)) ->  {
+                ^box <strcat>(String(fail 4, expected = ), Int(2), String(, actual = ), R|<local>/annotation|.R|/Ann.p4|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.p5|, Int(2)) ->  {
+                ^box <strcat>(String(fail 5, expected = ), Int(2), String(, actual = ), R|<local>/annotation|.R|/Ann.p5|)
+            }
+        }
+
+        ^box String(OK)
+    }

@@ -1,0 +1,28 @@
+FILE: char.kt
+    package test
+
+    @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME|]) public final annotation class Ann : R|kotlin/Annotation| {
+        public [ContainingClassKey=Ann] constructor([CorrespondingProperty=test/Ann.c1] c1: R|kotlin/Int|): R|test/Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val c1: R|kotlin/Int| = R|<local>/c1|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Int|
+
+    }
+    @R|test/Ann|(c1 = Char(a).R|kotlin/Char.minus|(Char(a)) [evaluated = Int(0)]) public final class MyClass : R|kotlin/Any| {
+        public [ContainingClassKey=MyClass] constructor(): R|test/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval annotation: R|test/Ann| = <getClass>(Q|test/MyClass|).R|kotlin/jvm/java|<R|test/MyClass|>.R|SubstitutionOverride<java/lang/Class.getAnnotation: R|A!|>|<R|test/Ann!|>(<getClass>(Q|test/Ann|).R|kotlin/jvm/java|<R|test/Ann|>)!!
+        when () {
+            !=(R|<local>/annotation|.R|test/Ann.c1|, Int(0)) ->  {
+                ^box <strcat>(String(fail : expected = ), Int(1), String(, actual = ), R|<local>/annotation|.R|test/Ann.c1|)
+            }
+        }
+
+        ^box String(OK)
+    }

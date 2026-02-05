@@ -100,7 +100,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
         }
 
         enableMetaInfoHandler()
-        forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
+        forTestsMatching("compiler/testData/codegen/box/evaluate/*") {
             enableMetaInfoHandler()
             defaultDirectives {
                 +FIR_DUMP

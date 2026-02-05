@@ -1,0 +1,33 @@
+FILE: kt9443.kt
+    public abstract class BaseClass : R|kotlin/Any| {
+        public [ContainingClassKey=BaseClass] constructor(): R|BaseClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open val menuId: R|kotlin/Int| = Int(0)
+            protected [ContainingClassKey=BaseClass] get(): R|kotlin/Int|
+
+        public final fun run(): R|kotlin/Pair<kotlin/String, kotlin/Boolean>| {
+            ^run <strcat>(this@R|/BaseClass|.R|/BaseClass.menuId|).R|kotlin/to|<R|kotlin/String|, R|kotlin/Boolean|>(==(this@R|/BaseClass|.R|/BaseClass.menuId|, Int(0)))
+        }
+
+    }
+    public final class ImplClass : R|BaseClass| {
+        public [ContainingClassKey=ImplClass] constructor(): R|ImplClass| {
+            super<R|BaseClass|>()
+        }
+
+        protected open override val menuId: R|kotlin/Int| = Int(3)
+            protected [ContainingClassKey=ImplClass] get(): R|kotlin/Int|
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval result: R|kotlin/Pair<kotlin/String, kotlin/Boolean>| = R|/ImplClass.ImplClass|().R|/BaseClass.run|()
+        when () {
+            !=(R|<local>/result|, String(3).R|kotlin/to|<R|kotlin/String|, R|kotlin/Boolean|>(Boolean(false))) ->  {
+                ^box <strcat>(String(Fail: ), R|<local>/result|)
+            }
+        }
+
+        ^box String(OK)
+    }

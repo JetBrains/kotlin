@@ -90,7 +90,7 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
             useHandlers(::IrMangledNameAndSignatureDumpHandler)
         }
 
-        forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
+        forTestsMatching("compiler/testData/codegen/box/evaluate/*") {
             enableMetaInfoHandler()
             defaultDirectives {
                 +FIR_DUMP
