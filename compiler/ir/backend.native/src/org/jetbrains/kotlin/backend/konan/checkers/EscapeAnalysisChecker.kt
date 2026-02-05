@@ -7,18 +7,16 @@ package org.jetbrains.kotlin.backend.konan.checkers
 
 import org.jetbrains.kotlin.backend.common.report
 import org.jetbrains.kotlin.backend.konan.BinaryType
+import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.computeBinaryType
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.annotations.escapes
 import org.jetbrains.kotlin.backend.konan.ir.annotations.pointsTo
-import org.jetbrains.kotlin.backend.konan.IntrinsicType
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
@@ -35,7 +33,6 @@ import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 class EscapeAnalysisChecker(
     private val context: PhaseContext,
-    private val irBuiltIns: IrBuiltIns,
     private val irFile: IrFile,
 ) : IrVisitorVoid() {
     private fun reportWarning(location: IrElement, message: String) {
@@ -185,7 +182,6 @@ class EscapeAnalysisChecker(
             return null
         }
 
-        if (declaration.symbol == irBuiltIns.arrayOf) return // TODO KT-83985 drop after bootstrap update
         warnUnusedIf(!declaration.isExternal) { "non-external function" } ?: return
         warnUnusedIf(!declaration.parent.fqNameForIrSerialization.isSupportedPackageByEA) { "package outside EA annotation checks" } ?: return
         warnUnusedIf(declaration.isLoweredIntrinsic) { "function is lowered in the compiler" } ?: return

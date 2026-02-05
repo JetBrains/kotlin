@@ -25,7 +25,6 @@ public actual inline fun <T> arrayOfNulls(size: Int): Array<T?> =
  * @sample samples.collections.Arrays.Constructors.arrayOfSample
  */
 @TypedIntrinsic(IntrinsicType.IDENTITY)
-@PointsTo(0x00, 0x01) // ret -> elements
 @Suppress("NOTHING_TO_INLINE")
 public actual external inline fun <T> arrayOf(vararg elements: T): Array<T>
 
