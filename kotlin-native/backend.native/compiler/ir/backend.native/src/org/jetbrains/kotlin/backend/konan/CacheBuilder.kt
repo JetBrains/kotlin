@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.cacheDirectories
 import org.jetbrains.kotlin.konan.config.cachedLibraries
 import org.jetbrains.kotlin.konan.config.checkDependencies
@@ -65,10 +66,10 @@ class CacheBuilder(
         val compilationSpawner: CompilationSpawner
 ) {
     private val configuration = konanConfig.configuration
-    private val autoCacheableFrom = configuration.get(KonanConfigKeys.AUTO_CACHEABLE_FROM)!!.map { File(it) }
-    private val icEnabled = configuration.get(CommonConfigurationKeys.INCREMENTAL_COMPILATION)!!
+    private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!.map { File(it) }
+    private val icEnabled = configuration[CommonConfigurationKeys.INCREMENTAL_COMPILATION]!!
     private val includedLibraries = configuration.konanIncludedLibraries.toSet()
-    private val generateTestRunner = configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER)
+    private val generateTestRunner = configuration.getNotNull(NativeConfigurationKeys.GENERATE_TEST_RUNNER)
 
     fun needToBuild() = konanConfig.ignoreCacheReason == null
             && (konanConfig.isFinalBinary || konanConfig.produce.isFullCache)

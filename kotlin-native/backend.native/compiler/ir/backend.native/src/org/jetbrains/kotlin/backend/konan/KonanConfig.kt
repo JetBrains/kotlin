@@ -109,7 +109,7 @@ class KonanConfig(
                     }
                 }
             }
-            configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let(this::putAll)
+            configuration[NativeConfigurationKeys.OVERRIDE_KONAN_PROPERTIES]?.let(this::putAll)
             configuration.llvmVariant?.getKonanPropertiesEntry()?.let { (key, value) ->
                 put(key, value)
             }
@@ -134,7 +134,7 @@ class KonanConfig(
 
     // TODO: debug info generation mode and debug/release variant selection probably requires some refactoring.
     val debug: Boolean get() = configuration.debug
-    val lightDebug: Boolean = configuration.get(KonanConfigKeys.LIGHT_DEBUG)
+    val lightDebug: Boolean = configuration[NativeConfigurationKeys.LIGHT_DEBUG]
             ?: target.family.isAppleFamily // Default is true for Apple targets.
     val generateDebugTrampoline = debug && configuration.generateDebugTrampoline
     val optimizationsEnabled = configuration.optimization
@@ -314,7 +314,7 @@ class KonanConfig(
     }
 
     val needCompilerVerification: Boolean
-        get() = configuration.get(KonanConfigKeys.VERIFY_COMPILER)
+        get() = configuration[NativeConfigurationKeys.VERIFY_COMPILER]
                 ?: (optimizationsEnabled || !KotlinCompilerVersion.VERSION.isRelease())
 
     val appStateTracking: AppStateTracking by lazy {
@@ -499,7 +499,7 @@ class KonanConfig(
 
     private val defaultPropertyLazyInitialization = true
     internal val propertyLazyInitialization: Boolean
-        get() = configuration.get(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION)?.also {
+        get() = configuration[NativeConfigurationKeys.PROPERTY_LAZY_INITIALIZATION]?.also {
             if (!it) {
                 configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Eager property initialization is deprecated")
             }

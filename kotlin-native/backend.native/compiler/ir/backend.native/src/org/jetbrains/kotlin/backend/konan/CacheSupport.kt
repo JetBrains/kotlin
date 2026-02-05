@@ -78,14 +78,14 @@ class CacheSupport(
     // TODO: consider using [FeaturedLibraries.kt].
     private val fileToLibrary = allLibraries.associateBy { it.libraryFile }
 
-    private val autoCacheableFrom = configuration.get(KonanConfigKeys.AUTO_CACHEABLE_FROM)!!
+    private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!
             .map {
                 File(it).takeIf { it.isDirectory }
                         ?: configuration.reportCompilationError("auto cacheable root $it is not found or is not a directory")
             }
 
     private val implicitCacheDirectories = buildList {
-        configuration.get(KonanConfigKeys.CACHE_DIRECTORIES)!!.forEach {
+        configuration[NativeConfigurationKeys.CACHE_DIRECTORIES]!!.forEach {
             add(File(it).takeIf { it.isDirectory }
                     ?: configuration.reportCompilationError("cache directory $it is not found or is not a directory"))
         }
@@ -113,7 +113,7 @@ class CacheSupport(
     }
 
     internal val cachedLibraries: CachedLibraries = run {
-        val explicitCacheFiles = configuration.get(KonanConfigKeys.CACHED_LIBRARIES)!!
+        val explicitCacheFiles = configuration[NativeConfigurationKeys.CACHED_LIBRARIES]!!
 
         val explicitCaches = explicitCacheFiles.entries.associate { (libraryPath, cachePath) ->
             val library = fileToLibrary[File(libraryPath)]
