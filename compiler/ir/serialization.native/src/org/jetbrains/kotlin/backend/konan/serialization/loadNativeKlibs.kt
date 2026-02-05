@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqu
 import org.jetbrains.kotlin.backend.common.loadFriendLibraries
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.klibAbiCompatibilityLevel
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.metadataKlib
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.konan.config.*
@@ -130,7 +132,11 @@ private fun loadNativeKlibs(
         all = result.librariesStdlibFirst,
         friends = result.loadFriendLibraries(friendPaths),
         included = result.loadFriendLibraries(includedPaths),
-    )
+    ).also { klibs ->
+        KonanLibrarySpecialCompatibilityChecker.check(
+            klibs.all, configuration.messageCollector, configuration.klibAbiCompatibilityLevel
+        )
+    }
 }
 
 /**
