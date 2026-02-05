@@ -24,8 +24,8 @@ import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
@@ -35,7 +35,7 @@ import java.io.File
 
 class CliJavaModuleFinder(
     private val jdkHome: File?,
-    private val messageCollector: MessageCollector?,
+    private val diagnosticReporter: CliDiagnosticReporter?,
     private val javaFileManager: KotlinCliJavaFileManager,
     project: Project,
     private val jdkRelease: Int?
@@ -63,7 +63,7 @@ class CliJavaModuleFinder(
             ?: return@lazy reportError(
                 "This JDK does not have the 'ct.sym' file required for the '-Xjdk-release=$jdkRelease' option: ${jdkHome.path}"
             )
-        
+
         ctSym
     }
 
@@ -191,7 +191,11 @@ class CliJavaModuleFinder(
 
 
     val nonModuleRoot: JavaModule.Root by lazy {
-        createModuleFromSignature(false, false, JavaModuleInfo("*", emptyList(), emptyList(), emptyList()))
+        createModuleFromSignature(
+            filterPackages = false,
+            filterModules = false,
+            moduleInfo = JavaModuleInfo("*", emptyList(), emptyList(), emptyList())
+        )
     }
 
     private val listFoldersForRelease: List<VirtualFile> by lazy {
@@ -228,7 +232,7 @@ class CliJavaModuleFinder(
     }
 
     private fun reportError(message: String): VirtualFile? {
-        messageCollector?.report(CompilerMessageSeverity.ERROR, message)
+        diagnosticReporter?.report(CliDiagnostics.JAVA_MODULE_RESOLUTION_ERROR, message)
         return null
     }
 }

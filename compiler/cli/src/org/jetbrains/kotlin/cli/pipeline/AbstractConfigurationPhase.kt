@@ -69,7 +69,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         scriptMode = arguments.script
         replMode = arguments.repl
         setupCommonArguments(arguments, ::createMetadataVersion)
-        val paths = computeKotlinPaths(messageCollector, arguments)?.also {
+        val paths = computeKotlinPaths(cliDiagnosticsReporter, arguments)?.also {
             kotlinPaths = it
         }
         loadCompilerPlugins(paths, input, this)

@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.wasm.test
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -70,7 +70,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
     val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
     val languageSettings = K2JSCompilerArguments().toLanguageVersionSettings(
-        MessageCollector.NONE,
+        CommonCompilerArgumentsConfigurator.Reporter.DoNothing,
         mapOf(allowFullyQualifiedNameInKClass to true)
     )
 

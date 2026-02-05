@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
+import org.jetbrains.kotlin.cli.common.cliDiagnosticsReporter
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -180,7 +181,7 @@ private class ProjectEnvironmentWithCoreEnvironmentEmulation(
     override fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider {
         return super.getPackagePartProvider(fileSearchScope).also {
             (it as? JvmPackagePartProvider)?.run {
-                addRoots(initialRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+                addRoots(initialRoots, configuration.cliDiagnosticsReporter)
                 packagePartProviders += this
             }
         }
@@ -208,7 +209,7 @@ fun createProjectEnvironment(
     val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE)
 
     val javaModuleFinder =
-        CliJavaModuleFinder(configuration.get(JVMConfigurationKeys.JDK_HOME), messageCollector, javaFileManager, project, releaseTarget)
+        CliJavaModuleFinder(configuration.get(JVMConfigurationKeys.JDK_HOME), configuration.cliDiagnosticsReporter, javaFileManager, project, releaseTarget)
 
     val outputDirectory =
         configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
@@ -218,7 +219,7 @@ fun createProjectEnvironment(
 
     val classpathRootsResolver = ClasspathRootsResolver(
         PsiManager.getInstance(project),
-        messageCollector,
+        configuration.cliDiagnosticsReporter,
         configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
         { contentRootToVirtualFile(it, localFileSystem, projectEnvironment.jarFileSystem, messageCollector) },
         javaModuleFinder,

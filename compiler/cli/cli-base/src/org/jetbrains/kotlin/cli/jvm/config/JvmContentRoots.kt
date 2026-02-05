@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.cli.jvm.config
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_ERROR
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.cliDiagnosticsReporter
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.jvm.compiler.report
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -122,7 +122,7 @@ fun CompilerConfiguration.configureJdkClasspathRoots() {
 
     if (!CoreJrtFileSystem.isModularJdk(javaRoot)) {
         if (classesRoots.isEmpty()) {
-            report(CompilerMessageSeverity.ERROR, "No class roots are found in the JDK path: $javaRoot")
+            cliDiagnosticsReporter.report(ROOTS_RESOLUTION_ERROR, "No class roots are found in the JDK path: $javaRoot")
         } else {
             addJvmSdkRoots(classesRoots)
         }
