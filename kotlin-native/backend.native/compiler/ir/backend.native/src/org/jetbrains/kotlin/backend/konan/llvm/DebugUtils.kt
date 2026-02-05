@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.isTypeParameter
 import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.konan.config.debugInfoVersion
 import org.jetbrains.kotlin.konan.file.File
 
 internal object DWARF {
@@ -54,7 +55,7 @@ internal object DWARF {
     }
 }
 
-fun KonanConfig.debugInfoVersion(): Int = configuration[KonanConfigKeys.DEBUG_INFO_VERSION] ?: 1
+fun KonanConfig.debugInfoVersion(): Int = configuration.debugInfoVersion ?: 1
 
 internal class DebugInfo(override val generationState: NativeGenerationState) : ContextUtils {
     private val config = context.config

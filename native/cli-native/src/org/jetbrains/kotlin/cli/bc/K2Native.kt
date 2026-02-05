@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.ir.validation.IrValidationException
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
+import org.jetbrains.kotlin.konan.config.overrideKonanProperties
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -202,7 +203,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         spawnedConfiguration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, it)
                     }
                     configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let {
-                        spawnedConfiguration.put(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES, it)
+                        spawnedConfiguration.overrideKonanProperties = it
                     }
                     configuration.get(BinaryOptions.checkStateAtExternalCalls)?.let {
                         spawnedConfiguration.put(BinaryOptions.checkStateAtExternalCalls, it)

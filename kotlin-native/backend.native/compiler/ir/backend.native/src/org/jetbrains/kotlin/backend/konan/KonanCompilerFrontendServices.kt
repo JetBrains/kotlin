@@ -15,13 +15,15 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.konan.config.emitLazyObjcHeaderFile
+import org.jetbrains.kotlin.konan.config.objcGenerics
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
     useImpl<FrontendServices>()
 
-    if (!config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE).isNullOrEmpty()) {
+    if (!config.configuration.emitLazyObjcHeaderFile.isNullOrEmpty()) {
         useImpl<ObjCExportLazyImpl>()
         useInstance(object : ObjCExportProblemCollector {
             override fun reportWarning(text: String) {}
@@ -42,7 +44,7 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
             }
 
             override val objcGenerics: Boolean
-                get() = config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
+                get() = config.configuration.objcGenerics
 
             override val objcExportBlockExplicitParameterNames: Boolean
                 get() = config.configuration.get(BinaryOptions.objcExportBlockExplicitParameterNames, true)
@@ -62,7 +64,7 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
 internal fun ComponentProvider.postprocessComponents(context: FrontendContext, files: Collection<KtFile>) {
     context.frontendServices = this.get<FrontendServices>()
 
-    context.config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.takeIf { it.isNotEmpty() }?.let {
+    context.config.configuration.emitLazyObjcHeaderFile?.takeIf { it.isNotEmpty() }?.let {
         this.get<ObjCExportLazy>().dumpObjCHeader(files, it, context.shouldExportKDoc())
     }
 }

@@ -20,9 +20,15 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
+import org.jetbrains.kotlin.konan.config.compileFromBitcode
+import org.jetbrains.kotlin.konan.config.exportedLibraries
+import org.jetbrains.kotlin.konan.config.filesToCache
+import org.jetbrains.kotlin.konan.config.generateTestRunner
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.konan.config.konanLibraries
 import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
+import org.jetbrains.kotlin.konan.config.listTargets
+import org.jetbrains.kotlin.konan.config.makePerFileCache
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -56,7 +62,7 @@ class KonanDriver(
         val compilationSpawner: CompilationSpawner
 ) {
     fun run() {
-        val isCompilingFromBitcode = configuration[KonanConfigKeys.COMPILE_FROM_BITCODE] != null
+        val isCompilingFromBitcode = configuration.compileFromBitcode != null
         val hasSourceRoots = configuration.kotlinSourceRoots.isNotEmpty()
 
         if (isCompilingFromBitcode && hasSourceRoots) {
@@ -67,10 +73,10 @@ class KonanDriver(
         }
 
         val fileNames = configuration.konanLibraryToAddToCache?.let { libPath ->
-            val filesToCache = configuration.get(KonanConfigKeys.FILES_TO_CACHE)
+            val filesToCache = configuration.filesToCache
             when {
-                !filesToCache.isNullOrEmpty() -> filesToCache
-                configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true -> {
+                !filesToCache.isEmpty() -> filesToCache
+                configuration.makePerFileCache -> {
                     val result = KlibLoader {
                         libraryPaths(libPath)
                         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
@@ -92,13 +98,13 @@ class KonanDriver(
             }
         }
         if (fileNames != null) {
-            configuration.put(KonanConfigKeys.MAKE_PER_FILE_CACHE, true)
-            configuration.put(KonanConfigKeys.FILES_TO_CACHE, fileNames)
+            configuration.makePerFileCache = true
+            configuration.filesToCache = fileNames
         }
 
         var konanConfig = KonanConfig(project, configuration)
 
-        if (configuration.get(KonanConfigKeys.LIST_TARGETS) == true) {
+        if (configuration.listTargets) {
             konanConfig.targetManager.list()
         }
 
@@ -107,14 +113,14 @@ class KonanDriver(
                 && configuration.konanLibraries.isNotEmpty() && !hasIncludedLibraries
         val hasCompilerInput = configuration.kotlinSourceRoots.isNotEmpty()
                 || hasIncludedLibraries
-                || configuration[KonanConfigKeys.EXPORTED_LIBRARIES]?.isNotEmpty() == true
+                || configuration.exportedLibraries.isNotEmpty()
                 || konanConfig.libraryToCache != null
                 || konanConfig.compileFromBitcode?.isNotEmpty() == true
                 || isProducingExecutableFromLibraries
 
         if (!hasCompilerInput) return
 
-        if (isProducingExecutableFromLibraries && configuration.get(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE) {
+        if (isProducingExecutableFromLibraries && configuration.generateTestRunner != TestRunnerKind.NONE) {
             configuration.report(CompilerMessageSeverity.STRONG_WARNING,
                     "Use `-Xinclude=<path-to-klib>` to pass libraries that contain tests.")
         }

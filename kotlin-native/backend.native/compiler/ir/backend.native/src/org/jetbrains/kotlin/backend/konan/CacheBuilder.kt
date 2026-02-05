@@ -15,6 +15,11 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.konan.config.cacheDirectories
+import org.jetbrains.kotlin.konan.config.cachedLibraries
+import org.jetbrains.kotlin.konan.config.checkDependencies
+import org.jetbrains.kotlin.konan.config.filesToCache
+import org.jetbrains.kotlin.konan.config.generateTestRunner
 import org.jetbrains.kotlin.konan.config.konanFriendLibraries
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.konan.config.konanLibraries
@@ -23,6 +28,8 @@ import org.jetbrains.kotlin.konan.config.konanNoDefaultLibs
 import org.jetbrains.kotlin.konan.config.konanNoEndorsedLibs
 import org.jetbrains.kotlin.konan.config.konanNoStdlib
 import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
+import org.jetbrains.kotlin.konan.config.makePerFileCache
+import org.jetbrains.kotlin.konan.config.testDumpOutputPath
 import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.isNativeStdlib
@@ -456,7 +463,7 @@ class CacheBuilder(
             konanProducedArtifactKind = CompilerOutputKind.STATIC_CACHE
             // CHECK_DEPENDENCIES is computed based on outputKind, which is overwritten in the line above
             // So we have to change CHECK_DEPENDENCIES accordingly, otherwise they might not be downloaded (see KT-67547)
-            put(KonanConfigKeys.CHECK_DEPENDENCIES, true)
+            checkDependencies = true
             konanLibraryToAddToCache = libraryPath
             konanNoDefaultLibs = true
             konanNoEndorsedLibs = true
@@ -465,15 +472,15 @@ class CacheBuilder(
             val generateTestRunner = this@CacheBuilder.generateTestRunner
             if (generateTestRunner != TestRunnerKind.NONE && libraryPath in this@CacheBuilder.includedLibraries) {
                 konanFriendLibraries = konanConfig.friendModuleFiles.map { it.absolutePath }
-                put(KonanConfigKeys.GENERATE_TEST_RUNNER, generateTestRunner)
+                this.generateTestRunner = generateTestRunner
                 konanIncludedLibraries = listOf(libraryPath)
-                configuration.get(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH)?.let { put(KonanConfigKeys.TEST_DUMP_OUTPUT_PATH, it) }
+                configuration.testDumpOutputPath?.let { testDumpOutputPath = it }
             }
-            put(KonanConfigKeys.CACHED_LIBRARIES, cachedLibraries)
-            put(KonanConfigKeys.CACHE_DIRECTORIES, listOf(libraryCacheDirectory.absolutePath))
-            put(KonanConfigKeys.MAKE_PER_FILE_CACHE, makePerFileCache)
+            this.cachedLibraries = cachedLibraries
+            cacheDirectories = listOf(libraryCacheDirectory.absolutePath)
+            this.makePerFileCache = makePerFileCache
             if (filesToCache.isNotEmpty())
-                put(KonanConfigKeys.FILES_TO_CACHE, filesToCache)
+                this.filesToCache = filesToCache
         }
     }
 }

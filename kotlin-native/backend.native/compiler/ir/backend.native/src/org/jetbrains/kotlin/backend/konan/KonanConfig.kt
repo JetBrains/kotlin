@@ -22,8 +22,20 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
+import org.jetbrains.kotlin.konan.config.allocationMode
+import org.jetbrains.kotlin.konan.config.autoCacheDir
+import org.jetbrains.kotlin.konan.config.checkDependencies
+import org.jetbrains.kotlin.konan.config.compileFromBitcode
+import org.jetbrains.kotlin.konan.config.debug
+import org.jetbrains.kotlin.konan.config.enableAssertions
+import org.jetbrains.kotlin.konan.config.externalDependencies
+import org.jetbrains.kotlin.konan.config.fullExportedNamePrefix
+import org.jetbrains.kotlin.konan.config.generateDebugTrampoline
+import org.jetbrains.kotlin.konan.config.incrementalCacheDir
+import org.jetbrains.kotlin.konan.config.konanDataDir
 import org.jetbrains.kotlin.konan.config.konanFriendLibraries
 import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
+import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.konan.config.konanIncludedBinaries
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.konan.config.konanManifestAddend
@@ -35,6 +47,19 @@ import org.jetbrains.kotlin.konan.config.konanRefinesModules
 import org.jetbrains.kotlin.konan.config.konanShortModuleName
 import org.jetbrains.kotlin.konan.config.konanTarget
 import org.jetbrains.kotlin.konan.config.konanWriteDependenciesOfProducedKlibTo
+import org.jetbrains.kotlin.konan.config.llvmLtoPasses
+import org.jetbrains.kotlin.konan.config.llvmModulePasses
+import org.jetbrains.kotlin.konan.config.llvmVariant
+import org.jetbrains.kotlin.konan.config.makePerFileCache
+import org.jetbrains.kotlin.konan.config.omitFrameworkBinary
+import org.jetbrains.kotlin.konan.config.optimization
+import org.jetbrains.kotlin.konan.config.runtimeFile
+import org.jetbrains.kotlin.konan.config.runtimeLogs
+import org.jetbrains.kotlin.konan.config.saveDependenciesPath
+import org.jetbrains.kotlin.konan.config.saveLlvmIrDirectory
+import org.jetbrains.kotlin.konan.config.serializedDependencies
+import org.jetbrains.kotlin.konan.config.staticFramework
+import org.jetbrains.kotlin.konan.config.testDumpOutputPath
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
@@ -85,17 +110,17 @@ class KonanConfig(
                 }
             }
             configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let(this::putAll)
-            configuration.get(KonanConfigKeys.LLVM_VARIANT)?.getKonanPropertiesEntry()?.let { (key, value) ->
+            configuration.llvmVariant?.getKonanPropertiesEntry()?.let { (key, value) ->
                 put(key, value)
             }
         }
 
         Distribution(
-                configuration.get(KonanConfigKeys.KONAN_HOME) ?: KotlinNativePaths.homePath.absolutePath,
+                configuration.konanHome ?: KotlinNativePaths.homePath.absolutePath,
                 false,
-                configuration.get(KonanConfigKeys.RUNTIME_FILE),
+                configuration.runtimeFile,
                 overridenProperties,
-                configuration.get(KonanConfigKeys.KONAN_DATA_DIR)
+                configuration.konanDataDir,
         )
     }
 
@@ -108,11 +133,11 @@ class KonanConfig(
     val useLlvmOpaquePointers = true
 
     // TODO: debug info generation mode and debug/release variant selection probably requires some refactoring.
-    val debug: Boolean get() = configuration.getBoolean(KonanConfigKeys.DEBUG)
+    val debug: Boolean get() = configuration.debug
     val lightDebug: Boolean = configuration.get(KonanConfigKeys.LIGHT_DEBUG)
             ?: target.family.isAppleFamily // Default is true for Apple targets.
-    val generateDebugTrampoline = debug && configuration.getBoolean(KonanConfigKeys.GENERATE_DEBUG_TRAMPOLINE)
-    val optimizationsEnabled = configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
+    val generateDebugTrampoline = debug && configuration.generateDebugTrampoline
+    val optimizationsEnabled = configuration.optimization
 
     val smallBinary: Boolean = run {
         val explicit = configuration.get(BinaryOptions.smallBinary)
@@ -126,7 +151,7 @@ class KonanConfig(
     }
     val inlineForPerformance get() = !debug && !smallBinary
 
-    val assertsEnabled = configuration.getBoolean(KonanConfigKeys.ENABLE_ASSERTIONS)
+    val assertsEnabled = configuration.enableAssertions
 
     val sanitizer = configuration.get(BinaryOptions.sanitizer)?.takeIf {
         when {
@@ -175,13 +200,13 @@ class KonanConfig(
     }
 
     val runtimeLogsEnabled: Boolean by lazy {
-        configuration.get(KonanConfigKeys.RUNTIME_LOGS) != null
+        configuration.runtimeLogs != null
     }
 
     val runtimeLogs: Map<LoggingTag, LoggingLevel> by lazy {
         val default = LoggingTag.entries.associateWith { LoggingLevel.None }
 
-        val cfgString = configuration.get(KonanConfigKeys.RUNTIME_LOGS) ?: return@lazy default
+        val cfgString = configuration.runtimeLogs ?: return@lazy default
 
         fun <T> error(message: String): T? {
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, "$message. No logging will be performed.")
@@ -354,11 +379,11 @@ class KonanConfig(
     }
 
     val llvmModulePasses: String? by lazy {
-        configuration.get(KonanConfigKeys.LLVM_MODULE_PASSES)
+        configuration.llvmModulePasses
     }
 
     val llvmLTOPasses: String? by lazy {
-        configuration.get(KonanConfigKeys.LLVM_LTO_PASSES)
+        configuration.llvmLtoPasses
     }
 
     val preCodegenInlineThreshold: UInt by lazy {
@@ -380,7 +405,7 @@ class KonanConfig(
 
     val platform by lazy {
         platformManager.platform(target).apply {
-            if (configuration.getBoolean(KonanConfigKeys.CHECK_DEPENDENCIES)) {
+            if (configuration.checkDependencies) {
                 downloadDependencies()
             }
         }
@@ -388,7 +413,7 @@ class KonanConfig(
 
     internal val clang by lazy { platform.clang }
 
-    internal val produceStaticFramework get() = configuration.getBoolean(KonanConfigKeys.STATIC_FRAMEWORK)
+    internal val produceStaticFramework get() = configuration.staticFramework
 
     private val resolve = KonanLibrariesResolveSupport(
             configuration, target, distribution, resolveManifestDependenciesLenient = true
@@ -412,7 +437,7 @@ class KonanConfig(
         )
     }
 
-    internal val externalDependenciesFile = configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES)?.let(::File)
+    internal val externalDependenciesFile = configuration.externalDependencies?.let(::File)
 
     internal val userVisibleIrModulesSupport = KonanUserVisibleIrModulesSupport(
             externalDependenciesLoader = UserVisibleIrModulesSupport.ExternalDependenciesLoader.from(
@@ -424,7 +449,7 @@ class KonanConfig(
     )
 
     val fullExportedNamePrefix: String
-        get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX) ?: implicitModuleName
+        get() = configuration.fullExportedNamePrefix ?: implicitModuleName
 
     override val moduleId: String
         get() = configuration.moduleName ?: implicitModuleName
@@ -433,7 +458,7 @@ class KonanConfig(
         get() = AllocationMode.CUSTOM
 
     val allocationMode by lazy {
-        (configuration.get(KonanConfigKeys.ALLOCATION_MODE) ?: defaultAllocationMode).also {
+        (configuration.allocationMode ?: defaultAllocationMode).also {
             if (it == AllocationMode.CUSTOM && sanitizer != null && pagedAllocator) {
                 configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Sanitizers are not useful with the paged allocator")
             }
@@ -492,7 +517,7 @@ class KonanConfig(
         "Konan_main"
     }
 
-    internal val testDumpFile: File? = configuration[KonanConfigKeys.TEST_DUMP_OUTPUT_PATH]?.let(::File)
+    internal val testDumpFile: File? = configuration.testDumpOutputPath?.let(::File)
 
     internal val useDebugInfoInNativeLibs = configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
 
@@ -563,13 +588,13 @@ class KonanConfig(
     }
 
     internal val systemCacheDirectory = File(distribution.systemCacheRootDirectory.absolutePath).child(systemCacheFlavorString).also { it.mkdirs() }
-    private val autoCacheRootDirectory = configuration.get(KonanConfigKeys.AUTO_CACHE_DIR)?.let {
+    private val autoCacheRootDirectory = configuration.autoCacheDir?.let {
         File(it).apply {
             if (!isDirectory) configuration.reportCompilationError("auto cache directory $this is not found or is not a directory")
         }
     } ?: File(distribution.systemCacheRootDirectory.absolutePath)
     internal val autoCacheDirectory = autoCacheRootDirectory.child(userCacheFlavorString).also { it.mkdirs() }
-    private val incrementalCacheRootDirectory = configuration.get(KonanConfigKeys.INCREMENTAL_CACHE_DIR)?.let {
+    private val incrementalCacheRootDirectory = configuration.incrementalCacheDir?.let {
         File(it).apply {
             if (!isDirectory) configuration.reportCompilationError("incremental cache directory $this is not found or is not a directory")
         }
@@ -601,7 +626,7 @@ class KonanConfig(
         get() = cacheSupport.libraryToCache
 
     internal val producePerFileCache
-        get() = configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true
+        get() = configuration.makePerFileCache
 
     private val implicitModuleName: String
         get() = cacheSupport.libraryToCache?.let {
@@ -617,7 +642,7 @@ class KonanConfig(
      * This is useful when user care only about framework's interface.
      */
     internal val omitFrameworkBinary: Boolean by lazy {
-        configuration.getBoolean(KonanConfigKeys.OMIT_FRAMEWORK_BINARY).also {
+        configuration.omitFrameworkBinary.also {
             if (it && produce != CompilerOutputKind.FRAMEWORK) {
                 configuration.report(CompilerMessageSeverity.STRONG_WARNING,
                         "Trying to disable framework binary compilation when producing ${produce.name.lowercase()} is meaningless.")
@@ -631,28 +656,28 @@ class KonanConfig(
      * This option can be used for continuing the compilation from a previous invocation.
      */
     internal val compileFromBitcode: String? by lazy {
-        configuration.get(KonanConfigKeys.COMPILE_FROM_BITCODE)
+        configuration.compileFromBitcode
     }
 
     /**
      * Path to serialized dependencies to use for bitcode compilation.
      */
     internal val readSerializedDependencies: String? by lazy {
-        configuration.get(KonanConfigKeys.SERIALIZED_DEPENDENCIES)
+        configuration.serializedDependencies
     }
 
     /**
      * Path to store backend dependency information.
      */
     internal val writeSerializedDependencies: String? by lazy {
-        configuration.get(KonanConfigKeys.SAVE_DEPENDENCIES_PATH)
+        configuration.saveDependenciesPath
     }
 
     /**
      * Directory to store LLVM IR from -Xsave-llvm-ir-after.
      */
     internal val saveLlvmIrDirectory: java.io.File by lazy {
-        val path = configuration.get(KonanConfigKeys.SAVE_LLVM_IR_DIRECTORY)
+        val path = configuration.saveLlvmIrDirectory
         if (path == null) {
             val tempDir = Files.createTempDirectory(Paths.get(StandardSystemProperty.JAVA_IO_TMPDIR.value()!!), /* prefix= */ null).toFile()
             configuration.report(CompilerMessageSeverity.WARNING,

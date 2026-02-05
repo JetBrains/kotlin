@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm.runtime
 
 import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.konan.config.runtimeFile
 import org.jetbrains.kotlin.konan.file.File
 
 class RuntimeModulesConfig(private val config: KonanConfig) {
@@ -20,7 +20,7 @@ class RuntimeModulesConfig(private val config: KonanConfig) {
         get() = File(config.distribution.defaultNatives(config.target)).child(filename).absolutePath
 
     private val compilerInterfaceAbsolutePath by lazy {
-        config.configuration.get(KonanConfigKeys.RUNTIME_FILE)
+        config.configuration.runtimeFile
                 ?: RuntimeModule.COMPILER_INTERFACE.absolutePath
     }
 
