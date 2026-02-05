@@ -1,0 +1,17 @@
+$TESTDATA_DIR$/relativePathInXIncludeArgument.kt
+-Xir-produce-klib-dir
+-ir-output-dir
+$TEMP_DIR$/mylib
+-ir-output-name
+mylib
+-libraries
+$STDLIB_JS$
+---
+-Xir-produce-js
+-libraries
+$STDLIB_JS$
+-Xinclude=$TEMP_DIR$/mylib/../mylib
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+app
