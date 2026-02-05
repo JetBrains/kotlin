@@ -163,6 +163,11 @@ val irCompilerModulesForIDE = arrayOf(
 ).also { extra["irCompilerModulesForIDE"] = it }
 
 val commonCompilerModules = arrayOf(
+    ":compiler:cli-base",
+    ":compiler:cli",
+    ":compiler:cli-jvm",
+    ":compiler:cli-js",
+    ":compiler:cli-metadata",
     ":compiler:psi:psi-api",
     ":compiler:psi:psi-impl",
     ":compiler:psi:psi-utils",
@@ -175,7 +180,6 @@ val commonCompilerModules = arrayOf(
     ":compiler:config.jvm",
     ":compiler:compiler.version",
     ":compiler:arguments.common",
-    ":compiler:cli-base",
     ":compiler:resolution.common",
     ":compiler:resolution.common.jvm",
     ":compiler:backend.common.jvm",
@@ -272,10 +276,6 @@ val fe10CompilerModules = arrayOf(
     ":kotlin-util-klib-metadata",
     ":compiler:backend",
     ":compiler:javac-wrapper",
-    ":compiler:cli",
-    ":compiler:cli-jvm",
-    ":compiler:cli-js",
-    ":compiler:cli-metadata",
     ":compiler:incremental-compilation-impl",
     ":js:js.ast",
     ":js:js.sourcemap",
