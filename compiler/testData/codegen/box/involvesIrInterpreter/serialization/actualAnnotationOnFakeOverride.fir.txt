@@ -1,46 +1,46 @@
 Module: common
 FILE: A.kt
-    public final [ExpectForActualAttributeKey={}] annotation class A : R|kotlin/Annotation| {
-        public [ContainingClassKey=A, ExpectForActualAttributeKey={}] constructor([CorrespondingProperty=/A.x] x: R|kotlin/String|): R|A| {
+    public final annotation class A : R|kotlin/Annotation| {
+        public [ContainingClassKey=A] constructor([CorrespondingProperty=/A.x] x: R|kotlin/String|): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public final [ExpectForActualAttributeKey={}, IsFromPrimaryConstructor=true] val x: R|kotlin/String| = R|<local>/x|
+        public final [IsFromPrimaryConstructor=true] val x: R|kotlin/String| = R|<local>/x|
             public [ContainingClassKey=A] get(): R|kotlin/String|
 
     }
-    public final [ExpectForActualAttributeKey={}] annotation class Something : R|kotlin/Annotation| {
-        public [ContainingClassKey=Something, ExpectForActualAttributeKey={}] constructor(): R|Something| {
+    public final annotation class Something : R|kotlin/Annotation| {
+        public [ContainingClassKey=Something] constructor(): R|Something| {
             super<R|kotlin/Any|>()
         }
 
     }
 FILE: B.kt
-    public abstract expect [ExpectForActualAttributeKey={}] interface B : R|kotlin/Any| {
+    public abstract expect interface B : R|kotlin/Any| {
     }
 FILE: D.kt
-    public final [ExpectForActualAttributeKey={}] class D : R|kotlin/Any| {
-        public [ContainingClassKey=D, ExpectForActualAttributeKey={}] constructor(): R|D| {
+    public final class D : R|kotlin/Any| {
+        public [ContainingClassKey=D] constructor(): R|D| {
             super<R|kotlin/Any|>()
         }
 
-        @R|Something|() public final [ExpectForActualAttributeKey={}] fun bar(): R|kotlin/Unit| {
+        @R|Something|() public final fun bar(): R|kotlin/Unit| {
         }
 
     }
-    public final [ExpectForActualAttributeKey={}] class E : R|B| {
-        public [ContainingClassKey=E, ExpectForActualAttributeKey={}] constructor(): R|E| {
+    public final class E : R|B| {
+        public [ContainingClassKey=E] constructor(): R|E| {
             super<R|kotlin/Any|>()
         }
 
     }
 Module: platform
 FILE: B.kt
-    public abstract actual [ExpectForActualAttributeKey={org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility$MatchedSuccessfully@706052a3=[FirRegularClassSymbol B]}] interface B : R|kotlin/Any| {
-        @R|A|(x = String(12345678) [evaluated = String(12345678)]) public open [ExpectForActualAttributeKey={}] fun foo(): R|kotlin/Unit| {
+    public abstract actual interface B : R|kotlin/Any| {
+        @R|A|(x = String(12345678) [evaluated = String(12345678)]) public open fun foo(): R|kotlin/Unit| {
         }
 
     }
-    public final [ExpectForActualAttributeKey={}] fun box(): R|kotlin/String| {
+    public final fun box(): R|kotlin/String| {
         ^box String(OK)
     }
