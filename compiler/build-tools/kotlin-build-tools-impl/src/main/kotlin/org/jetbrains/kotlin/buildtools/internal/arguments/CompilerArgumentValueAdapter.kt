@@ -8,6 +8,13 @@ package org.jetbrains.kotlin.buildtools.internal.arguments
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.*
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.CommonCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.CommonJsAndWasmArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.CommonKlibBasedArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.JsArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.WasmArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import java.io.File
@@ -29,6 +36,30 @@ internal interface CommonToolArgumentValueAdapter {
 internal interface CommonCompilerArgumentValueAdapter : CommonToolArgumentValueAdapter {
     fun <V, T> mapFrom(value: T, key: CommonCompilerArgument<V>): V
     fun <T, V> mapTo(value: V, key: CommonCompilerArgument<V>): T
+}
+
+@OptIn(ExperimentalCompilerArgument::class)
+internal interface CommonJsAndWasmArgumentValueAdapter : CommonKlibBasedArgumentValueAdapter {
+    fun <V, T> mapFrom(value: T, key: CommonJsAndWasmArgument<V>): V
+    fun <T, V> mapTo(value: V, key: CommonJsAndWasmArgument<V>): T
+}
+
+@OptIn(ExperimentalCompilerArgument::class)
+internal interface CommonKlibBasedArgumentValueAdapter : CommonCompilerArgumentValueAdapter {
+    fun <V, T> mapFrom(value: T, key: CommonKlibBasedArgument<V>): V
+    fun <T, V> mapTo(value: V, key: CommonKlibBasedArgument<V>): T
+}
+
+@OptIn(ExperimentalCompilerArgument::class)
+internal interface JsArgumentValueAdapter : CommonJsAndWasmArgumentValueAdapter {
+    fun <V, T> mapFrom(value: T, key: JsArgument<V>): V
+    fun <T, V> mapTo(value: V, key: JsArgument<V>): T
+}
+
+@OptIn(ExperimentalCompilerArgument::class)
+internal interface WasmArgumentValueAdapter : CommonJsAndWasmArgumentValueAdapter {
+    fun <V, T> mapFrom(value: T, key: WasmArgument<V>): V
+    fun <T, V> mapTo(value: V, key: WasmArgument<V>): T
 }
 
 internal interface JvmCompilerArgumentValueAdapter : CommonCompilerArgumentValueAdapter {

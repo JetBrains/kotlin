@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.buildtools.generator
 
 import org.jetbrains.kotlin.arguments.description.actualCommonCompilerArguments
+import org.jetbrains.kotlin.arguments.description.actualCommonJsAndWasmArguments
 import org.jetbrains.kotlin.arguments.description.actualCommonToolsArguments
 import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
 import org.jetbrains.kotlin.arguments.description.actualMetadataArguments
@@ -119,6 +120,13 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xjavac-arguments")
         }
     })
+    put(actualCommonJsAndWasmArguments.name, buildMap {
+        with(actualCommonJsAndWasmArguments) {
+            drop("Xir-produce-js")
+            drop("Xir-produce-klib-dir")
+            drop("Xir-produce-klib-file")
+        }
+    })
 }
 
 context(level: KotlinCompilerArgumentsLevel)
@@ -154,12 +162,12 @@ private fun KotlinCompilerArgument.transform(): ArgumentTransform =
     levelsToArgumentTransforms[level.name]?.get(name) ?: ArgumentTransform.NoOp
 
 private fun KotlinCompilerArgumentsLevel.generateCustomArguments(): List<BtaCompilerArgument<*>> {
-    val levelTransforms = levelsToArgumentTransforms[name] ?: error("Level $this is not found in levelsToArgumentTransforms")
+    val levelTransforms = levelsToArgumentTransforms[name] ?: emptyMap()
     return levelTransforms.values.filterIsInstance<ArgumentTransform.CustomArgument>().map { it.argument }
 }
 
 private fun KotlinCompilerArgumentsLevel.generateOverriddenArguments(): List<BtaCompilerArgument<*>> {
-    val levelTransforms = levelsToArgumentTransforms[name] ?: error("Level $this is not found in levelsToArgumentTransforms")
+    val levelTransforms = levelsToArgumentTransforms[name] ?: emptyMap()
     return levelTransforms.values.filterIsInstance<ArgumentTransform.Override>().map { it.argument }
 }
 
