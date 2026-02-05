@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web
 
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -24,9 +25,9 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
     name = "JsKlibSerializationPipelinePhase",
 ) {
     override fun executePhase(input: JsFir2IrPipelineArtifact): JsSerializedKlibPipelineArtifact {
-        val (fir2IrResult, firResult, configuration, diagnosticCollector, moduleStructure) = input
+        val (fir2IrResult, firResult, configuration, moduleStructure) = input
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-            diagnosticCollector,
+            configuration.diagnosticsCollector,
             configuration.languageVersionSettings
         )
 
@@ -62,7 +63,6 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
 
         return JsSerializedKlibPipelineArtifact(
             outputKlibPath,
-            diagnosticCollector,
             configuration
         )
     }

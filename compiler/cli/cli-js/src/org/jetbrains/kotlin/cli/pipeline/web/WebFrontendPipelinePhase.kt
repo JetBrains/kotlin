@@ -56,6 +56,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             it.notifyPhaseStarted(PhaseType.Analysis)
         }
         val messageCollector = configuration.messageCollector
+        val diagnosticsCollector = configuration.diagnosticsCollector
         val libraries = configuration.libraries
         val friendLibraries = configuration.friendLibraries
 
@@ -102,7 +103,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 ktSourceFiles = groupedSources.commonSources + groupedSources.platformSources,
                 libraries = libraries,
                 friendLibraries = friendLibraries,
-                diagnosticsReporter = input.diagnosticsCollector,
+                diagnosticsReporter = configuration.diagnosticsCollector,
                 performanceManager = configuration.perfManager,
                 incrementalDataProvider = configuration.incrementalDataProvider,
                 extensionStorage = extensionStorage,
@@ -129,7 +130,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 ktFiles = sourceFiles,
                 libraries = libraries,
                 friendLibraries = friendLibraries,
-                diagnosticsReporter = input.diagnosticsCollector,
+                diagnosticsReporter = configuration.diagnosticsCollector,
                 incrementalDataProvider = configuration.incrementalDataProvider,
                 extensionStorage = extensionStorage,
                 useWasmPlatform = isWasm,
@@ -141,9 +142,8 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         return WebFrontendPipelineArtifact(
             analyzedOutput,
             configuration,
-            input.diagnosticsCollector,
             moduleStructure,
-            hasErrors = messageCollector.hasErrors() || input.diagnosticsCollector.hasErrors,
+            hasErrors = messageCollector.hasErrors() || diagnosticsCollector.hasErrors,
         )
     }
 

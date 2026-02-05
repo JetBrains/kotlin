@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.buildFile
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.moduleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.toBackendInput
@@ -30,9 +31,10 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
         CheckCompilationErrors.CheckDiagnosticCollector
     )
 ) {
-    override fun executePhase(input: JvmFir2IrPipelineArtifact): JvmBackendPipelineArtifact? {
-        val (fir2IrResult, configuration, environment, diagnosticCollector, allSourceFiles, mainClassFqName) = input
+    override fun executePhase(input: JvmFir2IrPipelineArtifact): JvmBackendPipelineArtifact {
+        val (fir2IrResult, configuration, environment, allSourceFiles, mainClassFqName) = input
         val moduleDescriptor = fir2IrResult.irModuleFragment.descriptor
+        val diagnosticsCollector = configuration.diagnosticsCollector
         val project = environment.project
         val classResolver = FirJvmBackendClassResolver(fir2IrResult.components)
         val jvmBackendExtension = FirJvmBackendExtension(
@@ -78,7 +80,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
 
             codegenInputs += KotlinToJVMBytecodeCompiler.runLowerings(
                 project, configurationForModule, moduleDescriptor, module,
-                codegenFactory, backendInput, diagnosticCollector, classResolver,
+                codegenFactory, backendInput, diagnosticsCollector, classResolver,
             )
         }
 
@@ -90,12 +92,12 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
                 input,
                 input.state,
                 codegenFactory,
-                diagnosticCollector,
+                diagnosticsCollector,
                 input.state.configuration,
                 reportDiagnosticsToMessageCollector = false, // diagnostics will be reported in CheckCompilationErrors.CheckDiagnosticCollector
             )
         }
 
-        return JvmBackendPipelineArtifact(configuration, environment, diagnosticCollector, mainClassFqName, outputs)
+        return JvmBackendPipelineArtifact(configuration, environment, mainClassFqName, outputs)
     }
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.pipeline.web
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
@@ -43,8 +44,9 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
     preActions = setOf(PerformanceNotifications.TranslationToIrStarted),
     postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    override fun executePhase(input: WebFrontendPipelineArtifact): JsFir2IrPipelineArtifact? {
-        val (firResult, configuration, diagnosticsReporter, moduleStructure, hasErrors) = input
+    override fun executePhase(input: WebFrontendPipelineArtifact): JsFir2IrPipelineArtifact {
+        val (firResult, configuration, moduleStructure, hasErrors) = input
+        val diagnosticsReporter = configuration.diagnosticsCollector
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, firResult.outputs, diagnosticsReporter)
         if (!configuration.wasmCompilation)
             runJsKlibCallCheckers(diagnosticsReporter, configuration, firResult.outputs, fir2IrActualizedResult)
@@ -53,7 +55,6 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
             fir2IrActualizedResult,
             firResult,
             configuration,
-            diagnosticsReporter,
             moduleStructure,
             hasErrors = hasErrors || configuration.messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
         )

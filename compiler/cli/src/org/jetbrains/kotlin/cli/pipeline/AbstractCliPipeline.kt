@@ -123,7 +123,8 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
              * There might be a case when the pipeline is not executed fully, but it's not considered as a compilation error:
              *   if `-version` flag was passed
              */
-            if (e.definitelyCompilationError || input.messageCollector.hasErrors() || input.diagnosticsCollector.hasErrors) {
+            val configuration = input.configuration
+            if (e.definitelyCompilationError || configuration.messageCollector.hasErrors() || configuration.diagnosticsCollector.hasErrors) {
                 ExitCode.COMPILATION_ERROR
             } else {
                 ExitCode.OK

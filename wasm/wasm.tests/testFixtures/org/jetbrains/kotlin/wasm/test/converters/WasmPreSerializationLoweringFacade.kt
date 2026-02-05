@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaser.PhaserState
@@ -49,7 +50,7 @@ class WasmPreSerializationLoweringFacade(
                 require(cliArtifact is JsFir2IrPipelineArtifact) {
                     "Fir2IrCliBasedOutputArtifact should have JsFir2IrPipelineArtifact as cliArtifact, but has ${cliArtifact::class}"
                 }
-                val input = cliArtifact.copy(diagnosticsCollector = diagnosticReporter)
+                val input = cliArtifact.withNewDiagnosticCollector(diagnosticReporter)
 
                 if (diagnosticReporter.hasErrors) {
                     // Should errors be found by checkers, there's a chance that JsCodeOutlineLowering will throw an exception on unparseable code.

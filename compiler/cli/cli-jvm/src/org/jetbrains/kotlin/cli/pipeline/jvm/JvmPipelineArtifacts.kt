@@ -14,9 +14,8 @@ import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineArtifactWithExitCode
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
+import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.name.FqName
 
 data class JvmScriptPipelineArtifact(
@@ -33,7 +32,6 @@ data class JvmFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
     val environment: VfsBasedProjectEnvironment,
-    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
 ) : FrontendPipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
@@ -50,7 +48,6 @@ data class JvmFir2IrPipelineArtifact(
     override val result: Fir2IrActualizedResult,
     override val configuration: CompilerConfiguration,
     val environment: VfsBasedProjectEnvironment,
-    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
     val mainClassFqName: FqName?,
 ) : Fir2IrPipelineArtifact() {
@@ -63,7 +60,6 @@ data class JvmFir2IrPipelineArtifact(
 data class JvmBackendPipelineArtifact(
     override val configuration: CompilerConfiguration,
     val environment: VfsBasedProjectEnvironment,
-    val diagnosticsCollector: BaseDiagnosticsCollector,
     val mainClassFqName: FqName?,
     val outputs: List<GenerationState>,
 ) : PipelineArtifact() {

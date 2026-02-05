@@ -439,7 +439,7 @@ abstract class AbstractInvalidationTest(
                     performanceManager,
                     kaptMode = false,
                 ),
-                input = ConfigurationPipelineArtifact(configuration, diagnosticCollector, rootDisposable),
+                input = ConfigurationPipelineArtifact(configuration, rootDisposable),
             )
         } catch (_: PipelineStepException) {
             // Some pipeline step did not produce any output because of an error.

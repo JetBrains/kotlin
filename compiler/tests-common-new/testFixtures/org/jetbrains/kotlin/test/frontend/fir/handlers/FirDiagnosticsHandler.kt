@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifact
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
@@ -655,7 +655,6 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         lazyDeclarationResolver.disableLazyResolveContractChecksInside {
             val configuration =
                 testServices.compilerConfigurationProvider.getCompilerConfiguration(platformPart.module, CompilationStage.FIRST)
-            val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
             fun processDiagnosticsFromCliPhase(diagnosticsCollector: BaseDiagnosticsCollector, mode: KmpCompilationMode) {
                 val diagnosticsPerFirFile = buildMap {
@@ -670,7 +669,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
 
             when (info) {
                 is FirCliBasedOutputArtifact<*> -> {
-                    val diagnosticsCollector = info.cliArtifact.diagnosticsCollector
+                    val diagnosticsCollector = info.cliArtifact.configuration.diagnosticsCollector
                     val mode = if (info.cliArtifact is MetadataFrontendPipelineArtifact) {
                         KmpCompilationMode.METADATA
                     } else {

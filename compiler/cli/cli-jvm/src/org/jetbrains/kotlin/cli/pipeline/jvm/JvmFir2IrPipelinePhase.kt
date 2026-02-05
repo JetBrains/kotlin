@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
@@ -26,12 +27,12 @@ object JvmFir2IrPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFi
         executePhase(input, input.configuration.getCompilerExtensions(IrGenerationExtension))
 
     fun executePhase(input: JvmFrontendPipelineArtifact, irGenerationExtensions: List<IrGenerationExtension>): JvmFir2IrPipelineArtifact? {
-        val (firResult, configuration, environment, diagnosticCollector, sourceFiles) = input
+        val (firResult, configuration, environment, sourceFiles) = input
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
         val fir2IrAndIrActualizerResult = firResult.convertToIrAndActualizeForJvm(
             fir2IrExtensions,
             configuration,
-            diagnosticCollector,
+            configuration.diagnosticsCollector,
             irGenerationExtensions
         )
 
@@ -43,7 +44,6 @@ object JvmFir2IrPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFi
             fir2IrAndIrActualizerResult,
             configuration,
             environment,
-            diagnosticCollector,
             sourceFiles,
             mainClassFqName,
         )

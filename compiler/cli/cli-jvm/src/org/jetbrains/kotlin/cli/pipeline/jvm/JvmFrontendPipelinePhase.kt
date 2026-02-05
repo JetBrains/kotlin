@@ -17,13 +17,8 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.createLibraryListForJvm
-import org.jetbrains.kotlin.cli.jvm.compiler.createContextForIncrementalCompilation
-import org.jetbrains.kotlin.cli.jvm.compiler.createIncrementalCompilationScope
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.targetDescription
@@ -59,8 +54,9 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): JvmFrontendPipelineArtifact? {
-        val (configuration, diagnosticsCollector, rootDisposable) = input
+        val (configuration, rootDisposable) = input
         val messageCollector = configuration.messageCollector
+        val diagnosticsCollector = configuration.diagnosticsCollector
 
         val perfManager = configuration.perfManager
         val chunk = configuration.moduleChunk!!
@@ -184,7 +180,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         if (!kotlinPackageUsageIsFine) return null
 
         val frontendOutput = AllModulesFrontendOutput(outputs)
-        return JvmFrontendPipelineArtifact(frontendOutput, configuration, environment, diagnosticsCollector, allSources)
+        return JvmFrontendPipelineArtifact(frontendOutput, configuration, environment, allSources)
     }
 
     private data class EnvironmentAndSources(val environment: VfsBasedProjectEnvironment, val sources: () -> GroupedKtSources)
@@ -217,7 +213,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 EnvironmentAndSources(environment, sources)
             }
             false -> {
-                val kotlinCoreEnvironment = K2JVMCompiler.Companion.createCoreEnvironment(
+                val kotlinCoreEnvironment = K2JVMCompiler.createCoreEnvironment(
                     rootDisposable, configuration, messageCollector,
                     targetDescription
                 ) ?: return null

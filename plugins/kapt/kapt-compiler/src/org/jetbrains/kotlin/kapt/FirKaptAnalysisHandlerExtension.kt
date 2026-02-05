@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
@@ -186,30 +187,45 @@ open class FirKaptAnalysisHandlerExtension(
     protected open fun updateConfiguration(configuration: CompilerConfiguration) {
     }
 
+    @OptIn(PipelineArtifact.CliPipelineInternals::class)
     private fun contextForStubGeneration(disposable: Disposable, configuration: CompilerConfiguration): KaptContextForStubGeneration? {
         updateConfiguration(configuration)
         configuration.moduleChunk = ModuleChunk(configuration.modules)
 
-        val frontendInput = ConfigurationPipelineArtifact(
-            configuration, DiagnosticsCollectorImpl(), disposable,
-        )
+        // We want to ignore all diagnostics except syntax one, which will be checked manually.
+        // So we need to create a new configuration with a separate diagnostics collector, to avoid
+        // reporting any errors into the diagnostics collector of the root configuration, which would be
+        // checked by the main CLI pipeline upon finishing the KAPT stage.
+        val configurationForFrontend = configuration.copy().apply {
+            diagnosticsCollector = DiagnosticsCollectorImpl()
+        }
+
+        val frontendInput = ConfigurationPipelineArtifact(configurationForFrontend, disposable)
         val frontendOutput = JvmFrontendPipelinePhase.executePhase(frontendInput) ?: return null
 
-        if (checkForSyntaxErrorsAndReport(frontendOutput, configuration)) return null
+        if (checkForSyntaxErrorsAndReport(frontendOutput)) return null
 
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Analysis)
 
+        // FIR2IR checks for diagnostics in the collector after the main transformation and before const and plugin transformation,
+        // and early returns if there are any errors, so we need to create an empty diagnostics collector once again
+        val configurationForFir2Ir = configuration.copy().apply {
+            diagnosticsCollector = DiagnosticsCollectorImpl()
+        }
         val fir2IrOutput = JvmFir2IrPipelinePhase.executePhase(
-            frontendOutput.copy(
-                // Ignore all other FE errors
-                diagnosticsCollector = DiagnosticsCollectorImpl(),
-            ),
-            emptyList(),
+            frontendOutput.withCompilerConfiguration(configurationForFir2Ir),
+            irGenerationExtensions = emptyList()
         ) ?: return null
 
         val builderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
-        configuration.put(KotlinToJVMBytecodeCompiler.customClassBuilderFactory, builderFactory)
-        val backendOutput = JvmBackendPipelinePhase.executePhase(fir2IrOutput) ?: return null
+
+        // JVM backend checks for diagnostics in the collector and early returns if there are any errors
+        // so we need to create an empty diagnostics collector once again
+        val configurationForBackend = configuration.copy().apply {
+            diagnosticsCollector = DiagnosticsCollectorImpl()
+            put(KotlinToJVMBytecodeCompiler.customClassBuilderFactory, builderFactory)
+        }
+        val backendOutput = JvmBackendPipelinePhase.executePhase(fir2IrOutput.withCompilerConfiguration(configurationForBackend))
         val generationState = backendOutput.outputs.singleOrNull() ?: return null
 
         return KaptContextForStubGeneration(
@@ -218,18 +234,15 @@ open class FirKaptAnalysisHandlerExtension(
         )
     }
 
-    private fun checkForSyntaxErrorsAndReport(
-        frontendOutput: JvmFrontendPipelineArtifact,
-        configuration: CompilerConfiguration,
-    ): Boolean {
+    private fun checkForSyntaxErrorsAndReport(frontendOutput: JvmFrontendPipelineArtifact): Boolean {
         var reported = false
-        FirDiagnosticsCompilerResultsReporter.reportByFile(frontendOutput.diagnosticsCollector) { diagnostic, location ->
+        FirDiagnosticsCompilerResultsReporter.reportByFile(frontendOutput.configuration.diagnosticsCollector) { diagnostic, location ->
             if (diagnostic.factory == FirSyntaxErrors.SYNTAX) {
                 FirDiagnosticsCompilerResultsReporter.reportDiagnosticToMessageCollector(
                     diagnostic,
                     location,
                     logger.messageCollector,
-                    configuration.renderDiagnosticInternalName
+                    frontendOutput.configuration.renderDiagnosticInternalName
                 )
                 reported = true
             }

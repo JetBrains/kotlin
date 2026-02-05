@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.cli.pipeline.Fir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
+import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import java.io.File
@@ -21,7 +20,6 @@ import java.io.File
 data class WebFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
-    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
     val hasErrors: Boolean,
 ) : FrontendPipelineArtifact() {
@@ -39,7 +37,6 @@ data class JsFir2IrPipelineArtifact(
     override val result: Fir2IrActualizedResult,
     val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
-    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val moduleStructure: ModulesStructure,
     val hasErrors: Boolean,
 ) : Fir2IrPipelineArtifact() {
@@ -51,7 +48,6 @@ data class JsFir2IrPipelineArtifact(
 
 data class JsSerializedKlibPipelineArtifact(
     val outputKlibPath: String,
-    val diagnosticsCollector: BaseDiagnosticsCollector,
     override val configuration: CompilerConfiguration,
 ) : PipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)

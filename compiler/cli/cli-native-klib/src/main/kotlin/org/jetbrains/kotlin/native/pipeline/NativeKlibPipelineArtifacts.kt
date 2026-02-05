@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.cli.pipeline.Fir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.native.Fir2IrOutput
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.native.NativeFirstStagePhaseContext
 data class NativeConfigurationArtifact(
     override val configuration: CompilerConfiguration,
     val environment: KotlinCoreEnvironment,
-    val diagnosticsCollector: BaseDiagnosticsCollector,
 ) : PipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): NativeConfigurationArtifact {
@@ -32,7 +30,6 @@ data class NativeFrontendArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
     val environment: KotlinCoreEnvironment,
-    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val phaseContext: NativeFirstStagePhaseContext,
 ) : FrontendPipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
@@ -49,7 +46,6 @@ data class NativeFir2IrArtifact(
     val fir2IrOutput: Fir2IrOutput,
     override val configuration: CompilerConfiguration,
     val environment: KotlinCoreEnvironment,
-    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val phaseContext: NativeFirstStagePhaseContext,
 ) : Fir2IrPipelineArtifact() {
     override val result: Fir2IrActualizedResult
@@ -64,7 +60,6 @@ data class NativeFir2IrArtifact(
 data class NativeSerializationArtifact(
     val serializerOutput: SerializerOutput,
     override val configuration: CompilerConfiguration,
-    val diagnosticsCollector: BaseDiagnosticsCollector,
     val phaseContext: NativeFirstStagePhaseContext,
 ) : PipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
@@ -76,7 +71,6 @@ data class NativeSerializationArtifact(
 data class NativeKlibSerializedArtifact(
     val outputKlibPath: String,
     override val configuration: CompilerConfiguration,
-    val diagnosticsCollector: BaseDiagnosticsCollector,
 ) : PipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): NativeKlibSerializedArtifact {

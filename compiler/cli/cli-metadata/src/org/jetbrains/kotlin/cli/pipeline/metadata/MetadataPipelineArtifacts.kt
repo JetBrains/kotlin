@@ -10,14 +10,12 @@ import org.jetbrains.kotlin.cli.metadata.AbstractMetadataSerializer.OutputInfo
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.library.SerializedMetadata
 
 data class MetadataFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
-    override val diagnosticsCollector: BaseDiagnosticsCollector,
     val sourceFiles: List<KtSourceFile>,
 ) : FrontendPipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)

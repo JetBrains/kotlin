@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_REGIS
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
-import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
@@ -56,7 +55,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
             configuration.messageCollector.report(INFO, configuration.toString())
         }
 
-        return ConfigurationPipelineArtifact(configuration, input.diagnosticsCollector, input.rootDisposable)
+        return ConfigurationPipelineArtifact(configuration, input.rootDisposable)
     }
 
     protected abstract fun createMetadataVersion(versionArray: IntArray): BinaryVersion

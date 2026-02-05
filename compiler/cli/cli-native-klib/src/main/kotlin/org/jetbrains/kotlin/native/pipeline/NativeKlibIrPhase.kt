@@ -28,7 +28,7 @@ object NativeIrSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeSe
     postActions = setOf(PerformanceNotifications.IrSerializationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeFir2IrArtifact): NativeSerializationArtifact? {
-        val (fir2IrOutput, configuration, _, diagnosticCollector, phaseContext) = input
+        val (fir2IrOutput, configuration, _, phaseContext) = input
         val headerKlibPath = configuration.konanGeneratedHeaderKlibPath?.removeSuffix(".klib")
         val outputKlibPath = phaseContext.config.outputPath
         if (!headerKlibPath.isNullOrEmpty()) {
@@ -50,7 +50,6 @@ object NativeIrSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeSe
         return NativeSerializationArtifact(
             serializerOutput = serializerOutput,
             configuration = configuration,
-            diagnosticsCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }
@@ -66,7 +65,7 @@ object NativeKlibWritingPhase : PipelinePhase<NativeSerializationArtifact, Nativ
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeSerializationArtifact): NativeKlibSerializedArtifact {
-        val (serializerOutput, configuration, diagnosticCollector, phaseContext) = input
+        val (serializerOutput, configuration, phaseContext) = input
         val outputKlibPath = phaseContext.config.outputPath
         phaseContext.writeKlib(
             KlibWriterInput(serializerOutput, outputKlibPath, produceHeaderKlib = false)
@@ -74,7 +73,6 @@ object NativeKlibWritingPhase : PipelinePhase<NativeSerializationArtifact, Nativ
         return NativeKlibSerializedArtifact(
             outputKlibPath = outputKlibPath,
             configuration = configuration,
-            diagnosticsCollector = diagnosticCollector,
         )
     }
 }

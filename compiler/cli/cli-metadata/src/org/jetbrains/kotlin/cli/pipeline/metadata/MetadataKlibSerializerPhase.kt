@@ -30,7 +30,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataInMemorySerializationArtifact {
-        val (firResult, configuration, _, _) = input
+        val (firResult, configuration, _) = input
         val metadataVersion = configuration.klibMetadataVersionOrDefault()
         val fragments = mutableMapOf<String, MutableList<ByteArray>>()
 

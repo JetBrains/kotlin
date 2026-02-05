@@ -23,7 +23,7 @@ object JvmScriptPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, Jvm
     name = "JvmScriptPipelinePhase",
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): JvmScriptPipelineArtifact? {
-        val (configuration, _, rootDisposable) = input
+        val (configuration, rootDisposable) = input
         val messageCollector = configuration.messageCollector
         if (configuration.scriptMode && configuration.freeArgsForScript.isEmpty()) {
             messageCollector.report(ERROR, "Specify script source path to evaluate")

@@ -132,7 +132,7 @@ abstract class MetadataLegacySerializerPhaseBase(
     postActions = setOf(PerformanceNotifications.BackendFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     final override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact {
-        val (firResult, configuration, _, _) = input
+        val (firResult, configuration, _) = input
         val metadataVersion = configuration.klibMetadataVersionOrDefault()
         val destDir = configuration.metadataDestinationDirectory!!
         val outputInfo = serialize(firResult.outputs, destDir, metadataVersion)

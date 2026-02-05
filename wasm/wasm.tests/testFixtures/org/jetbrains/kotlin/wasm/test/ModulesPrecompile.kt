@@ -22,23 +22,11 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInTestPipeline
-import org.jetbrains.kotlin.js.config.includes
-import org.jetbrains.kotlin.js.config.outputDir
-import org.jetbrains.kotlin.js.config.outputName
-import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
-import org.jetbrains.kotlin.js.config.wasmCompilation
+import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.DebugMode
-import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorStub
-import org.jetbrains.kotlin.wasm.config.wasmDebug
-import org.jetbrains.kotlin.wasm.config.wasmDependencyResolutionMap
-import org.jetbrains.kotlin.wasm.config.wasmEnableArrayRangeChecks
-import org.jetbrains.kotlin.wasm.config.wasmForceDebugFriendlyCompilation
-import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
-import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
-import org.jetbrains.kotlin.wasm.config.wasmTarget
-import org.jetbrains.kotlin.wasm.config.wasmUseNewExceptionProposal
+import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.test.handlers.writeTo
 import java.io.File
 
@@ -96,7 +84,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
         it.languageVersionSettings = languageSettings
     }
 
-    val input = ConfigurationPipelineArtifact(configuration, DiagnosticsCollectorStub()) {}
+    val input = ConfigurationPipelineArtifact(configuration) {}
 
     @OptIn(K1Deprecation::class)
     val environment = KotlinCoreEnvironment.createForProduction(

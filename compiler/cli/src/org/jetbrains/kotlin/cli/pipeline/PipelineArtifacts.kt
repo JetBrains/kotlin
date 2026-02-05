@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.pipeline
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -46,7 +44,6 @@ data class ArgumentsPipelineArtifact<out A : CommonCompilerArguments>(
     val messageCollector: GroupingMessageCollector,
     val performanceManager: PerformanceManager,
 ) : PipelineArtifact() {
-    val diagnosticsCollector: BaseDiagnosticsCollector = DiagnosticsCollectorImpl()
     override val configuration: CompilerConfiguration = CompilerConfiguration.create(messageCollector = messageCollector)
 
     @CliPipelineInternals(OPT_IN_MESSAGE)
@@ -57,7 +54,6 @@ data class ArgumentsPipelineArtifact<out A : CommonCompilerArguments>(
 
 data class ConfigurationPipelineArtifact(
     override val configuration: CompilerConfiguration,
-    val diagnosticsCollector: BaseDiagnosticsCollector,
     val rootDisposable: Disposable,
 ) : PipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
@@ -68,14 +64,12 @@ data class ConfigurationPipelineArtifact(
 
 abstract class FrontendPipelineArtifact : PipelineArtifact() {
     abstract val frontendOutput: AllModulesFrontendOutput
-    abstract val diagnosticsCollector: BaseDiagnosticsCollector
     abstract override val configuration: CompilerConfiguration
     abstract fun withNewFrontendOutputImpl(newFrontendOutput: AllModulesFrontendOutput): FrontendPipelineArtifact
 }
 
 abstract class Fir2IrPipelineArtifact : PipelineArtifact() {
     abstract val result: Fir2IrActualizedResult
-    abstract val diagnosticsCollector: BaseDiagnosticsCollector
     abstract override val configuration: CompilerConfiguration
 }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.Fir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
@@ -62,5 +63,5 @@ class Fir2IrCliBasedOutputArtifact<A : Fir2IrPipelineArtifact>(val cliArtifact: 
     override val irMangler: KotlinMangler.IrMangler
         get() = cliArtifact.result.components.irMangler
     override val diagnosticReporter: BaseDiagnosticsCollector
-        get() = cliArtifact.diagnosticsCollector
+        get() = cliArtifact.configuration.diagnosticsCollector
 }

@@ -22,7 +22,7 @@ object NativeFir2IrPhase : PipelinePhase<NativeFrontendArtifact, NativeFir2IrArt
     postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeFrontendArtifact): NativeFir2IrArtifact {
-        val (frontendOutput, configuration, environment, diagnosticCollector, phaseContext) = input
+        val (frontendOutput, configuration, environment, phaseContext) = input
         val fir2IrResult = phaseContext.fir2Ir(frontendOutput)
         SpecialBackendChecksTraversal(
             phaseContext,
@@ -33,7 +33,6 @@ object NativeFir2IrPhase : PipelinePhase<NativeFrontendArtifact, NativeFir2IrArt
             fir2IrOutput = fir2IrResult,
             configuration = configuration,
             environment = environment,
-            diagnosticsCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }
@@ -44,8 +43,8 @@ object NativePreSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeF
     preActions = setOf(PerformanceNotifications.IrPreLoweringStarted),
     postActions = setOf(PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    override fun executePhase(input: NativeFir2IrArtifact): NativeFir2IrArtifact? {
-        val (fir2IrOutput, configuration, environment, diagnosticCollector, phaseContext) = input
+    override fun executePhase(input: NativeFir2IrArtifact): NativeFir2IrArtifact {
+        val (fir2IrOutput, configuration, environment, phaseContext) = input
         val phaseConfig = configuration.phaseConfig ?: PhaseConfig()
         val phaserState = PhaserState()
         val engine = PhaseEngine(phaseConfig, phaserState, phaseContext)
@@ -54,7 +53,6 @@ object NativePreSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeF
             fir2IrOutput = loweredResult,
             configuration = configuration,
             environment = environment,
-            diagnosticsCollector = diagnosticCollector,
             phaseContext = phaseContext,
         )
     }
