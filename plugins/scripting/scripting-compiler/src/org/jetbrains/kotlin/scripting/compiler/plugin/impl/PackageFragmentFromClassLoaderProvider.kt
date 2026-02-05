@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -56,7 +55,7 @@ class PackageFragmentFromClassLoaderProviderExtension(
             PackagePartFromClassLoaderProvider(
                 classLoader,
                 languageVersionSettings,
-                compilerConfiguration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                compilerConfiguration
             )
 
         val lazyJavaPackageFragmentProvider =

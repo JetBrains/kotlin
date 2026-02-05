@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.diagnostics.impl
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 
 /**
  * [BaseDiagnosticsCollector] is a [DiagnosticReporter] which stores all reported diagnostics inside itself.
@@ -15,4 +15,16 @@ import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 abstract class BaseDiagnosticsCollector : DiagnosticReporter() {
     abstract val diagnostics: List<KtDiagnostic>
     abstract val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
+
+    object DoNothing : BaseDiagnosticsCollector() {
+        override val diagnostics: List<KtDiagnostic>
+            get() = emptyList()
+        override val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>
+            get() = emptyMap()
+
+        override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {}
+
+        override val hasErrors: Boolean
+            get() = false
+    }
 }

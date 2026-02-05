@@ -109,7 +109,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         try {
             setupCommonArguments(configuration, arguments)
             setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
-            val paths = computeKotlinPaths(collector, arguments)
+            val paths = computeKotlinPaths(configuration, arguments)
             if (collector.hasErrors()) {
                 return COMPILATION_ERROR
             }

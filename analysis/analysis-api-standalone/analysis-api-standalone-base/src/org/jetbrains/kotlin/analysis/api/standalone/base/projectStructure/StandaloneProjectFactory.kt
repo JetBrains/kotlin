@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -207,7 +208,7 @@ object StandaloneProjectFactory {
     ) {
         val project = environment.project
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
-        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), null, javaFileManager, project, null)
+        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, project, null)
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val allSourceFileRoots = sourceFiles.map { JavaRoot(it.virtualFile, JavaRoot.RootType.SOURCE) }
@@ -297,7 +298,7 @@ object StandaloneProjectFactory {
         jdkHome: Path?,
     ): List<Path> {
         val javaFileManager = project.getService(JavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
-        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), null, javaFileManager, project, null)
+        val javaModuleFinder = CliJavaModuleFinder(jdkHome?.toFile(), createStubConfigurationForReporting(), javaFileManager, project, null)
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val javaRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
@@ -556,10 +557,14 @@ object StandaloneProjectFactory {
         languageVersionSettings: LanguageVersionSettings = latestLanguageVersionSettings,
     ): (GlobalSearchScope) -> JvmPackagePartProvider = { scope ->
         JvmPackagePartProvider(languageVersionSettings, scope).apply {
-            addRoots(libraryRoots, MessageCollector.NONE)
+            addRoots(libraryRoots, createStubConfigurationForReporting())
         }
     }
 
     private val latestLanguageVersionSettings: LanguageVersionSettings =
         LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST)
+
+    private fun createStubConfigurationForReporting(): CompilerConfiguration {
+        return CompilerConfiguration.create(BaseDiagnosticsCollector.DoNothing, MessageCollector.NONE)
+    }
 }

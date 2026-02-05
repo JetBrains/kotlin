@@ -139,8 +139,11 @@ open class IncrementalFirJvmCompilerRunner(
                 setupJvmSpecificArguments(args)
             }
 
-            val paths = computeKotlinPaths(collector, args)
-            if (collector.hasErrors()) return ExitCode.COMPILATION_ERROR to emptyList()
+            val paths = computeKotlinPaths(configuration, args)
+            if (collector.hasErrors() || configuration.diagnosticsCollector.hasErrors){
+                configuration.diagnosticsCollector.reportToMessageCollector(configuration.messageCollector, configuration.renderDiagnosticInternalName)
+                return ExitCode.COMPILATION_ERROR to emptyList()
+            }
 
             // -- plugins
             val pluginClasspaths = args.pluginClasspaths?.toList() ?: emptyList()

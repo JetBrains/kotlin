@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -13,11 +12,11 @@ import org.jetbrains.kotlin.config.LanguageVersion
 class K2NativeCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfigurator() {
     override fun configureAnalysisFlags(
         arguments: CommonCompilerArguments,
-        collector: MessageCollector,
+        reporter: Reporter,
         languageVersion: LanguageVersion,
     ): MutableMap<AnalysisFlag<*>, Any> = with(arguments) {
         require(this is K2NativeCompilerArguments)
-        super.configureAnalysisFlags(arguments, collector, languageVersion).apply {
+        super.configureAnalysisFlags(arguments, reporter, languageVersion).apply {
             val optInList = (get(AnalysisFlags.optIn) as List<*>?).orEmpty()
             putAnalysisFlag(AnalysisFlags.optIn, optInList + listOf("kotlin.ExperimentalUnsignedTypes"))
             if (printIr)

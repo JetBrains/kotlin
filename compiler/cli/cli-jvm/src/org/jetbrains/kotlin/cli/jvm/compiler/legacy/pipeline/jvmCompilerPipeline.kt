@@ -180,7 +180,7 @@ private class ProjectEnvironmentWithCoreEnvironmentEmulation(
     override fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider {
         return super.getPackagePartProvider(fileSearchScope).also {
             (it as? JvmPackagePartProvider)?.run {
-                addRoots(initialRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+                addRoots(initialRoots, configuration)
                 packagePartProviders += this
             }
         }
@@ -207,8 +207,13 @@ fun createProjectEnvironment(
 
     val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE)
 
-    val javaModuleFinder =
-        CliJavaModuleFinder(configuration.get(JVMConfigurationKeys.JDK_HOME), messageCollector, javaFileManager, project, releaseTarget)
+    val javaModuleFinder = CliJavaModuleFinder(
+        configuration.get(JVMConfigurationKeys.JDK_HOME),
+        configuration,
+        javaFileManager,
+        project,
+        releaseTarget
+    )
 
     val outputDirectory =
         configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
@@ -218,7 +223,7 @@ fun createProjectEnvironment(
 
     val classpathRootsResolver = ClasspathRootsResolver(
         PsiManager.getInstance(project),
-        messageCollector,
+        configuration,
         configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
         { contentRootToVirtualFile(it, localFileSystem, projectEnvironment.jarFileSystem, messageCollector) },
         javaModuleFinder,

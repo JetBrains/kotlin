@@ -7,9 +7,14 @@ package org.jetbrains.kotlin.cli.common
 
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportInfo
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -24,8 +29,6 @@ fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
     createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
 ) {
-    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
     put(CommonConfigurationKeys.USE_FIR_EXTRA_CHECKERS, arguments.extraWarnings)
     put(CommonConfigurationKeys.METADATA_KLIB, arguments.metadataKlib)
@@ -45,7 +48,7 @@ fun CompilerConfiguration.setupCommonArguments(
     val irVerificationMode = arguments.verifyIr?.let { verifyIrString ->
         IrVerificationMode.resolveMode(verifyIrString).also {
             if (it == null) {
-                messageCollector.report(CompilerMessageSeverity.ERROR, "Unsupported IR verification mode $verifyIrString")
+                this.report(COMPILER_ARGUMENTS_ERROR, "Unsupported IR verification mode $verifyIrString")
             }
         }
     } ?: IrVerificationMode.NONE
@@ -54,8 +57,8 @@ fun CompilerConfiguration.setupCommonArguments(
     if (arguments.verifyIrVisibility) {
         put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
         if (irVerificationMode == IrVerificationMode.NONE) {
-            messageCollector.report(
-                CompilerMessageSeverity.WARNING,
+            this.report(
+                COMPILER_ARGUMENTS_WARNING,
                 "'-Xverify-ir-visibility' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
             )
         }
@@ -64,8 +67,8 @@ fun CompilerConfiguration.setupCommonArguments(
     if (arguments.verifyIrNestedOffsets) {
         put(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS, true)
         if (irVerificationMode == IrVerificationMode.NONE) {
-            messageCollector.report(
-                CompilerMessageSeverity.WARNING,
+            this.report(
+                COMPILER_ARGUMENTS_WARNING,
                 "'-Xverify-ir-nested-offsets' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
             )
         }
@@ -74,8 +77,8 @@ fun CompilerConfiguration.setupCommonArguments(
     @Suppress("DEPRECATION")
     if (arguments.useFirExperimentalCheckers) {
         put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, true)
-        messageCollector.report(
-            CompilerMessageSeverity.WARNING,
+        this.report(
+            COMPILER_ARGUMENTS_WARNING,
             "'-Xuse-fir-experimental-checkers' is deprecated and will be removed in a future release"
         )
     }
@@ -108,17 +111,33 @@ fun CompilerConfiguration.setupMetadataVersion(
     if (metadataVersionString != null) {
         val versionArray = BinaryVersion.parseVersionArray(metadataVersionString)
         when {
-            versionArray == null -> messageCollector.report(
-                CompilerMessageSeverity.ERROR, "Invalid metadata version: $metadataVersionString", null
+            versionArray == null -> this.report(
+                COMPILER_ARGUMENTS_ERROR, "Invalid metadata version: $metadataVersionString", null
             )
             createMetadataVersion == null -> throw IllegalStateException("Unable to create metadata version: missing argument")
             else -> put(CommonConfigurationKeys.METADATA_VERSION, createMetadataVersion(versionArray))
         }
     }
 }
+fun CommonCompilerArgumentsConfigurator.Reporter.Companion.fromConfiguration(configuration: CompilerConfiguration): CommonCompilerArgumentsConfigurator.Reporter {
+    return object : CommonCompilerArgumentsConfigurator.Reporter {
+        override fun reportWarning(message: String) {
+            configuration.report(COMPILER_ARGUMENTS_WARNING, message)
+        }
+
+        override fun reportError(message: String) {
+            configuration.report(COMPILER_ARGUMENTS_ERROR, message)
+        }
+
+        override fun info(message: String) {
+            configuration.reportInfo(message)
+        }
+    }
+}
 
 fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompilerArguments) {
-    languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+    val reporter = CommonCompilerArgumentsConfigurator.Reporter.fromConfiguration(this)
+    languageVersionSettings = arguments.toLanguageVersionSettings(reporter)
 }
 
 private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompilerArguments) {
@@ -157,7 +176,7 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
 
 const val KOTLIN_HOME_PROPERTY = "kotlin.home"
 
-fun computeKotlinPaths(messageCollector: MessageCollector, arguments: CommonCompilerArguments): KotlinPaths? {
+fun computeKotlinPaths(configuration: CompilerConfiguration, arguments: CommonCompilerArguments): KotlinPaths? {
     val kotlinHomeProperty = System.getProperty(KOTLIN_HOME_PROPERTY)
     val kotlinHome = when {
         arguments.kotlinHome != null -> File(arguments.kotlinHome!!)
@@ -169,11 +188,11 @@ fun computeKotlinPaths(messageCollector: MessageCollector, arguments: CommonComp
         kotlinHome == null -> PathUtil.kotlinPathsForCompiler
         kotlinHome.isDirectory -> KotlinPathsFromHomeDir(kotlinHome)
         else -> {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Kotlin home does not exist or is not a directory: $kotlinHome", null)
+            configuration.report(COMPILER_ARGUMENTS_ERROR, "Kotlin home does not exist or is not a directory: $kotlinHome")
             null
         }
     }?.also {
-        messageCollector.report(CompilerMessageSeverity.LOGGING, "Using Kotlin home directory " + it.homePath, null)
+        configuration.reportLog("Using Kotlin home directory " + it.homePath, null)
     }
 }
 
@@ -245,14 +264,12 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     val rawFragmentSources = arguments.fragmentSources
     val rawFragmentRefines = arguments.fragmentRefines
 
-    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
     fun reportError(message: String) {
-        messageCollector.report(CompilerMessageSeverity.ERROR, message)
+        this.report(COMPILER_ARGUMENTS_ERROR, message)
     }
 
     fun reportWarning(message: String) {
-        messageCollector.report(CompilerMessageSeverity.WARNING, message)
+        this.report(COMPILER_ARGUMENTS_WARNING, message)
     }
 
     if (rawFragments == null) {

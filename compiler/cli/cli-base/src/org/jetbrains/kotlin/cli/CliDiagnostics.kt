@@ -8,13 +8,29 @@ package org.jetbrains.kotlin.cli
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.errorWithoutSource
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.warningWithoutSource
+import org.jetbrains.kotlin.diagnostics.strongWarningWithoutSource
 
 object CliDiagnostics : KtDiagnosticsContainer() {
-    val COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL: KtSourcelessDiagnosticFactory by warningWithoutSource()
-    val REDUNDANT_CLI_ARG: KtSourcelessDiagnosticFactory by warningWithoutSource()
+    val COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val REDUNDANT_CLI_ARG: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val CLASSPATH_RESOLUTION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val CLASSPATH_RESOLUTION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val JAVA_MODULE_RESOLUTION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val ROOTS_RESOLUTION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val ROOTS_RESOLUTION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val COMPILER_PLUGIN_INITIALIZATION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val COMPILER_PLUGIN_INITIALIZATION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val INITIALIZATION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+
+    val COMPILER_ARGUMENTS_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val COMPILER_ARGUMENTS_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val JAVAC_INTEGRATION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = Messages
 
@@ -22,6 +38,23 @@ object CliDiagnostics : KtDiagnosticsContainer() {
         override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("CLI") { map ->
             map.put(COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL, MESSAGE_PLACEHOLDER)
             map.put(REDUNDANT_CLI_ARG, MESSAGE_PLACEHOLDER)
+            map.put(CLASSPATH_RESOLUTION_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(CLASSPATH_RESOLUTION_ERROR, MESSAGE_PLACEHOLDER)
+            map.put(JAVA_MODULE_RESOLUTION_ERROR, MESSAGE_PLACEHOLDER)
+            map.put(ROOTS_RESOLUTION_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(ROOTS_RESOLUTION_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(COMPILER_PLUGIN_INITIALIZATION_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(COMPILER_PLUGIN_INITIALIZATION_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(INITIALIZATION_WARNING, MESSAGE_PLACEHOLDER)
+
+
+
+            map.put(COMPILER_ARGUMENTS_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(COMPILER_ARGUMENTS_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(JAVAC_INTEGRATION_ERROR, MESSAGE_PLACEHOLDER)
         }
     }
 }
