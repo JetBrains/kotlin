@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.test.runners.ir.jklib
+package org.jetbrains.kotlin.jklib.test.runners
 
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
+
 
 abstract class AbstractJKlibIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
     val targetFrontend: FrontendKind<FrontendOutput>

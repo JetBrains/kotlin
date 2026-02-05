@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.generators.dsl.junit4.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.runners.ir.jklib.AbstractFirLightTreeJKlibIrTextTest
+import org.jetbrains.kotlin.jklib.test.runners.AbstractFirLightTreeJKlibIrTextTest
 
 fun main(args: Array<String>) {
     val testsRoot = args[0]

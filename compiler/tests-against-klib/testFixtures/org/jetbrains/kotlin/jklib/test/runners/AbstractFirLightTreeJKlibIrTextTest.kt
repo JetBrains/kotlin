@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.test.runners.ir.jklib
+package org.jetbrains.kotlin.jklib.test.runners
 
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestMetadata
@@ -13,5 +13,3 @@ open class AbstractFirLightTreeJKlibIrTextTest : AbstractFirJKlibIrTextTest(FirP
 // To make it usable immediately, I can add a companion object or hardcode some tests, 
 // OR I can use @TestMetadata to point to existing tests and hope JUnit picks it up (if using JUnit5 dynamic tests).
 // AbstractKotlinCompilerWithTargetBackendTest typically works with generated tests.
-
-

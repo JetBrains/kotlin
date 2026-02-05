@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.test.runners.ir.jklib
+package org.jetbrains.kotlin.jklib.test.runners
 
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.config.AnalysisFlag

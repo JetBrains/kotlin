@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.test.runners.ir.jklib
+package org.jetbrains.kotlin.jklib.test.runners
 
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
