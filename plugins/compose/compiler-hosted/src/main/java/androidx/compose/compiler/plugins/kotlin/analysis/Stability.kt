@@ -200,6 +200,8 @@ class StabilityInferencer(
 ) {
     private val externalTypeMatcherCollection = FqNameMatcherCollection(externalStableTypeMatchers)
 
+    private val cache = mutableMapOf<SymbolForAnalysis, Stability>()
+
     fun stabilityOf(irType: IrType): Stability =
         stabilityOf(irType, emptyMap(), emptySet())
 
@@ -212,7 +214,20 @@ class StabilityInferencer(
         val typeArguments = declaration.typeParameters.map { substitutions[it.symbol] }
         val fullSymbol = SymbolForAnalysis(symbol, typeArguments)
 
-        if (currentlyAnalyzing.contains(fullSymbol)) return Stability.Unstable
+        if (fullSymbol in cache) return cache[fullSymbol]!!
+
+        val result = stabilityOf(declaration, fullSymbol, substitutions, currentlyAnalyzing)
+        cache[fullSymbol] = result
+        return result
+    }
+
+    private fun stabilityOf(
+        declaration: IrClass,
+        symbol: SymbolForAnalysis,
+        substitutions: Map<IrTypeParameterSymbol, IrTypeArgument>,
+        currentlyAnalyzing: Set<SymbolForAnalysis>
+    ): Stability {
+        if (currentlyAnalyzing.contains(symbol)) return Stability.Unstable
         if (declaration.hasStableMarkedDescendant()) return Stability.Stable
         if (declaration.isEnumClass || declaration.isEnumEntry) return Stability.Stable
         if (declaration.defaultType.isPrimitiveType()) return Stability.Stable
@@ -222,7 +237,7 @@ class StabilityInferencer(
             error("Builtins Stub: ${declaration.name}")
         }
 
-        val analyzing = currentlyAnalyzing + fullSymbol
+        val analyzing = currentlyAnalyzing + symbol
 
         if (canInferStability(declaration) || declaration.isExternalStableType()) {
             val fqName = declaration.fqNameWhenAvailable?.toString() ?: ""
