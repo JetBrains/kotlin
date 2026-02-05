@@ -7,7 +7,7 @@ open class Base() {
     open fun fakeOverride() {}
 }
 
-<!JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM;JVM;JVM}!>expect<!> class Foo : Base
+<!JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}!>expect<!> class Foo : Base
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java

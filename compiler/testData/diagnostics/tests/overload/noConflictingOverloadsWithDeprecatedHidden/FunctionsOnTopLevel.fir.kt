@@ -108,8 +108,8 @@ fun testDifferentReturnTypes(): UserKlassB = UserKlassB()
 @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS!>fun testMultipleTypeAliasedValueParameterTypesBReverse(arg1: SameUserKlassA, arg2: SameUserKlassB) {}<!>
 
 
-@Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithIdenticalDefaultArguments(arg: UserKlass = defaultArgument) {}<!>
-<!CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithIdenticalDefaultArguments(arg: UserKlass = defaultArgument) {}<!>
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithIdenticalDefaultArguments(arg: UserKlass = defaultArgument) {}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithIdenticalDefaultArguments(arg: UserKlass = defaultArgument) {}<!>
 
 @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInValueParameterDefaultArgumentsPresence(arg: UserKlass = defaultArgument) {}<!>
 <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInValueParameterDefaultArgumentsPresence(arg: UserKlass) {}<!>
@@ -117,14 +117,14 @@ fun testDifferentReturnTypes(): UserKlassB = UserKlassB()
 <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInValueParameterDefaultArgumentsPresenceReverse(arg: UserKlass = defaultArgument) {}<!>
 @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS!>fun testDifferencesInValueParameterDefaultArgumentsPresenceReverse(arg: UserKlass) {}<!>
 
-@Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithDifferentDefaultArguments(arg: UserKlass = defaultArgumentA) {}<!>
-<!CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithDifferentDefaultArguments(arg: UserKlass = defaultArgumentB) {}<!>
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithDifferentDefaultArguments(arg: UserKlass = defaultArgumentA) {}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithDifferentDefaultArguments(arg: UserKlass = defaultArgumentB) {}<!>
 
-@Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithAliasedDefaultArguments(arg: UserKlass = defaultArgument) {}<!>
-<!CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithAliasedDefaultArguments(arg: UserKlass = sameDefaultArgument) {}<!>
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithAliasedDefaultArguments(arg: UserKlass = defaultArgument) {}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithAliasedDefaultArguments(arg: UserKlass = sameDefaultArgument) {}<!>
 
-<!CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithAliasedDefaultArgumentsReverse(arg: UserKlass = defaultArgument) {}<!>
-@Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithAliasedDefaultArgumentsReverse(arg: UserKlass = sameDefaultArgument) {}<!>
+<!CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithAliasedDefaultArgumentsReverse(arg: UserKlass = defaultArgument) {}<!>
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS!>fun testValueParameterWithAliasedDefaultArgumentsReverse(arg: UserKlass = sameDefaultArgument) {}<!>
 
 
 @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_JVM_DECLARATIONS!>fun <T> testIdenticalTypeParametersA() {}<!>

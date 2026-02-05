@@ -5,7 +5,7 @@
 // FILE: common.kt
 
 expect fun foo1(x: Int)
-<!EXPECT_ACTUAL_IR_MISMATCH{JVM;JVM}!>expect<!> fun foo2(x: Int)
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> fun foo2(x: Int)
 
 expect class NoArgConstructor()
 

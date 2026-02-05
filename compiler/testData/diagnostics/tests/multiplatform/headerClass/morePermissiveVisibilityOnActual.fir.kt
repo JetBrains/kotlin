@@ -16,7 +16,7 @@
     protected fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>protectedFun3<!>()
 
     open internal fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>openInternalFun<!>()
-    open fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM;JVM}!>openPublicFun<!>()
+    open fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>openPublicFun<!>()
 }
 
 // MODULE: m2-jvm()()(m1-common)

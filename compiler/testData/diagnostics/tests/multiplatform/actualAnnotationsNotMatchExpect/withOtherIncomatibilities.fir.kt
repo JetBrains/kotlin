@@ -8,7 +8,7 @@ annotation class Ann
 <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> inline fun hasWeakIncompatibility()
 
 @Ann
-<!EXPECT_ACTUAL_IR_MISMATCH{JVM;JVM}!>expect<!> fun hasStrongIncompatibility(arg: Int)
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> fun hasStrongIncompatibility(arg: Int)
 
 expect fun hasStrongIncompatibility(arg: Double)
 

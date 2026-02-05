@@ -21,7 +21,7 @@ open class Base {
     var varFakeOverrideGetterAndSetter: Int = 0
 }
 
-<!JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM;JVM}!>expect<!> class Foo {
+<!JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}!>expect<!> class Foo {
     val valOverriddenGetter: Int
     val <!KOTLIN_ACTUAL_ANNOTATION_MISSING{JVM}!>valOverriddenGetter_missingAnootation<!>: Int
     val valFakeOverrideGetter: Int
