@@ -1,0 +1,45 @@
+FILE: Something.kt
+    public final annotation class A : R|kotlin/Annotation| {
+        public [ContainingClassKey=A] constructor([CorrespondingProperty=/A.x] x: R|kotlin/String|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val x: R|kotlin/String| = R|<local>/x|
+            public [ContainingClassKey=A] get(): R|kotlin/String|
+
+    }
+    public final annotation class Something : R|kotlin/Annotation| {
+        public [ContainingClassKey=Something] constructor(): R|Something| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: C.kt
+    public open class C : R|kotlin/Any| {
+        public [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(@R|A|(x = String(SomeWord) [evaluated = String(SomeWord)]) x: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+    }
+FILE: D.kt
+    public final class D : R|kotlin/Any| {
+        public [ContainingClassKey=D] constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|Something|() public final fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class E : R|C| {
+        public [ContainingClassKey=E] constructor(): R|E| {
+            super<R|C|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

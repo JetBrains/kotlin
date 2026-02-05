@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
@@ -122,6 +124,10 @@ abstract class AbstractJsBlackBoxCodegenTestBase(
         }
 
         forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
+            defaultDirectives {
+                +FIR_DUMP
+                +RENDER_FIR_DECLARATION_ATTRIBUTES
+            }
             configureFirHandlersStep {
                 useHandlers(::FirInterpreterDumpHandler)
             }

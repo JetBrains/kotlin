@@ -1,0 +1,28 @@
+FILE: Main.kt
+    package one.two
+
+    public final class Foo : R|kotlin/Any| {
+        public [ContainingClassKey=Foo] constructor(): R|one/two/Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private [ContainingClassKey=Companion] constructor(): R|one/two/Foo.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final const [EvaluatedValue=Int(1)] val FOO: R|kotlin/Int| = Int(1)
+                public [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+            public final const [EvaluatedValue=Int(3)] val BAZ: R|kotlin/Int| = Q|one/two/Bar|.R|one/two/Bar.BAR*s|.R|kotlin/Int.plus|(Int(1))
+                public [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+            public final const [EvaluatedValue=Int(5)] val DOO: R|kotlin/Int| = Q|one/two/Boo|.R|one/two/Boo.BOO*s|.R|kotlin/Int.plus|(Int(1))
+                public [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

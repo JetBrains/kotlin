@@ -1,0 +1,26 @@
+FILE: inJavaPackage.kt
+    package java2d
+
+    public final class A : R|kotlin/Any| {
+        public [ContainingClassKey=A] constructor(): R|java2d/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun getConst(): R|kotlin/String| {
+            ^getConst this@R|java2d/A.Companion|.R|java2d/A.Companion.OK|
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private [ContainingClassKey=Companion] constructor(): R|java2d/A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final const [EvaluatedValue=String(OK)] val OK: R|kotlin/String| = String(OK)
+                public [ContainingClassKey=Companion] get(): R|kotlin/String|
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|java2d/A.A|().R|java2d/A.getConst|()
+    }

@@ -1,0 +1,39 @@
+FILE: unsignedConst.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final const [EvaluatedValue=UByte(1)] val byteVal: R|kotlin/UByte| = UByte(1)
+        public get(): R|kotlin/UByte|
+    public final const [EvaluatedValue=UShort(2)] val shortVal: R|kotlin/UShort| = UShort(2)
+        public get(): R|kotlin/UShort|
+    public final const [EvaluatedValue=UInt(3)] val intVal: R|kotlin/UInt| = UInt(3)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=ULong(4)] val longVal: R|kotlin/ULong| = ULong(4)
+        public get(): R|kotlin/ULong|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/byteVal|.R|/id|<R|kotlin/UByte|>(), UInt(1).R|kotlin/UInt.toUByte|()) ->  {
+                ^box String(Fail 1)
+            }
+        }
+
+        when () {
+            !=(R|/shortVal|.R|/id|<R|kotlin/UShort|>(), UInt(2).R|kotlin/UInt.toUShort|()) ->  {
+                ^box String(Fail 2)
+            }
+        }
+
+        when () {
+            !=(R|/intVal|.R|/id|<R|kotlin/UInt|>(), UInt(3).R|kotlin/UInt.toUInt|()) ->  {
+                ^box String(Fail 3)
+            }
+        }
+
+        when () {
+            !=(R|/longVal|.R|/id|<R|kotlin/ULong|>(), UInt(4).R|kotlin/UInt.toULong|()) ->  {
+                ^box String(Fail 4)
+            }
+        }
+
+        ^box String(OK)
+    }

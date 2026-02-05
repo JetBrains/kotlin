@@ -1,0 +1,31 @@
+FILE: stdlibConst.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final const [EvaluatedValue=Int(49)] val code: R|kotlin/Int| = Char(1).R|kotlin/code|
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(5)] val floorDiv: R|kotlin/Int| = Int(10).R|kotlin/floorDiv|(Int(2))
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(2)] val mod: R|kotlin/Int| = Int(5).R|kotlin/mod|(Int(3))
+        public get(): R|kotlin/Int|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/code|.R|/id|<R|kotlin/Int|>(), Int(49)) ->  {
+                ^box String(Fail 1)
+            }
+        }
+
+        when () {
+            !=(R|/floorDiv|.R|/id|<R|kotlin/Int|>(), Int(5)) ->  {
+                ^box String(Fail 2)
+            }
+        }
+
+        when () {
+            !=(R|/mod|.R|/id|<R|kotlin/Int|>(), Int(2)) ->  {
+                ^box String(Fail 3)
+            }
+        }
+
+        ^box String(OK)
+    }

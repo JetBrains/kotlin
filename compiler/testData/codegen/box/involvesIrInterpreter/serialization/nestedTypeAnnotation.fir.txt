@@ -1,0 +1,38 @@
+Module: lib
+FILE: lib.kt
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY|]) public final annotation class TypeAnnotation : R|kotlin/Annotation| {
+        public [ContainingClassKey=TypeAnnotation] constructor([CorrespondingProperty=/TypeAnnotation.str] str: R|kotlin/String|): R|TypeAnnotation| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+            public [ContainingClassKey=TypeAnnotation] get(): R|kotlin/String|
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY|]) public final annotation class Nested : R|kotlin/Annotation| {
+        public [ContainingClassKey=Nested] constructor([CorrespondingProperty=/Nested.a] a: R|TypeAnnotation|): R|Nested| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val a: R|TypeAnnotation| = R|<local>/a|
+            public [ContainingClassKey=Nested] get(): R|TypeAnnotation|
+
+    }
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY|]) public final annotation class NestedArray : R|kotlin/Annotation| {
+        public [ContainingClassKey=NestedArray] constructor([CorrespondingProperty=/NestedArray.a] a: R|kotlin/Array<TypeAnnotation>|): R|NestedArray| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val a: R|kotlin/Array<TypeAnnotation>| = R|<local>/a|
+            public [ContainingClassKey=NestedArray] get(): R|kotlin/Array<TypeAnnotation>|
+
+    }
+    public final val a: R|@R|Nested|(a = R|/TypeAnnotation.TypeAnnotation|(<strcat>(String(Int), String(Anno))) [evaluated = R|/TypeAnnotation.TypeAnnotation|(String(IntAnno))])  kotlin/Int| = Int(1)
+        public get(): R|@R|Nested|(a = R|/TypeAnnotation.TypeAnnotation|(<strcat>(String(Int), String(Anno))) [evaluated = R|/TypeAnnotation.TypeAnnotation|(String(IntAnno))])  kotlin/Int|
+    public final val b: R|@R|NestedArray|(a = <collectionLiteralCall>(R|/TypeAnnotation.TypeAnnotation|(<strcat>(String(Element1), String(Anno))), R|/TypeAnnotation.TypeAnnotation|(<strcat>(String(Element2), String(Anno)))) [evaluated = <collectionLiteralCall>(R|/TypeAnnotation.TypeAnnotation|(String(Element1Anno)), R|/TypeAnnotation.TypeAnnotation|(String(Element2Anno)))])  kotlin/Int| = Int(1)
+        public get(): R|@R|NestedArray|(a = <collectionLiteralCall>(R|/TypeAnnotation.TypeAnnotation|(<strcat>(String(Element1), String(Anno))), R|/TypeAnnotation.TypeAnnotation|(<strcat>(String(Element2), String(Anno)))) [evaluated = <collectionLiteralCall>(R|/TypeAnnotation.TypeAnnotation|(String(Element1Anno)), R|/TypeAnnotation.TypeAnnotation|(String(Element2Anno)))])  kotlin/Int|
+Module: main
+FILE: main.kt
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

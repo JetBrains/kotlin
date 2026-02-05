@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.renderer.FirClassMemberRenderer
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRenderer
+import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttributes
 import org.jetbrains.kotlin.fir.renderer.FirPackageDirectiveRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirSymbolRendererWithStaticFlag
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPE
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_FIR_DUMP_HANDLER
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.EXPLICITLY_GENERATE_PLUGIN_FILES
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -67,7 +70,8 @@ class FirDumpHandler(
                 builder = builderForModule,
                 packageDirectiveRenderer = FirPackageDirectiveRenderer(),
                 classMemberRenderer = FirClassMemberRendererWithGeneratedDeclarations(part.session),
-                referencedSymbolRenderer = FirSymbolRendererWithStaticFlag()
+                referencedSymbolRenderer = FirSymbolRendererWithStaticFlag(),
+                declarationRenderer = if (RENDER_FIR_DECLARATION_ATTRIBUTES in module.directives) FirDeclarationRendererWithFilteredAttributes() else FirDeclarationRenderer(),
             )
             allFiles.forEach {
                 renderer.renderElementAsString(it)

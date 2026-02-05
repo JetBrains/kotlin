@@ -1,0 +1,58 @@
+FILE: enumName.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        private [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+            super<R|kotlin/Enum<EnumClass>|>()
+        }
+
+        public final static [ContainingClassKey=EnumClass] enum entry OK: R|EnumClass|
+        public final static [ContainingClassKey=EnumClass] enum entry VALUE: R|EnumClass|
+        public final static [ContainingClassKey=EnumClass] enum entry anotherValue: R|EnumClass|
+        public final static [ContainingClassKey=EnumClass] enum entry WITH_UNDERSCORE: R|EnumClass|
+        public final static [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        }
+
+        public final static [ContainingClassKey=EnumClass] fun valueOf(value: R|kotlin/String|): R|EnumClass| {
+        }
+
+        public final static [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
+    }
+    public final const [EvaluatedValue=String(OK)] val name1: R|kotlin/String| = Q|EnumClass|.R|/EnumClass.OK|.R|SubstitutionOverride</EnumClass.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(VALUE)] val name2: R|kotlin/String| = Q|EnumClass|.R|/EnumClass.VALUE|.R|SubstitutionOverride</EnumClass.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(anotherValue)] val name3: R|kotlin/String| = Q|EnumClass|.R|/EnumClass.anotherValue|.R|SubstitutionOverride</EnumClass.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(WITH_UNDERSCORE)] val name4: R|kotlin/String| = Q|EnumClass|.R|/EnumClass.WITH_UNDERSCORE|.R|SubstitutionOverride</EnumClass.name: R|kotlin/String|>|
+        public get(): R|kotlin/String|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(Q|EnumClass|.R|/EnumClass.OK|.R|SubstitutionOverride</EnumClass.name: R|kotlin/String|>|.R|/id|<R|kotlin/String|>(), String(OK)) ->  {
+                ^box String(Fail 1)
+            }
+        }
+
+        when () {
+            !=(R|/name2|.R|/id|<R|kotlin/String|>(), String(VALUE)) ->  {
+                ^box String(Fail 2)
+            }
+        }
+
+        when () {
+            !=(R|/name3|.R|/id|<R|kotlin/String|>(), String(anotherValue)) ->  {
+                ^box String(Fail 3)
+            }
+        }
+
+        when () {
+            !=(R|/name4|.R|/id|<R|kotlin/String|>(), String(WITH_UNDERSCORE)) ->  {
+                ^box String(Fail 4)
+            }
+        }
+
+        ^box R|/name1|.R|/id|<R|kotlin/String|>()
+    }

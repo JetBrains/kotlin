@@ -1,0 +1,363 @@
+FILE: equals_after.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final const [EvaluatedValue=Boolean(true)] val trueVal: R|kotlin/Boolean| = Boolean(true)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val falseVal: R|kotlin/Boolean| = Boolean(false)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Char(1)] val charOneVal: R|kotlin/Char| = Char(1)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Char(2)] val charTwoVal: R|kotlin/Char| = Char(2)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Char(3)] val charThreeVal: R|kotlin/Char| = Char(3)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Char(4)] val charFourVal: R|kotlin/Char| = Char(4)
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Byte(-1)] val byteMinusOneVal: R|kotlin/Byte| = Int(-1).R|kotlin/Int.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(1)] val byteOneVal: R|kotlin/Byte| = Int(1).R|kotlin/Int.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(2)] val byteTwoVal: R|kotlin/Byte| = Int(2).R|kotlin/Int.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(3)] val byteThreeVal: R|kotlin/Byte| = Int(3).R|kotlin/Int.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Byte(4)] val byteFourVal: R|kotlin/Byte| = Int(4).R|kotlin/Int.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Short(-1)] val shortMinusOneVal: R|kotlin/Short| = Int(-1).R|kotlin/Int.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(1)] val shortOneVal: R|kotlin/Short| = Int(1).R|kotlin/Int.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(2)] val shortTwoVal: R|kotlin/Short| = Int(2).R|kotlin/Int.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(3)] val shortThreeVal: R|kotlin/Short| = Int(3).R|kotlin/Int.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Short(4)] val shortFourVal: R|kotlin/Short| = Int(4).R|kotlin/Int.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Int(-1)] val intMinusOneVal: R|kotlin/Int| = Int(-1)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val intOneVal: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(2)] val intTwoVal: R|kotlin/Int| = Int(2)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(3)] val intThreeVal: R|kotlin/Int| = Int(3)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(4)] val intFourVal: R|kotlin/Int| = Int(4)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Long(-1)] val longMinusOneVal: R|kotlin/Long| = Long(1).R|kotlin/Long.unaryMinus|()
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(1)] val longOneVal: R|kotlin/Long| = Long(1)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(2)] val longTwoVal: R|kotlin/Long| = Long(2)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(3)] val longThreeVal: R|kotlin/Long| = Long(3)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Long(4)] val longFourVal: R|kotlin/Long| = Long(4)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=Float(-1.0)] val floatMinusOneVal: R|kotlin/Float| = Float(1.0).R|kotlin/Float.unaryMinus|()
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Float(1.0)] val floatOneVal: R|kotlin/Float| = Float(1.0)
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Float(2.0)] val floatTwoVal: R|kotlin/Float| = Float(2.0)
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Float(3.0)] val floatThreeVal: R|kotlin/Float| = Float(3.0)
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Float(4.0)] val floatFourVal: R|kotlin/Float| = Float(4.0)
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Double(-1.0)] val doubleMinusOneVal: R|kotlin/Double| = Double(1.0).R|kotlin/Double.unaryMinus|()
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Double(1.0)] val doubleOneVal: R|kotlin/Double| = Double(1.0)
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Double(2.0)] val doubleTwoVal: R|kotlin/Double| = Double(2.0)
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Double(3.0)] val doubleThreeVal: R|kotlin/Double| = Double(3.0)
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Double(4.0)] val doubleFourVal: R|kotlin/Double| = Double(4.0)
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=String(123)] val someStr: R|kotlin/String| = String(123)
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(other)] val otherStr: R|kotlin/String| = String(other)
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=Boolean(true)] val equalsBoolean1: R|kotlin/Boolean| = R|/trueVal|.R|kotlin/Boolean.equals|(R|/trueVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsBoolean2: R|kotlin/Boolean| = ==(R|/trueVal|, R|/falseVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsBoolean3: R|kotlin/Boolean| = R|/falseVal|.R|kotlin/Boolean.equals|(Int(1))
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsChar1: R|kotlin/Boolean| = R|/charOneVal|.R|kotlin/Char.equals|(R|/charTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val equalsChar2: R|kotlin/Boolean| = R|/charTwoVal|.R|kotlin/Char.equals|(R|/charTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsChar3: R|kotlin/Boolean| = ==(R|/charThreeVal|, R|/charTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsChar4: R|kotlin/Boolean| = R|/charFourVal|.R|kotlin/Char.equals|(Int(1))
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsByte1: R|kotlin/Boolean| = R|/byteOneVal|.R|kotlin/Byte.equals|(R|/byteTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val equalsByte2: R|kotlin/Boolean| = R|/byteTwoVal|.R|kotlin/Byte.equals|(R|/byteTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsByte3: R|kotlin/Boolean| = ==(R|/byteThreeVal|, R|/byteTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsByte4: R|kotlin/Boolean| = R|/byteFourVal|.R|kotlin/Byte.equals|(Int(1))
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsShort1: R|kotlin/Boolean| = R|/shortOneVal|.R|kotlin/Short.equals|(R|/shortTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val equalsShort2: R|kotlin/Boolean| = R|/shortTwoVal|.R|kotlin/Short.equals|(R|/shortTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsShort3: R|kotlin/Boolean| = ==(R|/shortThreeVal|, R|/shortTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsShort4: R|kotlin/Boolean| = R|/shortFourVal|.R|kotlin/Short.equals|(Int(1))
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsInt1: R|kotlin/Boolean| = R|/intOneVal|.R|kotlin/Int.equals|(R|/intTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val equalsInt2: R|kotlin/Boolean| = R|/intTwoVal|.R|kotlin/Int.equals|(R|/intTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsInt3: R|kotlin/Boolean| = ==(R|/intThreeVal|, R|/intTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsInt4: R|kotlin/Boolean| = R|/intFourVal|.R|kotlin/Int.equals|(Int(1))
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsLong1: R|kotlin/Boolean| = R|/longOneVal|.R|kotlin/Long.equals|(R|/longTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val equalsLong2: R|kotlin/Boolean| = R|/longTwoVal|.R|kotlin/Long.equals|(R|/longTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsLong3: R|kotlin/Boolean| = ==(R|/longThreeVal|, R|/longTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsLong4: R|kotlin/Boolean| = R|/longFourVal|.R|kotlin/Long.equals|(Int(1))
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsFloat1: R|kotlin/Boolean| = R|/floatOneVal|.R|kotlin/Float.equals|(R|/floatTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val equalsFloat2: R|kotlin/Boolean| = R|/floatTwoVal|.R|kotlin/Float.equals|(R|/floatTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsFloat3: R|kotlin/Boolean| = ==(R|/floatThreeVal|, R|/floatTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsFloat4: R|kotlin/Boolean| = R|/floatFourVal|.R|kotlin/Float.equals|(Int(1))
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsDouble1: R|kotlin/Boolean| = R|/doubleOneVal|.R|kotlin/Double.equals|(R|/doubleTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val equalsDouble2: R|kotlin/Boolean| = R|/doubleTwoVal|.R|kotlin/Double.equals|(R|/doubleTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsDouble3: R|kotlin/Boolean| = ==(R|/doubleThreeVal|, R|/doubleTwoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsDouble4: R|kotlin/Boolean| = R|/doubleFourVal|.R|kotlin/Double.equals|(Int(1))
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsString1: R|kotlin/Boolean| = R|/someStr|.R|kotlin/String.equals|(R|/otherStr|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val equalsString2: R|kotlin/Boolean| = R|/someStr|.R|kotlin/String.equals|(String(123))
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsString3: R|kotlin/Boolean| = ==(R|/otherStr|, R|/someStr|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equalsString4: R|kotlin/Boolean| = R|/someStr|.R|kotlin/String.equals|(Int(1))
+        public get(): R|kotlin/Boolean|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/equalsBoolean1|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 1.1)
+            }
+        }
+
+        when () {
+            !=(R|/equalsBoolean2|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 1.2)
+            }
+        }
+
+        when () {
+            !=(R|/equalsBoolean3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 1.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsChar1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 2.1)
+            }
+        }
+
+        when () {
+            !=(R|/equalsChar2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 2.2)
+            }
+        }
+
+        when () {
+            !=(R|/equalsChar3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 2.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsChar4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 2.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsByte1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 3.1)
+            }
+        }
+
+        when () {
+            !=(R|/equalsByte2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 3.2)
+            }
+        }
+
+        when () {
+            !=(R|/equalsByte3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 3.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsByte4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 3.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsShort1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 4.1)
+            }
+        }
+
+        when () {
+            !=(R|/equalsShort2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 4.2)
+            }
+        }
+
+        when () {
+            !=(R|/equalsShort3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 4.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsShort4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 4.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsInt1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 5.1)
+            }
+        }
+
+        when () {
+            !=(R|/equalsInt2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 5.2)
+            }
+        }
+
+        when () {
+            !=(R|/equalsInt3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 5.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsInt4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 5.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsLong1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 6.1)
+            }
+        }
+
+        when () {
+            !=(R|/equalsLong2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 6.2)
+            }
+        }
+
+        when () {
+            !=(R|/equalsLong3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 6.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsLong4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 6.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsFloat1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 7.1)
+            }
+        }
+
+        when () {
+            !=(R|/equalsFloat2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 7.2)
+            }
+        }
+
+        when () {
+            !=(R|/equalsFloat3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 7.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsFloat4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 7.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsDouble1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 8.1)
+            }
+        }
+
+        when () {
+            !=(R|/equalsDouble2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 8.2)
+            }
+        }
+
+        when () {
+            !=(R|/equalsDouble3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 8.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsDouble4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 8.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsString1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 9.1)
+            }
+        }
+
+        when () {
+            !=(R|/equalsString2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail 9.2)
+            }
+        }
+
+        when () {
+            !=(R|/equalsString3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 9.3)
+            }
+        }
+
+        when () {
+            !=(R|/equalsString4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail 9.3)
+            }
+        }
+
+        ^box String(OK)
+    }

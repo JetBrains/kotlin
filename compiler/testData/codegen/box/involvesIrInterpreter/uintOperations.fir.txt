@@ -1,0 +1,829 @@
+FILE: uintOperations.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final const [EvaluatedValue=UInt(0)] val zeroVal: R|kotlin/UInt| = UInt(0)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val oneVal: R|kotlin/UInt| = UInt(1)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(2)] val twoVal: R|kotlin/UInt| = UInt(2)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(3)] val threeVal: R|kotlin/UInt| = UInt(3)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(4)] val fourVal: R|kotlin/UInt| = UInt(4)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=Byte(2)] val byteVal: R|kotlin/Byte| = Int(2).R|kotlin/Int.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Short(2)] val shortVal: R|kotlin/Short| = Int(2).R|kotlin/Int.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Int(2)] val intVal: R|kotlin/Int| = Int(2)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Long(2)] val longVal: R|kotlin/Long| = Long(2)
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=UByte(2)] val ubyteVal: R|kotlin/UByte| = UInt(2).R|kotlin/UInt.toUByte|()
+        public get(): R|kotlin/UByte|
+    public final const [EvaluatedValue=UShort(2)] val ushortVal: R|kotlin/UShort| = UInt(2).R|kotlin/UInt.toUShort|()
+        public get(): R|kotlin/UShort|
+    public final const [EvaluatedValue=UInt(2)] val uintVal: R|kotlin/UInt| = UInt(2)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=ULong(2)] val ulongVal: R|kotlin/ULong| = ULong(2)
+        public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=Float(2.0)] val floatVal: R|kotlin/Float| = Float(2.0)
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Double(2.0)] val doubleVal: R|kotlin/Double| = Double(2.0)
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Int(-1)] val compareTo1: R|kotlin/Int| = R|/oneVal|.R|kotlin/UInt.compareTo|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val compareTo2: R|kotlin/Int| = R|/twoVal|.R|kotlin/UInt.compareTo|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(1)] val compareTo3: R|kotlin/Int| = R|/threeVal|.R|kotlin/UInt.compareTo|(R|/twoVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val compareTo4: R|kotlin/Int| = R|/twoVal|.R|kotlin/UInt.compareTo|(R|/ubyteVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val compareTo5: R|kotlin/Int| = R|/twoVal|.R|kotlin/UInt.compareTo|(R|/ushortVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Int(0)] val compareTo6: R|kotlin/Int| = R|/twoVal|.R|kotlin/UInt.compareTo|(R|/ulongVal|)
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=UInt(3)] val plus1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.plus|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(4)] val plus2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.plus|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(5)] val plus3: R|kotlin/UInt| = R|/threeVal|.R|kotlin/UInt.plus|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(4)] val plus4: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.plus|(R|/ubyteVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(4)] val plus5: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.plus|(R|/ushortVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=ULong(4)] val plus6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UInt.plus|(R|/ulongVal|)
+        public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(4294967295)] val minus1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.minus|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val minus2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.minus|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val minus3: R|kotlin/UInt| = R|/threeVal|.R|kotlin/UInt.minus|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val minus4: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.minus|(R|/ubyteVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val minus5: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.minus|(R|/ushortVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=ULong(0)] val minus6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UInt.minus|(R|/ulongVal|)
+        public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(2)] val times1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.times|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(4)] val times2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.times|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(6)] val times3: R|kotlin/UInt| = R|/threeVal|.R|kotlin/UInt.times|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(4)] val times4: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.times|(R|/ubyteVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(4)] val times5: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.times|(R|/ushortVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=ULong(4)] val times6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UInt.times|(R|/ulongVal|)
+        public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(0)] val div1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.div|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val div2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.div|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val div3: R|kotlin/UInt| = R|/threeVal|.R|kotlin/UInt.div|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val div4: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.div|(R|/ubyteVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val div5: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.div|(R|/ushortVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=ULong(1)] val div6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UInt.div|(R|/ulongVal|)
+        public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(0)] val floorDiv1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.floorDiv|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val floorDiv2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.floorDiv|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val floorDiv3: R|kotlin/UInt| = R|/threeVal|.R|kotlin/UInt.floorDiv|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val floorDiv4: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.floorDiv|(R|/ubyteVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val floorDiv5: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.floorDiv|(R|/ushortVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=ULong(1)] val floorDiv6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UInt.floorDiv|(R|/ulongVal|)
+        public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(1)] val rem1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.rem|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val rem2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.rem|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val rem3: R|kotlin/UInt| = R|/threeVal|.R|kotlin/UInt.rem|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val rem4: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.rem|(R|/ubyteVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val rem5: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.rem|(R|/ushortVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=ULong(0)] val rem6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UInt.rem|(R|/ulongVal|)
+        public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(1)] val mod1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.mod|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val mod2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.mod|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val mod3: R|kotlin/UInt| = R|/threeVal|.R|kotlin/UInt.mod|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UByte(0)] val mod4: R|kotlin/UByte| = R|/twoVal|.R|kotlin/UInt.mod|(R|/ubyteVal|)
+        public get(): R|kotlin/UByte|
+    public final const [EvaluatedValue=UShort(0)] val mod5: R|kotlin/UShort| = R|/twoVal|.R|kotlin/UInt.mod|(R|/ushortVal|)
+        public get(): R|kotlin/UShort|
+    public final const [EvaluatedValue=ULong(0)] val mod6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UInt.mod|(R|/ulongVal|)
+        public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(0)] val and1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.and|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(2)] val and2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.and|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(2)] val and3: R|kotlin/UInt| = R|/threeVal|.R|kotlin/UInt.and|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(8)] val and4: R|kotlin/UInt| = UInt(12).R|kotlin/UInt.and|(UInt(10))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(3)] val or1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.or|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(2)] val or2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.or|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(3)] val or3: R|kotlin/UInt| = R|/threeVal|.R|kotlin/UInt.or|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(14)] val or4: R|kotlin/UInt| = UInt(12).R|kotlin/UInt.or|(UInt(10))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(3)] val xor1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.xor|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val xor2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.xor|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val xor3: R|kotlin/UInt| = R|/threeVal|.R|kotlin/UInt.xor|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(6)] val xor4: R|kotlin/UInt| = UInt(12).R|kotlin/UInt.xor|(UInt(10))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(4294967295)] val inv1: R|kotlin/UInt| = R|/zeroVal|.R|kotlin/UInt.inv|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(4294967294)] val inv2: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.inv|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(2)] val shl1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shl|(Int(1))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(8)] val shl2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.shl|(Int(2))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(12)] val shl3: R|kotlin/UInt| = R|/threeVal|.R|kotlin/UInt.shl|(Int(2))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(2147483648)] val shl4: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shl|(Int(31))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val shl5: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shl|(Int(32))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(2147483648)] val shl6: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shl|(Int(63))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val shr1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shr|(Int(1))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val shr2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.shr|(Int(1))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val shr3: R|kotlin/UInt| = R|/threeVal|.R|kotlin/UInt.shr|(Int(1))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val shr4: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shr|(Int(31))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val shr5: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shr|(Int(32))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val shr6: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shr|(Int(63))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UByte(1)] val convert1: R|kotlin/UByte| = R|/oneVal|.R|kotlin/UInt.toUByte|()
+        public get(): R|kotlin/UByte|
+    public final const [EvaluatedValue=UShort(1)] val convert2: R|kotlin/UShort| = R|/oneVal|.R|kotlin/UInt.toUShort|()
+        public get(): R|kotlin/UShort|
+    public final const [EvaluatedValue=UInt(1)] val convert3: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.toUInt|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=ULong(1)] val convert4: R|kotlin/ULong| = R|/oneVal|.R|kotlin/UInt.toULong|()
+        public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=Float(1.0)] val convert5: R|kotlin/Float| = R|/oneVal|.R|kotlin/UInt.toFloat|()
+        public get(): R|kotlin/Float|
+    public final const [EvaluatedValue=Double(1.0)] val convert6: R|kotlin/Double| = R|/oneVal|.R|kotlin/UInt.toDouble|()
+        public get(): R|kotlin/Double|
+    public final const [EvaluatedValue=Byte(1)] val convert7: R|kotlin/Byte| = R|/oneVal|.R|kotlin/UInt.toByte|()
+        public get(): R|kotlin/Byte|
+    public final const [EvaluatedValue=Short(1)] val convert8: R|kotlin/Short| = R|/oneVal|.R|kotlin/UInt.toShort|()
+        public get(): R|kotlin/Short|
+    public final const [EvaluatedValue=Int(1)] val convert9: R|kotlin/Int| = R|/oneVal|.R|kotlin/UInt.toInt|()
+        public get(): R|kotlin/Int|
+    public final const [EvaluatedValue=Long(1)] val convert10: R|kotlin/Long| = R|/oneVal|.R|kotlin/UInt.toLong|()
+        public get(): R|kotlin/Long|
+    public final const [EvaluatedValue=UInt(1)] val convert11: R|kotlin/UInt| = Int(1).R|kotlin/Int.toByte|().R|kotlin/toUInt|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val convert12: R|kotlin/UInt| = Int(1).R|kotlin/Int.toShort|().R|kotlin/toUInt|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val convert13: R|kotlin/UInt| = Int(1).R|kotlin/toUInt|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val convert14: R|kotlin/UInt| = Long(1).R|kotlin/toUInt|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val convert15: R|kotlin/UInt| = Float(1.0).R|kotlin/toUInt|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(1)] val convert16: R|kotlin/UInt| = Double(1.0).R|kotlin/toUInt|()
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=Boolean(false)] val equals1: R|kotlin/Boolean| = ==(R|/oneVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val equals2: R|kotlin/Boolean| = ==(R|/twoVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equals3: R|kotlin/Boolean| = ==(R|/threeVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val equals4: R|kotlin/Boolean| = ==(R|/fourVal|, R|/twoVal|)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=String(1)] val toString1: R|kotlin/String| = R|/oneVal|.R|kotlin/UInt.toString|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(2)] val toString2: R|kotlin/String| = R|/twoVal|.R|kotlin/UInt.toString|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=UInt(4294967295)] val limits1: R|kotlin/UInt| = UInt(4294967294).R|kotlin/UInt.plus|(R|/oneVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val limits2: R|kotlin/UInt| = UInt(4294967295).R|kotlin/UInt.plus|(R|/oneVal|)
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(4294967295)] val limits3: R|kotlin/UInt| = R|/zeroVal|.R|kotlin/UInt.minus|(R|/oneVal|)
+        public get(): R|kotlin/UInt|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/compareTo1|.R|/id|<R|kotlin/Int|>(), Int(-1)) ->  {
+                ^box String(Fail compareTo 1)
+            }
+        }
+
+        when () {
+            !=(R|/compareTo2|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail compareTo2)
+            }
+        }
+
+        when () {
+            !=(R|/compareTo3|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail compareTo3)
+            }
+        }
+
+        when () {
+            !=(R|/compareTo4|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail compareTo4)
+            }
+        }
+
+        when () {
+            !=(R|/compareTo5|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail compareTo5)
+            }
+        }
+
+        when () {
+            !=(R|/compareTo6|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
+                ^box String(Fail compareTo6)
+            }
+        }
+
+        when () {
+            !=(R|/plus1|.R|/id|<R|kotlin/UInt|>(), UInt(3)) ->  {
+                ^box String(Fail plus1)
+            }
+        }
+
+        when () {
+            !=(R|/plus2|.R|/id|<R|kotlin/UInt|>(), UInt(4)) ->  {
+                ^box String(Fail plus2)
+            }
+        }
+
+        when () {
+            !=(R|/plus3|.R|/id|<R|kotlin/UInt|>(), UInt(5)) ->  {
+                ^box String(Fail plus3)
+            }
+        }
+
+        when () {
+            !=(R|/plus4|.R|/id|<R|kotlin/UInt|>(), UInt(4)) ->  {
+                ^box String(Fail plus4)
+            }
+        }
+
+        when () {
+            !=(R|/plus5|.R|/id|<R|kotlin/UInt|>(), UInt(4)) ->  {
+                ^box String(Fail plus5)
+            }
+        }
+
+        when () {
+            !=(R|/plus6|.R|/id|<R|kotlin/ULong|>(), ULong(4)) ->  {
+                ^box String(Fail plus6)
+            }
+        }
+
+        when () {
+            !=(R|/minus1|.R|/id|<R|kotlin/UInt|>(), UInt(4294967295)) ->  {
+                ^box String(Fail minus1)
+            }
+        }
+
+        when () {
+            !=(R|/minus2|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail minus2)
+            }
+        }
+
+        when () {
+            !=(R|/minus3|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail minus3)
+            }
+        }
+
+        when () {
+            !=(R|/minus4|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail minus4)
+            }
+        }
+
+        when () {
+            !=(R|/minus5|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail minus5)
+            }
+        }
+
+        when () {
+            !=(R|/minus6|.R|/id|<R|kotlin/ULong|>(), ULong(0)) ->  {
+                ^box String(Fail minus6)
+            }
+        }
+
+        when () {
+            !=(R|/times1|.R|/id|<R|kotlin/UInt|>(), UInt(2)) ->  {
+                ^box String(Fail times1)
+            }
+        }
+
+        when () {
+            !=(R|/times2|.R|/id|<R|kotlin/UInt|>(), UInt(4)) ->  {
+                ^box String(Fail times2)
+            }
+        }
+
+        when () {
+            !=(R|/times3|.R|/id|<R|kotlin/UInt|>(), UInt(6)) ->  {
+                ^box String(Fail times3)
+            }
+        }
+
+        when () {
+            !=(R|/times4|.R|/id|<R|kotlin/UInt|>(), UInt(4)) ->  {
+                ^box String(Fail times4)
+            }
+        }
+
+        when () {
+            !=(R|/times5|.R|/id|<R|kotlin/UInt|>(), UInt(4)) ->  {
+                ^box String(Fail times5)
+            }
+        }
+
+        when () {
+            !=(R|/times6|.R|/id|<R|kotlin/ULong|>(), ULong(4)) ->  {
+                ^box String(Fail times6)
+            }
+        }
+
+        when () {
+            !=(R|/div1|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail div1)
+            }
+        }
+
+        when () {
+            !=(R|/div2|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail div2)
+            }
+        }
+
+        when () {
+            !=(R|/div3|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail div3)
+            }
+        }
+
+        when () {
+            !=(R|/div4|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail div4)
+            }
+        }
+
+        when () {
+            !=(R|/div5|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail div5)
+            }
+        }
+
+        when () {
+            !=(R|/div6|.R|/id|<R|kotlin/ULong|>(), ULong(1)) ->  {
+                ^box String(Fail div6)
+            }
+        }
+
+        when () {
+            !=(R|/floorDiv1|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail  floorDiv1)
+            }
+        }
+
+        when () {
+            !=(R|/floorDiv2|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail  floorDiv2)
+            }
+        }
+
+        when () {
+            !=(R|/floorDiv3|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail  floorDiv3)
+            }
+        }
+
+        when () {
+            !=(R|/floorDiv4|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail  floorDiv4)
+            }
+        }
+
+        when () {
+            !=(R|/floorDiv5|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail  floorDiv5)
+            }
+        }
+
+        when () {
+            !=(R|/floorDiv6|.R|/id|<R|kotlin/ULong|>(), ULong(1)) ->  {
+                ^box String(Fail  floorDiv6)
+            }
+        }
+
+        when () {
+            !=(R|/rem1|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail rem1)
+            }
+        }
+
+        when () {
+            !=(R|/rem2|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail rem2)
+            }
+        }
+
+        when () {
+            !=(R|/rem3|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail rem3)
+            }
+        }
+
+        when () {
+            !=(R|/rem4|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail rem4)
+            }
+        }
+
+        when () {
+            !=(R|/rem5|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail rem5)
+            }
+        }
+
+        when () {
+            !=(R|/rem6|.R|/id|<R|kotlin/ULong|>(), ULong(0)) ->  {
+                ^box String(Fail rem6)
+            }
+        }
+
+        when () {
+            !=(R|/mod1|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail mod1)
+            }
+        }
+
+        when () {
+            !=(R|/mod2|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail mod2)
+            }
+        }
+
+        when () {
+            !=(R|/mod3|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail mod3)
+            }
+        }
+
+        when () {
+            !=(R|/mod4|.R|/id|<R|kotlin/UByte|>(), UInt(0).R|kotlin/UInt.toUByte|()) ->  {
+                ^box String(Fail mod4)
+            }
+        }
+
+        when () {
+            !=(R|/mod5|.R|/id|<R|kotlin/UShort|>(), UInt(0).R|kotlin/UInt.toUShort|()) ->  {
+                ^box String(Fail mod5)
+            }
+        }
+
+        when () {
+            !=(R|/mod6|.R|/id|<R|kotlin/ULong|>(), ULong(0)) ->  {
+                ^box String(Fail mod6)
+            }
+        }
+
+        when () {
+            !=(R|/and1|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail and1)
+            }
+        }
+
+        when () {
+            !=(R|/and2|.R|/id|<R|kotlin/UInt|>(), UInt(2)) ->  {
+                ^box String(Fail and2)
+            }
+        }
+
+        when () {
+            !=(R|/and3|.R|/id|<R|kotlin/UInt|>(), UInt(2)) ->  {
+                ^box String(Fail and3)
+            }
+        }
+
+        when () {
+            !=(R|/and4|.R|/id|<R|kotlin/UInt|>(), UInt(8)) ->  {
+                ^box String(Fail and4)
+            }
+        }
+
+        when () {
+            !=(R|/or1|.R|/id|<R|kotlin/UInt|>(), UInt(3)) ->  {
+                ^box String(Fail or1)
+            }
+        }
+
+        when () {
+            !=(R|/or2|.R|/id|<R|kotlin/UInt|>(), UInt(2)) ->  {
+                ^box String(Fail or2)
+            }
+        }
+
+        when () {
+            !=(R|/or3|.R|/id|<R|kotlin/UInt|>(), UInt(3)) ->  {
+                ^box String(Fail or3)
+            }
+        }
+
+        when () {
+            !=(R|/or4|.R|/id|<R|kotlin/UInt|>(), UInt(14)) ->  {
+                ^box String(Fail or4)
+            }
+        }
+
+        when () {
+            !=(R|/xor1|.R|/id|<R|kotlin/UInt|>(), UInt(3)) ->  {
+                ^box String(Fail xor1)
+            }
+        }
+
+        when () {
+            !=(R|/xor2|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail xor2)
+            }
+        }
+
+        when () {
+            !=(R|/xor3|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail xor3)
+            }
+        }
+
+        when () {
+            !=(R|/xor4|.R|/id|<R|kotlin/UInt|>(), UInt(6)) ->  {
+                ^box String(Fail xor4)
+            }
+        }
+
+        when () {
+            !=(R|/inv1|.R|/id|<R|kotlin/UInt|>(), UInt(4294967295)) ->  {
+                ^box String(Fail inv1)
+            }
+        }
+
+        when () {
+            !=(R|/inv2|.R|/id|<R|kotlin/UInt|>(), UInt(4294967294)) ->  {
+                ^box String(Fail inv2)
+            }
+        }
+
+        when () {
+            !=(R|/shl1|.R|/id|<R|kotlin/UInt|>(), UInt(2)) ->  {
+                ^box String(Fail shl1)
+            }
+        }
+
+        when () {
+            !=(R|/shl2|.R|/id|<R|kotlin/UInt|>(), UInt(8)) ->  {
+                ^box String(Fail shl2)
+            }
+        }
+
+        when () {
+            !=(R|/shl3|.R|/id|<R|kotlin/UInt|>(), UInt(12)) ->  {
+                ^box String(Fail shl3)
+            }
+        }
+
+        when () {
+            !=(R|/shl4|.R|/id|<R|kotlin/UInt|>(), UInt(2147483648)) ->  {
+                ^box String(Fail shl4)
+            }
+        }
+
+        when () {
+            !=(R|/shl5|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail shl5)
+            }
+        }
+
+        when () {
+            !=(R|/shl6|.R|/id|<R|kotlin/UInt|>(), UInt(2147483648)) ->  {
+                ^box String(Fail shl6)
+            }
+        }
+
+        when () {
+            !=(R|/shr1|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail shr1)
+            }
+        }
+
+        when () {
+            !=(R|/shr2|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail shr2)
+            }
+        }
+
+        when () {
+            !=(R|/shr3|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail shr3)
+            }
+        }
+
+        when () {
+            !=(R|/shr4|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail shr4)
+            }
+        }
+
+        when () {
+            !=(R|/shr5|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail shr5)
+            }
+        }
+
+        when () {
+            !=(R|/shr6|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail shr6)
+            }
+        }
+
+        when () {
+            !=(R|/convert1|.R|/id|<R|kotlin/UByte|>(), UInt(1).R|kotlin/UInt.toUByte|()) ->  {
+                ^box String(Fail convert1)
+            }
+        }
+
+        when () {
+            !=(R|/convert2|.R|/id|<R|kotlin/UShort|>(), UInt(1).R|kotlin/UInt.toUShort|()) ->  {
+                ^box String(Fail convert2)
+            }
+        }
+
+        when () {
+            !=(R|/convert3|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail convert3)
+            }
+        }
+
+        when () {
+            !=(R|/convert4|.R|/id|<R|kotlin/ULong|>(), ULong(1)) ->  {
+                ^box String(Fail convert4)
+            }
+        }
+
+        when () {
+            !=(R|/convert5|.R|/id|<R|kotlin/Float|>(), Float(1.0)) ->  {
+                ^box String(Fail convert5)
+            }
+        }
+
+        when () {
+            !=(R|/convert6|.R|/id|<R|kotlin/Double|>(), Double(1.0)) ->  {
+                ^box String(Fail convert6)
+            }
+        }
+
+        when () {
+            !=(R|/convert7|.R|/id|<R|kotlin/Byte|>(), Int(1).R|kotlin/Int.toByte|()) ->  {
+                ^box String(Fail convert7)
+            }
+        }
+
+        when () {
+            !=(R|/convert8|.R|/id|<R|kotlin/Short|>(), Int(1).R|kotlin/Int.toShort|()) ->  {
+                ^box String(Fail convert8)
+            }
+        }
+
+        when () {
+            !=(R|/convert9|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
+                ^box String(Fail convert9)
+            }
+        }
+
+        when () {
+            !=(R|/convert10|.R|/id|<R|kotlin/Long|>(), Long(1)) ->  {
+                ^box String(Fail convert10)
+            }
+        }
+
+        when () {
+            !=(R|/convert11|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail convert11)
+            }
+        }
+
+        when () {
+            !=(R|/convert12|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail convert12)
+            }
+        }
+
+        when () {
+            !=(R|/convert13|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail convert13)
+            }
+        }
+
+        when () {
+            !=(R|/convert14|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail convert14)
+            }
+        }
+
+        when () {
+            !=(R|/convert15|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail convert15)
+            }
+        }
+
+        when () {
+            !=(R|/convert16|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail convert16)
+            }
+        }
+
+        when () {
+            !=(R|/equals1|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail equals1)
+            }
+        }
+
+        when () {
+            !=(R|/equals2|.R|/id|<R|kotlin/Boolean|>(), Boolean(true)) ->  {
+                ^box String(Fail equals2)
+            }
+        }
+
+        when () {
+            !=(R|/equals3|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail equals3)
+            }
+        }
+
+        when () {
+            !=(R|/equals4|.R|/id|<R|kotlin/Boolean|>(), Boolean(false)) ->  {
+                ^box String(Fail equals4)
+            }
+        }
+
+        when () {
+            !=(R|/toString1|.R|/id|<R|kotlin/String|>(), String(1)) ->  {
+                ^box String(Fail toString1)
+            }
+        }
+
+        when () {
+            !=(R|/toString2|.R|/id|<R|kotlin/String|>(), String(2)) ->  {
+                ^box String(Fail toString2)
+            }
+        }
+
+        when () {
+            !=(R|/limits1|.R|/id|<R|kotlin/UInt|>(), UInt(4294967295)) ->  {
+                ^box String(Fail limits1)
+            }
+        }
+
+        when () {
+            !=(R|/limits2|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail limits2)
+            }
+        }
+
+        when () {
+            !=(R|/limits3|.R|/id|<R|kotlin/UInt|>(), UInt(4294967295)) ->  {
+                ^box String(Fail limits3)
+            }
+        }
+
+        ^box String(OK)
+    }
