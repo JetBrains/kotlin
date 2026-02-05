@@ -1,31 +1,52 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.testOld.klib
+package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker
+import org.jetbrains.kotlin.cli.bc.K2Native
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
+import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.js.testOld.utils.runJsCompiler
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.klib.compatibility.LibrarySpecialCompatibilityChecksTest
+import org.jetbrains.kotlin.klib.compatibility.StdlibSpecialCompatibilityChecksTest
 import org.jetbrains.kotlin.klib.compatibility.TestVersion
 import org.jetbrains.kotlin.klib.compatibility.WarningStatus
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_BUILTINS_PLATFORM
-import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
+import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
+import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
+import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
-import java.util.*
+import kotlin.test.fail
 
-abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
-    abstract val isWasm: Boolean
+abstract class NativeLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
+
+    private val nativeHome: File
+        get() = currentCustomNativeCompilerSettings.nativeHome
+
+    private val nativeTarget: String by lazy {
+        HostManager.host.visibleName
+    }
+
+    val patchedNativeStdlibWithoutJarManifest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        createPatchedLibrary(nativeStdlibPath)
+    }
+
+    private val nativeStdlibPath: String
+        get() = nativeHome.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+            .resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
+            .resolve(KONAN_STDLIB_NAME)
+            .absolutePath
+
+    override val platformDisplayName = "Kotlin/Native"
 
     override fun compileDummyLibrary(
         libraryVersion: TestVersion?,
@@ -36,24 +57,6 @@ abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatib
         compileDummyLibrary(libraryVersion, compilerVersion, isZipped = false, expectedWarningStatus, exportKlibToOlderAbiVersion)
         compileDummyLibrary(libraryVersion, compilerVersion, isZipped = true, expectedWarningStatus, exportKlibToOlderAbiVersion)
     }
-
-    val patchedJsStdlibWithoutJarManifest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-        createPatchedLibrary(JsEnvironmentConfigurator.stdlibPath)
-    }
-
-    val patchedWasmStdlibWithoutJarManifest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-        createPatchedLibrary(WasmEnvironmentConfigurator.stdlibPath(WasmTarget.JS))
-    }
-
-    val patchedJsTestWithoutJarManifest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-        createPatchedLibrary(JsEnvironmentConfigurator.kotlinTestPath)
-    }
-
-    val patchedWasmTestWithoutJarManifest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-        createPatchedLibrary(WasmEnvironmentConfigurator.kotlinTestPath(WasmTarget.JS))
-    }
-
-    override val platformDisplayName get() = if (isWasm) "Kotlin/Wasm" else "Kotlin/JS"
 
     private fun compileDummyLibrary(
         libraryVersion: TestVersion?,
@@ -77,14 +80,14 @@ abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatib
                 createFakeUnzippedLibraryWithSpecificVersion(libraryVersion)
 
             val expectedExitCode = if (expectedWarningStatus == WarningStatus.NO_WARNINGS) ExitCode.OK else ExitCode.COMPILATION_ERROR
-            runJsCompiler(messageCollector, expectedExitCode) {
+            runNativeCompiler(nativeHome.absolutePath, messageCollector, expectedExitCode) {
                 this.freeArgs = listOf(sourceFile.absolutePath)
-                this.libraries = (additionalLibraries() + fakeLibrary.absolutePath).joinToString(File.pathSeparator)
-                this.outputDir = outputDir.absolutePath
+                this.libraries = (additionalLibraries() + fakeLibrary.absolutePath).toTypedArray()
+                this.outputName = outputDir.resolve(moduleName).absolutePath
                 this.moduleName = moduleName
-                this.irProduceKlibFile = true
-                this.irModuleName = moduleName
-                this.wasm = isWasm
+                this.produce = "library"
+                this.target = nativeTarget
+                this.nostdlib = true
                 if (exportKlibToOlderAbiVersion) {
                     this.languageVersion = "${LanguageVersion.LATEST_STABLE.major}.${LanguageVersion.LATEST_STABLE.minor - 1}"
                     this.internalArguments = listOf(
@@ -103,16 +106,7 @@ abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatib
         messageCollector.checkMessage(expectedWarningStatus, libraryVersion, compilerVersion, klibAbiCompatibilityLevel)
     }
 
-    override val patchedLibraryPostfix: String
-        get() = if (isWasm) "wasm" else "js"
-
-    override fun additionalPatchedLibraryProperties(manifestFile: File) {
-        if (isWasm) {
-            val properties = manifestFile.inputStream().use { Properties().apply { load(it) } }
-            properties[KLIB_PROPERTY_BUILTINS_PLATFORM] = BuiltInsPlatform.WASM.name
-            manifestFile.outputStream().use { properties.store(it, null) }
-        }
-    }
+    override val patchedLibraryPostfix: String = "native"
 
     private inline fun <T> withCustomCompilerVersion(version: TestVersion?, block: () -> T): T {
         @Suppress("DEPRECATION")
@@ -123,4 +117,45 @@ abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatib
             LibrarySpecialCompatibilityChecker.resetUpCustomCompilerVersionForTest()
         }
     }
+}
+
+private fun runNativeCompiler(
+    nativeHome: String,
+    messageCollector: MessageCollectorImpl = MessageCollectorImpl(),
+    expectedExitCode: ExitCode = ExitCode.OK,
+    argsBuilder: K2NativeCompilerArguments.() -> Unit,
+) {
+    val args = K2NativeCompilerArguments().apply(argsBuilder)
+
+    val oldKonanHome = System.getProperty("konan.home")
+    try {
+        System.setProperty("konan.home", nativeHome)
+        val exitCode = K2Native().exec(messageCollector, Services.EMPTY, args)
+        if (exitCode != expectedExitCode) fail(
+            buildString {
+                appendLine("Unexpected compiler exit code:")
+                appendLine("  Expected: $expectedExitCode")
+                appendLine("  Actual:   $exitCode")
+                appendLine("Command-line arguments: " + args.toArgumentStrings().joinToString(" "))
+                appendLine("Compiler output:")
+                appendLine(messageCollector.toString())
+            }
+        )
+    } finally {
+        if (oldKonanHome != null) {
+            System.setProperty("konan.home", oldKonanHome)
+        } else {
+            System.clearProperty("konan.home")
+        }
+    }
+}
+
+@Suppress("JUnitTestCaseWithNoTests")
+class StdLibNativeLibrarySpecialCompatibilityChecksTest : NativeLibrarySpecialCompatibilityChecksTest(),
+    StdlibSpecialCompatibilityChecksTest {
+    override val originalLibraryPath: String
+        get() = patchedNativeStdlibWithoutJarManifest
+
+    override val libraryDisplayName: String
+        get() = "standard"
 }

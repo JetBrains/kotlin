@@ -35,6 +35,10 @@ dependencies {
 
     testFixturesImplementation(project(":compiler:cli:cli-native-klib"))
     testRuntimeOnly(libs.intellij.fastutil)
+    testImplementation(testFixtures(project(":native:native.tests:klib-compatibility")))
+    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+        testImplementation(project(":native:cli-native"))
+    }
 }
 
 sourceSets {

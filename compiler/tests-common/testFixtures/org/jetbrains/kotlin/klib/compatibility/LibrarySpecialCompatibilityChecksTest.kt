@@ -5,14 +5,24 @@
 
 package org.jetbrains.kotlin.klib.compatibility
 
-import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_LIBRARY_VERSION
+import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_MANIFEST_FILE
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
+import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.konan.file.createTempDir
+import org.jetbrains.kotlin.konan.file.unzipTo
+import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_ABI_VERSION
+import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.io.File
 import java.util.*
+import java.util.jar.Manifest
+import org.jetbrains.kotlin.konan.file.File as KFile
 
 @Execution(ExecutionMode.SAME_THREAD)
 abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
@@ -25,11 +35,21 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
      */
     @BeforeEach
     fun assumeAbiAndLanguageAligned() {
-        Assumptions.assumeTrue(abiAndLanguageAreAligned(), "ABI and language basic versions are not aligned")
+        Assumptions.assumeTrue(
+            LanguageVersion.LATEST_STABLE.major == KotlinAbiVersion.CURRENT.major && LanguageVersion.LATEST_STABLE.minor == KotlinAbiVersion.CURRENT.minor,
+            "ABI and language basic versions are not aligned"
+        )
     }
 
     @TempDir
     private lateinit var tmpdir: File
+
+    protected lateinit var testName: String
+
+    @BeforeEach
+    fun setUp(testInfo: TestInfo) {
+        testName = testInfo.testMethod.get().name
+    }
 
     @Test
     fun testSameBasicCompilerVersion() {
@@ -83,8 +103,6 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
         }
     }
 
-    protected abstract fun abiAndLanguageAreAligned(): Boolean
-
     private inline fun testCurrentAndNextBasicVersions(block: (currentVersion: TestVersion, nextVersion: TestVersion) -> Unit) {
         for (i in 0..SORTED_TEST_COMPILER_VERSION_GROUPS.size - 2) {
             val versionsWithSameBasicVersion = SORTED_TEST_COMPILER_VERSION_GROUPS[i]
@@ -106,6 +124,116 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
 
     protected fun createDir(name: String): File = tmpdir.resolve(name).apply { mkdirs() }
     protected fun createFile(name: String): File = tmpdir.resolve(name).apply { parentFile.mkdirs() }
+
+    protected abstract val libraryDisplayName: String
+    protected abstract val platformDisplayName: String
+
+    protected fun MessageCollectorImpl.hasOldLibraryError(specificVersions: Pair<TestVersion, TestVersion>? = null): Boolean {
+        val stdlibMessagePart = "$platformDisplayName $libraryDisplayName library has an older version" +
+                specificVersions?.first?.let { " ($it)" }.orEmpty()
+        val compilerMessagePart = "than the compiler" + specificVersions?.second?.let { " ($it)" }.orEmpty()
+
+        return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
+    }
+
+    protected fun MessageCollectorImpl.hasTooNewLibraryError(
+        libraryVersion: TestVersion? = null,
+        abiCompatibilityLevel: KlibAbiCompatibilityLevel? = null,
+    ): Boolean {
+        val stdlibMessagePart = "The $platformDisplayName $libraryDisplayName library has the ABI version" +
+                libraryVersion?.let { " (${it.basicVersion.major}.${it.basicVersion.minor}.0)" }.orEmpty()
+        val compilerMessagePart = "that is not compatible with the compiler's current ABI compatibility level ($abiCompatibilityLevel)"
+
+        return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
+    }
+
+    protected fun MessageCollectorImpl.checkMessage(
+        expectedWarningStatus: WarningStatus,
+        libraryVersion: TestVersion?,
+        compilerVersion: TestVersion?,
+        abiCompatibilityLevel: KlibAbiCompatibilityLevel?,
+    ) {
+        val success = when (expectedWarningStatus) {
+            WarningStatus.NO_WARNINGS -> !hasOldLibraryError() && !hasTooNewLibraryError()
+            WarningStatus.OLD_LIBRARY_WARNING -> hasOldLibraryError(libraryVersion!! to compilerVersion!!)
+            WarningStatus.TOO_NEW_LIBRARY_WARNING -> hasTooNewLibraryError(libraryVersion!!, abiCompatibilityLevel)
+        }
+        if (!success) fail(
+            buildString {
+                appendLine("Compiling with stdlib=[$libraryVersion] and compiler=[$compilerVersion]")
+                appendLine("Logger compiler messages (${messages.size} items):")
+                messages.joinTo(this, "\n")
+            }
+        )
+    }
+
+    protected fun createPatchedLibrary(libraryPath: String): String {
+        val src = File(libraryPath)
+        val stdlibName = if (src.isDirectory) src.name else src.nameWithoutExtension
+        val patchedStdlibDir = File(createTempDir(stdlibName).absolutePath)
+        if (src.isDirectory) {
+            src.copyRecursively(patchedStdlibDir, overwrite = true)
+        } else {
+            KFile(libraryPath).unzipTo(KFile(patchedStdlibDir.absolutePath))
+        }
+        patchedStdlibDir.resolve(KLIB_JAR_MANIFEST_FILE).delete()
+        return patchedStdlibDir.absolutePath
+    }
+
+    abstract val patchedLibraryPostfix: String
+    open fun additionalPatchedLibraryProperties(manifestFile: File) = Unit
+
+    protected fun createFakeUnzippedLibraryWithSpecificVersion(version: TestVersion?): File {
+        val rawVersion = version?.toString()
+
+        val patchedLibraryDir = createDir("dependencies/fakeLib-${rawVersion ?: "unknown"}-$patchedLibraryPostfix")
+        val manifestFile = patchedLibraryDir.resolve("default").resolve("manifest")
+        if (manifestFile.exists()) return patchedLibraryDir
+
+        val originalLibraryFile = File(originalLibraryPath)
+
+        if (originalLibraryFile.isDirectory) {
+            originalLibraryFile.copyRecursively(patchedLibraryDir)
+        } else {
+            KFile(originalLibraryPath).unzipTo(KFile(patchedLibraryDir.absolutePath))
+            // Zipped version of KLIB always has a manifest file, so we delete it inside the patchedLibraryDir
+            // just after unzipping, to replace with the test one
+        }
+
+        if (version != null) {
+            val properties = manifestFile.inputStream().use { Properties().apply { load(it) } }
+            properties[KLIB_PROPERTY_ABI_VERSION] = KotlinAbiVersion(version.basicVersion.major, version.basicVersion.minor, 0).toString()
+            manifestFile.outputStream().use { properties.store(it, null) }
+        }
+
+        if (rawVersion != null) {
+            val jarManifestFile = patchedLibraryDir.resolve(KLIB_JAR_MANIFEST_FILE)
+            jarManifestFile.parentFile.mkdirs()
+            jarManifestFile.outputStream().use { os ->
+                with(Manifest()) {
+                    mainAttributes.putValue(KLIB_JAR_LIBRARY_VERSION, rawVersion)
+                    mainAttributes.putValue("Manifest-Version", "1.0") // some convention stuff to make Jar manifest work
+                    write(os)
+                }
+            }
+        }
+
+        additionalPatchedLibraryProperties(manifestFile)
+
+        return patchedLibraryDir
+    }
+
+    protected fun createFakeZippedLibraryWithSpecificVersion(version: TestVersion?): File {
+        val rawVersion = version?.toString()
+
+        val patchedLibraryFile = createFile("dependencies/fakeLib-${rawVersion ?: "unknown"}-$patchedLibraryPostfix.klib")
+        if (patchedLibraryFile.exists()) return patchedLibraryFile
+
+        val unzippedLibraryDir = createFakeUnzippedLibraryWithSpecificVersion(version)
+        zipDirectory(directory = unzippedLibraryDir, zipFile = patchedLibraryFile)
+
+        return patchedLibraryFile
+    }
 
     companion object {
         private val currentKotlinVersion = KotlinVersion.CURRENT
@@ -129,4 +257,8 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
         val SORTED_TEST_OLD_LIBRARY_VERSION_GROUPS: List<TestVersion> =
             VERSIONS.map { (patch, postfix) -> TestVersion(currentKotlinVersion.major, currentKotlinVersion.minor - 1, patch, postfix) }
     }
+}
+
+private fun zipDirectory(directory: File, zipFile: File) {
+    KFile(directory.toPath()).zipDirAs(KFile(zipFile.toPath()))
 }
