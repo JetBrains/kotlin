@@ -67,7 +67,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.topologicalSort
 import org.picocontainer.PicoContainer
 import java.nio.file.Path
@@ -501,19 +500,7 @@ object StandaloneProjectFactory {
         // here, the lists are reversed to ensure that in the result, the earlier module from `ktModules`
         // will also appear earlier (ceteris paribus)
         return topologicalSort(ktModules.reversed()) {
-            allDependencies().reversed()
-        }
-    }
-
-    private fun KaModule.allDependencies(): List<KaModule> = buildList {
-        addAll(allDirectDependencies())
-        when (this) {
-            is KaLibrarySourceModule -> {
-                add(binaryLibrary)
-            }
-            is KaLibraryModule -> {
-                addIfNotNull(librarySources)
-            }
+            allDirectDependencies().asIterable().reversed()
         }
     }
 
