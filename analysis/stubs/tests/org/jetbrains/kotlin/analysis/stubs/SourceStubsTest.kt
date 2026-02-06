@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.junit.jupiter.api.Test
 
-class SourceStubsTest : AbstractAnalysisApiExecutionTest("analysis/stubs/testData/source/customData") {
+class SourceStubsTest : AbstractAnalysisApiExecutionTest("testData/source/customData") {
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 
     @Test

@@ -32,15 +32,15 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
-        workingDir = rootDir
-    }
+    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0))
 
     testGenerator("org.jetbrains.kotlin.analysis.stubs.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
     withJsRuntime()
     withStdlibCommon()
+    withTestJar()
+    withAnnotations()
     withMockJdkRuntime()
     withMockJdkAnnotationsJar()
     withScriptRuntime()
