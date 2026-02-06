@@ -52,13 +52,6 @@ projectTests {
         // nativeTest sets workingDir to rootDir so here we need to override it
         workingDir = projectDir
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
-
-        extensions.configure<TestInputsCheckExtension> {
-            // add link permission to load `libcallbacks.dylib`, via possible invocation of `JvmUtilsKt.createTempDirWithLibrary()` which invokes `Files.createLink()`
-            // This happens in case of `catch (e: UnsatisfiedLinkError)` in `JvmUtilsKt.tryLoadKonanLibrary()`
-            // with message `Native Library <...>/kotlin-native/dist/konan/nativelib/libcallbacks.dylib already loaded in another classloader`
-            extraPermissions.add("""permission java.nio.file.LinkPermission "hard";""")
-        }
     }
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt", generateTestsInBuildDirectory = true) {

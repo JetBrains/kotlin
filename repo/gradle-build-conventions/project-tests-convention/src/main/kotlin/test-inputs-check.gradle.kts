@@ -199,6 +199,10 @@ tasks.withType<Test>().configureEach {
                                     """permission java.net.SocketPermission "download.jetbrains.com:443", "connect,resolve";""", // DependencyDownloader.kt
                                     """permission java.net.SocketPermission "download-cdn.jetbrains.com:443", "connect,resolve";""", // DependencyDownloader.kt
                                     """permission java.net.SocketPermission "repo.labs.intellij.net:443", "connect,resolve";""", // DependencyDownloader.kt
+                                    // add link permission to load `libcallbacks.dylib`, via possible invocation of `JvmUtilsKt.createTempDirWithLibrary()` which invokes `Files.createLink()`
+                                    // This happens in case of `catch (e: UnsatisfiedLinkError)` in `JvmUtilsKt.tryLoadKonanLibrary()`
+                                    // with message `Native Library <...>/kotlin-native/dist/konan/nativelib/libcallbacks.dylib already loaded in another classloader`
+                                    """permission java.nio.file.LinkPermission "hard";""",
                                 )
                                 if (nativeHome.isPresent) {
                                     konanPermissions.add("""permission java.io.FilePermission "${nativeHome.get()}/-" , "read,write,delete";""")
