@@ -46,8 +46,6 @@ projectTests {
             JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
         )
     ) {
-        workingDir = rootDir
-
         extensions.configure<TestInputsCheckExtension> {
             allowFlightRecorder = true
         }
