@@ -17,7 +17,8 @@ internal object CommonMainOrTestWithDependsOnChecker : KotlinGradleProjectChecke
         fun KotlinSourceSet.registerReporting(suffix: String) {
             internal.dependsOn.forAll {
                 collector.reportOncePerGradleProject(
-                    project,
+                    projectPath,
+                    renderingOptions,
                     KotlinToolingDiagnostics.CommonMainOrTestWithDependsOnDiagnostic(suffix),
                     key = suffix
                 )
