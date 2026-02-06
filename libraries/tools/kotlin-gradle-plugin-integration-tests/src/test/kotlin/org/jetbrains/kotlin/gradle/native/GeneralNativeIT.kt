@@ -817,6 +817,23 @@ class GeneralNativeIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Assert that disabled native task warnings are shown and can be suppressed")
+    @GradleTest
+    @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS])
+    @TestMetadata("new-mpp-lib-and-app/sample-lib")
+    fun testDisabledNativeTaskWarnings(gradleVersion: GradleVersion) {
+        nativeProject("new-mpp-lib-and-app/sample-lib", gradleVersion, buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()) {
+            // First build should show the disabled task warning
+            build {
+                assertHasDiagnostic(KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning)
+            }
+            // With the ignore property set, the warning should be suppressed
+            build("-P$KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS_PROPERTY=true") {
+                assertNoDiagnostic(KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning)
+            }
+        }
+    }
+
     @DisplayName("Checks native arguments with the spaces in it")
     @TestMetadata("new-mpp-lib-and-app/sample-lib")
     @GradleTest
