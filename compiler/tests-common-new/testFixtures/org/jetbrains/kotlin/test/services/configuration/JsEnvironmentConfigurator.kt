@@ -31,7 +31,7 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
         get() = listOf(JsEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
 
     companion object {
-        const val TEST_DATA_DIR_PATH = "js/js.translator/testData"
+        const val TEST_DATA_DIR_PATH = "compiler/testData/js"
         const val OLD_MODULE_SUFFIX = "_old"
 
         val kotlinTestPath: String

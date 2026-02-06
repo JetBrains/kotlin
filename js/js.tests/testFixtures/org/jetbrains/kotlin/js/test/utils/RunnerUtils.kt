@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.utils.DFS.topologicalOrder
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
 
-const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
+const val MODULE_EMULATION_FILE = "../../${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
 
 fun TestModule.getNameFor(filePath: String, testServices: TestServices): String {
     return testServices.klibEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, name) + "-js-" + filePath

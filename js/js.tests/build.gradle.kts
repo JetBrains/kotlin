@@ -162,10 +162,8 @@ projectTests {
     testData(project(":compiler").isolated, "testData/klib/syntheticAccessors")
     testData(project(":compiler").isolated, "testData/klib/__utils__")
 
-    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
-    testData(project(":js:js.translator").isolated, "testData/moduleEmulation.js")
+    testData(project(":compiler").isolated, "testData/js")
     testData(project(":js:js.translator").isolated, "testData/incremental")
-    testData(project(":js:js.translator").isolated, "testData/box")
     testData(project(":js:js.translator").isolated, "testData/lineNumbers")
     testData(project(":js:js.translator").isolated, "testData/js-optimizer/")
     testData(project(":js:js.translator").isolated, "testData/js-name-resolution")

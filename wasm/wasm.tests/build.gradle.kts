@@ -465,7 +465,7 @@ projectTests {
     testData(project(":compiler").isolated, "testData/klib/__utils__")
 
     testData(project(":js:js.translator").isolated, "testData/incremental")
-    testData(project(":js:js.translator").isolated, "testData/box")
+    testData(project(":compiler").isolated, "testData/js/box")
     testData(project(":js:js.translator").isolated, "testData/typescript-export/wasm/")
 
     withWasmRuntime()

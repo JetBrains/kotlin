@@ -193,8 +193,8 @@ open class AbstractFirWasmJsCodegenInteropTest : AbstractFirWasmJsTest(
 }
 
 open class AbstractFirWasmJsTranslatorTest : AbstractFirWasmJsTest(
-    "js/js.translator/testData/box/",
-    "js.translator/firBox"
+    "compiler/testData/js/box/",
+    "js/box"
 )
 
 open class AbstractFirWasmJsSteppingTest(

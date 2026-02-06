@@ -89,7 +89,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(testsRoot, "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "compiler/testData/js/box", testRunnerMethodName = "runTest0") {
             testClass<AbstractPsiJsBoxTest> {
                 model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
