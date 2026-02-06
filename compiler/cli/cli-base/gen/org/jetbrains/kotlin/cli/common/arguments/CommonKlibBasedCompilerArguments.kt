@@ -112,4 +112,14 @@ The only observable effect is that a custom ABI version is written to KLIB manif
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Argument(
+        value = "-Xskip-compatibility-checks",
+        description = "Skip library compatibility checks",
+    )
+    var skipCompatibilityChecks: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
 }
