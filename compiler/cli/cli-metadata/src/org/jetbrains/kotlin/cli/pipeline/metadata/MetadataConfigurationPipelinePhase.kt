@@ -38,7 +38,7 @@ import java.io.File
 
 object MetadataConfigurationPipelinePhase : AbstractConfigurationPhase<K2MetadataCompilerArguments>(
     name = "MetadataConfigurationPipelinePhase",
-    postActions = setOf(CheckCompilationErrors.CheckMessageCollector),
+    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector),
     configurationUpdaters = listOf(MetadataConfigurationUpdater)
 ) {
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {

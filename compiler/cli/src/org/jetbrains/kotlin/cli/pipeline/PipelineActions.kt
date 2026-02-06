@@ -13,25 +13,12 @@ import org.jetbrains.kotlin.config.phaser.ActionState
 import org.jetbrains.kotlin.util.PhaseType
 
 abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext> {
-    object CheckMessageCollector : CheckCompilationErrors() {
-        override fun invoke(
-            state: ActionState,
-            output: PipelineArtifact,
-            c: PipelineContext,
-        ) {
-            if (output.configuration.messageCollector.hasErrors()) {
-                throw PipelineStepException()
-            }
-        }
-    }
-
     object CheckDiagnosticCollector : CheckCompilationErrors() {
         override fun invoke(
             state: ActionState,
             output: PipelineArtifact,
             c: PipelineContext,
         ) {
-            if (c.kaptMode) return
             val configuration = output.configuration
             if (configuration.diagnosticsCollector.hasErrors || configuration.messageCollector.hasErrors()) {
                 throw PipelineStepException()

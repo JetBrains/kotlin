@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.config.perfManager
  */
 object NativeEnvironmentPhase : PipelinePhase<ConfigurationPipelineArtifact, NativeConfigurationArtifact>(
     name = "NativeEnvironmentPhase",
-    postActions = setOf(PerformanceNotifications.InitializationFinished, CheckCompilationErrors.CheckMessageCollector)
+    postActions = setOf(PerformanceNotifications.InitializationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): NativeConfigurationArtifact {
         val (configuration, rootDisposable) = input

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 object NativeConfigurationPhase : AbstractConfigurationPhase<K2NativeCompilerArguments>(
     name = "NativeConfigurationPhase",
     preActions = setOf(PerformanceNotifications.InitializationStarted),
-    postActions = setOf(CheckCompilationErrors.CheckMessageCollector),
+    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector),
     configurationUpdaters = listOf(NativeKlibConfigurationUpdater)
 ) {
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {

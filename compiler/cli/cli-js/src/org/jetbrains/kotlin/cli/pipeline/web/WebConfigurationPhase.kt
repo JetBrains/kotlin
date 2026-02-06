@@ -41,7 +41,7 @@ import java.io.IOException
 
 object WebConfigurationPhase : AbstractConfigurationPhase<K2JSCompilerArguments>(
     name = "JsConfigurationPhase",
-    postActions = setOf(CheckCompilationErrors.CheckMessageCollector),
+    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector),
     configurationUpdaters = listOf(CommonWebConfigurationUpdater, JsConfigurationUpdater, WasmConfigurationUpdater)
 ) {
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
