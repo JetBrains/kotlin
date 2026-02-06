@@ -8,10 +8,14 @@
 package org.jetbrains.kotlin.buildtools.api.internal.wrappers
 
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.Path
 
 /**
  * A wrapper class for `KotlinToolchains` to accommodate functionality
@@ -123,20 +127,35 @@ internal class KotlinBelow240Wrapper(
         operator fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V)
     }
 
+    @OptIn(ExperimentalCompilerArgument::class)
     private class JvmArgumentInterceptor(
         private val delegate: JvmArgumentAccessor,
     ) : JvmArgumentAccessor by delegate {
 
         @Suppress("CAST_NEVER_SUCCEEDS", "UNCHECKED_CAST")
         override fun <V> get(key: JvmCompilerArguments.JvmCompilerArgument<V>): V {
-            //TODO(KT-83794) Handle backward compatibility for changed compiler arguments
+            if (key == JvmCompilerArguments.X_PROFILE) {
+                val stringValue = delegate[key] as? String ?: return null as V
+                val parts = stringValue.split(File.pathSeparator)
+                require(parts.size == 3) { "Invalid async profiler settings format: $this" }
+
+                return ProfileCompilerCommand(Path(parts[0]), parts[1], Path(parts[2])) as V
+            }
 
             return delegate[key]
         }
 
         @Suppress("UNCHECKED_CAST")
         override fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V) {
-            //TODO(KT-83794) Handle backward compatibility for changed compiler arguments
+            if (key == JvmCompilerArguments.X_PROFILE) {
+                val profileCompilerCommand = value as? ProfileCompilerCommand
+                val stringValue =
+                    profileCompilerCommand?.let { "${it.profilerPath.toFile().absolutePath}${File.pathSeparator}${it.command}${File.pathSeparator}${it.outputDir.toFile().absolutePath}" }
+                val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                delegate[stringKey] = stringValue
+                return
+            }
 
             delegate[key] = value
         }
