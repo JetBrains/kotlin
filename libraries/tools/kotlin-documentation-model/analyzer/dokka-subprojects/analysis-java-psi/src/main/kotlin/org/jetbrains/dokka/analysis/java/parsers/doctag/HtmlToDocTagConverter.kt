@@ -74,6 +74,7 @@ internal class HtmlToDocTagConverter(
             "table" -> ifChildrenPresent { Table(children) }
             "tr" -> ifChildrenPresent { Tr(children) }
             "td" -> listOf(Td(children))
+            "th" -> ifChildrenPresent { Th(children) }
             "thead" -> listOf(THead(children))
             "tbody" -> listOf(TBody(children))
             "tfoot" -> listOf(TFoot(children))
