@@ -1209,17 +1209,17 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
 }
 
-fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean, indexObjCTypesUsingVisitChildren: Boolean): IndexerResult {
+fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean): IndexerResult {
     val result = NativeIndexImpl(library, verbose)
-    return buildNativeIndexImpl(result, allowPrecompiledHeaders, indexObjCTypesUsingVisitChildren)
+    return buildNativeIndexImpl(result, allowPrecompiledHeaders)
 }
 
-fun buildNativeIndexImpl(index: NativeIndexImpl, allowPrecompiledHeaders: Boolean, indexObjCTypesUsingVisitChildren: Boolean): IndexerResult {
-    val compilation = indexDeclarations(index, allowPrecompiledHeaders, indexObjCTypesUsingVisitChildren)
+fun buildNativeIndexImpl(index: NativeIndexImpl, allowPrecompiledHeaders: Boolean): IndexerResult {
+    val compilation = indexDeclarations(index, allowPrecompiledHeaders)
     return IndexerResult(index, compilation)
 }
 
-private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHeaders: Boolean, indexObjCTypesUsingVisitChildren: Boolean): Compilation {
+private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHeaders: Boolean): Compilation {
     // Below, declarations from PCH should be excluded to restrict `visitChildren` to visit local declarations only
     withIndex(excludeDeclarationsFromPCH = true) { index ->
         val errors = mutableListOf<Diagnostic>()
@@ -1249,12 +1249,10 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                     nativeIndex.getHeaderId(it)
                 }
 
-                // FIXME: Do we need an opt-in/out feature flag here jic?
                 val allTranslationUnits = unitsHolder.loadedTranslationUnits.union(ownTranslationUnits)
                 nativeIndex.typesDefinitions = indexTranslationUnitsForTypesDefinitions(index, allTranslationUnits)
 
                 unitsToProcess.forEach {
-                    // FIXME: Do we need an opt-in/out feature flag for CXIndexOpt_IndexGeneratedDeclarations?
                     indexTranslationUnit(index, it, CXIndexOpt_IndexGeneratedDeclarations, object : Indexer {
                         override fun indexDeclaration(info: CXIdxDeclInfo) {
                             val file = memScoped {
@@ -1268,32 +1266,6 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                             }
                         }
                     })
-                }
-
-                // FIXME: Do we care about overriden llvm?
-                if (indexObjCTypesUsingVisitChildren) {
-                    unitsToProcess.forEach {
-                        // This fixed KT-49455, which effectively was a bug in libclang. The vanilla libclang indexer indexes
-                        // `__attribute__((external_source_symbol(language="Swift",...)))`
-                        // as CXIdxEntity_CXX* and further ignores entities marked "generated_declaration"
-                        // We have since patched these issues in https://github.com/Kotlin/llvm-project/pull/12
-                        visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
-                            val file = getContainingFile(cursor)
-                            if (file in ownHeaders && nativeIndex.library.includesDeclaration(cursor)) {
-                                when (cursor.kind) {
-                                    CXCursorKind.CXCursor_ObjCInterfaceDecl -> nativeIndex.indexObjCClass(cursor)
-                                    CXCursorKind.CXCursor_ObjCProtocolDecl -> nativeIndex.indexObjCProtocol(cursor)
-                                    CXCursorKind.CXCursor_ObjCCategoryDecl -> {
-                                        // As a workaround, additionally enumerate all the categories explicitly.
-                                        nativeIndex.indexObjCCategory(cursor)
-                                    }
-
-                                    else -> {}
-                                }
-                            }
-                            CXChildVisitResult.CXChildVisit_Continue
-                        }
-                    }
                 }
 
                 val compilationWithPCH = if (allowPrecompiledHeaders)
