@@ -18,6 +18,7 @@ import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
+import kotlin.io.path.Path
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.CLASSPATH
@@ -226,7 +227,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     if (EXPRESSION in this) { arguments.expression = get(EXPRESSION)}
     if (INCLUDE_RUNTIME in this) { arguments.includeRuntime = get(INCLUDE_RUNTIME)}
     if (JAVA_PARAMETERS in this) { arguments.javaParameters = get(JAVA_PARAMETERS)}
-    if (JDK_HOME in this) { arguments.jdkHome = get(JDK_HOME)}
+    if (JDK_HOME in this) { arguments.jdkHome = get(JDK_HOME)?.absolutePathStringOrThrow()}
     if (JVM_DEFAULT in this) { arguments.jvmDefaultStable = get(JVM_DEFAULT)}
     if (JVM_TARGET in this) { arguments.jvmTarget = get(JVM_TARGET)?.stringValue}
     if (MODULE_NAME in this) { arguments.moduleName = get(MODULE_NAME)}
@@ -312,7 +313,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     try { this[EXPRESSION] = arguments.expression } catch (_: NoSuchMethodError) {  }
     try { this[INCLUDE_RUNTIME] = arguments.includeRuntime } catch (_: NoSuchMethodError) {  }
     try { this[JAVA_PARAMETERS] = arguments.javaParameters } catch (_: NoSuchMethodError) {  }
-    try { this[JDK_HOME] = arguments.jdkHome } catch (_: NoSuchMethodError) {  }
+    try { this[JDK_HOME] = arguments.jdkHome?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[JVM_DEFAULT] = arguments.jvmDefaultStable } catch (_: NoSuchMethodError) {  }
     try { this[JVM_TARGET] = arguments.jvmTarget?.let { JvmTarget.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -jvm-target value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
@@ -539,7 +540,8 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     public val JAVA_PARAMETERS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("JAVA_PARAMETERS")
 
-    public val JDK_HOME: JvmCompilerArgument<String?> = JvmCompilerArgument("JDK_HOME")
+    public val JDK_HOME: JvmCompilerArgument<java.nio.`file`.Path?> =
+        JvmCompilerArgument("JDK_HOME")
 
     public val JVM_DEFAULT: JvmCompilerArgument<String?> = JvmCompilerArgument("JVM_DEFAULT")
 

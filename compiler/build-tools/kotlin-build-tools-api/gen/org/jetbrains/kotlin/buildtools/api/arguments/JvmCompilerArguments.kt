@@ -3,6 +3,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
+import java.nio.`file`.Path
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.Deprecated
@@ -802,7 +803,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Include a custom JDK from the specified location in the classpath instead of the default 'JAVA_HOME'.
      */
     @JvmField
-    public val JDK_HOME: JvmCompilerArgument<String?> =
+    public val JDK_HOME: JvmCompilerArgument<Path?> =
         JvmCompilerArgument("JDK_HOME", KotlinReleaseVersion(1, 0, 3))
 
     /**
