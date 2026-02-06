@@ -255,12 +255,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     protected fun getStructDeclAt(
             cursor: CValue<CXCursor>
     ): StructDecl = structRegistry.getOrPut(cursor, { createStructDecl(cursor) }) { decl ->
-        // FIXME: Can we even get here with an anonymous struct?
-        val definitionCursor = if (!isAnonymous(cursor)) {
-            typesDefinitions.structDefinitionByName[getCursorSpelling(cursor)] ?: clang_getCursorDefinition(cursor)
-        } else {
-            clang_getCursorDefinition(cursor)
-        }
+        val definitionCursor = typesDefinitions.structDefinitionByName[getCursorSpelling(cursor)]
+                ?: clang_getCursorDefinition(cursor)
         if (clang_Cursor_isNull(definitionCursor) == 0) {
             decl.def = createStructDef(definitionCursor, definitionCursor.type)
         }
