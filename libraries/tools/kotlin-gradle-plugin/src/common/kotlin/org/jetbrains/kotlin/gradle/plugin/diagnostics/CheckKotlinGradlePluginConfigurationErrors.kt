@@ -74,14 +74,14 @@ internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(): TaskPr
         task.errorDiagnostics.set(
             provider {
                 kotlinToolingDiagnosticsCollector
-                    .getDiagnosticsForProject(this)
+                    .getDiagnosticsForProject(path)
                     .filter { it.severity == ToolingDiagnostic.Severity.ERROR }
             }
         )
         task.strongWarningDiagnostics.set(
             provider {
                 kotlinToolingDiagnosticsCollector
-                    .getDiagnosticsForProject(this)
+                    .getDiagnosticsForProject(path)
                     .filter { it.severity == ToolingDiagnostic.Severity.STRONG_WARNING }
             }
         )

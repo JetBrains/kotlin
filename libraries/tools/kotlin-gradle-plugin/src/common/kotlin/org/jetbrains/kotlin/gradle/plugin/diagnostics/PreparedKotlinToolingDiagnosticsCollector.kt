@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
-import org.gradle.api.logging.Logger
 
 /**
  * Facade for [KotlinToolingDiagnosticsCollector] that simplifies diagnostic reporting to just one method [report]
@@ -23,7 +22,11 @@ internal abstract class PreparedKotlinToolingDiagnosticsCollector(
             PreparedForExecutionPhaseDiagnosticsCollector(parameters)
 
         fun create(project: Project): PreparedKotlinToolingDiagnosticsCollector =
-            PreparedForConfigurationPhaseDiagnosticCollector(project)
+            PreparedForConfigurationPhaseDiagnosticCollector(
+                project.path,
+                ToolingDiagnosticRenderingOptions.forProject(project),
+                project.kotlinToolingDiagnosticsCollector,
+            )
     }
 }
 
@@ -36,9 +39,11 @@ private class PreparedForExecutionPhaseDiagnosticsCollector(
 }
 
 private class PreparedForConfigurationPhaseDiagnosticCollector(
-    private val project: Project
-) : PreparedKotlinToolingDiagnosticsCollector(project.kotlinToolingDiagnosticsCollector) {
+    private val projectPath: String,
+    private val renderingOptions: ToolingDiagnosticRenderingOptions,
+    collector: KotlinToolingDiagnosticsCollector,
+) : PreparedKotlinToolingDiagnosticsCollector(collector) {
     override fun report(diagnostic: ToolingDiagnostic, reportOnce: Boolean, key: String) {
-        collector.report(project, diagnostic, reportOnce, key)
+        collector.report(projectPath, renderingOptions, diagnostic, reportOnce, key)
     }
 }
