@@ -31,7 +31,7 @@ internal val KotlinToolingDiagnosticsSetupAction = KotlinProjectSetupAction {
     // Schedule diagnostics rendering
     project.launch {
         configurationResult.await()
-        val diagnostics = collectorProvider.map { it.getDiagnosticsForProject(project) }.get()
+        val diagnostics = collectorProvider.map { it.getDiagnosticsForProject(project.path) }.get()
         diagnostics.reportProblems(reporterProvider.get(), diagnosticRenderingOptions)
     }
 
