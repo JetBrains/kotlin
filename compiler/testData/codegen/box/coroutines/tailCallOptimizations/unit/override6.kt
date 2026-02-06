@@ -30,7 +30,7 @@ fun box(): String {
         inlineMe { suspendHere() }.generic()
     }
 
-    TailCallOptimizationChecker.checkStateMachineIn("generic")
+    TailCallOptimizationChecker.checkNoStateMachineIn("generic")
 
     return "OK"
 }

@@ -65,10 +65,6 @@ class CoroutineTransformerMethodVisitor(
     private val containingClassInternalName: String,
     obtainClassBuilderForCoroutineState: () -> ClassBuilder,
     private val isForNamedFunction: Boolean,
-    // Since tail-call optimization of functions with Unit return type relies on ability of call-site to recognize them,
-    // in order to ignore return value and push Unit, when we cannot ensure this ability, for example, when the function overrides function,
-    // returning Any, we need to disable tail-call optimization for these functions.
-    private val disableTailCallOptimizationForFunctionReturningUnit: Boolean,
     private val reportSuspensionPointInsideMonitor: (String) -> Unit,
     private val lineNumber: Int,
     private val sourceFile: String,
@@ -123,7 +119,7 @@ class CoroutineTransformerMethodVisitor(
         var actualCoroutineStart = methodNode.instructions.first
 
         if (isForNamedFunction) {
-            if (methodNode.allSuspensionPointsAreTailCalls(suspensionPoints, !disableTailCallOptimizationForFunctionReturningUnit)) {
+            if (methodNode.allSuspensionPointsAreTailCalls(suspensionPoints)) {
                 methodNode.addCoroutineSuspendedChecks(suspensionPoints)
                 methodNode.insertAsyncStackTraceEntriesForTailCallFunction(suspensionPoints)
                 dropSuspensionMarkers(methodNode)

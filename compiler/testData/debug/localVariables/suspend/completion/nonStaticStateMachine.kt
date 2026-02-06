@@ -29,5 +29,4 @@ suspend fun box() {
 // test.kt:10 foo1: l:long=42:long, $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=A$foo1$1, $result:java.lang.Object=null
 // test.kt:11 foo1: l:long=42:long, $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=A$foo1$1, $result:java.lang.Object=null
 // test.kt:12 foo1: l:long=42:long, $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1, $continuation:kotlin.coroutines.Continuation=A$foo1$1, $result:java.lang.Object=null, dead:long=42:long
-// test.kt:16 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 // test.kt:17 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
