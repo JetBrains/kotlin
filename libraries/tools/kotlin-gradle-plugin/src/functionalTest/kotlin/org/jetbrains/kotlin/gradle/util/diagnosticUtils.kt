@@ -56,7 +56,11 @@ internal fun Project.checkDiagnostics(
     val expectedDiagnostics = expectedDiagnosticsFile(testDataName)
 
     val filteredDiagnostics =
-        diagnosticsPerProject.mapValues { (_, diagnostics) -> diagnostics.filterNot { it.id in filterDiagnosticIds.map { it.id } } }
+        diagnosticsPerProject.mapValues { (_, diagnostics) ->
+            diagnostics.filterNot { diagnostic ->
+                filterDiagnosticIds.any { diagnostic.id == it.id || diagnostic.id.startsWith("${it.id}_") }
+            }
+        }
 
     if (filteredDiagnostics.all { (_, diagnostics) -> diagnostics.isEmpty() }) {
         if (expectedDiagnostics.exists())
@@ -88,7 +92,9 @@ internal val defaultFilteredDiagnostics =
 
 internal fun Project.assertNoDiagnostics(filterDiagnosticIds: List<ToolingDiagnosticFactory> = defaultFilteredDiagnostics) {
     val actualDiagnostics =
-        kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filterNot { it.id in filterDiagnosticIds.map { it.id } }
+        kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filterNot { diagnostic ->
+            filterDiagnosticIds.any { diagnostic.id == it.id || diagnostic.id.startsWith("${it.id}_") }
+        }
     assertTrue(
         actualDiagnostics.isEmpty(), "Expected to have no diagnostics, but some were reported:\n ${actualDiagnostics.render()}"
     )
