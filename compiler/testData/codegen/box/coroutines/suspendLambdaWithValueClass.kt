@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// WORKS_WHEN_VALUE_CLASS
 
 import helpers.*
 import kotlin.coroutines.*
@@ -42,6 +43,7 @@ fun testUlong(): String {
     return "OK"
 }
 
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class UserValueClass(val raw: String)
 
 fun testUseValueClass(): String {
