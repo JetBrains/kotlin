@@ -2,6 +2,7 @@ val extension = extensions.create("projectTests", ProjectTestsExtension::class)
 
 val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply {
     stdlibRuntimeForTests.from(extension.stdlibRuntimeForTests)
+    stdlibRuntimeSourcesForTests.from(extension.stdlibRuntimeSourcesForTests)
     stdlibMinimalRuntimeForTests.from(extension.stdlibMinimalRuntimeForTests)
     kotlinReflectJarForTests.from(extension.kotlinReflectJarForTests)
     stdlibCommonRuntimeForTests.from(extension.stdlibCommonRuntimeForTests)

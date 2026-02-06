@@ -115,7 +115,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File runtimeSourcesJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-sources.jar"));
+        return propertyOrDist(KOTLIN_FULL_STDLIB_SOURCES_PATH, "dist/kotlinc/lib/kotlin-stdlib-sources.jar");
     }
 
     @NotNull

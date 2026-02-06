@@ -47,6 +47,9 @@ abstract class ProjectTestsExtension(val project: Project) {
     val stdlibRuntimeForTests: Configuration = project.configurations.create("stdlibRuntimeForTests") {
         isTransitive = false
     }
+    val stdlibRuntimeSourcesForTests: Configuration = project.configurations.create("stdlibRuntimeSourcesForTests") {
+        isTransitive = false
+    }
     val stdlibMinimalRuntimeForTests: Configuration = project.configurations.create("stdlibMinimalRuntimeForTests") {
         isTransitive = false
     }
@@ -129,6 +132,10 @@ abstract class ProjectTestsExtension(val project: Project) {
         add(stdlibRuntimeForTests) { project(":kotlin-stdlib") }
         add(stdlibMinimalRuntimeForTests) { project(":kotlin-stdlib-jvm-minimal-for-test") }
         add(kotlinReflectJarForTests) { project(":kotlin-reflect") }
+    }
+
+    fun withJvmStdlibSources() {
+        add(stdlibRuntimeSourcesForTests) { project(":kotlin-stdlib", "distSources") }
     }
 
     fun withStdlibCommon() {

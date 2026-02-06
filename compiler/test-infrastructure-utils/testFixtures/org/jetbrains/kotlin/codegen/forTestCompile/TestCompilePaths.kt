@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.forTestCompile
 // This file is duplicated at repo/gradle-build-conventions/project-tests-convention/src/main/kotlin/TestCompilePaths.kt
 object TestCompilePaths {
     const val KOTLIN_FULL_STDLIB_PATH: String = "kotlin.full.stdlib.path"
+    const val KOTLIN_FULL_STDLIB_SOURCES_PATH: String = "kotlin.full.stdlib.sources.path"
     const val KOTLIN_MINIMAL_STDLIB_PATH: String = "kotlin.minimal.stdlib.path"
     const val KOTLIN_TEST_JAR_PATH: String = "kotlin.test.jar.path"
     const val KOTLIN_REFLECT_JAR_PATH: String = "kotlin.reflect.jar.path"

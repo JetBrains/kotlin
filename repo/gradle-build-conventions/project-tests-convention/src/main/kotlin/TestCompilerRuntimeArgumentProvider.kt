@@ -7,6 +7,7 @@ import TestCompilePaths.KOTLIN_ANNOTATIONS_PATH
 import TestCompilePaths.KOTLIN_COMMON_STDLIB_PATH
 import TestCompilePaths.KOTLIN_DIST_PATH
 import TestCompilePaths.KOTLIN_FULL_STDLIB_PATH
+import TestCompilePaths.KOTLIN_FULL_STDLIB_SOURCES_PATH
 import TestCompilePaths.KOTLIN_JS_KOTLIN_TEST_KLIB_PATH
 import TestCompilePaths.KOTLIN_JS_REDUCED_STDLIB_PATH
 import TestCompilePaths.KOTLIN_JS_STDLIB_KLIB_PATH
@@ -44,6 +45,10 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
     @get:InputFiles
     @get:Classpath
     abstract val stdlibRuntimeForTests: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val stdlibRuntimeSourcesForTests: ConfigurableFileCollection
 
     @get:InputFiles
     @get:Classpath
@@ -178,6 +183,7 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
         return listOfNotNull(
             // JVM libs
             argument(KOTLIN_FULL_STDLIB_PATH, stdlibRuntimeForTests),
+            argument(KOTLIN_FULL_STDLIB_SOURCES_PATH, stdlibRuntimeSourcesForTests),
             argument(KOTLIN_MINIMAL_STDLIB_PATH, stdlibMinimalRuntimeForTests),
             argument(KOTLIN_REFLECT_JAR_PATH, kotlinReflectJarForTests),
             ifNotEmpty(KOTLIN_COMMON_STDLIB_PATH, stdlibCommonRuntimeForTests),
