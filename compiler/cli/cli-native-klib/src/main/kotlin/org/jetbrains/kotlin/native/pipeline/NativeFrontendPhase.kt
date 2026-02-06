@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.konan.config.konanPrintFiles
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.native.NativePhaseContext
+import org.jetbrains.kotlin.native.NativeFirstStagePhaseContext
 import org.jetbrains.kotlin.native.createNativeKlibConfig
 
 object NativeFrontendPhase : PipelinePhase<NativeConfigurationArtifact, NativeFrontendArtifact>(
@@ -39,7 +39,7 @@ object NativeFrontendPhase : PipelinePhase<NativeConfigurationArtifact, NativeFr
     override fun executePhase(input: NativeConfigurationArtifact): NativeFrontendArtifact {
         val (configuration, environment, diagnosticCollector) = input
         val config = createNativeKlibConfig(configuration)
-        val phaseContext = NativePhaseContext(config)
+        val phaseContext = NativeFirstStagePhaseContext(config)
         val firOutput = phaseContext.firFrontend(environment)
         return NativeFrontendArtifact(
             firOutput,
@@ -51,7 +51,7 @@ object NativeFrontendPhase : PipelinePhase<NativeConfigurationArtifact, NativeFr
     }
 
     @OptIn(SessionConfiguration::class, ExperimentalCompilerApi::class)
-    private inline fun <F> NativePhaseContext.firFrontend(
+    private inline fun <F> NativeFirstStagePhaseContext.firFrontend(
         input: KotlinCoreEnvironment,
         files: List<F>,
         fileHasSyntaxErrors: (F) -> Boolean,
@@ -115,7 +115,7 @@ object NativeFrontendPhase : PipelinePhase<NativeConfigurationArtifact, NativeFr
         }
     }
 
-    private fun NativePhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): AllModulesFrontendOutput {
+    private fun NativeFirstStagePhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): AllModulesFrontendOutput {
         val configuration = input.configuration
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         // FIR
@@ -135,7 +135,7 @@ object NativeFrontendPhase : PipelinePhase<NativeConfigurationArtifact, NativeFr
         )
     }
 
-    private fun NativePhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): AllModulesFrontendOutput {
+    private fun NativeFirstStagePhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): AllModulesFrontendOutput {
         val configuration = input.configuration
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         // FIR
@@ -163,7 +163,7 @@ object NativeFrontendPhase : PipelinePhase<NativeConfigurationArtifact, NativeFr
         )
     }
 
-    private fun NativePhaseContext.firFrontend(input: KotlinCoreEnvironment): AllModulesFrontendOutput {
+    private fun NativeFirstStagePhaseContext.firFrontend(input: KotlinCoreEnvironment): AllModulesFrontendOutput {
         var output = if (input.configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)) {
             firFrontendWithLightTree(input)
         } else {
