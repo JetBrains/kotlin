@@ -49,8 +49,7 @@ sealed interface DefFileProperty<T> {
         ExcludeDependentModules("excludeDependentModules"),
         DisableDesignatedInitializerChecks("disableDesignatedInitializerChecks"),
         AllowIncludingObjCCategoriesFromDefFile("allowIncludingObjCCategoriesFromDefFile"),
-        SkipNonImportableModules("skipNonImportableModules"),
-        IndexObjCTypesUsingVisitChildren("indexObjCTypesUsingVisitChildren");
+        SkipNonImportableModules("skipNonImportableModules");
 
         override fun parse(rawValue: String?): Boolean = rawValue.toBoolean()
     }

@@ -132,8 +132,7 @@ fun buildNativeIndex(
         library: NativeLibrary,
         verbose: Boolean,
         allowPrecompiledHeaders: Boolean = true,
-        indexObjCTypesUsingVisitChildren: Boolean = false,
-): IndexerResult = buildNativeIndexImpl(library, verbose, allowPrecompiledHeaders, indexObjCTypesUsingVisitChildren)
+): IndexerResult = buildNativeIndexImpl(library, verbose, allowPrecompiledHeaders)
 
 /**
  * This class describes the IR of definitions from C header file(s).
