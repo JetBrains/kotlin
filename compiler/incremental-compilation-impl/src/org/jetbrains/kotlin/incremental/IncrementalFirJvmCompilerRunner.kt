@@ -186,8 +186,11 @@ open class IncrementalFirJvmCompilerRunner(
             setIdeaIoUseFallback()
 
             // -AbstractProjectEnvironment-
-            val projectEnvironment =
-                createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
+            val projectEnvironment = createProjectEnvironment(
+                configuration,
+                rootDisposable,
+                EnvironmentConfigFiles.JVM_CONFIG_FILES
+            )
 
             // -sources
             val allPlatformSourceFiles = linkedSetOf<KtSourceFile>() // TODO: get from caller

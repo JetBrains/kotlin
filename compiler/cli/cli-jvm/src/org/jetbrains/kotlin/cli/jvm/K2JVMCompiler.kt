@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.jvm
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -273,9 +274,10 @@ fun CompilerConfiguration.configureModuleChunk(
 
     return if (buildFile != null) {
         val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val diagnosticReporter = this.cliDiagnosticsReporter
 
         fun strongWarning(message: String) {
-            messageCollector.report(STRONG_WARNING, message)
+            diagnosticReporter.report(COMPILER_ARGUMENTS_WARNING, message)
         }
 
         if (destination != null) {

@@ -5,32 +5,32 @@
 
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
+import org.jetbrains.kotlin.cli.CliDiagnostics.SCRIPTING_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.SCRIPTING_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.cliDiagnosticsReporter
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.freeArgsForScript
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.replMode
 import org.jetbrains.kotlin.cli.common.scriptMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.expressionToEvaluate
-import org.jetbrains.kotlin.config.messageCollector
 
 object JvmScriptPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JvmScriptPipelineArtifact>(
     name = "JvmScriptPipelinePhase",
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): JvmScriptPipelineArtifact? {
         val (configuration, rootDisposable) = input
-        val messageCollector = configuration.messageCollector
+        val diagnosticReporter = configuration.cliDiagnosticsReporter
         if (configuration.scriptMode && configuration.freeArgsForScript.isEmpty()) {
-            messageCollector.report(ERROR, "Specify script source path to evaluate")
+            diagnosticReporter.report(SCRIPTING_ERROR, "Specify script source path to evaluate")
             return null
         }
         if (configuration.replMode && configuration.freeArgsForScript.isNotEmpty()) {
-            messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, "The arguments are ignored in the REPL mode")
+            diagnosticReporter.report(SCRIPTING_WARNING, "The arguments are ignored in the REPL mode")
         }
 
         val projectEnvironment by lazy(LazyThreadSafetyMode.NONE) {
@@ -50,14 +50,14 @@ object JvmScriptPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, Jvm
             val scriptingEvaluator = ScriptEvaluationExtension.getInstances(projectEnvironment.project)
                 .find { it.isAccepted(argumentsStub) }
             if (scriptingEvaluator == null) {
-                messageCollector.report(ERROR, "Unable to evaluate script, no scripting plugin loaded")
+                diagnosticReporter.report(SCRIPTING_ERROR, "Unable to evaluate script, no scripting plugin loaded")
                 return null
             }
             scriptingEvaluator.eval(configuration, projectEnvironment)
         } else {
             if (!configuration.replMode) {
-                messageCollector.report(
-                    ERROR,
+                diagnosticReporter.report(
+                    SCRIPTING_ERROR,
                     "Kotlin REPL is deprecated and should be enabled explicitly for now; please use the '-Xrepl' option"
                 )
                 return null
@@ -66,7 +66,7 @@ object JvmScriptPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, Jvm
             val argumentsStub = K2JVMCompilerArguments()
             val shell = ShellExtension.getInstances(projectEnvironment.project).find { it.isAccepted(argumentsStub) }
             if (shell == null) {
-                messageCollector.report(ERROR, "Unable to run REPL, no scripting plugin loaded")
+                diagnosticReporter.report(SCRIPTING_ERROR, "Unable to run REPL, no scripting plugin loaded")
                 return null
             }
             shell.run(argumentsStub, configuration, projectEnvironment)
