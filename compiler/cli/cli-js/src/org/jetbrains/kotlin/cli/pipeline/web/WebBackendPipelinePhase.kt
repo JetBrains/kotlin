@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web
 
+import org.jetbrains.kotlin.cli.CliDiagnostics.JS_IC_ERROR
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.cliDiagnosticsReporter
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.js.IcCachesConfigurationData
 import org.jetbrains.kotlin.cli.js.platformChecker
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
@@ -39,12 +39,13 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): Output? {
         val configuration = input.configuration
-        val messageCollector = configuration.messageCollector
+        val diagnosticReporter = configuration.cliDiagnosticsReporter
 
         val cacheDirectory = configuration.icCacheDirectory
         val outputDirPath = configuration.outputDir
-        messageCollector.report(CompilerMessageSeverity.LOGGING, "Produce executable: $outputDirPath")
-        messageCollector.report(CompilerMessageSeverity.LOGGING, "Cache directory: $cacheDirectory")
+
+        diagnosticReporter.log("Produce executable: $outputDirPath")
+        diagnosticReporter.log("Cache directory: $cacheDirectory")
 
         val mainCallArguments = if (configuration.callMainMode == K2JsArgumentConstants.NO_CALL) null else emptyList<String>()
 
@@ -68,19 +69,16 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
         configuration: CompilerConfiguration,
         mainCallArguments: List<String>?,
     ): IntermediateOutput? {
-        val messageCollector = configuration.messageCollector
+        val diagnosticReporter = configuration.cliDiagnosticsReporter
 
         val icCaches = cacheGuard.acquireAndRelease { status ->
             when (status) {
                 IncrementalCacheGuard.AcquireStatus.CACHE_CLEARED -> {
-                    messageCollector.report(
-                        CompilerMessageSeverity.INFO,
-                        "Cache guard file detected, cache directory '$cacheDirectory' cleared"
-                    )
+                    diagnosticReporter.info("Cache guard file detected, cache directory '$cacheDirectory' cleared")
                 }
                 IncrementalCacheGuard.AcquireStatus.INVALID_CACHE -> {
-                    messageCollector.report(
-                        CompilerMessageSeverity.ERROR,
+                    diagnosticReporter.report(
+                        JS_IC_ERROR,
                         "Cache guard file detected in readonly mode, cache directory '$cacheDirectory' should be cleared"
                     )
                     return null
@@ -101,7 +99,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
                         granularity = configuration.artifactConfiguration!!.granularity
                     )
                 },
-                messageCollector = messageCollector,
+                diagnosticReporter = diagnosticReporter,
                 outputDir = configuration.outputDir!!,
                 targetConfiguration = configuration,
                 mainCallArguments = mainCallArguments,

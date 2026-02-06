@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.cli.pipeline.web
 
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.js.platformChecker
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -88,7 +88,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 !configuration.jsIncrementalCompilationEnabled
             ) {
                 if (!configuration.printVersion) {
-                    messageCollector.report(CompilerMessageSeverity.ERROR, "No source files")
+                    configuration.cliDiagnosticsReporter.report(COMPILER_ARGUMENTS_ERROR, "No source files")
                 }
                 return null
             }
@@ -118,7 +118,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 !configuration.jsIncrementalCompilationEnabled
             ) {
                 if (!configuration.printVersion) {
-                    messageCollector.report(CompilerMessageSeverity.ERROR, "No source files")
+                    configuration.cliDiagnosticsReporter.report(COMPILER_ARGUMENTS_ERROR, "No source files")
                 }
                 return null
             }

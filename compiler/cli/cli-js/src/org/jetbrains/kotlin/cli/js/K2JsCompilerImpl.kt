@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.cli.js
 
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
+import org.jetbrains.kotlin.cli.common.cliDiagnosticsReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.util.PhaseType
 class Ir2JsTransformer private constructor(
     val module: ModulesStructure,
     val messageCollector: MessageCollector,
+    val diagnosticReporter: CliDiagnosticReporter,
     val mainCallArguments: List<String>?,
     val keep: Set<String>,
     val dceRuntimeDiagnostic: String?,
@@ -37,6 +40,7 @@ class Ir2JsTransformer private constructor(
     ) : this(
         module,
         messageCollector,
+        configuration.cliDiagnosticsReporter,
         mainCallArguments,
         keep = configuration.keep.toSet(),
         dceRuntimeDiagnostic = configuration.dceRuntimeDiagnostic,
@@ -57,12 +61,12 @@ class Ir2JsTransformer private constructor(
             keep = keep,
             dceRuntimeDiagnostic = RuntimeDiagnostic.resolve(
                 dceRuntimeDiagnostic,
-                messageCollector
+                diagnosticReporter
             ),
             safeExternalBoolean = safeExternalBoolean,
             safeExternalBooleanDiagnostic = RuntimeDiagnostic.resolve(
                 safeExternalBooleanDiagnostic,
-                messageCollector
+                diagnosticReporter
             ),
             granularity = granularity,
         )

@@ -31,9 +31,14 @@ object CliDiagnostics : KtDiagnosticsContainer() {
 
     val KOTLIN_PACKAGE_USAGE: KtSourcelessDiagnosticFactory by errorWithoutSource()
     val IO_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val COMPILER_EXCEPTION: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
     val SCRIPTING_WARNING: KtSourcelessDiagnosticFactory by warningWithoutSource()
     val SCRIPTING_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val JS_ARGUMENT_WARNING: KtSourcelessDiagnosticFactory by warningWithoutSource()
+    val JS_ARGUMENT_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val JS_IC_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = Messages
 
@@ -60,9 +65,14 @@ object CliDiagnostics : KtDiagnosticsContainer() {
 
             map.put(KOTLIN_PACKAGE_USAGE, MESSAGE_PLACEHOLDER)
             map.put(IO_ERROR, MESSAGE_PLACEHOLDER)
+            map.put(COMPILER_EXCEPTION, MESSAGE_PLACEHOLDER)
 
             map.put(SCRIPTING_WARNING, MESSAGE_PLACEHOLDER)
             map.put(SCRIPTING_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(JS_ARGUMENT_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(JS_ARGUMENT_ERROR, MESSAGE_PLACEHOLDER)
+            map.put(JS_IC_ERROR, MESSAGE_PLACEHOLDER)
         }
     }
 }
