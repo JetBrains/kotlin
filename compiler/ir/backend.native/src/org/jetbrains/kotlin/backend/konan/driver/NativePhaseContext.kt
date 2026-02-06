@@ -33,6 +33,6 @@ interface PerformanceManagerContext {
  * * On the other hand, middle- and bitcode phases are hard to decouple due to the way the code was written many years ago.
  * It will take some time to rewrite it properly.
  */
-interface PhaseContext : LoggingContext, ErrorReportingContext, DisposableContext, PerformanceManagerContext {
+interface NativePhaseContext : LoggingContext, ErrorReportingContext, DisposableContext, PerformanceManagerContext {
     val config: NativeKlibCompilationConfig
 }
