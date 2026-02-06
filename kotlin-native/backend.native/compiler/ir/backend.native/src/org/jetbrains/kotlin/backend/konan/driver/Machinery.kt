@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.driver
 
-import org.jetbrains.kotlin.backend.common.DisposableContext
-import org.jetbrains.kotlin.backend.common.ErrorReportingContext
-import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.phaser.PhaserState
