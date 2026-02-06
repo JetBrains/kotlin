@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.Kotlin230AndBelowWrapper
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.konan.NativePlatformToolchain
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -23,6 +24,7 @@ import kotlin.contracts.contract
  * Currently supported toolchains:
  * - [JvmPlatformToolchain] for Kotlin/JVM compilation
  * - [CriToolchain] for Compiler Reference Index operations
+ * - [NativePlatformToolchain] for Kotlin/Native compilation
  *
  * This interface is not intended to be implemented by the API consumers.
  *
