@@ -81,7 +81,6 @@ class NativeCompilerSecondStageFacade(
                     K2NativeCompilerArguments::kotlinHome.cliArgument, nativeHome.absolutePath,
                     optimizationArgument.cliArgument,
                     K2NativeCompilerArguments::binaryOptions.cliArgument("runtimeAssertionsMode=panic"),
-                    K2NativeCompilerArguments::binaryOptions.cliArgument("gc=parallel_mark_concurrent_sweep"),
                     K2NativeCompilerArguments::verifyIr.cliArgument("error"),
                     K2NativeCompilerArguments::llvmVariant.cliArgument("dev"),
                     K2NativeCompilerArguments::produce.cliArgument, "program",
