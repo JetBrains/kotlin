@@ -7805,15 +7805,7 @@
                                 },
                                 "delimiter": null,
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                    "isNullable": {
-                                        "current": true,
-                                        "valueInVersions": []
-                                    },
-                                    "defaultValue": {
-                                        "current": null,
-                                        "valueInVersions": []
-                                    }
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.ProfileCompilerCommandType"
                                 },
                                 "argumentTypeDescription": {
                                     "current": "<profilerPath:command:outputDir>",
