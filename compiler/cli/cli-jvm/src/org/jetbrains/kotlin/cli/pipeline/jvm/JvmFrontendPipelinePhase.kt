@@ -9,13 +9,12 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtPsiSourceFile
-import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_PLUGIN_INITIALIZATION_ERROR
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.CONTENT_ROOTS
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.targetDescription
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createEnvironmentAndSources
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
@@ -55,7 +55,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): JvmFrontendPipelineArtifact? {
         val (configuration, rootDisposable) = input
-        val messageCollector = configuration.messageCollector
         val diagnosticsCollector = configuration.diagnosticsCollector
 
         val perfManager = configuration.perfManager
@@ -63,7 +62,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val targetDescription = chunk.targetDescription()
         perfManager?.targetDescription = targetDescription
 
-        if (!checkNotSupportedPlugins(configuration, messageCollector)) {
+        if (!checkNotSupportedPlugins(configuration)) {
             perfManager?.notifyPhaseFinished(PhaseType.Initialization)
             return null
         }
@@ -102,7 +101,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             configuration.buildFile == null
         ) {
             if (!configuration.printVersion) {
-                messageCollector.report(CompilerMessageSeverity.ERROR, "No source files")
+                configuration.report(COMPILER_ARGUMENTS_ERROR, "No source files")
             }
             return null
         }
@@ -140,7 +139,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             friendPaths = chunk.modules.fold(emptyList()) { paths, m -> paths + m.getFriendPaths() }
         )
 
-        val sessionsWithSources = prepareJvmSessions<KtSourceFile>(
+        val sessionsWithSources = prepareJvmSessions(
             files = allSources,
             rootModuleName = Name.special("<$moduleName>"),
             configuration = configuration,
@@ -206,8 +205,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 val environment = createProjectEnvironment(
                     configuration,
                     rootDisposable,
-                    EnvironmentConfigFiles.JVM_CONFIG_FILES,
-                    messageCollector
+                    EnvironmentConfigFiles.JVM_CONFIG_FILES
                 )
                 val sources = { collectSources(configuration, environment) }
                 EnvironmentAndSources(environment, sources)
@@ -252,10 +250,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         return GroupedKtSources(platformSources, commonSources, sourcesByModuleName)
     }
 
-    private fun checkNotSupportedPlugins(
-        compilerConfiguration: CompilerConfiguration,
-        messageCollector: MessageCollector
-    ): Boolean {
+    private fun checkNotSupportedPlugins(compilerConfiguration: CompilerConfiguration): Boolean {
         val notSupportedPlugins = mutableListOf<String?>().apply {
             compilerConfiguration.get(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)
                 .collectIncompatiblePluginNamesTo(this, ComponentRegistrar::supportsK2)
@@ -264,8 +259,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         }
 
         if (notSupportedPlugins.isNotEmpty()) {
-            messageCollector.report(
-                CompilerMessageSeverity.ERROR,
+            compilerConfiguration.report(
+                COMPILER_PLUGIN_INITIALIZATION_ERROR,
                 """
                     |There are some plugins incompatible with language version 2.0:
                     |${notSupportedPlugins.joinToString(separator = "\n|") { "  $it" }}
@@ -292,8 +287,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         if (commonScripts.isNotEmpty()) {
             val cwd = File(".").absoluteFile
             fun renderFile(ktFile: KtFile) = File(ktFile.virtualFilePath).descendantRelativeTo(cwd).path
-            configuration.messageCollector.report(
-                CompilerMessageSeverity.ERROR,
+            configuration.report(
+                COMPILER_ARGUMENTS_ERROR,
                 "Script files in common source roots are not supported. Misplaced files:\n    " +
                         commonScripts.joinToString("\n    ", transform = ::renderFile)
             )

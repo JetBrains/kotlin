@@ -20,11 +20,10 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.configureProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
@@ -190,8 +190,7 @@ private class ProjectEnvironmentWithCoreEnvironmentEmulation(
 fun createProjectEnvironment(
     configuration: CompilerConfiguration,
     parentDisposable: Disposable,
-    configFiles: EnvironmentConfigFiles,
-    messageCollector: MessageCollector
+    configFiles: EnvironmentConfigFiles
 ): VfsBasedProjectEnvironment {
     setupIdeaStandaloneExecution()
     val appEnv = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(parentDisposable, configuration)
@@ -208,7 +207,7 @@ fun createProjectEnvironment(
     val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE)
 
     val javaModuleFinder = CliJavaModuleFinder(
-        configuration.get(JVMConfigurationKeys.JDK_HOME),
+        configuration.jdkHome,
         configuration,
         javaFileManager,
         project,
@@ -225,7 +224,7 @@ fun createProjectEnvironment(
         PsiManager.getInstance(project),
         configuration,
         configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
-        { contentRootToVirtualFile(it, localFileSystem, projectEnvironment.jarFileSystem, messageCollector) },
+        { contentRootToVirtualFile(it, localFileSystem, projectEnvironment.jarFileSystem, configuration) },
         javaModuleFinder,
         !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
         outputDirectory?.let { localFileSystem.findFileByPath(it) },
@@ -282,18 +281,18 @@ private fun contentRootToVirtualFile(
     root: JvmContentRootBase,
     localFileSystem: VirtualFileSystem,
     jarFileSystem: VirtualFileSystem,
-    messageCollector: MessageCollector,
+    configuration: CompilerConfiguration,
 ): VirtualFile? =
     when (root) {
         // TODO: find out why non-existent location is not reported for JARs, add comment or fix
         is JvmClasspathRoot ->
             if (root.file.isFile) jarFileSystem.findJarRoot(root.file)
-            else localFileSystem.findExistingRoot(root, "Classpath entry", messageCollector)
+            else localFileSystem.findExistingRoot(root, "Classpath entry", configuration)
         is JvmModulePathRoot ->
             if (root.file.isFile) jarFileSystem.findJarRoot(root.file)
-            else localFileSystem.findExistingRoot(root, "Java module root", messageCollector)
+            else localFileSystem.findExistingRoot(root, "Java module root", configuration)
         is JavaSourceRoot ->
-            localFileSystem.findExistingRoot(root, "Java source root", messageCollector)
+            localFileSystem.findExistingRoot(root, "Java source root", configuration)
         is VirtualJvmClasspathRoot ->
             root.file
         else ->
@@ -304,12 +303,12 @@ private fun VirtualFileSystem.findJarRoot(file: File): VirtualFile? =
     findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
 
 private fun VirtualFileSystem.findExistingRoot(
-    root: JvmContentRoot, rootDescription: String, messageCollector: MessageCollector,
+    root: JvmContentRoot, rootDescription: String, configuration: CompilerConfiguration,
 ): VirtualFile? {
     return findFileByPath(root.file.absolutePath).also {
         if (it == null) {
-            messageCollector.report(
-                CompilerMessageSeverity.STRONG_WARNING,
+            configuration.report(
+                ROOTS_RESOLUTION_WARNING,
                 "$rootDescription points to a non-existent location: ${root.file}"
             )
         }

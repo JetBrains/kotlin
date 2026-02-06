@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
+import org.jetbrains.kotlin.cli.CliDiagnostics.JAVAC_INTEGRATION_WARNING
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.VirtualJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
@@ -132,8 +134,8 @@ fun writeOutputsIfNeeded(
                 it.compile(configuration.outputDirOrCurrentDirectory())
             }
         } else {
-            messageCollector.report(
-                CompilerMessageSeverity.WARNING,
+            configuration.report(
+                JAVAC_INTEGRATION_WARNING,
                 "A chunk contains multiple modules (${outputs.joinToString { it.moduleName }}). "
             )
         }

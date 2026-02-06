@@ -38,7 +38,6 @@ abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : KtUsefulTe
             CompilerConfiguration.create(),
             testRootDisposable,
             EnvironmentConfigFiles.JVM_CONFIG_FILES,
-            MessageCollector.NONE,
         )
         val psiManager = PsiManager.getInstance(environment.project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
