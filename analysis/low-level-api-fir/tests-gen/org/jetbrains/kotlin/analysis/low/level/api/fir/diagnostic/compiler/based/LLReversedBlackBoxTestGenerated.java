@@ -58,6 +58,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("annotationClass.kt")
+    public void testAnnotationClass() {
+      runTest("compiler/testData/codegen/box/annotations/annotationClass.kt");
+    }
+
+    @Test
     @TestMetadata("annotationDefaultValueOfUnsigned.kt")
     public void testAnnotationDefaultValueOfUnsigned() {
       runTest("compiler/testData/codegen/box/annotations/annotationDefaultValueOfUnsigned.kt");
@@ -319,6 +325,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     @TestMetadata("kt25489.kt")
     public void testKt25489() {
       runTest("compiler/testData/codegen/box/annotations/kt25489.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleEqualMethodsBug.kt")
+    public void testMultipleEqualMethodsBug() {
+      runTest("compiler/testData/codegen/box/annotations/multipleEqualMethodsBug.kt");
     }
 
     @Test
@@ -5925,6 +5937,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("classMemberAndNonExtensionCompatibility.kt")
+      public void testClassMemberAndNonExtensionCompatibility() {
+        runTest("compiler/testData/codegen/box/callableReference/function/classMemberAndNonExtensionCompatibility.kt");
+      }
+
+      @Test
       @TestMetadata("classMemberFromClass.kt")
       public void testClassMemberFromClass() {
         runTest("compiler/testData/codegen/box/callableReference/function/classMemberFromClass.kt");
@@ -5967,6 +5985,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("classMemberOverridden.kt")
+      public void testClassMemberOverridden() {
+        runTest("compiler/testData/codegen/box/callableReference/function/classMemberOverridden.kt");
+      }
+
+      @Test
       @TestMetadata("coercionToUnit.kt")
       public void testCoercionToUnit() {
         runTest("compiler/testData/codegen/box/callableReference/function/coercionToUnit.kt");
@@ -5994,6 +6018,18 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("constructorFromTopLevelOneStringArg.kt")
       public void testConstructorFromTopLevelOneStringArg() {
         runTest("compiler/testData/codegen/box/callableReference/function/constructorFromTopLevelOneStringArg.kt");
+      }
+
+      @Test
+      @TestMetadata("constructorsWithArgs.kt")
+      public void testConstructorsWithArgs() {
+        runTest("compiler/testData/codegen/box/callableReference/function/constructorsWithArgs.kt");
+      }
+
+      @Test
+      @TestMetadata("constructorsWithArgsSimple.kt")
+      public void testConstructorsWithArgsSimple() {
+        runTest("compiler/testData/codegen/box/callableReference/function/constructorsWithArgsSimple.kt");
       }
 
       @Test
@@ -6030,6 +6066,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("extensionFromExtension.kt")
       public void testExtensionFromExtension() {
         runTest("compiler/testData/codegen/box/callableReference/function/extensionFromExtension.kt");
+      }
+
+      @Test
+      @TestMetadata("extensionFromTopLevel.kt")
+      public void testExtensionFromTopLevel() {
+        runTest("compiler/testData/codegen/box/callableReference/function/extensionFromTopLevel.kt");
       }
 
       @Test
@@ -6132,6 +6174,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("extensionWithTypeParam.kt")
       public void testExtensionWithTypeParam() {
         runTest("compiler/testData/codegen/box/callableReference/function/extensionWithTypeParam.kt");
+      }
+
+      @Test
+      @TestMetadata("functionReferenceName.kt")
+      public void testFunctionReferenceName() {
+        runTest("compiler/testData/codegen/box/callableReference/function/functionReferenceName.kt");
       }
 
       @Test
@@ -6255,6 +6303,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("localAndTopLevelExtensions.kt")
+      public void testLocalAndTopLevelExtensions() {
+        runTest("compiler/testData/codegen/box/callableReference/function/localAndTopLevelExtensions.kt");
+      }
+
+      @Test
       @TestMetadata("nestedConstructorFromClass.kt")
       public void testNestedConstructorFromClass() {
         runTest("compiler/testData/codegen/box/callableReference/function/nestedConstructorFromClass.kt");
@@ -6339,6 +6393,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("stringNativeExtension.kt")
+      public void testStringNativeExtension() {
+        runTest("compiler/testData/codegen/box/callableReference/function/stringNativeExtension.kt");
+      }
+
+      @Test
       @TestMetadata("topLevelFromClass.kt")
       public void testTopLevelFromClass() {
         runTest("compiler/testData/codegen/box/callableReference/function/topLevelFromClass.kt");
@@ -6378,6 +6438,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("topLevelFromTopLevelUnitOneStringArg.kt")
       public void testTopLevelFromTopLevelUnitOneStringArg() {
         runTest("compiler/testData/codegen/box/callableReference/function/topLevelFromTopLevelUnitOneStringArg.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelFromTopLevelWithArg.kt")
+      public void testTopLevelFromTopLevelWithArg() {
+        runTest("compiler/testData/codegen/box/callableReference/function/topLevelFromTopLevelWithArg.kt");
       }
 
       @Test
@@ -6575,6 +6641,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("extensionProperty2.kt")
+      public void testExtensionProperty2() {
+        runTest("compiler/testData/codegen/box/callableReference/property/extensionProperty2.kt");
+      }
+
+      @Test
       @TestMetadata("extensionPropertyInDelegatedJavaSam.kt")
       public void testExtensionPropertyInDelegatedJavaSam() {
         runTest("compiler/testData/codegen/box/callableReference/property/extensionPropertyInDelegatedJavaSam.kt");
@@ -6719,6 +6791,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("memberProperty.kt")
+      public void testMemberProperty() {
+        runTest("compiler/testData/codegen/box/callableReference/property/memberProperty.kt");
+      }
+
+      @Test
       @TestMetadata("nullableExtensionProperty.kt")
       public void testNullableExtensionProperty() {
         runTest("compiler/testData/codegen/box/callableReference/property/nullableExtensionProperty.kt");
@@ -6788,6 +6866,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("simpleTopLevel.kt")
       public void testSimpleTopLevel() {
         runTest("compiler/testData/codegen/box/callableReference/property/simpleTopLevel.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelVar.kt")
+      public void testTopLevelVar() {
+        runTest("compiler/testData/codegen/box/callableReference/property/topLevelVar.kt");
       }
     }
 
@@ -7529,6 +7613,82 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/char")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Char {
+    @Test
+    public void testAllFilesPresentInChar() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/char"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("charBinaryOperations.kt")
+    public void testCharBinaryOperations() {
+      runTest("compiler/testData/codegen/box/char/charBinaryOperations.kt");
+    }
+
+    @Test
+    @TestMetadata("charCompareToIntrinsic.kt")
+    public void testCharCompareToIntrinsic() {
+      runTest("compiler/testData/codegen/box/char/charCompareToIntrinsic.kt");
+    }
+
+    @Test
+    @TestMetadata("charConstantByUnicodeId.kt")
+    public void testCharConstantByUnicodeId() {
+      runTest("compiler/testData/codegen/box/char/charConstantByUnicodeId.kt");
+    }
+
+    @Test
+    @TestMetadata("charConversions.kt")
+    public void testCharConversions() {
+      runTest("compiler/testData/codegen/box/char/charConversions.kt");
+    }
+
+    @Test
+    @TestMetadata("charElvis.kt")
+    public void testCharElvis() {
+      runTest("compiler/testData/codegen/box/char/charElvis.kt");
+    }
+
+    @Test
+    @TestMetadata("charEquals.kt")
+    public void testCharEquals() {
+      runTest("compiler/testData/codegen/box/char/charEquals.kt");
+    }
+
+    @Test
+    @TestMetadata("charInStringTemplate.kt")
+    public void testCharInStringTemplate() {
+      runTest("compiler/testData/codegen/box/char/charInStringTemplate.kt");
+    }
+
+    @Test
+    @TestMetadata("charIsCheck.kt")
+    public void testCharIsCheck() {
+      runTest("compiler/testData/codegen/box/char/charIsCheck.kt");
+    }
+
+    @Test
+    @TestMetadata("charNoBoxing.kt")
+    public void testCharNoBoxing() {
+      runTest("compiler/testData/codegen/box/char/charNoBoxing.kt");
+    }
+
+    @Test
+    @TestMetadata("charRanges.kt")
+    public void testCharRanges() {
+      runTest("compiler/testData/codegen/box/char/charRanges.kt");
+    }
+
+    @Test
+    @TestMetadata("charUnaryOperations.kt")
+    public void testCharUnaryOperations() {
+      runTest("compiler/testData/codegen/box/char/charUnaryOperations.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/checkcastOptimization")
   @TestDataPath("$PROJECT_ROOT")
   public class CheckcastOptimization {
@@ -7827,6 +7987,88 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       public void testObjectSuperConstructorCall() {
         runTest("compiler/testData/codegen/box/classLiteral/java/objectSuperConstructorCall.kt");
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/box/classObject")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ClassObject {
+    @Test
+    @TestMetadata("accessing.kt")
+    public void testAccessing() {
+      runTest("compiler/testData/codegen/box/classObject/accessing.kt");
+    }
+
+    @Test
+    public void testAllFilesPresentInClassObject() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/classObject"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("contextDependentClassObjectName.kt")
+    public void testContextDependentClassObjectName() {
+      runTest("compiler/testData/codegen/box/classObject/contextDependentClassObjectName.kt");
+    }
+
+    @Test
+    @TestMetadata("contextDependentClassObjectTwoNames.kt")
+    public void testContextDependentClassObjectTwoNames() {
+      runTest("compiler/testData/codegen/box/classObject/contextDependentClassObjectTwoNames.kt");
+    }
+
+    @Test
+    @TestMetadata("defaultObjectSameNamesAsInOuter.kt")
+    public void testDefaultObjectSameNamesAsInOuter() {
+      runTest("compiler/testData/codegen/box/classObject/defaultObjectSameNamesAsInOuter.kt");
+    }
+
+    @Test
+    @TestMetadata("enumCompanionObject.kt")
+    public void testEnumCompanionObject() {
+      runTest("compiler/testData/codegen/box/classObject/enumCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("inTrait.kt")
+    public void testInTrait() {
+      runTest("compiler/testData/codegen/box/classObject/inTrait.kt");
+    }
+
+    @Test
+    @TestMetadata("invokeOperatorInCompanionObject.kt")
+    public void testInvokeOperatorInCompanionObject() {
+      runTest("compiler/testData/codegen/box/classObject/invokeOperatorInCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("namedClassObject.kt")
+    public void testNamedClassObject() {
+      runTest("compiler/testData/codegen/box/classObject/namedClassObject.kt");
+    }
+
+    @Test
+    @TestMetadata("objectInCompanionObject.kt")
+    public void testObjectInCompanionObject() {
+      runTest("compiler/testData/codegen/box/classObject/objectInCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("setVar.kt")
+    public void testSetVar() {
+      runTest("compiler/testData/codegen/box/classObject/setVar.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      runTest("compiler/testData/codegen/box/classObject/simple.kt");
+    }
+
+    @Test
+    @TestMetadata("withInheritance.kt")
+    public void testWithInheritance() {
+      runTest("compiler/testData/codegen/box/classObject/withInheritance.kt");
     }
   }
 
@@ -9355,6 +9597,146 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       public void testVarAsFunInsideLocalFun() {
         runTest("compiler/testData/codegen/box/closures/closureInsideClosure/varAsFunInsideLocalFun.kt");
       }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/closures/inlineAnonymousFunctions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InlineAnonymousFunctions {
+      @Test
+      public void testAllFilesPresentInInlineAnonymousFunctions() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/inlineAnonymousFunctions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("closureInWithInsideWith.kt")
+      public void testClosureInWithInsideWith() {
+        runTest("compiler/testData/codegen/box/closures/inlineAnonymousFunctions/closureInWithInsideWith.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineChain.kt")
+      public void testInlineChain() {
+        runTest("compiler/testData/codegen/box/closures/inlineAnonymousFunctions/inlineChain.kt");
+      }
+
+      @Test
+      @TestMetadata("keywordEscaping.kt")
+      public void testKeywordEscaping() {
+        runTest("compiler/testData/codegen/box/closures/inlineAnonymousFunctions/keywordEscaping.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdaChain.kt")
+      public void testLambdaChain() {
+        runTest("compiler/testData/codegen/box/closures/inlineAnonymousFunctions/lambdaChain.kt");
+      }
+
+      @Test
+      @TestMetadata("localParameterInCallback.kt")
+      public void testLocalParameterInCallback() {
+        runTest("compiler/testData/codegen/box/closures/inlineAnonymousFunctions/localParameterInCallback.kt");
+      }
+
+      @Test
+      @TestMetadata("twiceRegeneratedAnonymousObject.kt")
+      public void testTwiceRegeneratedAnonymousObject() {
+        runTest("compiler/testData/codegen/box/closures/inlineAnonymousFunctions/twiceRegeneratedAnonymousObject.kt");
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/box/coercion")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Coercion {
+    @Test
+    public void testAllFilesPresentInCoercion() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coercion"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("classProperty.kt")
+    public void testClassProperty() {
+      runTest("compiler/testData/codegen/box/coercion/classProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("derivedFunctionReturningUnit.kt")
+    public void testDerivedFunctionReturningUnit() {
+      runTest("compiler/testData/codegen/box/coercion/derivedFunctionReturningUnit.kt");
+    }
+
+    @Test
+    @TestMetadata("destructuringToUnit.kt")
+    public void testDestructuringToUnit() {
+      runTest("compiler/testData/codegen/box/coercion/destructuringToUnit.kt");
+    }
+
+    @Test
+    @TestMetadata("ifWithUnit.kt")
+    public void testIfWithUnit() {
+      runTest("compiler/testData/codegen/box/coercion/ifWithUnit.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineFunReturningUnit.kt")
+    public void testInlineFunReturningUnit() {
+      runTest("compiler/testData/codegen/box/coercion/inlineFunReturningUnit.kt");
+    }
+
+    @Test
+    @TestMetadata("loopOverUnits.kt")
+    public void testLoopOverUnits() {
+      runTest("compiler/testData/codegen/box/coercion/loopOverUnits.kt");
+    }
+
+    @Test
+    @TestMetadata("safeCallLetReturningUnit.kt")
+    public void testSafeCallLetReturningUnit() {
+      runTest("compiler/testData/codegen/box/coercion/safeCallLetReturningUnit.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelProperty.kt")
+    public void testTopLevelProperty() {
+      runTest("compiler/testData/codegen/box/coercion/topLevelProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("tryWithEmptyCatch.kt")
+    public void testTryWithEmptyCatch() {
+      runTest("compiler/testData/codegen/box/coercion/tryWithEmptyCatch.kt");
+    }
+
+    @Test
+    @TestMetadata("unitIsAs.kt")
+    public void testUnitIsAs() {
+      runTest("compiler/testData/codegen/box/coercion/unitIsAs.kt");
+    }
+
+    @Test
+    @TestMetadata("unitMaterializationInOverriddenMethod.kt")
+    public void testUnitMaterializationInOverriddenMethod() {
+      runTest("compiler/testData/codegen/box/coercion/unitMaterializationInOverriddenMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("unitMaterializationOnCall.kt")
+    public void testUnitMaterializationOnCall() {
+      runTest("compiler/testData/codegen/box/coercion/unitMaterializationOnCall.kt");
+    }
+
+    @Test
+    @TestMetadata("unitSafeCall.kt")
+    public void testUnitSafeCall() {
+      runTest("compiler/testData/codegen/box/coercion/unitSafeCall.kt");
+    }
+
+    @Test
+    @TestMetadata("whenWithUnit.kt")
+    public void testWhenWithUnit() {
+      runTest("compiler/testData/codegen/box/coercion/whenWithUnit.kt");
     }
   }
 
@@ -13438,6 +13820,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("boxingUnboxingInsideTheSuspendFunction.kt")
+    public void testBoxingUnboxingInsideTheSuspendFunction() {
+      runTest("compiler/testData/codegen/box/coroutines/boxingUnboxingInsideTheSuspendFunction.kt");
+    }
+
+    @Test
     @TestMetadata("builderInferenceAndGenericArrayAcessCall.kt")
     public void testBuilderInferenceAndGenericArrayAcessCall() {
       runTest("compiler/testData/codegen/box/coroutines/builderInferenceAndGenericArrayAcessCall.kt");
@@ -14080,6 +14468,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("kt54382.kt")
+    public void testKt54382() {
+      runTest("compiler/testData/codegen/box/coroutines/kt54382.kt");
+    }
+
+    @Test
     @TestMetadata("kt55494.kt")
     public void testKt55494() {
       runTest("compiler/testData/codegen/box/coroutines/kt55494.kt");
@@ -14089,6 +14483,18 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     @TestMetadata("kt56407.kt")
     public void testKt56407() {
       runTest("compiler/testData/codegen/box/coroutines/kt56407.kt");
+    }
+
+    @Test
+    @TestMetadata("kt61183.kt")
+    public void testKt61183() {
+      runTest("compiler/testData/codegen/box/coroutines/kt61183.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaWithValueClass.kt")
+    public void testLambdaWithValueClass() {
+      runTest("compiler/testData/codegen/box/coroutines/lambdaWithValueClass.kt");
     }
 
     @Test
@@ -14125,6 +14531,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     @TestMetadata("localDelegate.kt")
     public void testLocalDelegate() {
       runTest("compiler/testData/codegen/box/coroutines/localDelegate.kt");
+    }
+
+    @Test
+    @TestMetadata("localVarOptimization.kt")
+    public void testLocalVarOptimization() {
+      runTest("compiler/testData/codegen/box/coroutines/localVarOptimization.kt");
     }
 
     @Test
@@ -14356,9 +14768,21 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("suspendFunctionAsSupertypeIsCheck.kt")
+    public void testSuspendFunctionAsSupertypeIsCheck() {
+      runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsSupertypeIsCheck.kt");
+    }
+
+    @Test
     @TestMetadata("suspendFunctionAsSupertypeWithInlinedFunInKlib.kt")
     public void testSuspendFunctionAsSupertypeWithInlinedFunInKlib() {
       runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsSupertypeWithInlinedFunInKlib.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFunctionIsAs.kt")
+    public void testSuspendFunctionIsAs() {
+      runTest("compiler/testData/codegen/box/coroutines/suspendFunctionIsAs.kt");
     }
 
     @Test
@@ -14416,6 +14840,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("suspendInvokeWithSuspendKlassRef.kt")
+    public void testSuspendInvokeWithSuspendKlassRef() {
+      runTest("compiler/testData/codegen/box/coroutines/suspendInvokeWithSuspendKlassRef.kt");
+    }
+
+    @Test
     @TestMetadata("suspendJavaOverrides.kt")
     public void testSuspendJavaOverrides() {
       runTest("compiler/testData/codegen/box/coroutines/suspendJavaOverrides.kt");
@@ -14431,6 +14861,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     @TestMetadata("suspendLambdaWithArgumentRearrangement.kt")
     public void testSuspendLambdaWithArgumentRearrangement() {
       runTest("compiler/testData/codegen/box/coroutines/suspendLambdaWithArgumentRearrangement.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendLambdaWithValueClass.kt")
+    public void testSuspendLambdaWithValueClass() {
+      runTest("compiler/testData/codegen/box/coroutines/suspendLambdaWithValueClass.kt");
     }
 
     @Test
@@ -14452,6 +14888,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("tailCallOptimization.kt")
+    public void testTailCallOptimization() {
+      runTest("compiler/testData/codegen/box/coroutines/tailCallOptimization.kt");
+    }
+
+    @Test
     @TestMetadata("tailCallToNothing.kt")
     public void testTailCallToNothing() {
       runTest("compiler/testData/codegen/box/coroutines/tailCallToNothing.kt");
@@ -14467,6 +14909,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     @TestMetadata("tryCatchWithHandleResult.kt")
     public void testTryCatchWithHandleResult() {
       runTest("compiler/testData/codegen/box/coroutines/tryCatchWithHandleResult.kt");
+    }
+
+    @Test
+    @TestMetadata("tryFinally.kt")
+    public void testTryFinally() {
+      runTest("compiler/testData/codegen/box/coroutines/tryFinally.kt");
     }
 
     @Test
