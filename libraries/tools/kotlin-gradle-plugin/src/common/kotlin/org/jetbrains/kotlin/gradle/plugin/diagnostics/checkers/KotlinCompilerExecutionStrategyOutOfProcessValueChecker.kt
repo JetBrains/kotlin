@@ -21,7 +21,8 @@ internal object KotlinCompilerExecutionStrategyOutOfProcessValueChecker : Kotlin
         @Suppress("DEPRECATION")
         if (kotlinPropertiesProvider.kotlinCompilerExecutionStrategy == KotlinCompilerExecutionStrategy.OUT_OF_PROCESS) {
             collector.reportOncePerGradleBuild(
-                project,
+                projectPath,
+                renderingOptions,
                 KotlinToolingDiagnostics.OutOfProcessExecutionStrategyUsage(),
             )
         }

@@ -22,7 +22,10 @@ internal object UnusedSourceSetsChecker : KotlinGradleProjectChecker {
             .filter { it.internal.awaitPlatformCompilations().isEmpty() }
 
         if (unusedSourceSets.isNotEmpty()) {
-            collector.report(project, KotlinToolingDiagnostics.UnusedSourceSetsWarning(unusedSourceSets.toSet().map { it.name }))
+            collector.report(
+                projectPath, renderingOptions,
+                KotlinToolingDiagnostics.UnusedSourceSetsWarning(unusedSourceSets.toSet().map { it.name }),
+            )
         }
     }
 }

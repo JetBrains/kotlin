@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
@@ -20,7 +18,10 @@ internal object DisabledNativeTargetsChecker : KotlinGradleProjectChecker {
             .map { it.name }
 
         if (disabledTargets.isNotEmpty()) {
-            collector.reportOncePerGradleProject(project, KotlinToolingDiagnostics.DisabledKotlinNativeTargets(disabledTargets))
+            collector.reportOncePerGradleProject(
+                projectPath, renderingOptions,
+                KotlinToolingDiagnostics.DisabledKotlinNativeTargets(disabledTargets),
+            )
         }
     }
 }

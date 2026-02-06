@@ -16,7 +16,7 @@ internal object NoKotlinTargetsDeclaredChecker : KotlinGradleProjectChecker {
         val isNoTargetsInitialized = (multiplatformExtension ?: return).awaitTargets().none { it !is KotlinMetadataTarget }
 
         if (isNoTargetsInitialized) {
-            collector.report(project, KotlinToolingDiagnostics.NoKotlinTargetsDeclared(project.name, project.path))
+            collector.report(projectPath, renderingOptions, KotlinToolingDiagnostics.NoKotlinTargetsDeclared(projectName, projectPath))
         }
     }
 }
