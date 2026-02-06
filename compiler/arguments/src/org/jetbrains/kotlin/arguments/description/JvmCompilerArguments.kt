@@ -739,7 +739,9 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
                     """.trimIndent()
                 )
             )
-        argumentType = StringType.defaultNull
+        @Suppress("DEPRECATION")
+        valueType = StringType.defaultNull
+        argumentType = ProfileCompilerCommandType
         argumentTypeDescription = "<profilerPath:command:outputDir>".asReleaseDependent()
 
         lifecycle(
