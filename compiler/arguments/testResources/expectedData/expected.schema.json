@@ -1176,6 +1176,12 @@
                            },
                            {
                               "type": "object",
+                              "required": [],
+                              "properties": {},
+                              "title": "ProfileCompilerCommandType"
+                           },
+                           {
+                              "type": "object",
                               "required": [
                                  "isNullable",
                                  "defaultValue"
@@ -2229,6 +2235,12 @@
                                  }
                               },
                               "title": "PathType"
+                           },
+                           {
+                              "type": "object",
+                              "required": [],
+                              "properties": {},
+                              "title": "ProfileCompilerCommandType"
                            },
                            {
                               "type": "object",
@@ -3409,6 +3421,12 @@
                                     },
                                     {
                                        "type": "object",
+                                       "required": [],
+                                       "properties": {},
+                                       "title": "ProfileCompilerCommandType"
+                                    },
+                                    {
+                                       "type": "object",
                                        "required": [
                                           "isNullable",
                                           "defaultValue"
@@ -4462,6 +4480,12 @@
                                           }
                                        },
                                        "title": "PathType"
+                                    },
+                                    {
+                                       "type": "object",
+                                       "required": [],
+                                       "properties": {},
+                                       "title": "ProfileCompilerCommandType"
                                     },
                                     {
                                        "type": "object",
@@ -5642,6 +5666,12 @@
                                              },
                                              {
                                                 "type": "object",
+                                                "required": [],
+                                                "properties": {},
+                                                "title": "ProfileCompilerCommandType"
+                                             },
+                                             {
+                                                "type": "object",
                                                 "required": [
                                                    "isNullable",
                                                    "defaultValue"
@@ -6695,6 +6725,12 @@
                                                    }
                                                 },
                                                 "title": "PathType"
+                                             },
+                                             {
+                                                "type": "object",
+                                                "required": [],
+                                                "properties": {},
+                                                "title": "ProfileCompilerCommandType"
                                              },
                                              {
                                                 "type": "object",
@@ -7875,6 +7911,12 @@
                                                       },
                                                       {
                                                          "type": "object",
+                                                         "required": [],
+                                                         "properties": {},
+                                                         "title": "ProfileCompilerCommandType"
+                                                      },
+                                                      {
+                                                         "type": "object",
                                                          "required": [
                                                             "isNullable",
                                                             "defaultValue"
@@ -8928,6 +8970,12 @@
                                                             }
                                                          },
                                                          "title": "PathType"
+                                                      },
+                                                      {
+                                                         "type": "object",
+                                                         "required": [],
+                                                         "properties": {},
+                                                         "title": "ProfileCompilerCommandType"
                                                       },
                                                       {
                                                          "type": "object",
@@ -10108,6 +10156,12 @@
                                                                },
                                                                {
                                                                   "type": "object",
+                                                                  "required": [],
+                                                                  "properties": {},
+                                                                  "title": "ProfileCompilerCommandType"
+                                                               },
+                                                               {
+                                                                  "type": "object",
                                                                   "required": [
                                                                      "isNullable",
                                                                      "defaultValue"
@@ -11161,6 +11215,12 @@
                                                                      }
                                                                   },
                                                                   "title": "PathType"
+                                                               },
+                                                               {
+                                                                  "type": "object",
+                                                                  "required": [],
+                                                                  "properties": {},
+                                                                  "title": "ProfileCompilerCommandType"
                                                                },
                                                                {
                                                                   "type": "object",
@@ -12341,6 +12401,12 @@
                                                                         },
                                                                         {
                                                                            "type": "object",
+                                                                           "required": [],
+                                                                           "properties": {},
+                                                                           "title": "ProfileCompilerCommandType"
+                                                                        },
+                                                                        {
+                                                                           "type": "object",
                                                                            "required": [
                                                                               "isNullable",
                                                                               "defaultValue"
@@ -13394,6 +13460,12 @@
                                                                               }
                                                                            },
                                                                            "title": "PathType"
+                                                                        },
+                                                                        {
+                                                                           "type": "object",
+                                                                           "required": [],
+                                                                           "properties": {},
+                                                                           "title": "ProfileCompilerCommandType"
                                                                         },
                                                                         {
                                                                            "type": "object",
@@ -14574,6 +14646,12 @@
                                                                                  },
                                                                                  {
                                                                                     "type": "object",
+                                                                                    "required": [],
+                                                                                    "properties": {},
+                                                                                    "title": "ProfileCompilerCommandType"
+                                                                                 },
+                                                                                 {
+                                                                                    "type": "object",
                                                                                     "required": [
                                                                                        "isNullable",
                                                                                        "defaultValue"
@@ -15627,6 +15705,12 @@
                                                                                        }
                                                                                     },
                                                                                     "title": "PathType"
+                                                                                 },
+                                                                                 {
+                                                                                    "type": "object",
+                                                                                    "required": [],
+                                                                                    "properties": {},
+                                                                                    "title": "ProfileCompilerCommandType"
                                                                                  },
                                                                                  {
                                                                                     "type": "object",
@@ -16807,6 +16891,12 @@
                                                                                           },
                                                                                           {
                                                                                              "type": "object",
+                                                                                             "required": [],
+                                                                                             "properties": {},
+                                                                                             "title": "ProfileCompilerCommandType"
+                                                                                          },
+                                                                                          {
+                                                                                             "type": "object",
                                                                                              "required": [
                                                                                                 "isNullable",
                                                                                                 "defaultValue"
@@ -17863,6 +17953,12 @@
                                                                                           },
                                                                                           {
                                                                                              "type": "object",
+                                                                                             "required": [],
+                                                                                             "properties": {},
+                                                                                             "title": "ProfileCompilerCommandType"
+                                                                                          },
+                                                                                          {
+                                                                                             "type": "object",
                                                                                              "required": [
                                                                                                 "isNullable",
                                                                                                 "defaultValue"
@@ -18889,6 +18985,12 @@
                                                                                                    },
                                                                                                    {
                                                                                                       "type": "object",
+                                                                                                      "required": [],
+                                                                                                      "properties": {},
+                                                                                                      "title": "ProfileCompilerCommandType"
+                                                                                                   },
+                                                                                                   {
+                                                                                                      "type": "object",
                                                                                                       "required": [
                                                                                                          "isNullable",
                                                                                                          "defaultValue"
@@ -19736,6 +19838,12 @@
                                                                                                    },
                                                                                                    {
                                                                                                       "type": "object",
+                                                                                                      "required": [],
+                                                                                                      "properties": {},
+                                                                                                      "title": "ProfileCompilerCommandType"
+                                                                                                   },
+                                                                                                   {
+                                                                                                      "type": "object",
                                                                                                       "required": [
                                                                                                          "isNullable",
                                                                                                          "defaultValue"
@@ -20385,6 +20493,12 @@
                                                                                                             },
                                                                                                             {
                                                                                                                "type": "object",
+                                                                                                               "required": [],
+                                                                                                               "properties": {},
+                                                                                                               "title": "ProfileCompilerCommandType"
+                                                                                                            },
+                                                                                                            {
+                                                                                                               "type": "object",
                                                                                                                "required": [
                                                                                                                   "isNullable",
                                                                                                                   "defaultValue"
@@ -20792,6 +20906,12 @@
                                                                                                             },
                                                                                                             {
                                                                                                                "type": "object",
+                                                                                                               "required": [],
+                                                                                                               "properties": {},
+                                                                                                               "title": "ProfileCompilerCommandType"
+                                                                                                            },
+                                                                                                            {
+                                                                                                               "type": "object",
                                                                                                                "required": [
                                                                                                                   "isNullable",
                                                                                                                   "defaultValue"
@@ -21097,6 +21217,12 @@
                                                                                                                         "required": {},
                                                                                                                         "properties": {},
                                                                                                                         "title": {}
+                                                                                                                     },
+                                                                                                                     {
+                                                                                                                        "type": {},
+                                                                                                                        "required": {},
+                                                                                                                        "properties": {},
+                                                                                                                        "title": {}
                                                                                                                      }
                                                                                                                   ],
                                                                                                                   "title": "KotlinArgumentValueType"
@@ -21121,6 +21247,12 @@
                                                                                                                },
                                                                                                                "valueType": {
                                                                                                                   "anyOf": [
+                                                                                                                     {
+                                                                                                                        "type": {},
+                                                                                                                        "required": {},
+                                                                                                                        "properties": {},
+                                                                                                                        "title": {}
+                                                                                                                     },
                                                                                                                      {
                                                                                                                         "type": {},
                                                                                                                         "required": {},
