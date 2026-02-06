@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 
-fun PhaseContext.fir2Ir(
+fun NativePhaseContext.fir2Ir(
         input: AllModulesFrontendOutput,
 ): Fir2IrOutput {
     val resolvedLibraries = config.resolvedLibraries.getFullResolvedList()
