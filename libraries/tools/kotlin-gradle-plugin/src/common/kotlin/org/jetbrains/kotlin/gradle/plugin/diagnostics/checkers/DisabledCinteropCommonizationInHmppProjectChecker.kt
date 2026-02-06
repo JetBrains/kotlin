@@ -48,7 +48,8 @@ internal object DisabledCinteropCommonizationInHmppProjectChecker : KotlinGradle
         val affectedCinteropsString = affectedCInterops.map { it.toString() }.sorted().joinToString(", ", "[", "]")
 
         collector.reportOncePerGradleProject(
-            project,
+            projectPath,
+            renderingOptions,
             KotlinToolingDiagnostics.DisabledCinteropsCommonizationInHmppProject(affectedSourceSetsString, affectedCinteropsString)
         )
     }

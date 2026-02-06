@@ -15,7 +15,7 @@ internal object KonanHomeConflictDeclarationChecker : KotlinGradleProjectChecker
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         if (project.nativeProperties.konanDataDir.isPresent && project.nativeProperties.userProvidedNativeHome.isPresent) {
             collector.report(
-                project, KotlinToolingDiagnostics.KonanHomeConflictDeclaration(
+                projectPath, renderingOptions, KotlinToolingDiagnostics.KonanHomeConflictDeclaration(
                     project.nativeProperties.konanDataDir.orNull,
                     project.nativeProperties.userProvidedNativeHome.orNull,
                 )
