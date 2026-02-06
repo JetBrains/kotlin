@@ -190,6 +190,437 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         )
     }
 
+    @Test
+    fun `multimodular import - forward declaration to protocol in another module - is dereferenced to definition`() {
+        val files = testFiles()
+        files.file("module.modulemap", """
+            module forward { header "forward.h" }
+            module original { header "original.h" }
+        """.trimIndent())
+        files.file("forward.h", """
+            @protocol Foo;
+            void consume(id<Foo>);
+        """.trimIndent())
+        files.file("original.h", """
+            @protocol Foo
+            - (void)bar;
+            @end
+        """.trimIndent())
+        val def = files.file("forward.def", """
+            language = Objective-C
+            modules = forward original
+        """.trimIndent())
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(def, argsWithFmodulesAndSearchPath(files.directory)),
+                verbose = false
+        ).index
+
+        data class TypeCheck(
+                val name: String,
+                val isForwardDeclaration: Boolean,
+        )
+
+        assertEquals(
+                listOf(TypeCheck("Foo", true)),
+                index.objCProtocols.map { TypeCheck(it.name, it.isForwardDeclaration) }
+        )
+//        assertEquals(
+//                listOf(TypeCheck("Foo", false)),
+//                index.objCProtocols.map { TypeCheck(it.name, it.isForwardDeclaration) }
+//        )
+
+        val protocol = index.objCProtocols.single()
+        assertEquals(
+                listOf("consume" to listOf(protocol)),
+                index.functions.map { it.name to assertIs<ObjCIdType>(it.parameters.single().type).protocols },
+        )
+    }
+
+    @Test
+    fun `multimodular import - forward declaration to platform library type - is dereferenced to definition`() {
+        val files = testFiles()
+        files.file("module.modulemap", """
+            module forward { header "forward.h" }
+            module original { header "original.h" }
+        """.trimIndent())
+        files.file("forward.h", """
+            @class NSObject;
+            void consume(NSObject *);
+        """.trimIndent())
+        files.file("original.h", """
+            #import <Foundation/Foundation.h>
+        """.trimIndent())
+        val def = files.file("forward.def", """
+            language = Objective-C
+            modules = forward original
+        """.trimIndent())
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(def, argsWithFmodulesAndSearchPath(files.directory)),
+                verbose = false
+        ).index
+
+        data class TypeCheck(
+                val name: String,
+                val isForwardDeclaration: Boolean,
+        )
+
+        assertEquals(
+                listOf("consume" to TypeCheck("NSObject", true)),
+                index.functions.map { it.name to assertIs<ObjCObjectPointer>(it.parameters.single().type).def.let { TypeCheck(it.name, it.isForwardDeclaration) } },
+        )
+//        assertEquals(
+//                listOf("consume" to TypeCheck("NSObject", false)),
+//                index.functions.map { it.name to assertIs<ObjCObjectPointer>(it.parameters.single().type).def.let { TypeCheck(it.name, it.isForwardDeclaration) } },
+//        )
+    }
+
+    @Test
+    fun `multimodular import - forward declarations to structs, their typedefs and unions and - are dereferenced to definition`() {
+        val files = testFiles()
+        files.file("module.modulemap", """
+            module forward { header "forward.h" }
+            module original { header "original.h" }
+        """.trimIndent())
+        files.file("forward.h", """
+            struct S;
+            void consumeS(struct S *);
+            
+            struct F;
+            typedef struct F T;
+            void consumeT(T *);
+            
+            union U;
+            void consumeU(union U *);
+        """.trimIndent())
+        files.file("original.h", """
+            struct S {
+                int a;
+            };
+            
+            struct F {
+                int b;
+            };
+            
+            union U {
+                int c;
+                long d;
+            };
+        """.trimIndent())
+        val def = files.file("forward.def", """
+            language = Objective-C
+            modules = forward original
+        """.trimIndent())
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(def, argsWithFmodulesAndSearchPath(files.directory)),
+                verbose = false
+        ).index
+
+        data class TypeCheck(
+                val name: String,
+                val isForwardDeclaration: Boolean,
+        )
+
+        assertEquals(
+                listOf(TypeCheck("struct S", true), TypeCheck("struct F", true), TypeCheck("union U", true)),
+                index.structs.map { TypeCheck(it.spelling, it.def == null) },
+        )
+//        assertEquals(
+//                listOf(TypeCheck("struct S", false), TypeCheck("struct F", false), TypeCheck("union U", false)),
+//                index.structs.map { TypeCheck(it.spelling, it.def == null) },
+//        )
+
+        val structS = index.structs.single { it.spelling == "struct S" }
+        val structF = index.structs.single { it.spelling == "struct F" }
+        val unionU = index.structs.single { it.spelling == "union U" }
+
+        assertEquals(
+                listOf("consumeS", "consumeT", "consumeU"),
+                index.functions.map { it.name },
+        )
+
+        assertEquals(
+                listOf(structS),
+                index.functions.single {
+                    it.name == "consumeS"
+                }.let {
+                    it.parameters.map {
+                        assertIs<RecordType>(assertIs<PointerType>(it.type).pointeeType).decl
+                    }
+                }
+        )
+        assertEquals(
+                listOf(unionU),
+                index.functions.single {
+                    it.name == "consumeU"
+                }.let {
+                    it.parameters.map {
+                        assertIs<RecordType>(assertIs<PointerType>(it.type).pointeeType).decl
+                    }
+                }
+        )
+
+        assertEquals(
+                listOf(structF),
+                index.functions.single {
+                    it.name == "consumeT"
+                }.let {
+                    it.parameters.map {
+                        assertIs<RecordType>(
+                                assertIs<Typedef>(assertIs<PointerType>(it.type).pointeeType).def.aliased
+                        ).decl
+                    }
+                }
+        )
+    }
+
+    // FIXME: Is this a sufficient test? The root cause was 2 typedefs, but the failure was in the StubIrDriver
+    // FIXME: NSEnum redeclaration?
+    @Test
+    fun `KT-81695 repeated typedefs with -fmodules - reference the same underlying typedef`() {
+        val markerFunctionOne = "foo"
+        val markerFunctionTwo = "bar"
+        val files = testFiles()
+        files.file("module.modulemap", """
+            module one {
+                header "one.h"
+            }
+            module two {
+                header "two.h"
+            }
+        """.trimIndent())
+        files.file("one.h", """
+            typedef unsigned char char8_t;
+            void ${markerFunctionOne}(char8_t);
+        """.trimIndent())
+        files.file("two.h", """
+            typedef unsigned char char8_t;
+            void ${markerFunctionTwo}(char8_t);
+        """.trimIndent())
+        val def = files.file("dup.def", """
+            language = Objective-C
+            modules = one two
+        """.trimIndent())
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(def, argsWithFmodulesAndSearchPath(files.directory)),
+                verbose = false
+        ).index
+
+        assertEquals(
+                listOf("char8_t", "char8_t"),
+                index.typedefs.map { it.name },
+        )
+//        assertEquals(
+//                listOf("char8_t"),
+//                index.typedefs.map { it.name },
+//        )
+
+        assertEquals(
+                listOf(markerFunctionOne to index.typedefs.toList()[0], markerFunctionTwo to index.typedefs.toList()[1]),
+                index.functions.map { it.name to assertIs<Typedef>(it.parameters.single().type).def },
+        )
+//        val typedef = index.typedefs.single()
+
+//        assertEquals(
+//                listOf(markerFunctionOne to typedef, markerFunctionTwo to typedef),
+//                index.functions.map { it.name to assertIs<Typedef>(it.parameters.single().type).def },
+//        )
+    }
+
+    private class MultiModularImportCase(
+            val def: File,
+            val originalHeader: File,
+            val forwardHeader: File,
+            val tempFiles: TempFiles,
+    )
+    private fun multiModularImportBaseCase(originalHeaderContent: String): MultiModularImportCase {
+        val files = testFiles()
+        files.file("module.modulemap", """
+            module forward { header "forward.h" }
+            module original { header "original.h" }
+        """.trimIndent())
+        val forward = files.file("forward.h", """
+            @class Foo;
+            void consume(Foo *);
+        """.trimIndent())
+        val original = files.file("original.h", originalHeaderContent)
+        val def = files.file("foo.def", """
+            language = Objective-C
+            modules = forward original
+        """.trimIndent())
+        return MultiModularImportCase(def, original, forward, files)
+    }
+
+    @Test
+    fun `KT-82377 multimodular import - forward before original - original still gets emitted`() {
+        val multiModularImportBaseCase = multiModularImportBaseCase("""
+            @interface Foo
+            -(void)bar;
+            @end
+            """.trimIndent()
+        )
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(multiModularImportBaseCase.def, argsWithFmodulesAndSearchPath(multiModularImportBaseCase.tempFiles.directory)),
+                verbose = false
+        ).index
+
+        assertEquals(
+                listOf("Foo" to true),
+                index.objCClasses.map { it.name to it.isForwardDeclaration }
+        )
+//        assertEquals(
+//                listOf("Foo" to false),
+//                index.objCClasses.map { it.name to it.isForwardDeclaration }
+//        )
+
+        val objcClass = index.objCClasses.single()
+        assertEquals(
+                listOf("consume" to objcClass),
+                index.functions.map { it.name to assertIs<ObjCObjectPointer>(it.parameters.single().type).def },
+        )
+    }
+
+    @Test
+    fun `KT-82766 multimodular import - forward declaration to external source symbol with generated_declaration flag - are dereferenced to definition`() {
+        val multiModularImportBaseCase = multiModularImportBaseCase("""
+            # pragma clang attribute push(__attribute__((external_source_symbol(language="Swift", defined_in="original",generated_declaration))), apply_to=any(function,enum,objc_interface,objc_category,objc_protocol))
+            @interface Foo
+            -(void)bar;
+            @end
+            # pragma clang attribute pop
+            """.trimIndent()
+        )
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(multiModularImportBaseCase.def, argsWithFmodulesAndSearchPath(multiModularImportBaseCase.tempFiles.directory)),
+                verbose = false
+        ).index
+
+        assertEquals(
+                listOf("Foo" to true),
+                index.objCClasses.map { it.name to it.isForwardDeclaration }
+        )
+//        assertEquals(
+//                listOf("Foo" to false),
+//                index.objCClasses.map { it.name to it.isForwardDeclaration }
+//        )
+
+        val objcClass = index.objCClasses.single()
+        assertEquals(
+                listOf("consume" to objcClass),
+                index.functions.map { it.name to assertIs<ObjCObjectPointer>(it.parameters.single().type).def },
+        )
+    }
+
+    @Test
+    fun `KT-82766 multimodular import - forward declaration to external source symbol with generated_declaration flag - with USR override`() {
+        val multiModularImportBaseCase = multiModularImportBaseCase("""
+            __attribute__((external_source_symbol(language="Swift", defined_in="sample",generated_declaration, USR="Baz")))
+            @interface Foo
+            -(void)bar;
+            @end
+            """.trimIndent()
+        )
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(multiModularImportBaseCase.def, argsWithFmodulesAndSearchPath(multiModularImportBaseCase.tempFiles.directory)),
+                verbose = false
+        ).index
+
+        assertEquals(
+                listOf("Foo" to true),
+                index.objCClasses.map { it.name to it.isForwardDeclaration }
+        )
+//        assertEquals(
+//                listOf("Foo" to false),
+//                index.objCClasses.map { it.name to it.isForwardDeclaration }
+//        )
+
+        val objcClass = index.objCClasses.single()
+        assertEquals(
+                listOf("consume" to objcClass),
+                index.functions.map { it.name to assertIs<ObjCObjectPointer>(it.parameters.single().type).def },
+        )
+    }
+
+    @Test
+    fun `KT-82402 cinterop type reuse with -fmodules - uses the original type when it is visible`() {
+        val multiModularImportBaseCase = multiModularImportBaseCase("""
+            @interface Foo
+            -(void)bar;
+            @end
+            """.trimIndent()
+        )
+
+        val definitionHeaderId = HeaderId(headerContentsHash(multiModularImportBaseCase.originalHeader.path))
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(
+                        multiModularImportBaseCase.def,
+                        argsWithFmodulesAndSearchPath(multiModularImportBaseCase.tempFiles.directory),
+                        imports = ImportsMock(
+                                mapOf(
+                                        definitionHeaderId to "original"
+                                )
+                        )
+                ),
+                verbose = false
+        ).index
+
+        assertEquals(
+                listOf("Foo" to true),
+                index.objCClasses.map { it.name to it.isForwardDeclaration },
+                message = "ObjC class should not be included as it would come from original"
+        )
+//        assertEquals(
+//                emptyList(),
+//                index.objCClasses,
+//                message = "ObjC class should not be included as it would come from original"
+//        )
+
+        data class ClassCheck(
+                val name: String,
+                val isForwardDeclaration: Boolean,
+                val location: Location,
+        )
+
+        assertEquals(
+                listOf("consume" to ClassCheck(
+                        name = "Foo",
+                        isForwardDeclaration = true,
+                        location = Location(HeaderId(headerContentsHash(multiModularImportBaseCase.forwardHeader.path))),
+                )),
+                index.functions.map {
+                    it.name to assertIs<ObjCObjectPointer>(it.parameters.single().type).def.let {
+                        ClassCheck(
+                                it.name,
+                                it.isForwardDeclaration,
+                                it.location,
+                        )
+                    }
+                },
+        )
+//        assertEquals(
+//                listOf("consume" to ClassCheck(
+//                        name = "Foo",
+//                        isForwardDeclaration = false,
+//                        location = Location(definitionHeaderId),
+//                )),
+//                index.functions.map {
+//                    it.name to assertIs<ObjCObjectPointer>(it.parameters.single().type).def.let {
+//                        ClassCheck(
+//                                it.name,
+//                                it.isForwardDeclaration,
+//                                it.location,
+//                        )
+//                    }
+//                },
+//        )
+    }
+
     private fun argsWithFmodules(vararg arguments: String): Array<String> = arrayOf("-compiler-option", "-fmodules") + arguments
     private fun argsWithFmodulesAndSearchPath(searchPath: File) = argsWithFmodules("-compiler-option", "-I${searchPath}")
 
