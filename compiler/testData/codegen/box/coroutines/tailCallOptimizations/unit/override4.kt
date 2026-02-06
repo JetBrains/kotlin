@@ -31,8 +31,7 @@ fun box(): String {
         inlineMe { }.generic()
     }
 
-    // TODO: There should be no state-machine. Should fix in IR_BE
-    TailCallOptimizationChecker.checkStateMachineIn("generic")
+    TailCallOptimizationChecker.checkNoStateMachineIn("generic")
 
     return "OK"
 }

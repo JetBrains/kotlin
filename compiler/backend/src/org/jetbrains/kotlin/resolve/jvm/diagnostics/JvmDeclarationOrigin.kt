@@ -33,5 +33,9 @@ open class JvmDeclarationOrigin(
     companion object {
         @JvmField
         val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(OTHER, null, null)
+
+        @JvmField
+        val NO_ORIGIN_SUSPEND_FOR_INLINE: JvmDeclarationOrigin =
+            JvmDeclarationOrigin(JvmDeclarationOriginKind.INLINE_VERSION_OF_SUSPEND_FUN, null, null)
     }
 }
