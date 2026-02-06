@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 
 /**
@@ -108,4 +107,35 @@ public interface CancellableBuildOperation<R> : BuildOperation<R> {
     public fun cancel() {
         error("Cancellation is supported from compiler version 2.3.20.")
     }
+}
+
+/**
+ * A [BuildOperation] that wholly consists of a number of more primitive [BuildOperation]s.
+ *
+ * An execution of [CompositeBuildOperation] gives exactly the same result as execution of each [subOperations]
+ * in a dependency-respecting order.
+ *
+ * Implementation is free to use a custom execution of [CompositeBuildOperation] for performance reasons.
+ */
+@ExperimentalBuildToolsApi
+public interface CompositeBuildOperation<R> : BuildOperation<R> {
+    /**
+     * [BuildOperation] together with a set of [dependencies] that must be complete before [operation] can run.
+     */
+    public interface SubOperation {
+        public val operation: BuildOperation<*>
+        public val dependencies: Set<SubOperation>
+    }
+
+    /**
+     * A list of [SubOperation]s this [CompositeBuildOperation] consists of.
+     *
+     * An execution of [CompositeBuildOperation] gives exactly the same result as executing each [SubOperation]
+     * respecting the dependency order.
+     *
+     * Executing each operation in the given order will automatically respect dependencies.
+     *
+     * @param buildSession buildSession to use, when the list of operations is monadic
+     */
+    public fun subOperations(buildSession: KotlinToolchains.BuildSession): List<SubOperation>
 }
