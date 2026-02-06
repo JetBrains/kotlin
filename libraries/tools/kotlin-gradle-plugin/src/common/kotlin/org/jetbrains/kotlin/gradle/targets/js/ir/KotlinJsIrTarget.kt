@@ -276,6 +276,8 @@ constructor(
         }
         addSubTarget(KotlinGenericJsIr::class.java) {
             configureSubTarget()
+            subTargetConfigurators.add(LibraryConfigurator(this))
+            subTargetConfigurators.add(GenericJsEnvironmentConfigurator(this))
         }
     }
 
