@@ -1250,9 +1250,8 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                 }
 
                 // FIXME: Do we need an opt-in/out feature flag here jic?
-                // val allTranslationUnits = unitsHolder.loadedTranslationUnits.union(ownTranslationUnits)
-                // nativeIndex.typesDefinitions = indexTranslationUnitsForTypesDefinitions(index, allTranslationUnits)
-                nativeIndex.typesDefinitions = TypesDefinitions(emptyMap(), emptyMap(), emptyMap(), emptyMap())
+                val allTranslationUnits = unitsHolder.loadedTranslationUnits.union(ownTranslationUnits)
+                nativeIndex.typesDefinitions = indexTranslationUnitsForTypesDefinitions(index, allTranslationUnits)
 
                 unitsToProcess.forEach {
                     // FIXME: Do we need an opt-in/out feature flag for CXIndexOpt_IndexGeneratedDeclarations?

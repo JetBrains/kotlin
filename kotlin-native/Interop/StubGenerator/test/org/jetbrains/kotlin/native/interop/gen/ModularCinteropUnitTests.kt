@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.native.interop.indexer.EnumType
 import org.jetbrains.kotlin.native.interop.indexer.HeaderId
 import org.jetbrains.kotlin.native.interop.indexer.Location
 import org.jetbrains.kotlin.native.interop.indexer.NativeLibraryHeaderFilter
@@ -108,7 +109,7 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         )
         assertEquals(
                 listOf("one",
-                        // FIXME: ???
+                        // We don't expect the "failure" module here, but having it here also should have no adverse side effects
                         "failure",
                         "two"),
                 filter.modules,
@@ -222,13 +223,9 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         )
 
         assertEquals(
-                listOf(TypeCheck("Foo", true)),
+                listOf(TypeCheck("Foo", false)),
                 index.objCProtocols.map { TypeCheck(it.name, it.isForwardDeclaration) }
         )
-//        assertEquals(
-//                listOf(TypeCheck("Foo", false)),
-//                index.objCProtocols.map { TypeCheck(it.name, it.isForwardDeclaration) }
-//        )
 
         val protocol = index.objCProtocols.single()
         assertEquals(
@@ -267,13 +264,9 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         )
 
         assertEquals(
-                listOf("consume" to TypeCheck("NSObject", true)),
+                listOf("consume" to TypeCheck("NSObject", false)),
                 index.functions.map { it.name to assertIs<ObjCObjectPointer>(it.parameters.single().type).def.let { TypeCheck(it.name, it.isForwardDeclaration) } },
         )
-//        assertEquals(
-//                listOf("consume" to TypeCheck("NSObject", false)),
-//                index.functions.map { it.name to assertIs<ObjCObjectPointer>(it.parameters.single().type).def.let { TypeCheck(it.name, it.isForwardDeclaration) } },
-//        )
     }
 
     @Test
@@ -324,13 +317,9 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         )
 
         assertEquals(
-                listOf(TypeCheck("struct S", true), TypeCheck("struct F", true), TypeCheck("union U", true)),
+                listOf(TypeCheck("struct S", false), TypeCheck("struct F", false), TypeCheck("union U", false)),
                 index.structs.map { TypeCheck(it.spelling, it.def == null) },
         )
-//        assertEquals(
-//                listOf(TypeCheck("struct S", false), TypeCheck("struct F", false), TypeCheck("union U", false)),
-//                index.structs.map { TypeCheck(it.spelling, it.def == null) },
-//        )
 
         val structS = index.structs.single { it.spelling == "struct S" }
         val structF = index.structs.single { it.spelling == "struct F" }
@@ -376,8 +365,6 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         )
     }
 
-    // FIXME: Is this a sufficient test? The root cause was 2 typedefs, but the failure was in the StubIrDriver
-    // FIXME: NSEnum redeclaration?
     @Test
     fun `KT-81695 repeated typedefs with -fmodules - reference the same underlying typedef`() {
         val markerFunctionOne = "foo"
@@ -391,12 +378,13 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
                 header "two.h"
             }
         """.trimIndent())
+        val typedefDecl = "typedef unsigned char char8_t;"
         files.file("one.h", """
-            typedef unsigned char char8_t;
+            $typedefDecl
             void ${markerFunctionOne}(char8_t);
         """.trimIndent())
         files.file("two.h", """
-            typedef unsigned char char8_t;
+            $typedefDecl
             void ${markerFunctionTwo}(char8_t);
         """.trimIndent())
         val def = files.file("dup.def", """
@@ -410,24 +398,64 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         ).index
 
         assertEquals(
-                listOf("char8_t", "char8_t"),
+                listOf("char8_t"),
                 index.typedefs.map { it.name },
         )
-//        assertEquals(
-//                listOf("char8_t"),
-//                index.typedefs.map { it.name },
-//        )
+
+        val typedef = index.typedefs.single()
 
         assertEquals(
-                listOf(markerFunctionOne to index.typedefs.toList()[0], markerFunctionTwo to index.typedefs.toList()[1]),
+                listOf(markerFunctionOne to typedef, markerFunctionTwo to typedef),
                 index.functions.map { it.name to assertIs<Typedef>(it.parameters.single().type).def },
         )
-//        val typedef = index.typedefs.single()
+    }
 
-//        assertEquals(
-//                listOf(markerFunctionOne to typedef, markerFunctionTwo to typedef),
-//                index.functions.map { it.name to assertIs<Typedef>(it.parameters.single().type).def },
-//        )
+    @Test
+    fun `KT-81695 repeated NS_ENUM with -fmodules - reference the same underlying typedef`() {
+        val markerFunctionOne = "foo"
+        val markerFunctionTwo = "bar"
+        val files = testFiles()
+        files.file("module.modulemap", """
+            module one {
+                header "one.h"
+            }
+            module two {
+                header "two.h"
+            }
+        """.trimIndent())
+        val typedefDecl = "typedef NS_ENUM(NSInteger, Foo) { One, Two };"
+        files.file("one.h", """
+            #import <Foundation/Foundation.h>
+            $typedefDecl
+            void ${markerFunctionOne}(Foo);
+        """.trimIndent())
+        files.file("two.h", """
+            #import <Foundation/Foundation.h>
+            $typedefDecl
+            void ${markerFunctionTwo}(Foo);
+        """.trimIndent())
+        val def = files.file("dup.def", """
+            language = Objective-C
+            modules = one two
+        """.trimIndent())
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(def, argsWithFmodulesAndSearchPath(files.directory)),
+                verbose = false
+        ).index
+
+        assertEquals(
+                listOf("enum Foo"),
+                index.enums.map { it.spelling },
+        )
+
+        val enumDecl = index.enums.single()
+        listOf(
+                listOf("one" to enumDecl, "two" to enumDecl),
+                index.functions.map {
+                    it.name to assertIs<EnumType>(it.parameters.single().type).def
+                }
+        )
     }
 
     private class MultiModularImportCase(
@@ -468,14 +496,16 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
                 verbose = false
         ).index
 
-        assertEquals(
-                listOf("Foo" to true),
-                index.objCClasses.map { it.name to it.isForwardDeclaration }
+        data class TypeCheck(
+                val name: String,
+                val methods: List<String>,
+                val isForwardDeclaration: Boolean,
         )
-//        assertEquals(
-//                listOf("Foo" to false),
-//                index.objCClasses.map { it.name to it.isForwardDeclaration }
-//        )
+
+        assertEquals(
+                listOf(TypeCheck("Foo", listOf("bar"), false)),
+                index.objCClasses.map { TypeCheck(it.name, it.methods.map { it.kotlinName }, it.isForwardDeclaration) }
+        )
 
         val objcClass = index.objCClasses.single()
         assertEquals(
@@ -501,13 +531,9 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         ).index
 
         assertEquals(
-                listOf("Foo" to true),
+                listOf("Foo" to false),
                 index.objCClasses.map { it.name to it.isForwardDeclaration }
         )
-//        assertEquals(
-//                listOf("Foo" to false),
-//                index.objCClasses.map { it.name to it.isForwardDeclaration }
-//        )
 
         val objcClass = index.objCClasses.single()
         assertEquals(
@@ -532,13 +558,9 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         ).index
 
         assertEquals(
-                listOf("Foo" to true),
+                listOf("Foo" to false),
                 index.objCClasses.map { it.name to it.isForwardDeclaration }
         )
-//        assertEquals(
-//                listOf("Foo" to false),
-//                index.objCClasses.map { it.name to it.isForwardDeclaration }
-//        )
 
         val objcClass = index.objCClasses.single()
         assertEquals(
@@ -571,15 +593,10 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         ).index
 
         assertEquals(
-                listOf("Foo" to true),
-                index.objCClasses.map { it.name to it.isForwardDeclaration },
+                emptyList(),
+                index.objCClasses,
                 message = "ObjC class should not be included as it would come from original"
         )
-//        assertEquals(
-//                emptyList(),
-//                index.objCClasses,
-//                message = "ObjC class should not be included as it would come from original"
-//        )
 
         data class ClassCheck(
                 val name: String,
@@ -590,8 +607,8 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         assertEquals(
                 listOf("consume" to ClassCheck(
                         name = "Foo",
-                        isForwardDeclaration = true,
-                        location = Location(HeaderId(headerContentsHash(multiModularImportBaseCase.forwardHeader.path))),
+                        isForwardDeclaration = false,
+                        location = Location(definitionHeaderId),
                 )),
                 index.functions.map {
                     it.name to assertIs<ObjCObjectPointer>(it.parameters.single().type).def.let {
@@ -603,22 +620,6 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
                     }
                 },
         )
-//        assertEquals(
-//                listOf("consume" to ClassCheck(
-//                        name = "Foo",
-//                        isForwardDeclaration = false,
-//                        location = Location(definitionHeaderId),
-//                )),
-//                index.functions.map {
-//                    it.name to assertIs<ObjCObjectPointer>(it.parameters.single().type).def.let {
-//                        ClassCheck(
-//                                it.name,
-//                                it.isForwardDeclaration,
-//                                it.location,
-//                        )
-//                    }
-//                },
-//        )
     }
 
     private fun argsWithFmodules(vararg arguments: String): Array<String> = arrayOf("-compiler-option", "-fmodules") + arguments
