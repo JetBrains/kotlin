@@ -201,7 +201,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     if (X_NO_UNIFIED_NULL_CHECKS in this) { arguments.noUnifiedNullChecks = get(X_NO_UNIFIED_NULL_CHECKS)}
     if (X_NULLABILITY_ANNOTATIONS in this) { arguments.nullabilityAnnotations = get(X_NULLABILITY_ANNOTATIONS)}
     if (X_OUTPUT_BUILTINS_METADATA in this) { arguments.outputBuiltinsMetadata = get(X_OUTPUT_BUILTINS_METADATA)}
-    if (X_PROFILE in this) { arguments.profileCompilerCommand = get(X_PROFILE)?.toArgumentString()}
+    if (X_PROFILE in this) { try { arguments.profileCompilerCommand = get(X_PROFILE)?.toArgumentString() } catch(e: ClassCastException) { arguments.applyProfileCompilerCommand(get(X_PROFILE)) }}
     if (X_SAM_CONVERSIONS in this) { arguments.samConversions = get(X_SAM_CONVERSIONS)}
     if (X_SANITIZE_PARENTHESES in this) { arguments.sanitizeParentheses = get(X_SANITIZE_PARENTHESES)}
     if (X_SCRIPT_RESOLVER_ENVIRONMENT in this) { arguments.scriptResolverEnvironment = get(X_SCRIPT_RESOLVER_ENVIRONMENT)}
@@ -287,7 +287,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     try { this[X_NO_UNIFIED_NULL_CHECKS] = arguments.noUnifiedNullChecks } catch (_: NoSuchMethodError) {  }
     try { this[X_NULLABILITY_ANNOTATIONS] = arguments.nullabilityAnnotations } catch (_: NoSuchMethodError) {  }
     try { this[X_OUTPUT_BUILTINS_METADATA] = arguments.outputBuiltinsMetadata } catch (_: NoSuchMethodError) {  }
-    try { this[X_PROFILE] = arguments.profileCompilerCommand?.toXprofile() } catch (_: NoSuchMethodError) {  }
+    try { try { this[X_PROFILE] = arguments.profileCompilerCommand?.toXprofile() } catch (e: ClassCastException) { applyProfileCompilerCommand(this[X_PROFILE], arguments) } } catch (_: NoSuchMethodError) {  }
     try { this[X_SAM_CONVERSIONS] = arguments.samConversions } catch (_: NoSuchMethodError) {  }
     try { this[X_SANITIZE_PARENTHESES] = arguments.sanitizeParentheses } catch (_: NoSuchMethodError) {  }
     try { this[X_SCRIPT_RESOLVER_ENVIRONMENT] = arguments.scriptResolverEnvironment } catch (_: NoSuchMethodError) {  }
