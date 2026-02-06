@@ -70,7 +70,7 @@ internal class NativeTestGroupingMessageCollector(
                     || isLibraryIncludedMoreThanOnceWarning(message)
                     || isK2Experimental(message)
                     || isPartialLinkageWarning(message)
-                    || isKlibResolver(message)
+                    || isKlibLoader(message)
                     || isContextReceiversWarning(message)
                     || isK1LanguageVersionWarning(message)
                     || isArgumentPassedMultipleTimesWarning(message)
@@ -115,7 +115,7 @@ internal class NativeTestGroupingMessageCollector(
 
     private fun isK2Experimental(message: String): Boolean = message.startsWith(K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX)
 
-    private fun isKlibResolver(message: String): Boolean = message.startsWith(KLIB_RESOLVER_WARNING_PREFIX)
+    private fun isKlibLoader(message: String): Boolean = message.startsWith(KLIB_LOADER_WARNING_PREFIX)
 
     private fun isPartialLinkageWarning(message: String): Boolean = message.matches(PARTIAL_LINKAGE_WARNING_REGEX)
 
@@ -132,7 +132,7 @@ internal class NativeTestGroupingMessageCollector(
         private const val UNSAFE_COMPILER_ARGS_WARNING_PREFIX = "ATTENTION!\nThis build uses unsafe internal compiler arguments:\n\n"
         private const val LIBRARY_INCLUDED_MORE_THAN_ONCE_WARNING_PREFIX = "library included more than once: "
         private const val K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX = "Language version 2.0 is experimental"
-        private const val KLIB_RESOLVER_WARNING_PREFIX = "KLIB resolver: "
+        private const val KLIB_LOADER_WARNING_PREFIX = "KLIB loader: "
         private const val CONTEXT_RECEIVERS_WARNING_PREFIX = "Experimental context receivers are superseded by context parameters"
 
         private val K1_LANGUAGE_VERSIONS_WARNING_REGEX = Regex("Language version 1.[0-9.]+ is deprecated and its support will be removed in a future version of Kotlin")

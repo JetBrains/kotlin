@@ -419,7 +419,7 @@ class KonanConfig(
             configuration, target, distribution, resolveManifestDependenciesLenient = true
     )
 
-    override val resolvedLibraries get() = resolve.resolvedLibraries
+    val resolvedLibraries get() = resolve.resolvedLibraries
 
     val includedLibraries: List<KotlinLibrary>
         get() = getIncludedLibraries(

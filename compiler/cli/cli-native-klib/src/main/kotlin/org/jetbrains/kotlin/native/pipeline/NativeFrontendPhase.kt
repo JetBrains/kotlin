@@ -67,7 +67,7 @@ object NativeFrontendPhase : PipelinePhase<NativeConfigurationArtifact, NativeFr
         val mainModuleName = Name.special("<${config.moduleId}>")
         val syntaxErrors = files.fold(false) { errorsFound, file -> fileHasSyntaxErrors(file) or errorsFound }
         val dependencyList = DependencyListForCliModule.build {
-            val (interopLibs, regularLibs) = config.resolvedLibraries.getFullList().partition { it.isCInteropLibrary() }
+            val (interopLibs, regularLibs) = config.loadedKlibs.all.partition { it.isCInteropLibrary() }
             defaultDependenciesSet(mainModuleName) {
                 dependencies(regularLibs.map { it.libraryFile.absolutePath })
                 friendDependencies(config.friendModuleFiles.map { it.absolutePath })
@@ -82,13 +82,12 @@ object NativeFrontendPhase : PipelinePhase<NativeConfigurationArtifact, NativeFr
             }
             // TODO: !!! dependencies module data?
         }
-        val resolvedLibraries = config.resolvedLibraries.getFullResolvedList().map { it.library }
 
         val sessionsWithSources = prepareNativeSessions(
             files,
             configuration,
             mainModuleName,
-            resolvedLibraries,
+            config.loadedKlibs.all,
             dependencyList,
             extensionRegistrars,
             metadataCompilationMode = config.metadataKlib,

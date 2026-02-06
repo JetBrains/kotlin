@@ -211,7 +211,7 @@ class KotlinLibraryResolverResultImpl(
     override fun filterRoots(predicate: (KotlinResolvedLibrary) -> Boolean) =
         KotlinLibraryResolverResultImpl(roots.filter(predicate))
 
-    override fun getFullResolvedList(order: LibraryOrder?) = (order?.invoke(all) ?: all)
+    override fun getFullList(order: LibraryOrder?): List<KotlinLibrary> = (order?.invoke(all) ?: all).map { it.library }
 
     override fun forEach(action: (KotlinLibrary, PackageAccessHandler) -> Unit) {
         all.forEach { action(it.library, it) }

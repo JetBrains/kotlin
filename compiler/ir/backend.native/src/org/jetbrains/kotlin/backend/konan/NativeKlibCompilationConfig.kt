@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 
 /**
@@ -33,8 +32,6 @@ interface NativeKlibCompilationConfig {
     val configuration: CompilerConfiguration
 
     val target: KonanTarget
-
-    val resolvedLibraries: KotlinLibraryResolveResult
 
     val moduleId: String
 

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.konan.config.konanExportKdoc
 import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
-import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 
 internal fun NativeFirstStagePhaseContext.firSerializerBase(
         firResult: AllModulesFrontendOutput,
@@ -29,9 +29,13 @@ internal fun NativeFirstStagePhaseContext.firSerializerBase(
         produceHeaderKlib: Boolean = false,
 ): SerializerOutput {
     val configuration = config.configuration
-    val usedResolvedLibraries = fir2IrOutput?.let {
-        config.resolvedLibraries.getFullResolvedList(TopologicalLibraryOrder).filter {
-            (!it.isDefault && !configuration.konanPurgeUserLibs) || it in fir2IrOutput.usedLibraries
+    val usedLibraries = fir2IrOutput?.let {
+        config.loadedKlibs.all.filter { library ->
+            // TODO (KT-60874): Need to clarify why used-specified libraries are forced to stay in the list of "used libraries"
+            //  even when they are not used. Note that the default value for `konanPurgeUserLibs` is always `false`.
+            val forceLibraryToStayInUsedLibrariesList = !configuration.konanPurgeUserLibs && !library.isFromKotlinNativeDistribution
+
+            forceLibraryToStayInUsedLibrariesList || library in fir2IrOutput.usedLibraries
         }
     }
 
@@ -51,7 +55,7 @@ internal fun NativeFirstStagePhaseContext.firSerializerBase(
                 produceHeaderKlib = produceHeaderKlib,
             ),
             cleanFiles = emptyList(),
-            dependencies = usedResolvedLibraries?.map { it.library }.orEmpty(),
+            dependencies = usedLibraries.orEmpty(),
             createModuleSerializer = { irDiagnosticReporter ->
                 KonanIrModuleSerializer(
                     settings = IrSerializationSettings(

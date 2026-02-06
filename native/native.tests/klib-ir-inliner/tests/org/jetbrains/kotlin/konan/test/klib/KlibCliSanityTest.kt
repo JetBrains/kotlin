@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTar
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_IR_PROVIDER
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.test.utils.assertCompilerOutputHasKlibResolverIncompatibleAbiMessages
 import org.jetbrains.kotlin.test.utils.patchManifestAsMap
 import org.jetbrains.kotlin.test.utils.patchManifestToBumpAbiVersion
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -87,7 +87,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun `Compiler rejects non-existent KLIB passed via CLI arguments`() {
+    fun `Compiler warns on non-existent KLIB passed via CLI arguments`() {
         val modules = newSourceModules { addRegularModule("a") }
 
         listOf(
@@ -98,35 +98,32 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             modules.modules[0].sourceFile.parentFile.resolve("non-existent-klib").absolutePath,
             modules.modules[0].sourceFile.parentFile.resolve("non-existent-klib.klib").absolutePath,
         ).forEach { libraryPath ->
-            try {
-                modules.compileToKlibsViaCli(
-                    extraCliArgs = listOf("-library", libraryPath, "-friend-modules", libraryPath)
-                )
-
-                fail { "Normally unreachable code" }
-            } catch (cte: CompilationToolException) {
-                assertTrue(cte.reason.contains("KLIB resolver: Could not find \"$libraryPath\""))
+            //                     extraCliArgs = listOf("-library", libraryPath, "-friend-modules", libraryPath)
+            modules.compileToKlibsViaCli(extraCliArgs = listOf("-library", libraryPath)) { _, successKlib ->
+                val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
+                assertEquals(ExitCode.OK, compilationToolCall.exitCode)
+                assertTrue("KLIB loader: Library not found: $libraryPath" in compilationToolCall.toolOutput)
             }
         }
     }
 
     @Test
-    fun `Compiler warns on non-existent transitive dependency in depends= property of regular KLIB, v1`() =
-        doTestWarnOnNonexistentTransitiveDependencyInManifestV1(lastModuleIsCInterop = false)
+    fun `Compiler ignores non-existent transitive dependency in depends= property of regular KLIB, v1`() =
+        doTestIgnoringNonexistentTransitiveDependencyInManifestV1(lastModuleIsCInterop = false)
 
     @Test
-    fun `Compiler warns on non-existent transitive dependency in depends= property of regular KLIB, v2`() =
-        doTestWarnOnNonexistentTransitiveDependencyInManifestV2(lastModuleIsCInterop = false)
+    fun `Compiler ignores non-existent transitive dependency in depends= property of regular KLIB, v2`() =
+        doTestIgnoringNonexistentTransitiveDependencyInManifestV2(lastModuleIsCInterop = false)
 
     @Test
-    fun `Compiler warns on non-existent transitive dependency in depends= property of C-interop KLIB, v1`() =
-        doTestWarnOnNonexistentTransitiveDependencyInManifestV1(lastModuleIsCInterop = true)
+    fun `Compiler ignores non-existent transitive dependency in depends= property of C-interop KLIB, v1`() =
+        doTestIgnoringNonexistentTransitiveDependencyInManifestV1(lastModuleIsCInterop = true)
 
     @Test
-    fun `Compiler warns on non-existent transitive dependency in depends= property of C-interop KLIB, v2`() =
-        doTestWarnOnNonexistentTransitiveDependencyInManifestV2(lastModuleIsCInterop = true)
+    fun `Compiler ignores non-existent transitive dependency in depends= property of C-interop KLIB, v2`() =
+        doTestIgnoringNonexistentTransitiveDependencyInManifestV2(lastModuleIsCInterop = true)
 
-    private fun doTestWarnOnNonexistentTransitiveDependencyInManifestV1(lastModuleIsCInterop: Boolean) {
+    private fun doTestIgnoringNonexistentTransitiveDependencyInManifestV1(lastModuleIsCInterop: Boolean) {
         var aKlib: KLIB? = null
 
         newSourceModules {
@@ -143,14 +140,13 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
                 "c" -> {
                     val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
                     assertEquals(ExitCode.OK, compilationToolCall.exitCode)
-                    val warnings = compilationToolCall.toolOutput.lineSequence().filter { "KLIB resolver:" in it }.toList()
-                    assertTrue(warnings.isEmpty())
+                    assertFalse("KLIB loader: " in compilationToolCall.toolOutput)
                 }
             }
         }
     }
 
-    private fun doTestWarnOnNonexistentTransitiveDependencyInManifestV2(lastModuleIsCInterop: Boolean) {
+    private fun doTestIgnoringNonexistentTransitiveDependencyInManifestV2(lastModuleIsCInterop: Boolean) {
         newSourceModules {
             addRegularModule("b")
             if (lastModuleIsCInterop)
@@ -172,8 +168,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
                 "c" -> {
                     val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
                     assertEquals(ExitCode.OK, compilationToolCall.exitCode)
-                    val warnings = compilationToolCall.toolOutput.lineSequence().filter { "KLIB resolver:" in it }.toList()
-                    assertTrue(warnings.isEmpty())
+                    assertFalse("KLIB loader: " in compilationToolCall.toolOutput)
                 }
             }
         }
@@ -199,39 +194,36 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
 
             fail { "Normally unreachable code" }
         } catch (cte: CompilationToolException) {
-            assertCompilerOutputHasKlibResolverIncompatibleAbiMessages(
-                assertions = JUnit5Assertions,
-                compilerOutput = cte.reason,
-                missingLibrary = "/klib-files.unpacked.transformed/lib1",
-                baseDir = buildDir
-            )
+            val libraryPath = buildDir.resolve("klib-files.unpacked.transformed/lib1").path
+            if (!cte.reason.contains("KLIB loader: Incompatible ABI version 3.4.0 in library: $libraryPath"))
+                throw cte
         }
     }
 
     @Test
     fun `Compiler consumes KLIB with known IR provider`() {
-        doTestIrProviders(knownIrProvider = true)
+        doTestIrProviders(irProviderName = KLIB_INTEROP_IR_PROVIDER_IDENTIFIER)
     }
 
     @Test
     fun `Compiler rejects KLIB with unknown IR provider`() {
         try {
-            doTestIrProviders(knownIrProvider = false)
+            doTestIrProviders(irProviderName = "QwERTY")
             fail { "Normally unreachable code" }
         } catch (cte: CompilationToolException) {
-            if (!cte.reason.contains("The library requires unknown IR provider"))
+            if (!cte.reason.contains("KLIB loader: Library with unsupported IR provider QwERTY:"))
                 throw cte
         }
     }
 
-    private fun doTestIrProviders(knownIrProvider: Boolean) {
+    private fun doTestIrProviders(irProviderName: String) {
         newSourceModules {
             addRegularModule("a")
             addRegularModule("b") { dependsOn("a") }
         }.compileToKlibsViaCli { module, successKlib ->
             if (module.name == "a") {
                 patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
-                    properties[KLIB_PROPERTY_IR_PROVIDER] = if (knownIrProvider) KLIB_INTEROP_IR_PROVIDER_IDENTIFIER else "QWERTY"
+                    properties[KLIB_PROPERTY_IR_PROVIDER] = irProviderName
                 }
             }
         }

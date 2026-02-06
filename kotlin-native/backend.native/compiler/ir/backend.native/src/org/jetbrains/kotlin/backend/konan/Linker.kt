@@ -175,11 +175,11 @@ internal fun runLinkerCommands(context: NativeBackendPhaseContext, commands: Lis
     else null
 
     val extraUserSetupInfo = run {
-        context.config.resolvedLibraries.getFullResolvedList()
-                .filter { it.library.isCInteropLibrary() }
+        context.config.resolvedLibraries.getFullList()
+                .filter { it.isCInteropLibrary() }
                 .mapNotNull { library ->
-                    library.library.manifestProperties["userSetupHint"]?.let {
-                        "From ${library.library.uniqueName}:\n$it".takeIf { it.isNotEmpty() }
+                    library.manifestProperties["userSetupHint"]?.let {
+                        "From ${library.uniqueName}:\n$it".takeIf { it.isNotEmpty() }
                     }
                 }
                 .mapIndexed { index, message -> "$index. $message" }

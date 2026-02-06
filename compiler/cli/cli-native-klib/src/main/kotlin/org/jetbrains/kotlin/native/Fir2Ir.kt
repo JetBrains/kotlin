@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 fun NativeFirstStagePhaseContext.fir2Ir(
         input: AllModulesFrontendOutput,
 ): Fir2IrOutput {
-    val resolvedLibraries = config.resolvedLibraries.getFullResolvedList()
+    val loadedKlibs = config.loadedKlibs
     val configuration = config.configuration
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val diagnosticsReporter = DiagnosticsCollectorImpl()
@@ -88,8 +88,8 @@ fun NativeFirstStagePhaseContext.fir2Ir(
     }.toList()
 
 
-    val usedLibraries = resolvedLibraries.filter { resolvedLibrary ->
-        val header = parseModuleHeader(resolvedLibrary.library.metadata.moduleHeaderData)
+    val usedLibraries = loadedKlibs.all.filter { library ->
+        val header = parseModuleHeader(library.metadata.moduleHeaderData)
 
         val nonEmptyPackageNames = buildSet {
             addAll(header.packageFragmentNameList)
@@ -99,7 +99,7 @@ fun NativeFirstStagePhaseContext.fir2Ir(
         usedPackages.any { it.asString() in nonEmptyPackageNames }
     }.toSet()
 
-    resolvedLibraries.find { it.library.isNativeStdlib }?.let {
+    loadedKlibs.all.find { it.isNativeStdlib }?.let {
         require(usedLibraries.contains(it)) {
             "Internal error: stdlib must be in usedLibraries, if it's in resolvedLibraries"
         }

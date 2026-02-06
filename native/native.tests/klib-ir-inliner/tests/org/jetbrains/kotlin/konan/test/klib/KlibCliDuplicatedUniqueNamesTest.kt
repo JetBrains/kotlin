@@ -111,7 +111,7 @@ class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
             val compilerOutputFromModuleC: List<String> = cte.reason.lines()
 
             val duplicatedNameMessagePresent = compilerOutputFromModuleC.any {
-                it.startsWith("$expectedDuplicatedNameMessagePrefix: KLIB resolver: The same 'unique_name=$DUPLICATED_UNIQUE_NAME' found in more than one library")
+                it.startsWith("$expectedDuplicatedNameMessagePrefix: KLIB loader: The same 'unique_name=$DUPLICATED_UNIQUE_NAME' found in more than one library")
             }
             assertTrue(duplicatedNameMessagePresent)
 
