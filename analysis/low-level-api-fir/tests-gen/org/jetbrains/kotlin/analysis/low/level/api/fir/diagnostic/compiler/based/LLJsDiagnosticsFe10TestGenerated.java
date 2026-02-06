@@ -175,6 +175,12 @@ public class LLJsDiagnosticsFe10TestGenerated extends AbstractLLJsDiagnosticsTes
   }
 
   @Test
+  @TestMetadata("unsafeJsoExampleForMaterializeVariablePrioritization.kt")
+  public void testUnsafeJsoExampleForMaterializeVariablePrioritization() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/unsafeJsoExampleForMaterializeVariablePrioritization.kt");
+  }
+
+  @Test
   @TestMetadata("wrongMultipleInheritance.kt")
   public void testWrongMultipleInheritance() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/wrongMultipleInheritance.kt");
