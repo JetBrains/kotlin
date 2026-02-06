@@ -227,6 +227,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
     override lateinit var includedHeaders: List<HeaderId>
 
+    lateinit var typesDefinitions: TypesDefinitions
+
     internal fun log(message: String) {
         if (verbose) {
             println(message)
@@ -234,7 +236,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     private fun getDeclarationId(cursor: CValue<CXCursor>): DeclarationID {
-        val usr = clang_getCursorUSR(cursor).convertAndDispose()
+        val usr = getUsr(cursor)
         if (usr == "") {
             val kind = cursor.kind
             val spelling = getCursorSpelling(cursor)
@@ -253,7 +255,12 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     protected fun getStructDeclAt(
             cursor: CValue<CXCursor>
     ): StructDecl = structRegistry.getOrPut(cursor, { createStructDecl(cursor) }) { decl ->
-        val definitionCursor = clang_getCursorDefinition(cursor)
+        // FIXME: Can we even get here with an anonymous struct?
+        val definitionCursor = if (!isAnonymous(cursor)) {
+            typesDefinitions.structDefinitionByName[getCursorSpelling(cursor)] ?: clang_getCursorDefinition(cursor)
+        } else {
+            clang_getCursorDefinition(cursor)
+        }
         if (clang_Cursor_isNull(definitionCursor) == 0) {
             decl.def = createStructDef(definitionCursor, definitionCursor.type)
         }
@@ -263,12 +270,12 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     private fun createStructDecl(cursor: CValue<CXCursor>): StructDeclImpl =
             StructDeclImpl(
                     cursor.type.name,
-                    isAnonymous = clang_Cursor_isAnonymous(cursor) != 0,
+                    isAnonymous = isAnonymous(cursor),
                     getLocation(cursor)
             )
 
     private fun createStructDef(cursor: CValue<CXCursor>, structType: CValue<CXType>): StructDefImpl {
-        assert(clang_isCursorDefinition(cursor) != 0)
+        assert(!isStructDeclForward(cursor))
         val type = clang_getCursorType(cursor)
         val size = clang_Type_getSizeOf(type)
         val align = clang_Type_getAlignOf(type).toInt()
@@ -311,7 +318,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
                 // Behavior of clang_Cursor_isAnonymous is changing starting from LLVM 8.
                 // Use lately introduced clang_Cursor_isAnonymousRecordDecl when available (LLVM 9)
-                val isAnonymousRecordType = (fieldCursor.type.kind == CXType_Record) && (clang_Cursor_isAnonymous(declCursor) == 1)
+                val isAnonymousRecordType = (fieldCursor.type.kind == CXType_Record) && (isAnonymous(declCursor))
                 when {
                     isAnonymousRecordType -> {
                         // TODO: clang_Cursor_getOffsetOfField is OK for anonymous, but only for the 1st level of such nesting
@@ -378,7 +385,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         return EnumDefImpl(
                 typeSpelling,
                 baseType,
-                isAnonymous = clang_Cursor_isAnonymous(cursor) != 0,
+                isAnonymous = isAnonymous(cursor),
                 getLocation(cursor)
         )
     }
@@ -400,20 +407,9 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         }
     }
 
-    private fun isObjCInterfaceDeclForward(cursor: CValue<CXCursor>): Boolean {
-        assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
-
-        // It is forward declaration <=> the first child is reference to it:
-        var result = false
-        visitChildren(cursor) { child, _ ->
-            result = (child.kind == CXCursorKind.CXCursor_ObjCClassRef && clang_getCursorReferenced(child) == cursor)
-            CXChildVisitResult.CXChildVisit_Break
-        }
-        return result
-    }
-
-    private fun getObjCClassAt(cursor: CValue<CXCursor>): ObjCClassImpl {
-        assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
+    private fun getObjCClassAt(originalCursor: CValue<CXCursor>): ObjCClassImpl {
+        assert(originalCursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { originalCursor.kind }
+        val cursor = typesDefinitions.classDefinitionByName[getCursorSpelling(originalCursor)] ?: originalCursor
 
         val name = clang_getCursorDisplayName(cursor).convertAndDispose()
         val parameters = mutableListOf<String>()
@@ -490,13 +486,14 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     private fun isLocatedInDefFile(cursor: CValue<CXCursor>): Boolean =
             clang_Location_isFromMainFile(clang_getCursorLocation(cursor)) != 0
 
-    private fun getObjCProtocolAt(cursor: CValue<CXCursor>): ObjCProtocolImpl {
-        assert(cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl) { cursor.kind }
+    private fun getObjCProtocolAt(originalCursor: CValue<CXCursor>): ObjCProtocolImpl {
+        assert(originalCursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl) { originalCursor.kind }
+        val cursor = typesDefinitions.protocolDefinition(getCursorSpelling(originalCursor)) ?: originalCursor
         val name = clang_getCursorDisplayName(cursor).convertAndDispose()
 
-        if (clang_isCursorDefinition(cursor) == 0) {
+        if (isObjCProtocolDeclForward(cursor)) {
             val definition = clang_getCursorDefinition(cursor)
-            return if (clang_isCursorDefinition(definition) != 0) {
+            return if (!isObjCProtocolDeclForward(definition)) {
                 getObjCProtocolAt(definition)
             } else {
                 objCProtocolRegistry.getOrPut(cursor) {
@@ -574,8 +571,9 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     fun getTypedef(type: CValue<CXType>): Type {
-        val declCursor = clang_getTypeDeclaration(type)
-        val name = getCursorSpelling(declCursor)
+        val originalDeclCursor = clang_getTypeDeclaration(type)
+        val name = getCursorSpelling(originalDeclCursor)
+        val declCursor = typesDefinitions.typedefDefinitionByName[name] ?: originalDeclCursor
 
         val underlying = convertType(clang_getTypedefDeclUnderlyingType(declCursor))
 
@@ -1162,15 +1160,6 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         )
     }
 
-    // TODO: unavailable declarations should be imported as deprecated.
-    private fun isAvailable(cursor: CValue<CXCursor>): Boolean = when (clang_getCursorAvailability(cursor)) {
-        CXAvailabilityKind.CXAvailability_Available,
-        CXAvailabilityKind.CXAvailability_Deprecated -> true
-
-        CXAvailabilityKind.CXAvailability_NotAvailable,
-        CXAvailabilityKind.CXAvailability_NotAccessible -> false
-    }
-
     // Skip functions which parameter or return type is TemplateRef
     protected open fun isFuncDeclEligible(cursor: CValue<CXCursor>): Boolean {
         var ret = true
@@ -1220,17 +1209,17 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
 }
 
-fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean): IndexerResult {
+fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean, indexObjCTypesUsingVisitChildren: Boolean): IndexerResult {
     val result = NativeIndexImpl(library, verbose)
-    return buildNativeIndexImpl(result, allowPrecompiledHeaders)
+    return buildNativeIndexImpl(result, allowPrecompiledHeaders, indexObjCTypesUsingVisitChildren)
 }
 
-fun buildNativeIndexImpl(index: NativeIndexImpl, allowPrecompiledHeaders: Boolean): IndexerResult {
-    val compilation = indexDeclarations(index, allowPrecompiledHeaders)
+fun buildNativeIndexImpl(index: NativeIndexImpl, allowPrecompiledHeaders: Boolean, indexObjCTypesUsingVisitChildren: Boolean): IndexerResult {
+    val compilation = indexDeclarations(index, allowPrecompiledHeaders, indexObjCTypesUsingVisitChildren)
     return IndexerResult(index, compilation)
 }
 
-private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHeaders: Boolean): Compilation {
+private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHeaders: Boolean, indexObjCTypesUsingVisitChildren: Boolean): Compilation {
     // Below, declarations from PCH should be excluded to restrict `visitChildren` to visit local declarations only
     withIndex(excludeDeclarationsFromPCH = true) { index ->
         val errors = mutableListOf<Diagnostic>()
@@ -1260,8 +1249,14 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                     nativeIndex.getHeaderId(it)
                 }
 
+                // FIXME: Do we need an opt-in/out feature flag here jic?
+                // val allTranslationUnits = unitsHolder.loadedTranslationUnits.union(ownTranslationUnits)
+                // nativeIndex.typesDefinitions = indexTranslationUnitsForTypesDefinitions(index, allTranslationUnits)
+                nativeIndex.typesDefinitions = TypesDefinitions(emptyMap(), emptyMap(), emptyMap(), emptyMap())
+
                 unitsToProcess.forEach {
-                    indexTranslationUnit(index, it, 0, object : Indexer {
+                    // FIXME: Do we need an opt-in/out feature flag for CXIndexOpt_IndexGeneratedDeclarations?
+                    indexTranslationUnit(index, it, CXIndexOpt_IndexGeneratedDeclarations, object : Indexer {
                         override fun indexDeclaration(info: CXIdxDeclInfo) {
                             val file = memScoped {
                                 val fileVar = alloc<CXFileVar>()
@@ -1276,25 +1271,29 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                     })
                 }
 
-                unitsToProcess.forEach {
-                    visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
-                        val file = getContainingFile(cursor)
-                        if (file in ownHeaders && nativeIndex.library.includesDeclaration(cursor)) {
-                            when (cursor.kind) {
-                                CXCursorKind.CXCursor_ObjCInterfaceDecl -> nativeIndex.indexObjCClass(cursor)
-                                CXCursorKind.CXCursor_ObjCProtocolDecl -> nativeIndex.indexObjCProtocol(cursor)
-                                CXCursorKind.CXCursor_ObjCCategoryDecl -> {
-                                    // This fixes https://youtrack.jetbrains.com/issue/KT-49455, which effectively seems to be a bug in libclang:
-                                    // the libclang indexer doesn't properly index categories with
-                                    // `__attribute__((external_source_symbol(language="Swift",...)))`.
-                                    // As a workaround, additionally enumerate all the categories explicitly.
-                                    nativeIndex.indexObjCCategory(cursor)
-                                }
+                // FIXME: Do we care about overriden llvm?
+                if (indexObjCTypesUsingVisitChildren) {
+                    unitsToProcess.forEach {
+                        // This fixed KT-49455, which effectively was a bug in libclang. The vanilla libclang indexer indexes
+                        // `__attribute__((external_source_symbol(language="Swift",...)))`
+                        // as CXIdxEntity_CXX* and further ignores entities marked "generated_declaration"
+                        // We have since patched these issues in https://github.com/Kotlin/llvm-project/pull/12
+                        visitChildren(clang_getTranslationUnitCursor(it)) { cursor, _ ->
+                            val file = getContainingFile(cursor)
+                            if (file in ownHeaders && nativeIndex.library.includesDeclaration(cursor)) {
+                                when (cursor.kind) {
+                                    CXCursorKind.CXCursor_ObjCInterfaceDecl -> nativeIndex.indexObjCClass(cursor)
+                                    CXCursorKind.CXCursor_ObjCProtocolDecl -> nativeIndex.indexObjCProtocol(cursor)
+                                    CXCursorKind.CXCursor_ObjCCategoryDecl -> {
+                                        // As a workaround, additionally enumerate all the categories explicitly.
+                                        nativeIndex.indexObjCCategory(cursor)
+                                    }
 
-                                else -> {}
+                                    else -> {}
+                                }
                             }
+                            CXChildVisitResult.CXChildVisit_Continue
                         }
-                        CXChildVisitResult.CXChildVisit_Continue
                     }
                 }
 
@@ -1307,6 +1306,8 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                 return compilation
             }
         } finally {
+            // Drop definitions index so that we don't have dangling references when the TU is disposed
+            nativeIndex.typesDefinitions = TypesDefinitions(emptyMap(), emptyMap(), emptyMap())
             clang_disposeTranslationUnit(translationUnit)
         }
     }

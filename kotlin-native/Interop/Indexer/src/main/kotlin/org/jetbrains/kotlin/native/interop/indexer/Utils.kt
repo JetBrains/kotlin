@@ -17,6 +17,11 @@
 package org.jetbrains.kotlin.native.interop.indexer
 
 import clang.*
+import clang.CXIdxEntityKind.CXIdxEntity_ObjCClass
+import clang.CXIdxEntityKind.CXIdxEntity_ObjCProtocol
+import clang.CXIdxEntityKind.CXIdxEntity_Typedef
+import clang.CXIdxEntityKind.CXIdxEntity_Struct
+import clang.CXIdxEntityKind.CXIdxEntity_Union
 import kotlinx.cinterop.*
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -671,6 +676,65 @@ internal class ModulesMap(
     }
 }
 
+data class TypesDefinitions(
+        val protocolDefinitionByName: Map<String, CValue<CXCursor>>,
+        val classDefinitionByName: Map<String, CValue<CXCursor>>,
+        val structDefinitionByName: Map<String, CValue<CXCursor>>,
+        val typedefDefinitionByName: Map<String, CValue<CXCursor>>,
+)
+
+fun indexTranslationUnitsForTypesDefinitions(
+        index: CXIndex,
+        translationUnits: Collection<CXTranslationUnit>,
+): TypesDefinitions {
+    val protocolDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
+    val classDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
+    val structDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
+    val typedefDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
+
+    translationUnits.forEach {
+        indexTranslationUnit(index, it, CXIndexOpt_IndexGeneratedDeclarations, object : Indexer {
+            override fun indexDeclaration(info: CXIdxDeclInfo) {
+                val cursor = info.cursor.readValue()
+                if (!isAvailable(cursor)) return
+
+                val entityInfo = info.entityInfo!!.pointed
+                val kind = entityInfo.kind
+                when (kind) {
+                    CXIdxEntity_Typedef -> {
+                        val type = clang_getCursorType(cursor)
+                        val declCursor = clang_getTypeDeclaration(type)
+                        typedefDefinitionByName[getCursorSpelling(declCursor)] = declCursor
+                    }
+                    CXIdxEntity_Union, CXIdxEntity_Struct -> {
+                        if (!isStructDeclForward(cursor)) {
+                            structDefinitionByName[getCursorSpelling(cursor)] = cursor
+                        }
+                    }
+                    CXIdxEntity_ObjCClass -> {
+                        if (cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl && !isObjCInterfaceDeclForward(cursor)) {
+                            classDefinitionByName[getCursorSpelling(cursor)] = cursor
+                        }
+                    }
+                    CXIdxEntity_ObjCProtocol -> {
+                        if (cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl && !isObjCProtocolDeclForward(cursor)) {
+                            protocolDefinitionByName[getCursorSpelling(cursor)] = cursor
+                        }
+                    }
+                    else -> {}
+                }
+            }
+        })
+    }
+
+    return TypesDefinitions(
+            protocolDefinitionByName = protocolDefinitionByName,
+            classDefinitionByName = classDefinitionByName,
+            structDefinitionByName = structDefinitionByName,
+            typedefDefinitionByName = typedefDefinitionByName,
+    )
+}
+
 internal fun getHeaderId(library: NativeLibrary, header: ClangFile?): HeaderId {
     if (header == null) {
         return HeaderId("builtins")
@@ -738,6 +802,8 @@ internal fun getHeadersAndUnits(
 
 class UnitsHolder(val index: CXIndex) : Disposable {
     private val unitByBinaryFile = mutableMapOf<String, CXTranslationUnit>()
+
+    val loadedTranslationUnits get() = unitByBinaryFile.values.toSet()
 
     internal fun load(info: CXIdxImportedASTFileInfo): CXTranslationUnit {
         val canonicalPath: String = info.getFile()!!.canonicalPath
@@ -981,6 +1047,36 @@ internal val CXModule.name: String get() = clang_Module_getName(this).convertAnd
 // TODO: this map doesn't get cleaned up but adds quite significant performance improvement.
 private val canonicalPaths = ConcurrentHashMap<String, String>()
 internal val ClangFile.canonicalPath: String get() = canonicalPaths.getOrPut(this.path) { File(this.path).canonicalPath }
+
+
+// TODO: unavailable declarations should be imported as deprecated.
+fun isAvailable(cursor: CValue<CXCursor>): Boolean = when (clang_getCursorAvailability(cursor)) {
+    CXAvailabilityKind.CXAvailability_Available,
+    CXAvailabilityKind.CXAvailability_Deprecated -> true
+
+    CXAvailabilityKind.CXAvailability_NotAvailable,
+    CXAvailabilityKind.CXAvailability_NotAccessible -> false
+}
+
+fun isObjCInterfaceDeclForward(cursor: CValue<CXCursor>): Boolean {
+    assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
+
+    // It is forward declaration <=> the first child is reference to it:
+    var result = false
+    visitChildren(cursor) { child, _ ->
+        result = (child.kind == CXCursorKind.CXCursor_ObjCClassRef && clang_getCursorReferenced(child) == cursor)
+        CXChildVisitResult.CXChildVisit_Break
+    }
+    return result
+}
+
+private fun isDeclForward(cursor: CValue<CXCursor>): Boolean = clang_isCursorDefinition(cursor) == 0
+fun isObjCProtocolDeclForward(cursor: CValue<CXCursor>): Boolean = isDeclForward(cursor)
+fun isStructDeclForward(cursor: CValue<CXCursor>): Boolean = isDeclForward(cursor)
+
+fun getUsr(cursor: CValue<CXCursor>): String = clang_getCursorUSR(cursor).convertAndDispose()
+
+fun isAnonymous(cursor: CValue<CXCursor>): Boolean = clang_Cursor_isAnonymous(cursor) != 0
 
 private fun createVfsOverlayFileContents(virtualPathToReal: Map<Path, Path>): ByteArray {
     val overlay = clang_VirtualFileOverlay_create(0)
