@@ -148,21 +148,3 @@ fun disposeRootInWriteAction(disposable: Disposable) {
         Disposer.dispose(disposable)
     }
 }
-
-fun CompilerConfiguration.reportDiagnostic(
-    factory: KtSourcelessDiagnosticFactory,
-    message: String,
-    location: CompilerMessageSourceLocation? = null,
-) {
-    val context = object : DiagnosticBaseContext {
-        override val languageVersionSettings: LanguageVersionSettings
-            get() = this@reportDiagnostic.languageVersionSettings
-    }
-    val diagnostic = factory.create(message, location, context) ?: return
-    FirDiagnosticsCompilerResultsReporter.reportDiagnosticToMessageCollector(
-        diagnostic,
-        location,
-        messageCollector,
-        renderDiagnosticInternalName
-    )
-}
