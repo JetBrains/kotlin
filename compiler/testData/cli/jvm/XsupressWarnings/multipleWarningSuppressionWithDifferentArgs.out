@@ -1,3 +1,3 @@
-warning: argument "-Xsuppress-warning" is deprecated. Use "-Xwarning-level=UNCHECKED_CAST:disabled" instead
-error: severity of UNCHECKED_CAST is configured both with -Xwarning-level and -Xsuppress-warning flags
+error: [COMPILER_ARGUMENTS_ERROR] Severity of UNCHECKED_CAST is configured both with -Xwarning-level and -Xsuppress-warning flags
+warning: [COMPILER_ARGUMENTS_WARNING] Argument "-Xsuppress-warning" is deprecated. Use "-Xwarning-level=UNCHECKED_CAST:disabled" instead
 COMPILATION_ERROR
