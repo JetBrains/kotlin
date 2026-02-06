@@ -147,18 +147,14 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             if (completionMode.allLambdasShouldBeAnalyzed) {
                 // Stage 3: fix variables for parameter types of all postponed arguments
                 for (argument in postponedAtomsDependingOnFunctionType) {
-                    val variableWasFixed = postponedArgumentsInputTypesResolver.fixNextReadyVariableForParameterTypeIfNeeded(
+                    val nextVariable = postponedArgumentsInputTypesResolver.findNextReadyVariableForParameterType(
                         argument,
                         postponedArguments,
                         topLevelType,
                         dependencyProvider,
-                    ) {
-                        // NB: FE 1.0 calls findResolvedAtomBy here
-                        // atom provided here is used only inside constraint positions, omitting right now
-                        null
-                    }
+                    )
 
-                    if (variableWasFixed)
+                    if (nextVariable != null && fixVariableIfReady(nextVariable))
                         continue@completion
                 }
 
