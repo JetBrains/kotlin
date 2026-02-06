@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -167,9 +168,15 @@ internal fun Project.reportDiagnosticOncePerBuild(diagnostic: ToolingDiagnostic,
 internal annotation class ImmediateDiagnosticReporting
 
 @ImmediateDiagnosticReporting
-internal fun Project.reportDiagnosticImmediately(diagnostic: ToolingDiagnostic) {
-    reportDiagnosticImmediately(logger, ToolingDiagnosticRenderingOptions.forProject(this), diagnostic)
+internal fun reportDiagnosticImmediately(
+    logger: Logger,
+    renderingOptions: ToolingDiagnosticRenderingOptions,
+    diagnostic: ToolingDiagnostic,
+) {
+    diagnostic.renderReportedDiagnostic(logger, renderingOptions)
 }
 
 @ImmediateDiagnosticReporting
 internal fun Project.reportDiagnosticImmediately(diagnostic: ToolingDiagnostic) {
+    reportDiagnosticImmediately(logger, ToolingDiagnosticRenderingOptions.forProject(this), diagnostic)
+}
