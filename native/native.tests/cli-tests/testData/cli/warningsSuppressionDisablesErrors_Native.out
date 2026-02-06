@@ -1,4 +1,4 @@
-warning: argument "-Xsuppress-warning" is deprecated. Use "-Xwarning-level=non-existing-diagnostic:disabled" instead (and the same for other warnings)
 error: diagnostic "UNINITIALIZED_VARIABLE" is an error. Changing the severity of errors is prohibited
 error: warning with name "non-existing-diagnostic" does not exist
+warning: argument "-Xsuppress-warning" is deprecated. Use "-Xwarning-level=non-existing-diagnostic:disabled" instead (and the same for other warnings)
 COMPILATION_ERROR
