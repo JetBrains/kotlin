@@ -13,7 +13,6 @@ internal fun <T> K2JVMCompilerArguments.applyProfileCompilerCommand(profileCompi
     this.profileCompilerCommand = profileCompilerCommand
 }
 
-
 @Suppress("UNCHECKED_CAST")
 internal fun <T> applyProfileCompilerCommand(
     currentValue: Any?,
@@ -22,4 +21,20 @@ internal fun <T> applyProfileCompilerCommand(
     require(currentValue is String?) { "X_PROFILE home must be a string, but was $currentValue" }
 
     return compilerArgs.profileCompilerCommand as T
+}
+
+internal fun <T> K2JVMCompilerArguments.applyJdkHome(jdkHome: T?) {
+    require(jdkHome is String?) { "JDK home must be a string, but was $jdkHome" }
+
+    this.jdkHome = jdkHome
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applyJdkHome(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is String?) { "JDK home must be a string, but was $currentValue" }
+
+    return compilerArgs.jdkHome as T
 }
