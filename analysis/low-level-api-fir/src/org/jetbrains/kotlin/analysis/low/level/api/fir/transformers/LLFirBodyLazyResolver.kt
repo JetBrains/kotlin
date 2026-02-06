@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirMod
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
@@ -912,6 +913,10 @@ internal object BodyStateKeepers {
     private val VALUE_PARAMETER: StateKeeper<FirValueParameter, FirDesignation> = stateKeeper { builder, valueParameter, _ ->
         if (valueParameter.defaultValue != null) {
             builder.add(FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue, ::expressionGuard)
+            builder.add(
+                { parameter -> parameter.evaluatedInitializer },
+                { parameter, evaluatorResult -> parameter.evaluatedInitializer = evaluatorResult },
+            )
         }
 
         builder.add(FirValueParameter::controlFlowGraphReference, FirValueParameter::replaceControlFlowGraphReference)
@@ -1018,6 +1023,8 @@ private fun <T : FirDeclaration> StateKeeperScope<T, FirDesignation>.preservePar
             }
         }
 
+        // NOTE: parameters might have `evaluatedInitializer` that is not stored in the partial context,
+        // but it is not a problem as long as annotation constructors are not partially resolvable
         val newParameters = parameterSupplier(declaration)
         for ((index, newParameter) in newParameters.withIndex()) {
             if (newParameter.defaultValue != null) {
