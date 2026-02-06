@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_4
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_4_20
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.konan.NativePlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import java.net.URLClassLoader
 import java.nio.file.Path
@@ -33,6 +34,7 @@ import kotlin.contracts.contract
  * - [JsPlatformToolchain] for Kotlin/JS compilation
  * - [AbiValidationToolchain] for ABI validation
  * - [CriToolchain] for Compiler Reference Index operations
+ * - [NativePlatformToolchain] for Kotlin/Native compilation
  *
  * This interface is not intended to be implemented by the API consumers.
  *
