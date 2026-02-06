@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.cli.metadata
 
 import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
@@ -30,8 +31,7 @@ abstract class AbstractMetadataSerializer<T>(
         val destDir = environment.destDir
         if (destDir == null) {
             val configuration = environment.configuration
-            val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify destination via -d")
+            configuration.report(COMPILER_ARGUMENTS_ERROR, "Specify destination via -d")
             return null
         }
 
