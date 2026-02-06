@@ -5,11 +5,19 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.native.interop.indexer.headerContentsHash
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ExternalSourceSymbolTests : IndexerTestsBase() {
+
+    @BeforeEach
+    fun onlyOnObjCSupportedHost() {
+        Assumptions.assumeTrue(HostManager.hostIsMac)
+    }
 
     private fun interfaceDeclaration(attribute: String): String = """
         ${attribute}
@@ -36,13 +44,9 @@ class ExternalSourceSymbolTests : IndexerTestsBase() {
         ).index
 
         assertEquals(
-                listOf(),
+                listOf("Foo" to listOf("bar")),
                 index.objCClasses.map { it.name to it.methods.map { it.kotlinName } },
         )
-//        assertEquals(
-//                listOf("Foo" to listOf("bar")),
-//                index.objCClasses.map { it.name to it.methods.map { it.kotlinName } },
-//        )
     }
 
     @Test
@@ -62,13 +66,9 @@ class ExternalSourceSymbolTests : IndexerTestsBase() {
         ).index
 
         assertEquals(
-                listOf(),
+                listOf("Foo" to listOf("bar")),
                 index.objCClasses.map { it.name to it.methods.map { it.kotlinName } },
         )
-//        assertEquals(
-//                listOf("Foo" to listOf("bar")),
-//                index.objCClasses.map { it.name to it.methods.map { it.kotlinName } },
-//        )
     }
 
     @Test
@@ -88,13 +88,9 @@ class ExternalSourceSymbolTests : IndexerTestsBase() {
         ).index
 
         assertEquals(
-                listOf(),
+                listOf("Foo" to listOf("bar")),
                 index.objCClasses.map { it.name to it.methods.map { it.kotlinName } },
         )
-//        assertEquals(
-//                listOf("Foo" to listOf("bar")),
-//                index.objCClasses.map { it.name to it.methods.map { it.kotlinName } },
-//        )
     }
 
     @Test
@@ -128,17 +124,11 @@ class ExternalSourceSymbolTests : IndexerTestsBase() {
         ).index
 
         assertEquals(
-                listOf(),
+                listOf("KT49455Ext" to listOf("extensionFunction")),
                 index.objCCategories.filter {
                     it.location.headerId.value == headerContentsHash(header.path)
                 }.map { it.name to it.methods.map { it.kotlinName } }
         )
-//        assertEquals(
-//                listOf("KT49455Ext" to listOf("extensionFunction")),
-//                index.objCCategories.filter {
-//                    it.location.headerId.value == headerContentsHash(header.path)
-//                }.map { it.name to it.methods.map { it.kotlinName } }
-//        )
     }
 
 }
