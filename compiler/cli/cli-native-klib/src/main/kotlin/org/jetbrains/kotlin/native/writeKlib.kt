@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.native
 
 import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
 import org.jetbrains.kotlin.backend.common.serialization.addLanguageFeaturesToManifest
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.konan.config.konanDontCompressKlib
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import java.util.Properties
 
-fun PhaseContext.writeKlib(input: KlibWriterInput) {
+fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
     val suffix = ".klib"
     val outputPath = input.outputPath
     val dontCompressKlib = config.configuration.konanDontCompressKlib

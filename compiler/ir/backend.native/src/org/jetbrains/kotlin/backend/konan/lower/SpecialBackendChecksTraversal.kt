@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -46,7 +46,7 @@ import java.io.File
  * TODO: Should be moved to compiler frontend after K2.
  */
 class SpecialBackendChecksTraversal(
-    private val context: PhaseContext,
+    private val context: NativePhaseContext,
     private val symbols: BackendNativeSymbols,
     private val irBuiltIns: IrBuiltIns,
 ) : FileLoweringPass {
@@ -58,10 +58,10 @@ class SpecialBackendChecksTraversal(
 }
 
 private class BackendChecker(
-        private val context: PhaseContext,
-        val symbols: BackendNativeSymbols,
-        val irBuiltIns: IrBuiltIns,
-        private val irFile: IrFile,
+    private val context: NativePhaseContext,
+    val symbols: BackendNativeSymbols,
+    val irBuiltIns: IrBuiltIns,
+    private val irFile: IrFile,
 ) : IrVisitorVoid() {
     val target = context.config.target
 

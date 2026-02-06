@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.native
 
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
@@ -117,7 +117,7 @@ fun NativeFirstStagePhaseContext.fir2Ir(
     return Fir2IrOutput(input, symbols, actualizedResult, usedLibraries)
 }
 
-private fun PhaseContext.createKonanSymbols(
+private fun NativePhaseContext.createKonanSymbols(
         irBuiltIns: IrBuiltIns,
 ): BackendNativeSymbols {
     return BackendNativeSymbols(this, irBuiltIns, this.config.configuration)
