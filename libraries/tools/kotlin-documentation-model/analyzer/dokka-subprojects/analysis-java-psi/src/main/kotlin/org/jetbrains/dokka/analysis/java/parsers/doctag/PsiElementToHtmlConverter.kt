@@ -11,6 +11,8 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.javadoc.PsiDocTagValue
 import com.intellij.psi.javadoc.PsiDocToken
 import com.intellij.psi.javadoc.PsiInlineDocTag
+import com.intellij.psi.javadoc.PsiMarkdownCodeBlock
+import com.intellij.psi.javadoc.PsiMarkdownReferenceLink
 import com.intellij.psi.javadoc.PsiSnippetDocTag
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.analysis.java.doccomment.DocumentationContent
@@ -18,8 +20,8 @@ import org.jetbrains.dokka.analysis.java.JavadocTag
 import org.jetbrains.dokka.analysis.java.doccomment.PsiDocumentationContent
 import org.jetbrains.dokka.analysis.java.parsers.CommentResolutionContext
 import org.jetbrains.dokka.analysis.java.util.*
+import org.jetbrains.dokka.analysis.java.parsers.doctag.markdown.MarkdownToHtmlConverter
 import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.dokka.utilities.htmlEscape
 
@@ -46,7 +48,8 @@ private data class HtmlParsingResult(val newState: HtmlParserState, val parsedLi
 internal class PsiElementToHtmlConverter(
     private val inheritDocTagResolver: InheritDocTagResolver,
     private val sourceSet: DokkaSourceSet,
-    private val logger: DokkaLogger
+    private val logger: DokkaLogger,
+    private val markdownToHtmlConverterProvider: () -> MarkdownToHtmlConverter
 ) {
     private val preOpeningTagRegex = "<pre(\\s+.*)?>".toRegex()
     private val preClosingTagRegex = "</pre>".toRegex()
@@ -65,6 +68,8 @@ internal class PsiElementToHtmlConverter(
         private val commentResolutionContext: CommentResolutionContext
     ) {
 
+        private val isMarkdownDocComment = commentResolutionContext.comment.isMarkdownComment
+
         private val snippetToHtmlConverter: SnippetToHtmlConverter by lazy {
             DefaultSnippetToHtmlConverter(sourceSet, docTagParserContext, logger)
         }
@@ -74,7 +79,9 @@ internal class PsiElementToHtmlConverter(
                 psiElements.fold(HtmlParsingResult(commentResolutionContext.tag)) { resultAccumulator, psiElement ->
                     resultAccumulator + parseHtml(psiElement, resultAccumulator.newState)
                 }
-            return parsingResult.parsedLine?.trim()
+            return parsingResult.parsedLine?.trim()?.let {
+                if (isMarkdownDocComment) markdownToHtmlConverterProvider().convertMarkdownToHtml(it.trimIndent()) else it
+            }
         }
 
         private fun parseHtml(psiElement: PsiElement, state: HtmlParserState): HtmlParsingResult =
@@ -95,8 +102,10 @@ internal class PsiElementToHtmlConverter(
             val parsed = when (psiElement) {
                 is PsiInlineDocTag -> psiElement.toHtml(state.currentJavadocTag)
                 is PsiDocParamRef -> psiElement.toDocumentationLinkString()
+                is PsiMarkdownCodeBlock -> psiElement.toHtml()
+                is PsiMarkdownReferenceLink -> psiElement.linkElement?.referenceElementOrSelf()?.toDocumentationLinkString(psiElement.label?.text ?: "")
                 is PsiDocTagValue, is LeafPsiElement -> {
-                    psiElement.stringifyElementAsText(isInsidePre, state.previousElement)
+                    psiElement.stringifyElementAsText(isInsidePre || isMarkdownDocComment, state.previousElement)
                 }
                 else -> null
             }
@@ -124,7 +133,7 @@ internal class PsiElementToHtmlConverter(
                         it.stringifyElementAsText(keepFormatting = false).orEmpty()
                     })
 
-                "code" -> "<code data-inline>${dataElementsAsText(this)}</code>"
+                "code" -> dataElementsAsText(this).wrapInCodeTag(true)
                 "literal" -> "<literal>${dataElementsAsText(this)}</literal>"
                 "index" -> "<index>${this.children.filterIsInstance<PsiDocTagValue>().joinToString { it.text }}</index>"
                 "inheritDoc" -> {
@@ -158,15 +167,31 @@ internal class PsiElementToHtmlConverter(
         }
 
         private fun PsiElement.toDocumentationLinkString(label: String = ""): String {
+            val displayLabel = label.ifBlank { defaultLabel().text }
+
             val driId = reference?.resolve()?.takeIf { it !is PsiParameter }?.let {
                 val dri = DRI.from(it)
                 val id = docTagParserContext.store(dri)
                 id
-            } ?: UNRESOLVED_PSI_ELEMENT // TODO [beresnev] log this somewhere maybe?
+            } ?: run {
+                logger.warn("unresolved link to '$displayLabel'")
+                UNRESOLVED_PSI_ELEMENT
+            }
 
             // TODO [beresnev] data-dri into a constant
-            return """<a data-dri="${driId.htmlEscape()}">${label.ifBlank { defaultLabel().text }}</a>"""
+            return """<a data-dri="${driId.htmlEscape()}">$displayLabel</a>"""
         }
+
+        private fun PsiMarkdownCodeBlock.toHtml() =
+            if (isInline) {
+                codeText.wrapInCodeTag(true)
+            } else {
+                "<pre${codeLanguage?.id?.lowercase()?.let { " lang=\"$it\"" } ?: ""}><code>${codeText.trimIndent()}</code></pre>"
+            }
+
+        private fun String.wrapInCodeTag(isDataInline: Boolean = false) =
+            if (isMarkdownDocComment) "`$this`" // use ` for Markdown comments, further will be converted to <code> by MarkdownToHtmlConverter
+            else "<code${if (isDataInline) " data-inline" else ""}>$this</code>"
     }
 }
 
