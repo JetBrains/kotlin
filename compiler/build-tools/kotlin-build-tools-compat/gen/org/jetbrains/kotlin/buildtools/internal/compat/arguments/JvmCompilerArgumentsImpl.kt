@@ -224,7 +224,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     if (EXPRESSION in this) { arguments.expression = get(EXPRESSION)}
     if (INCLUDE_RUNTIME in this) { arguments.includeRuntime = get(INCLUDE_RUNTIME)}
     if (JAVA_PARAMETERS in this) { arguments.javaParameters = get(JAVA_PARAMETERS)}
-    if (JDK_HOME in this) { arguments.jdkHome = get(JDK_HOME)?.absolutePathStringOrThrow()}
+    if (JDK_HOME in this) { try { arguments.jdkHome = get(JDK_HOME)?.absolutePathStringOrThrow() } catch(e: ClassCastException) { arguments.applyJdkHome(get(JDK_HOME)) }}
     try { if (JVM_DEFAULT in this) { arguments.jvmDefaultStable = get(JVM_DEFAULT)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: JVM_DEFAULT. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     if (JVM_TARGET in this) { arguments.jvmTarget = get(JVM_TARGET)?.stringValue}
     if (MODULE_NAME in this) { arguments.moduleName = get(MODULE_NAME)}
@@ -309,7 +309,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     try { this[EXPRESSION] = arguments.expression } catch (_: NoSuchMethodError) {  }
     try { this[INCLUDE_RUNTIME] = arguments.includeRuntime } catch (_: NoSuchMethodError) {  }
     try { this[JAVA_PARAMETERS] = arguments.javaParameters } catch (_: NoSuchMethodError) {  }
-    try { this[JDK_HOME] = arguments.jdkHome?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
+    try { try { this[JDK_HOME] = arguments.jdkHome?.let { Path(it) } } catch (e: ClassCastException) { applyJdkHome(this[JDK_HOME], arguments) } } catch (_: NoSuchMethodError) {  }
     try { this[JVM_DEFAULT] = arguments.jvmDefaultStable } catch (_: NoSuchMethodError) {  }
     try { this[JVM_TARGET] = arguments.jvmTarget?.let { JvmTarget.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -jvm-target value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
