@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.native.pipeline
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.cliDiagnosticsReporter
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.setupCommonKlibArguments
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.config.*
@@ -120,8 +121,8 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
             mode = arguments.partialLinkageMode,
             logLevel = arguments.partialLinkageLogLevel,
             compilerModeAllowsUsingPartialLinkage = false, // Don't run PL when producing KLIB
-            onWarning = { configuration.messageCollector.report(WARNING, it) },
-            onError = { configuration.messageCollector.report(ERROR, it) }
+            onWarning = { configuration.cliDiagnosticsReporter.report(KONAN_ARGUMENT_WARNING, it) },
+            onError = { configuration.cliDiagnosticsReporter.report(KONAN_ARGUMENT_ERROR, it) }
         )
     }
 
@@ -135,8 +136,8 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         }
 
         if (unrecognizedTargetNames.isNotEmpty()) {
-            configuration.messageCollector.report(
-                WARNING,
+            configuration.cliDiagnosticsReporter.report(
+                KONAN_ARGUMENT_WARNING,
                 """
                     The following target names passed to the -Xmanifest-native-targets are not recognized:
                     ${unrecognizedTargetNames.joinToString(separator = ", ")}

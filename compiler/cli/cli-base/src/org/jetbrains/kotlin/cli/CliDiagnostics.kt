@@ -40,6 +40,9 @@ object CliDiagnostics : KtDiagnosticsContainer() {
     val JS_ARGUMENT_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
     val JS_IC_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
+    val KONAN_ARGUMENT_WARNING: KtSourcelessDiagnosticFactory by warningWithoutSource()
+    val KONAN_ARGUMENT_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = Messages
 
     object Messages : BaseSourcelessDiagnosticRendererFactory() {
@@ -73,6 +76,9 @@ object CliDiagnostics : KtDiagnosticsContainer() {
             map.put(JS_ARGUMENT_WARNING, MESSAGE_PLACEHOLDER)
             map.put(JS_ARGUMENT_ERROR, MESSAGE_PLACEHOLDER)
             map.put(JS_IC_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(KONAN_ARGUMENT_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(KONAN_ARGUMENT_ERROR, MESSAGE_PLACEHOLDER)
         }
     }
 }
