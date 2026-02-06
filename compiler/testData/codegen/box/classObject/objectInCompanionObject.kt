@@ -1,5 +1,6 @@
 // See KT-6203
 package foo
+import kotlin.test.assertEquals
 
 class TestClass {
     object a {

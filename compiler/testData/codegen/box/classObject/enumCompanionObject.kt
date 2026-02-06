@@ -1,5 +1,6 @@
 // See KT-6326, KT-6777
 package foo
+import kotlin.test.assertEquals
 
 enum class Foo {
     A;

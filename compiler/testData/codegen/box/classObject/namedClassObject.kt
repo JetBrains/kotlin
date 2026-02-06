@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.assertEquals
 
 interface Named {
     companion object Bar {

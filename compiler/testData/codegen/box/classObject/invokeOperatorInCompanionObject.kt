@@ -1,5 +1,6 @@
 // See KT-11100
 package foo
+import kotlin.test.assertEquals
 
 class Div {
     var className: String? = null

@@ -1,6 +1,7 @@
 // KT-4130 object fields are not evaluated correctly
 
 package foo
+import kotlin.test.assertEquals
 
 class Foo() {
     companion object {
