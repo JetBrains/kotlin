@@ -41,8 +41,24 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
     private val rawDiagnosticsFromProject: MutableMap<GradleProjectPath, MutableList<ToolingDiagnostic>> = ConcurrentHashMap()
     private val reportedIds: MutableSet<ToolingDiagnosticId> = Collections.newSetFromMap(ConcurrentHashMap())
 
+    fun getDiagnosticsForProject(projectPath: String): Collection<ToolingDiagnostic> {
+        return rawDiagnosticsFromProject[projectPath] ?: return emptyList()
+    }
+
     fun getDiagnosticsForProject(project: Project): Collection<ToolingDiagnostic> {
-        return rawDiagnosticsFromProject[project.path] ?: return emptyList()
+        return getDiagnosticsForProject(project.path)
+    }
+
+    fun report(
+        projectPath: String,
+        renderingOptions: ToolingDiagnosticRenderingOptions,
+        diagnostic: ToolingDiagnostic,
+        reportOnce: Boolean = false,
+        key: ToolingDiagnosticId = diagnostic.id,
+    ) {
+        if (reportedIds.add(key) || !reportOnce) {
+            handleDiagnostic(projectPath, renderingOptions, diagnostic)
+        }
     }
 
     fun report(
@@ -51,9 +67,12 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
         reportOnce: Boolean = false,
         key: ToolingDiagnosticId = diagnostic.id,
     ) {
-        if (reportedIds.add(key) || !reportOnce) {
-            handleDiagnostic(project, diagnostic)
+        if (reportOnce) {
+            if (!reportedIds.add(key)) return
+        } else {
+            reportedIds.add(key)
         }
+        handleDiagnostic(project.path, ToolingDiagnosticRenderingOptions.forProject(project), diagnostic)
     }
 
     fun report(
@@ -72,11 +91,10 @@ internal abstract class KotlinToolingDiagnosticsCollector @Inject constructor(
         isTransparent = true
     }
 
-    private fun handleDiagnostic(project: Project, diagnostic: ToolingDiagnostic) {
-        val options = ToolingDiagnosticRenderingOptions.forProject(project)
+    private fun handleDiagnostic(projectPath: String, options: ToolingDiagnosticRenderingOptions, diagnostic: ToolingDiagnostic) {
         if (diagnostic.isSuppressed(options)) return
 
-        rawDiagnosticsFromProject.compute(project.path) { _, previousListIfAny ->
+        rawDiagnosticsFromProject.compute(projectPath) { _, previousListIfAny ->
             previousListIfAny?.apply { add(diagnostic) } ?: mutableListOf(diagnostic)
         }
 
@@ -104,11 +122,29 @@ internal fun Project.reportDiagnostic(diagnostic: ToolingDiagnostic) {
 }
 
 internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(
+    projectPath: String,
+    renderingOptions: ToolingDiagnosticRenderingOptions,
+    diagnostic: ToolingDiagnostic,
+    key: ToolingDiagnosticId = diagnostic.id,
+) {
+    report(projectPath, renderingOptions, diagnostic, reportOnce = true, ":#$key")
+}
+
+internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(
     fromProject: Project,
     diagnostic: ToolingDiagnostic,
     key: ToolingDiagnosticId = diagnostic.id,
 ) {
     report(fromProject, diagnostic, reportOnce = true, ":#$key")
+}
+
+internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleProject(
+    projectPath: String,
+    renderingOptions: ToolingDiagnosticRenderingOptions,
+    diagnostic: ToolingDiagnostic,
+    key: ToolingDiagnosticId = diagnostic.id,
+) {
+    report(projectPath, renderingOptions, diagnostic, reportOnce = true, "${projectPath}#$key")
 }
 
 internal fun KotlinToolingDiagnosticsCollector.reportOncePerGradleProject(
@@ -132,6 +168,8 @@ internal annotation class ImmediateDiagnosticReporting
 
 @ImmediateDiagnosticReporting
 internal fun Project.reportDiagnosticImmediately(diagnostic: ToolingDiagnostic) {
-    val renderingOptions = ToolingDiagnosticRenderingOptions.forProject(project)
-    diagnostic.renderReportedDiagnostic(logger, renderingOptions)
+    reportDiagnosticImmediately(logger, ToolingDiagnosticRenderingOptions.forProject(this), diagnostic)
 }
+
+@ImmediateDiagnosticReporting
+internal fun Project.reportDiagnosticImmediately(diagnostic: ToolingDiagnostic) {
