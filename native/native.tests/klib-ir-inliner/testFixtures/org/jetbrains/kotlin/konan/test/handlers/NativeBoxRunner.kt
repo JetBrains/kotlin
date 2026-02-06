@@ -68,15 +68,7 @@ class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(
                     fileCheckStage = null,
                     hasSyntheticAccessorsDump = false,
                 ),
-                loggedCompilationToolCall = LoggedData.CompilationToolCall(
-                    toolName = "Compiler",
-                    input = null,
-                    parameters = LoggedData.CompilerParameters(KotlinNativeHome(dir = File("File")), arrayOf()),
-                    exitCode = ExitCode.OK,
-                    toolOutput = "",
-                    toolOutputHasErrors = false,
-                    duration = Duration.ZERO
-                ),
+                loggedCompilationToolCall = LoggedData.dummyCompilerCall,
                 testNames = listOf(TestName(executable.name)),
             ),
             runParameters = emptyList(),
