@@ -41,7 +41,10 @@ internal fun Project.checkDiagnostics(
     compactRendering: Boolean = true,
     // An (KTI-1928) issue prevents us from using a snapshot version of Kotlin Native during testing. This results in a diagnostic warning.
     // Diagnostic warnings concern outdated Kotlin Native versions should be ignored in test environments.
-    filterDiagnosticIds: List<ToolingDiagnosticFactory> = listOf(KotlinToolingDiagnostics.OldNativeVersionDiagnostic),
+    filterDiagnosticIds: List<ToolingDiagnosticFactory> = listOf(
+        KotlinToolingDiagnostics.OldNativeVersionDiagnostic,
+        KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning
+    ),
 ) {
     val diagnosticsPerProject = rootProject.allprojects.mapNotNull {
         val diagnostics = it.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(it)
@@ -53,7 +56,11 @@ internal fun Project.checkDiagnostics(
     val expectedDiagnostics = expectedDiagnosticsFile(testDataName)
 
     val filteredDiagnostics =
-        diagnosticsPerProject.mapValues { (_, diagnostics) -> diagnostics.filterNot { it.id in filterDiagnosticIds.map { it.id } } }
+        diagnosticsPerProject.mapValues { (_, diagnostics) ->
+            diagnostics.filterNot { diagnostic ->
+                filterDiagnosticIds.any { diagnostic.id == it.id || diagnostic.id.startsWith("${it.id}_") }
+            }
+        }
 
     if (filteredDiagnostics.all { (_, diagnostics) -> diagnostics.isEmpty() }) {
         if (expectedDiagnostics.exists())
@@ -80,11 +87,14 @@ internal fun Project.checkDiagnostics(
 
 // An (KTI-1928) issue prevents us from using a snapshot version of Kotlin Native during testing. This results in a diagnostic warning.
 // Diagnostic warnings concern outdated Kotlin Native versions should be ignored in test environments.
-internal val defaultFilteredDiagnostics = listOf(KotlinToolingDiagnostics.OldNativeVersionDiagnostic)
+internal val defaultFilteredDiagnostics =
+    listOf(KotlinToolingDiagnostics.OldNativeVersionDiagnostic, KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning)
 
 internal fun Project.assertNoDiagnostics(filterDiagnosticIds: List<ToolingDiagnosticFactory> = defaultFilteredDiagnostics) {
     val actualDiagnostics =
-        kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filterNot { it.id in filterDiagnosticIds.map { it.id } }
+        kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filterNot { diagnostic ->
+            filterDiagnosticIds.any { diagnostic.id == it.id || diagnostic.id.startsWith("${it.id}_") }
+        }
     assertTrue(
         actualDiagnostics.isEmpty(), "Expected to have no diagnostics, but some were reported:\n ${actualDiagnostics.render()}"
     )

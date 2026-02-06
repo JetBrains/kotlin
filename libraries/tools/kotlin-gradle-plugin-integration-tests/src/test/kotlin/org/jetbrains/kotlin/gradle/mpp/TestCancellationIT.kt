@@ -9,8 +9,9 @@ import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Timeout
@@ -106,11 +107,15 @@ class TestCancellationIT : KGPBaseTest() {
             // Fetch enabled KMP tests that use ExecHandle to launch the tests.
             // Currently, this is only Native and JS tests.
             // Native test tasks are dynamically enabled based on the host machine.
+            // Note: We query targets instead of checking task.enabled because native test tasks
+            // use onlyIf() specs which aren't reflected in the enabled property.
             val enabledKotlinNativeTestPaths: List<String> =
                 buildScriptReturn {
-                    project.tasks.withType(KotlinNativeTest::class.java)
-                        .matching { it.enabled }
-                        .map { it.path }
+                    kotlinMultiplatform
+                        .targets
+                        .withType(KotlinNativeTargetWithHostTests::class.java)
+                        .filter { it.konanTarget == HostManager.hostOrNull }
+                        .map { ":${it.targetName}Test" }
                 }.buildAndReturn(executingProject = this)
 
             val enabledKotlinJsTestPaths: List<String> =
