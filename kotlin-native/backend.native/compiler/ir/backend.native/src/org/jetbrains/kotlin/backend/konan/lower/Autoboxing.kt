@@ -246,6 +246,16 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 expression
             }
 
+            symbols.initInstance -> { // Leave the second argument of [initInstance] as is.
+                val instance = expression.arguments[0]!!
+                val constructorCall = expression.arguments[1]!!
+                check(constructorCall is IrConstructorCall) { "Expected a constructor call: ${constructorCall.render()}" }
+                expression.arguments[0] = instance.transform(this, data = null).useAs(irBuiltIns.anyType)
+                constructorCall.transformChildrenVoid()
+
+                expression
+            }
+
             else -> super.visitCall(expression)
         }
     }
@@ -257,12 +267,12 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     private val symbols = context.symbols
     private val irBuiltIns = context.irBuiltIns
 
-    private val builtBoxUnboxFunctions = mutableListOf<IrFunction>()
+    private val builtSpecialFunctions = mutableListOf<IrFunction>()
 
     override fun visitFile(declaration: IrFile): IrFile {
         declaration.transformChildrenVoid(this)
-        declaration.declarations.addAll(builtBoxUnboxFunctions)
-        builtBoxUnboxFunctions.clear()
+        declaration.declarations.addAll(builtSpecialFunctions)
+        builtSpecialFunctions.clear()
         return declaration
     }
 
@@ -277,6 +287,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
 
                 buildBoxFunction(declaration, context.getBoxFunction(declaration))
                 buildUnboxFunction(declaration, context.getUnboxFunction(declaration))
+                buildBackingFieldSetter(declaration, context.getInlineClassFieldSetter(declaration))
             }
 
             if (declaration.isNativePrimitiveType()) {
@@ -334,6 +345,26 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             builder.lowerConstructorCallToValue(expression, constructor)
         } else {
             expression
+        }
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        if (expression.symbol != symbols.initInstance)
+            return super.visitCall(expression)
+
+        val instance = expression.arguments[0]!!
+        val constructorCall = expression.arguments[1]!!
+        check(constructorCall is IrConstructorCall) { "Expected a constructor call: ${constructorCall.render()}" }
+        val constructor = constructorCall.symbol.owner
+        return if (!constructor.constructedClass.isInlined())
+            super.visitCall(expression)
+        else {
+            val backingFieldSetter = context.getInlineClassFieldSetter(constructor.constructedClass)
+            builder.at(expression).irCall(backingFieldSetter).apply {
+                arguments[0] = instance.transform(this@InlineClassTransformer, data = null)
+                constructorCall.transformChildrenVoid()
+                arguments[1] = builder.lowerConstructorCallToValue(constructorCall, constructor)
+            }
         }
     }
 
@@ -403,7 +434,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             +irReturn(irGet(box))
         }
 
-        builtBoxUnboxFunctions += function
+        builtSpecialFunctions += function
     }
 
     private fun IrBuilderWithScope.irNullPointerOrReference(type: IrType): IrExpression =
@@ -429,7 +460,18 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             +irReturn(irGetField(irGet(boxParameter), getInlineClassBackingField(irClass)))
         }
 
-        builtBoxUnboxFunctions += function
+        builtSpecialFunctions += function
+    }
+
+    private fun buildBackingFieldSetter(irClass: IrClass, function: IrFunction) {
+        val builder = context.createIrBuilder(function.symbol)
+
+        function.body = builder.irBlockBody(function) {
+            val field = getInlineClassBackingField(irClass)
+            +irSetField(irGet(function.parameters[0]), field, irGet(function.parameters[1]))
+        }
+
+        builtSpecialFunctions += function
     }
 
     private fun buildBoxField(declaration: IrClass) {

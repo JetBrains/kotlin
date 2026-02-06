@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.isArray
+import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnbox
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.lower.PreCodegenFunctionInlining
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
@@ -133,7 +134,7 @@ internal class PreCodegenInliner(
                         val shouldInline = !isALoop // As FunctionInlining doesn't work with recursive functions.
                                 && calleeSize <= inlineThreshold
                                 && calleeIrFunction.symbol != context.symbols.entryPoint // Might be unexpected to not see [main] in stacktraces.
-                                && (calleeIrFunction.origin != DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
+                                && !calleeIrFunction.isBoxOrUnbox()
                                 && calleeIrFunction.konanLibrary?.isCInteropLibrary() != true
                                 && !calleeIrFunction.hasAnnotation(noInline)
                                 && calleeIrFunction.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) != true
