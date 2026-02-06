@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.konan.config.konanExportKdoc
 import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 
-internal fun PhaseContext.firSerializerBase(
+internal fun NativePhaseContext.firSerializerBase(
         firResult: AllModulesFrontendOutput,
         fir2IrOutput: Fir2IrOutput?,
         produceHeaderKlib: Boolean = false,
