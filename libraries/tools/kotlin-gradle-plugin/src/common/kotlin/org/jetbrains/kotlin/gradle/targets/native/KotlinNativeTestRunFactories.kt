@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.native
 
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.isCurrentHost
@@ -23,9 +26,23 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal class KotlinNativeHostTestRunFactory(private val target: KotlinNativeTarget) : KotlinTestRunFactory<KotlinNativeHostTestRun> {
     override fun create(name: String): KotlinNativeHostTestRun {
+        val project = target.project
+        val konanTarget = target.konanTarget
+        val isCurrentHost = konanTarget.isCurrentHost
         return DefaultHostTestRun(name, target).apply {
-            val project = target.project
-            executionTask = this@KotlinNativeHostTestRunFactory.target.registerNativeTestTask(testTaskName)
+            // Report diagnostic during test run creation (not in task configuration) to ensure it's emitted
+            // even with configuration avoidance when the task is not realized
+            if (!isCurrentHost && project.kotlinPropertiesProvider.ignoreDisabledNativeTargets != true) {
+                project.reportDiagnosticOncePerBuild(
+                    KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning(
+                        taskName = testTaskName,
+                        targetName = konanTarget.name,
+                        currentHost = HostManager.hostOrNull?.name ?: "unsupported",
+                        reason = "tests can only run on ${konanTarget.name}"
+                    )
+                )
+            }
+            executionTask = this@KotlinNativeHostTestRunFactory.target.registerNativeTestTask(testTaskName, isCurrentHost)
             setExecutionSourceFrom(this@KotlinNativeHostTestRunFactory.target.binaries.getTest(NativeBuildType.DEBUG))
             project.kotlinTestRegistry.registerTestTask(executionTask)
         }
@@ -38,8 +55,24 @@ internal class KotlinNativeSimulatorTestRunFactory(private val target: KotlinNat
         val thisTarget = target
         return DefaultSimulatorTestRun(name, target).apply {
             val project = target.project
-            executionTask = thisTarget.registerNativeTestTask<KotlinNativeSimulatorTest>(testTaskName) { testTask ->
-                testTask.isEnabled = HostManager.hostIsMac && HostManager.host.architecture == thisTarget.konanTarget.architecture
+            val isCompatibleHost = HostManager.hostIsMac && HostManager.host.architecture == thisTarget.konanTarget.architecture
+            // Report diagnostic during test run creation (not in task configuration) to ensure it's emitted
+            // even with configuration avoidance when the task is not realized
+            if (!isCompatibleHost && project.kotlinPropertiesProvider.ignoreDisabledNativeTargets != true) {
+                val reason = when {
+                    !HostManager.hostIsMac -> "simulator tests require macOS"
+                    else -> "architecture mismatch - target requires ${thisTarget.konanTarget.architecture.name}, current host is ${HostManager.host.architecture.name}"
+                }
+                project.reportDiagnosticOncePerBuild(
+                    KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning(
+                        taskName = testTaskName,
+                        targetName = thisTarget.konanTarget.name,
+                        currentHost = HostManager.platformName(),
+                        reason = reason
+                    )
+                )
+            }
+            executionTask = thisTarget.registerNativeTestTask<KotlinNativeSimulatorTest>(testTaskName, isCompatibleHost) { testTask ->
                 testTask.configureDeviceId(thisTarget.konanTarget)
                 testTask.standalone.convention(true).finalizeValueOnRead()
             }
@@ -50,13 +83,15 @@ internal class KotlinNativeSimulatorTestRunFactory(private val target: KotlinNat
 }
 
 private inline fun <reified T : KotlinNativeTest> KotlinNativeTarget.registerNativeTestTask(
-    name: String, crossinline configure: (T) -> Unit = {},
+    name: String,
+    isEnabledOnCurrentHost: Boolean,
+    crossinline configure: (T) -> Unit = {},
 ): TaskProvider<T> {
     return project.registerTask(name, T::class.java) { testTask ->
         testTask.group = LifecycleBasePlugin.VERIFICATION_GROUP
         testTask.description = "Executes Kotlin/Native unit tests for target ${targetName}."
         testTask.targetName = this@registerNativeTestTask.targetName
-        testTask.enabled = konanTarget.isCurrentHost
+        testTask.onlyIf("Tests require compatible host") { isEnabledOnCurrentHost }
         testTask.workingDir = project.projectDir.absolutePath
         testTask.configureConventions()
         configure(testTask)
