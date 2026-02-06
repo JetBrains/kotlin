@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.pipeline.metadata
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.cliDiagnosticsReporter
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.getZipFileSystemAccessor
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -116,7 +117,7 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
 
         configuration.zipFileSystemAccessor = arguments.getZipFileSystemAccessor(
             zipFileAccessorCacheLimitArgument = K2MetadataCompilerArguments::klibZipFileAccessorCacheLimit,
-            collector = collector,
+            diagnosticReporter = configuration.cliDiagnosticsReporter,
             rootDisposable = rootDisposable,
         )
     }

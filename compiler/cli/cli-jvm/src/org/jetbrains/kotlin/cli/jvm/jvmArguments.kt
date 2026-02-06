@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.jvm
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.cliDiagnosticsReporter
 import org.jetbrains.kotlin.cli.common.getLibraryFromHome
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -234,7 +235,7 @@ fun <PathProvider : Any> CompilerConfiguration.configureStandardLibs(
     fun addRoot(moduleName: String, libraryName: String, getLibrary: (PathProvider) -> File, noLibraryArgument: String) {
         addModularRootIfNotNull(
             isModularJava, moduleName,
-            getLibraryFromHome(paths, getLibrary, libraryName, messageCollector, noLibraryArgument)
+            getLibraryFromHome(paths, getLibrary, libraryName, cliDiagnosticsReporter, noLibraryArgument)
         )
     }
 

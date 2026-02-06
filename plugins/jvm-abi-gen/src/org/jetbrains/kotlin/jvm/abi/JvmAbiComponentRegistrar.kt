@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.jvm.abi
 
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
+import org.jetbrains.kotlin.cli.common.cliDiagnosticsReporter
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.jvm.abi.JvmAbiCommandLineProcessor.Companion.COMPILER_PLUGIN_ID
 import java.io.File
 
@@ -42,7 +42,15 @@ class JvmAbiComponentRegistrar(
                 val outputPath = File(configuration.getNotNull(JvmAbiConfigurationKeys.JVM_ABI_OUTPUT_PATH))
                 if (outputPath.extension == "jar") {
                     // We don't include the runtime or main class in interface jars and always reset time stamps.
-                    CompileEnvironmentUtil.writeToJar(outputPath, false, true, true, null, outputFiles, configuration.messageCollector)
+                    CompileEnvironmentUtil.writeToJar(
+                        /* jarPath = */ outputPath,
+                        /* jarRuntime = */ false,
+                        /* noReflect = */ true,
+                        /* resetJarTimestamps = */ true,
+                        /* mainClass = */ null,
+                        /* outputFiles = */ outputFiles,
+                        /* diagnosticReporter = */ configuration.cliDiagnosticsReporter
+                    )
                 } else {
                     outputFiles.writeAllTo(outputPath)
                 }

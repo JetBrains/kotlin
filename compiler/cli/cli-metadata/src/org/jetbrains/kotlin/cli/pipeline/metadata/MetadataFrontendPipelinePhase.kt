@@ -75,7 +75,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         val outputs = if (isLightTree) {
             val projectEnvironment = environment.toVfsBasedProjectEnvironment()
             var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-            val groupedSources = collectSources(configuration, projectEnvironment, messageCollector)
+            val groupedSources = collectSources(configuration, projectEnvironment)
 
             val ltFiles = groupedSources.let { it.commonSources + it.platformSources }.toList().also {
                 sourceFiles = it

@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFileSystem
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.cliDiagnosticsReporter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
@@ -83,7 +84,7 @@ private fun writeOutput(
             resetJarTimestamps,
             mainClassFqName,
             outputFiles,
-            messageCollector
+            configuration.cliDiagnosticsReporter
         )
         val sourceFiles = outputFiles.asList().flatMap { it.sourceFiles }.distinct()
         configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(
@@ -97,7 +98,13 @@ private fun writeOutput(
         return
     }
 
-    outputFiles.writeAll(configuration.outputDirOrCurrentDirectory(), messageCollector, reportOutputFiles, configuration.fileMappingTracker)
+    outputFiles.writeAll(
+        configuration.outputDirOrCurrentDirectory(),
+        messageCollector,
+        configuration.cliDiagnosticsReporter,
+        reportOutputFiles,
+        configuration.fileMappingTracker
+    )
 }
 
 private fun CompilerConfiguration.outputDirOrCurrentDirectory(): File =

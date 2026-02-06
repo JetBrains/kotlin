@@ -243,7 +243,7 @@ class ScriptJvmK2CompilerImpl(
 
         if (reportingCtx.diagnosticsCollector.hasErrors) return failure(reportingCtx.diagnosticsCollector)
 
-        checkKotlinPackageUsageForLightTree(compilerConfiguration, sourcesToFir.values, reportingCtx.messageCollector)
+        checkKotlinPackageUsageForLightTree(compilerConfiguration, sourcesToFir.values)
 
         if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
 

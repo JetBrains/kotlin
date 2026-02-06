@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -37,7 +38,7 @@ abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : KtUsefulTe
             CompilerConfiguration.create(),
             testRootDisposable,
             EnvironmentConfigFiles.JVM_CONFIG_FILES,
-            MessageCollector.NONE
+            MessageCollector.NONE,
         )
         val psiManager = PsiManager.getInstance(environment.project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)

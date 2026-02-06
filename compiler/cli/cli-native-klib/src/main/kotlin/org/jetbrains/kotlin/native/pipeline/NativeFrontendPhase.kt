@@ -140,8 +140,7 @@ object NativeFrontendPhase : PipelinePhase<NativeConfigurationArtifact, NativeFr
 
         val groupedSources = collectSources(
             configuration,
-            input.toVfsBasedProjectEnvironment(),
-            messageCollector
+            input.toVfsBasedProjectEnvironment()
         )
 
         val ktSourceFiles = mutableListOf<KtSourceFile>().apply {

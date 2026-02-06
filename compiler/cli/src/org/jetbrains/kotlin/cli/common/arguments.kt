@@ -168,7 +168,7 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
         }
 
         val argValue = if (effectivePropertyValue is String) "=$effectivePropertyValue" else ""
-        reportDiagnostic(
+        cliDiagnosticsReporter.report(
             CliDiagnostics.REDUNDANT_CLI_ARG,
             "The argument '${explicitArgument.argument.value}${argValue}' is redundant for the current language version $languageVersion.",
         )

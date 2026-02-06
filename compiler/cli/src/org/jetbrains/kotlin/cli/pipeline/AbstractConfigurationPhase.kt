@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_COMMA
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_K2_REGISTRAR_NAME
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_REGISTRAR_NAME
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
@@ -52,7 +50,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         }
 
         if (input.arguments.printConfiguration || input.arguments.verbose) {
-            configuration.messageCollector.report(INFO, configuration.toString())
+            configuration.cliDiagnosticsReporter.info(configuration.toString())
         }
 
         return ConfigurationPipelineArtifact(configuration, input.rootDisposable)
@@ -109,8 +107,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
                 if (missingJars.isEmpty()) {
                     scriptingPluginClasspath.addAll(0, jars.map { it.canonicalPath })
                 } else {
-                    configuration.messageCollector.report(
-                        LOGGING,
+                    configuration.cliDiagnosticsReporter.log(
                         "Scripting plugin will not be loaded: not all required jars are present in the classpath (missing files: $missingJars)"
                     )
                 }
@@ -150,7 +147,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
                 true
             } else false
         } catch (e: Throwable) {
-            configuration.messageCollector.report(LOGGING, "Exception on loading scripting plugin: $e")
+            configuration.cliDiagnosticsReporter.log("Exception on loading scripting plugin: $e")
             false
         }
     }

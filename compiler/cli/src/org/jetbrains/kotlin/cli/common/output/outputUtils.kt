@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.cli.common.output
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
@@ -51,6 +53,7 @@ fun OutputFileCollection.writeAllTo(outputDir: File) {
 fun OutputFileCollection.writeAll(
     outputDir: File,
     messageCollector: MessageCollector,
+    diagnosticReporter: CliDiagnosticReporter,
     reportOutputFiles: Boolean,
     fileMappingTracker: ICFileMappingTracker?,
 ) {
@@ -71,9 +74,9 @@ fun OutputFileCollection.writeAll(
             }
         }
     } catch (e: NoPermissionException) {
-        messageCollector.report(CompilerMessageSeverity.ERROR, e.message!!)
+        diagnosticReporter.report(CliDiagnostics.IO_ERROR, e.message!!)
     } catch (e: FileNotFoundException) {
-        messageCollector.report(CompilerMessageSeverity.ERROR, "directory not found: $outputDir")
+        diagnosticReporter.report(CliDiagnostics.IO_ERROR, "directory not found: $outputDir")
     }
 }
 
