@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.cli.js
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.LoweredIr
+import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
+import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
+import org.jetbrains.kotlin.ir.backend.js.compile
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsCodeGenerator
@@ -20,6 +23,7 @@ import org.jetbrains.kotlin.util.PhaseType
 class Ir2JsTransformer private constructor(
     val module: ModulesStructure,
     val messageCollector: MessageCollector,
+    val configuration: CompilerConfiguration,
     val mainCallArguments: List<String>?,
     val keep: Set<String>,
     val dceRuntimeDiagnostic: String?,
@@ -37,6 +41,7 @@ class Ir2JsTransformer private constructor(
     ) : this(
         module,
         messageCollector,
+        configuration,
         mainCallArguments,
         keep = configuration.keep.toSet(),
         dceRuntimeDiagnostic = configuration.dceRuntimeDiagnostic,
@@ -57,12 +62,12 @@ class Ir2JsTransformer private constructor(
             keep = keep,
             dceRuntimeDiagnostic = RuntimeDiagnostic.resolve(
                 dceRuntimeDiagnostic,
-                messageCollector
+                configuration
             ),
             safeExternalBoolean = safeExternalBoolean,
             safeExternalBooleanDiagnostic = RuntimeDiagnostic.resolve(
                 safeExternalBooleanDiagnostic,
-                messageCollector
+                configuration
             ),
             granularity = granularity,
         )

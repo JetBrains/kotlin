@@ -6,25 +6,24 @@
 package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_WARNING
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_EXCEPTION
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_LOG
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.pipeline.web.CommonWebConfigurationUpdater
 import org.jetbrains.kotlin.cli.pipeline.web.WebCliPipeline
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.PathUtil
-import java.io.File
 
 class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
     override val platform: TargetPlatform
@@ -75,13 +74,13 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
 
 fun RuntimeDiagnostic.Companion.resolve(
     value: String?,
-    messageCollector: MessageCollector,
+    configuration: CompilerConfiguration
 ): RuntimeDiagnostic? = when (value?.lowercase()) {
     RUNTIME_DIAGNOSTIC_LOG -> RuntimeDiagnostic.LOG
     RUNTIME_DIAGNOSTIC_EXCEPTION -> RuntimeDiagnostic.EXCEPTION
     null -> null
     else -> {
-        messageCollector.report(STRONG_WARNING, "Unknown runtime diagnostic '$value'")
+        configuration.report(WEB_ARGUMENT_WARNING, "Unknown runtime diagnostic '$value'")
         null
     }
 }

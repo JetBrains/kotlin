@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.cli.js
 
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContext
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.JsICContext
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
@@ -34,7 +33,6 @@ sealed class IcCachesConfigurationData {
 internal fun prepareIcCaches(
     cacheDirectory: String,
     arguments: K2JSCompilerArguments,
-    messageCollector: MessageCollector,
     outputDir: File,
     targetConfiguration: CompilerConfiguration,
     mainCallArguments: List<String>?,
@@ -54,7 +52,6 @@ internal fun prepareIcCaches(
     return prepareIcCaches(
         cacheDirectory,
         data,
-        messageCollector,
         outputDir,
         targetConfiguration,
         mainCallArguments,
@@ -65,18 +62,17 @@ internal fun prepareIcCaches(
 internal fun prepareIcCaches(
     cacheDirectory: String,
     icConfigurationData: IcCachesConfigurationData,
-    messageCollector: MessageCollector,
     outputDir: File,
     targetConfiguration: CompilerConfiguration,
     mainCallArguments: List<String>?,
     icCacheReadOnly: Boolean,
 ): IcCachesArtifacts {
 
-    messageCollector.report(LOGGING, "")
-    messageCollector.report(LOGGING, "Building cache:")
-    messageCollector.report(LOGGING, "to: $outputDir")
-    messageCollector.report(LOGGING, "cache directory: $cacheDirectory")
-    messageCollector.report(LOGGING, targetConfiguration.libraries.toString())
+    targetConfiguration.reportLog("")
+    targetConfiguration.reportLog("Building cache:")
+    targetConfiguration.reportLog("to: $outputDir")
+    targetConfiguration.reportLog("cache directory: $cacheDirectory")
+    targetConfiguration.reportLog(targetConfiguration.libraries.toString())
 
     val start = System.currentTimeMillis()
 
@@ -103,9 +99,9 @@ internal fun prepareIcCaches(
 
     val artifacts = cacheUpdater.actualizeCaches()
 
-    messageCollector.report(LOGGING, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
+    targetConfiguration.reportLog("IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
     for ((event, duration) in cacheUpdater.getStopwatchLastLaps()) {
-        messageCollector.report(LOGGING, "  $event: ${(duration / 1e6).toInt()}ms")
+        targetConfiguration.reportLog("  $event: ${(duration / 1e6).toInt()}ms")
     }
 
     var libIndex = 0
@@ -121,13 +117,13 @@ internal fun prepareIcCaches(
             srcFiles.values.any { it.singleOrNull() == DirtyFileState.NON_MODIFIED_IR } -> "partially rebuilt" to srcFiles
             else -> "fully rebuilt" to srcFiles
         }
-        messageCollector.report(LOGGING, "${++libIndex}) module [${File(libFile.path).name}] was $msg")
+        targetConfiguration.reportLog("${++libIndex}) module [${File(libFile.path).name}] was $msg")
         var fileIndex = 0
         for ((srcFile, stat) in showFiles) {
             val filteredStats = stat.filter { it != DirtyFileState.NON_MODIFIED_IR }
             val statStr = filteredStats.takeIf { it.isNotEmpty() }?.joinToString { it.str } ?: continue
             // Use index, because MessageCollector ignores already reported messages
-            messageCollector.report(LOGGING, "  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
+            targetConfiguration.reportLog("  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
         }
     }
 

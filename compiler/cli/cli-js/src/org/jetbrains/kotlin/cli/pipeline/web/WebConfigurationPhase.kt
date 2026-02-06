@@ -8,16 +8,12 @@ package org.jetbrains.kotlin.cli.pipeline.web
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
-import org.jetbrains.kotlin.cli.common.allowKotlinPackage
+import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_WARNING
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.cli.common.checkForUnexpectedKlibLibraries
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.createPhaseConfig
-import org.jetbrains.kotlin.cli.common.incrementalCompilationIsEnabledForJs
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
-import org.jetbrains.kotlin.cli.common.setupCommonKlibArguments
 import org.jetbrains.kotlin.cli.js.*
 import org.jetbrains.kotlin.cli.pipeline.AbstractConfigurationPhase
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
@@ -25,6 +21,7 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationUpdater
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsConfigurationUpdater
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmConfigurationUpdater
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
@@ -63,17 +60,16 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         initializeCommonConfiguration(configuration, arguments, rootDisposable)
         configuration.jsIncrementalCompilationEnabled = incrementalCompilationIsEnabledForJs(arguments)
 
-        val messageCollector = configuration.messageCollector
         when (val outputName = arguments.moduleName) {
-            null -> messageCollector.report(ERROR, "IR: Specify output name via ${K2JSCompilerArguments::moduleName.cliArgument}", null)
+            null -> configuration.report(WEB_ARGUMENT_ERROR, "IR: Specify output name via ${K2JSCompilerArguments::moduleName.cliArgument}")
             else -> configuration.outputName = outputName
         }
         when (val outputDir = arguments.outputDir) {
-            null -> messageCollector.report(ERROR, "IR: Specify output dir via ${K2JSCompilerArguments::outputDir.cliArgument}", null)
+            null -> configuration.report(WEB_ARGUMENT_ERROR, "IR: Specify output dir via ${K2JSCompilerArguments::outputDir.cliArgument}")
             else -> try {
                 configuration.outputDir = File(outputDir).canonicalFile
             } catch (_: IOException) {
-                messageCollector.report(ERROR, "Could not resolve output directory", location = null)
+                configuration.report(WEB_ARGUMENT_ERROR, "Could not resolve output directory")
             }
         }
 
@@ -94,8 +90,8 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         }
 
         if (arguments.includes == null && arguments.irProduceJs) {
-            configuration.messageCollector.report(
-                ERROR,
+            configuration.report(
+                WEB_ARGUMENT_ERROR,
                 "It is not possible to produce a KLIB ('${K2JSCompilerArguments::includes.cliArgument}' is not passed) "
                         + "and compile the resulting JavaScript artifact ('${K2JSCompilerArguments::irProduceJs.cliArgument}' is passed) at the same time "
                         + "with the K2 compiler"
@@ -112,8 +108,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         arguments: K2JSCompilerArguments,
         services: Services,
     ) {
-        val messageCollector = configuration.messageCollector
-
         if (arguments.generateDwarf) {
             configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, true)
         }
@@ -130,7 +124,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
 
             var sourceMapSourceRoots = arguments.sourceMapBaseDirs
             if (sourceMapSourceRoots == null && StringUtil.isNotEmpty(arguments.sourceMapPrefix)) {
-                sourceMapSourceRoots = calculateSourceMapSourceRoot(messageCollector, arguments)
+                sourceMapSourceRoots = calculateSourceMapSourceRoot(configuration, arguments)
             }
 
             if (sourceMapSourceRoots != null) {
@@ -140,10 +134,10 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
 
         } else {
             if (arguments.sourceMapPrefix != null) {
-                messageCollector.report(WARNING, "source-map-prefix argument has no effect without source map", null)
+                configuration.report(WEB_ARGUMENT_WARNING, "source-map-prefix argument has no effect without source map", null)
             }
             if (arguments.sourceMapBaseDirs != null) {
-                messageCollector.report(WARNING, "source-map-source-root argument has no effect without source map", null)
+                configuration.report(WEB_ARGUMENT_WARNING, "source-map-source-root argument has no effect without source map", null)
             }
         }
 
@@ -174,8 +168,8 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
             SourceMapSourceEmbedding.INLINING
         }
         if (sourceMapContentEmbedding == null) {
-            messageCollector.report(
-                ERROR,
+            configuration.report(
+                WEB_ARGUMENT_ERROR,
                 "Unknown source map source embedding mode: $sourceMapEmbedContentString. Valid values are: ${sourceMapContentEmbeddingMap.keys.joinToString()}"
             )
             sourceMapContentEmbedding = SourceMapSourceEmbedding.INLINING
@@ -184,7 +178,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.sourceMapIncludeMappingsFromUnavailableFiles = arguments.includeUnavailableSourcesIntoSourceMap
 
         if (!arguments.sourceMap && sourceMapEmbedContentString != null) {
-            messageCollector.report(WARNING, "source-map-embed-sources argument has no effect without source map", null)
+            configuration.report(WEB_ARGUMENT_WARNING, "source-map-embed-sources argument has no effect without source map", null)
         }
 
         val sourceMapNamesPolicyString = arguments.sourceMapNamesPolicy
@@ -194,8 +188,8 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
             SourceMapNamesPolicy.SIMPLE_NAMES
         }
         if (sourceMapNamesPolicy == null) {
-            messageCollector.report(
-                ERROR,
+            configuration.report(
+                WEB_ARGUMENT_ERROR,
                 "Unknown source map names policy: $sourceMapNamesPolicyString. Valid values are: ${sourceMapNamesPolicyMap.keys.joinToString()}"
             )
             sourceMapNamesPolicy = SourceMapNamesPolicy.SIMPLE_NAMES
@@ -212,12 +206,16 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
             mode = arguments.partialLinkageMode,
             logLevel = arguments.partialLinkageLogLevel,
             compilerModeAllowsUsingPartialLinkage = arguments.includes != null, // no PL when producing KLIB
-            onWarning = { messageCollector.report(WARNING, it) },
-            onError = { messageCollector.report(ERROR, it) }
+            onWarning = { configuration.report(WEB_ARGUMENT_WARNING, it) },
+            onError = { configuration.report(WEB_ARGUMENT_ERROR, it) }
         )
     }
 
-    internal fun initializeCommonConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments, rootDisposable: Disposable) {
+    internal fun initializeCommonConfiguration(
+        configuration: CompilerConfiguration,
+        arguments: K2JSCompilerArguments,
+        rootDisposable: Disposable,
+    ) {
         configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = false, rootDisposable = rootDisposable)
 
         val libraries: List<String> = configureLibraries(arguments.libraries) + listOfNotNull(arguments.includes)
@@ -241,7 +239,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         }
         val moduleName = arguments.irModuleName ?: arguments.moduleName ?: run {
             val message = "Specify the module name via ${K2JSCompilerArguments::irModuleName.cliArgument} or ${K2JSCompilerArguments::moduleName.cliArgument}"
-            configuration.messageCollector.report(ERROR, message, location = null)
+            configuration.report(WEB_ARGUMENT_ERROR, message)
             return
         }
         configuration.moduleName = moduleName

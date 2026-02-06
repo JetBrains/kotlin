@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web.js
 
+import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.incrementalCompilationIsEnabledForJs
 import org.jetbrains.kotlin.cli.common.list
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.initializeFinalArtifactConfiguration
 import org.jetbrains.kotlin.cli.js.moduleKindMap
 import org.jetbrains.kotlin.cli.js.targetVersion
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationUpdater
 import org.jetbrains.kotlin.cli.pipeline.SuccessfulPipelineExecutionException
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.ir.backend.js.jsLowerings
@@ -34,7 +33,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         if (configuration.wasmCompilation) return
         val arguments = input.arguments
         fillConfiguration(configuration, arguments)
-        checkWasmArgumentsUsage(arguments, configuration.messageCollector)
+        checkWasmArgumentsUsage(arguments, configuration)
 
         // setup phase config for the second compilation stage (JS codegen)
         if (arguments.includes != null) {
@@ -45,8 +44,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
     }
 
     private fun fillConfiguration(configuration: CompilerConfiguration, arguments: K2JSCompilerArguments) {
-        val messageCollector = configuration.messageCollector
-        val targetVersion = initializeAndCheckTargetVersion(arguments, messageCollector)
+        val targetVersion = initializeAndCheckTargetVersion(arguments, configuration)
         configuration.optimizeGeneratedJs = arguments.optimizeGeneratedJs
         val isES2015 = targetVersion == EcmaVersion.es2015
         configuration.moduleKind = configuration.moduleKind
@@ -78,7 +76,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         }
 
         if (arguments.script) {
-            messageCollector.report(ERROR, "K/JS does not support Kotlin script (*.kts) files")
+            configuration.report(WEB_ARGUMENT_ERROR, "K/JS does not support Kotlin script (*.kts) files")
         }
 
         if (arguments.freeArgs.isEmpty() && !(incrementalCompilationIsEnabledForJs(arguments))) {
@@ -87,29 +85,29 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
                 throw SuccessfulPipelineExecutionException()
             }
             if (arguments.includes.isNullOrEmpty()) {
-                messageCollector.report(ERROR, "Specify at least one source file or directory", location = null)
+                configuration.report(WEB_ARGUMENT_ERROR, "Specify at least one source file or directory", location = null)
             }
         }
     }
 
     private fun initializeAndCheckTargetVersion(
         arguments: K2JSCompilerArguments,
-        messageCollector: MessageCollector,
+        configuration: CompilerConfiguration
     ): EcmaVersion? {
         val targetVersion = arguments.targetVersion
 
         if (targetVersion == null) {
-            messageCollector.report(ERROR, "Unsupported ECMA version: ${arguments.target}")
+            configuration.report(WEB_ARGUMENT_ERROR, "Unsupported ECMA version: ${arguments.target}")
         }
         return targetVersion
     }
 
-    internal fun checkWasmArgumentsUsage(arguments: K2JSCompilerArguments, messageCollector: MessageCollector) {
+    internal fun checkWasmArgumentsUsage(arguments: K2JSCompilerArguments, configuration: CompilerConfiguration) {
         if (arguments.irDceDumpReachabilityInfoToFile != null) {
-            messageCollector.report(STRONG_WARNING, "Dumping the reachability info to a file is not supported for Kotlin/JS.")
+            configuration.report(WEB_ARGUMENT_WARNING, "Dumping the reachability info to a file is not supported for Kotlin/JS.")
         }
         if (arguments.irDceDumpDeclarationIrSizesToFile != null) {
-            messageCollector.report(STRONG_WARNING, "Dumping the sizes of declarations to file is not supported for Kotlin/JS.")
+            configuration.report(WEB_ARGUMENT_WARNING, "Dumping the sizes of declarations to file is not supported for Kotlin/JS.")
         }
     }
 }
