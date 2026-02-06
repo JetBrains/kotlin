@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.constValue
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstantPrimitive
@@ -21,6 +22,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
@@ -48,6 +51,7 @@ private fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
 
 private var IrClass.boxFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
 private var IrClass.unboxFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+private var IrClass.backingFieldSetter: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
 internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::boxFunction.getOrSetIfNull {
     require(inlinedClass.isUsedAsBoxClass())
@@ -109,6 +113,41 @@ internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction =
             endOffset = inlinedClass.endOffset
             name = Name.identifier("value")
             type = boxedType
+        }
+    }
+}
+
+internal fun Context.getBackingFieldSetter(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::backingFieldSetter.getOrSetIfNull {
+    require(inlinedClass.isUsedAsBoxClass())
+
+    val property = inlinedClass.properties.singleOrNull { it.backingField?.isStatic == false }
+            ?: error("No backing field found for ${inlinedClass.render()}")
+    val isNullable = inlinedClass.inlinedClassIsNullable()
+    val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
+    val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
+
+    irFactory.buildFun {
+        startOffset = inlinedClass.startOffset
+        endOffset = inlinedClass.endOffset
+        origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+        name = Name.special("<set-${property.name}>")
+        returnType = irBuiltIns.unitType
+    }.also { function ->
+        function.parent = inlinedClass
+        function.correspondingPropertySymbol = property.symbol
+        property.setter = function
+
+        function.addValueParameter {
+            startOffset = inlinedClass.startOffset
+            endOffset = inlinedClass.endOffset
+            name = Name.identifier("inst")
+            type = boxedType
+        }
+        function.addValueParameter {
+            startOffset = inlinedClass.startOffset
+            endOffset = inlinedClass.endOffset
+            name = Name.identifier("value")
+            type = unboxedType
         }
     }
 }
