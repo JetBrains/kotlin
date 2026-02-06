@@ -911,6 +911,17 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                                 )),
                                 P(listOf(
                                     Text("This method may be used to iterate over the constants.")
+                                )),
+                                P(listOf(
+                                    Text(
+                                        "The function returns a new instance of the array on every call. " +
+                                                "The array could be mutated, so working with it may also require " +
+                                                "defensive copying. Consider using "),
+                                    CodeInline(listOf(Text("entries"))),
+                                    Text(
+                                        " property as a more efficient alternative returning " +
+                                                "an immutable list of enum entries."
+                                    )
                                 ))
                             ),
                             name = MARKDOWN_ELEMENT_FILE_NAME
