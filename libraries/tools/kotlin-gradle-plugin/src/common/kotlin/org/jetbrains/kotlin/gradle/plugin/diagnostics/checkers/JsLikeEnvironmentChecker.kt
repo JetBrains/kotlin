@@ -21,7 +21,8 @@ internal abstract class JsLikeEnvironmentChecker(
         multiplatformExtension?.findMisconfiguredTargetIfAny() ?: return
 
         collector.reportOncePerGradleBuild(
-            project,
+            projectPath,
+            renderingOptions,
             diagnostic(
                 availableEnvironments = environments
             )

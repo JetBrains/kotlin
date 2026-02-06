@@ -35,7 +35,7 @@ internal object AndroidSourceSetLayoutV1SourceSetsNotFoundChecker : KotlinGradle
             .map { it.value }
 
         unknownAndroidSourceSetNames.forEach { unknownAndroidSourceSetName ->
-            collector.report(project, AndroidSourceSetLayoutV1SourceSetsNotFoundError(unknownAndroidSourceSetName))
+            collector.report(projectPath, renderingOptions, AndroidSourceSetLayoutV1SourceSetsNotFoundError(unknownAndroidSourceSetName))
         }
     }
 }
