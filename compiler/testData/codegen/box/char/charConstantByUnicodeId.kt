@@ -1,5 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
 package foo
+import kotlin.test.assertEquals
 
 fun box(): String {
     val chars = mapOf('\u0000' to 0x0000,

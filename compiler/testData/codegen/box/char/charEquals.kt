@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_NEW_COUNT: function=box max=10
 fun box(): String {
