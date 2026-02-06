@@ -692,6 +692,7 @@ class BodyGenerator(
 
     fun generateObjectCreationPrefixIfNeeded(constructor: IrConstructor) {
         val parentClass = constructor.parentAsClass
+        // TODO why not then? where is the object created in that case if its not here?
         if (constructor.origin == PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR) return
         if (parentClass.isAbstractOrSealed) return
         val thisParameter = functionContext.referenceLocal(parentClass.thisReceiver!!.symbol)
@@ -715,6 +716,7 @@ class BodyGenerator(
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
+        // TODO might need to change, to call initNoAlloc instead of real constructors
         val klass = functionContext.irFunction!!.parentAsClass
 
         // Don't delegate constructors of Any to Any.
@@ -771,6 +773,10 @@ class BodyGenerator(
             return
         }
 
+        if (call.symbol == wasmSymbols.wasmAllocateGCObject){
+            return
+        }
+
         // Some intrinsics are a special case because we want to remove them completely, including their arguments.
         if (backendContext.configuration.get(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS) != true) {
             if (call.symbol == wasmSymbols.rangeCheck) {
@@ -796,6 +802,7 @@ class BodyGenerator(
         }
 
         // We skip now calling any ctor because it is empty
+        // TODO why symbol.owner again here? Seems unnecessary (doesn't change semantics)
         if (callFunction.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) return
 
         val function: IrFunction = callFunction.realOverrideTarget

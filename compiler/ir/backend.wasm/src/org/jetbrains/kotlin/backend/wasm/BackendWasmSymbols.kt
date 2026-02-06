@@ -170,6 +170,9 @@ class BackendWasmSymbols(
     val boxIntrinsic: IrSimpleFunctionSymbol = CallableIds.boxIntrinsic.functionSymbol()
     val unboxIntrinsic: IrSimpleFunctionSymbol = CallableIds.unboxIntrinsic.functionSymbol()
 
+    // TODO probably remove and find better solution
+    val wasmAllocateGCObject = CallableIds.wasmAllocateGCObject.functionSymbol()
+
     val createString = CallableIds.createString.functionSymbol()
 
     val getWasmAbiVersion = CallableIds.getWasmAbiVersion.functionSymbol()
@@ -501,6 +504,9 @@ private object CallableIds {
     val getCachedJsObject = "getCachedJsObject".wasmCallableId
 
     val jsConcat = "jsConcat".wasmCallableId
+
+    // TODO probably remove and find better solution
+    val wasmAllocateGCObject = "wasmAllocateGCObject".wasmCallableId
 
     // Collection functions
     private val String.collectionCallableId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))

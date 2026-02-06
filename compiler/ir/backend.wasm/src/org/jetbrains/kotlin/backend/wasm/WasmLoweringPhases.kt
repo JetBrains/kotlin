@@ -232,6 +232,8 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::InlineClassDeclarationLowering,
     ::InlineClassUsageLowering,
 
+    ::SplitConstructorsIntoAllocationInitialization,
+
     ::ExpressionBodyTransformer,
     ::EraseVirtualDispatchReceiverParametersTypes,
     ::WasmBridgesConstruction,

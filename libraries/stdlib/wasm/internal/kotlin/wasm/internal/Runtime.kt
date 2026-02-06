@@ -89,6 +89,10 @@ internal fun <T, R> boxIntrinsic(x: T): R =
 internal fun <T, R> unboxIntrinsic(x: T): R =
     implementedAsIntrinsic
 
+@ExcludedFromCodegen
+internal fun <T, R> wasmAllocateGCObject(x: T): R =
+    implementedAsIntrinsic
+
 // Represents absence of a value. Should never be used as a real object. See UnitToVoidLowering.kt for more info.
 @ExcludedFromCodegen
 @UsedFromCompilerGeneratedCode
