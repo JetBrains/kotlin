@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.native.FirSerializerInput
 import org.jetbrains.kotlin.native.KlibWriterInput
-import org.jetbrains.kotlin.native.NativePhaseContext
+import org.jetbrains.kotlin.native.NativeFirstStagePhaseContext
 import org.jetbrains.kotlin.native.firSerializerBase
 import org.jetbrains.kotlin.native.writeKlib
 
@@ -55,7 +55,7 @@ object NativeIrSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeSe
         )
     }
 
-    private fun NativePhaseContext.fir2IrSerializer(input: FirSerializerInput): SerializerOutput {
+    private fun NativeFirstStagePhaseContext.fir2IrSerializer(input: FirSerializerInput): SerializerOutput {
         return firSerializerBase(input.firToIrOutput.frontendOutput, input.firToIrOutput, produceHeaderKlib = input.produceHeaderKlib)
     }
 }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.konan.config.konanExportKdoc
 import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 
-internal fun NativePhaseContext.firSerializerBase(
+internal fun NativeFirstStagePhaseContext.firSerializerBase(
         firResult: AllModulesFrontendOutput,
         fir2IrOutput: Fir2IrOutput?,
         produceHeaderKlib: Boolean = false,

@@ -41,7 +41,7 @@ class NativeKlibConfig(
         }
 }
 
-class NativePhaseContext(
+class NativeFirstStagePhaseContext(
     override val config: NativeKlibConfig,
 ) : PhaseContext {
     override var inVerbosePhase: Boolean = false

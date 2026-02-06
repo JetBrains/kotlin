@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.native.Fir2IrOutput
-import org.jetbrains.kotlin.native.NativePhaseContext
+import org.jetbrains.kotlin.native.NativeFirstStagePhaseContext
 
 data class NativeConfigurationArtifact(
     val configuration: CompilerConfiguration,
@@ -28,7 +28,7 @@ data class NativeFrontendArtifact(
     override val configuration: CompilerConfiguration,
     val environment: KotlinCoreEnvironment,
     override val diagnosticCollector: BaseDiagnosticsCollector,
-    val phaseContext: NativePhaseContext,
+    val phaseContext: NativeFirstStagePhaseContext,
 ) : FrontendPipelineArtifact() {
     override fun withNewDiagnosticCollectorImpl(newDiagnosticsCollector: BaseDiagnosticsCollector): NativeFrontendArtifact {
         return copy(diagnosticCollector = newDiagnosticsCollector)
@@ -44,7 +44,7 @@ data class NativeFir2IrArtifact(
     val configuration: CompilerConfiguration,
     val environment: KotlinCoreEnvironment,
     override val diagnosticCollector: BaseDiagnosticsCollector,
-    val phaseContext: NativePhaseContext,
+    val phaseContext: NativeFirstStagePhaseContext,
 ) : Fir2IrPipelineArtifact() {
     override val result: Fir2IrActualizedResult
         get() = fir2IrOutput.fir2irActualizedResult
@@ -54,7 +54,7 @@ data class NativeSerializationArtifact(
     val serializerOutput: SerializerOutput,
     val configuration: CompilerConfiguration,
     val diagnosticCollector: BaseDiagnosticsCollector,
-    val phaseContext: NativePhaseContext,
+    val phaseContext: NativeFirstStagePhaseContext,
 ) : PipelineArtifact()
 
 data class NativeKlibSerializedArtifact(
