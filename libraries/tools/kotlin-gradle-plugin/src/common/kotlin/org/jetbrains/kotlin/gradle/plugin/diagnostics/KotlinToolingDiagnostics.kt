@@ -907,6 +907,26 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object DisabledNativeTargetTaskWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            taskName: String,
+            targetName: String,
+            currentHost: String,
+            reason: String,
+        ): ToolingDiagnostic = build(taskName.toIdSuffix()) {
+            title("Native task '$taskName' is disabled")
+                .description {
+                    """
+                    Task '$taskName' for target '$targetName' cannot run on the current host ($currentHost).
+                    Reason: $reason
+                    """.trimIndent()
+                }
+                .solution {
+                    "To suppress this warning, add '$KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS=true' to gradle.properties."
+                }
+        }
+    }
+
     object InconsistentTargetCompatibilityForKotlinAndJavaTasks : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
             javaTaskName: String,

@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinNativeCacheMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeLinkTaskMetrics
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
@@ -166,11 +169,23 @@ private fun Project.createLinkTask(binary: NativeBinary) {
 
 private fun Project.createRunTask(binary: Executable) {
     val taskName = binary.runTaskName ?: return
+    val isCurrentHost = binary.konanTarget.isCurrentHost
+    // Report diagnostic during task registration (not in task configuration) to ensure it's emitted
+    // even with configuration avoidance when the task is not realized
+    if (!isCurrentHost && kotlinPropertiesProvider.ignoreDisabledNativeTargets != true) {
+        reportDiagnosticOncePerBuild(
+            KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning(
+                taskName = taskName,
+                targetName = binary.konanTarget.name,
+                currentHost = HostManager.hostOrNull?.name ?: "unsupported",
+                reason = "executable can only run on ${binary.konanTarget.name}"
+            )
+        )
+    }
     registerTask<Exec>(taskName) { exec ->
         exec.group = KotlinNativeTargetConfigurator.RUN_GROUP
         exec.description = "Executes Kotlin/Native executable ${binary.name} for target ${binary.target.name}"
-
-        exec.enabled = binary.konanTarget.isCurrentHost
+        exec.onlyIf("Executable requires ${binary.konanTarget.name} host") { isCurrentHost }
 
         exec.executable = binary.outputFile.absolutePath
         exec.workingDir = project.projectDir
