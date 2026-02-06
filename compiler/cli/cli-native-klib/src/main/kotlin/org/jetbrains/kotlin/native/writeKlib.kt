@@ -70,7 +70,7 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
         val usedDependenciesFile = File(path)
         // We write out the absolute path instead of canonical here to avoid resolving symbolic links
         // as that can make it difficult to map the dependencies back to the command line arguments.
-        usedDependenciesFile.writeLines(linkDependencies.map { it.location.absolutePath })
+        usedDependenciesFile.writeLines(linkDependencies.map { it.location.absolutePath }.sorted())
     }
 
     val nativeTargetsForManifest = config.nativeTargetsForManifest?.map { it.visibleName }
