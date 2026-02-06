@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.assertEquals
 
 import kotlin.reflect.KMutableProperty1
 

@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.assertEquals
 
 open class A(var msg:String) {
     open var prop:String = "initA"
