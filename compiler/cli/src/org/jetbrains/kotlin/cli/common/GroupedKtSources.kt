@@ -12,11 +12,11 @@ import com.intellij.openapi.vfs.isFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.cli.CliDiagnostics
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.allSourceFilesSequence
 import org.jetbrains.kotlin.cli.jvm.compiler.findFileByPath
 import org.jetbrains.kotlin.cli.jvm.compiler.getSourceRootsCheckingForDuplicates
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.dontSortSourceFiles
@@ -46,8 +46,7 @@ private val ktSourceFileComparator = Comparator<KtSourceFile> { o1, o2 ->
 
 fun collectSources(
     compilerConfiguration: CompilerConfiguration,
-    projectEnvironment: VfsBasedProjectEnvironment,
-    messageCollector: MessageCollector
+    projectEnvironment: VfsBasedProjectEnvironment
 ): GroupedKtSources {
     fun createSet(): MutableSet<KtSourceFile> = if (compilerConfiguration.dontSortSourceFiles) {
         mutableSetOf()
@@ -88,7 +87,7 @@ fun collectSources(
                             ensurePluginsConfigured()
                             val isKotlin = virtualFile.fileType == KotlinFileType.INSTANCE
                             if (isExplicit && !isKotlin) {
-                                compilerConfiguration.reportDiagnostic(
+                                compilerConfiguration.report(
                                     CliDiagnostics.ROOTS_RESOLUTION_ERROR,
                                     "Source entry is not a Kotlin file: ${virtualFile.path}"
                                 )

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.services.jvm
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.config.fileMappingTracker
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -21,7 +20,12 @@ class CompiledClassesManager(val testServices: TestServices) : TestService {
         val outputDir = getOutputDirForModule(module)
         val classFileFactory = classFileFactory ?: testServices.artifactsProvider.getArtifact(module, ArtifactKinds.Jvm).classFileFactory
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
-        classFileFactory.writeAll(outputDir, configuration.messageCollector, reportOutputFiles = false, configuration.fileMappingTracker)
+        classFileFactory.writeAll(
+            outputDir,
+            configuration,
+            reportOutputFiles = false,
+            configuration.fileMappingTracker
+        )
         return outputDir
     }
 

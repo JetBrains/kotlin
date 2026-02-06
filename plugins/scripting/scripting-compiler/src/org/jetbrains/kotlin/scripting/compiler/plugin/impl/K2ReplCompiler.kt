@@ -359,7 +359,7 @@ private fun compileImpl(
                 )
     }
 
-    checkKotlinPackageUsageForLightTree(compilerConfiguration, rawFir, messageCollector)
+    checkKotlinPackageUsageForLightTree(compilerConfiguration, rawFir)
 
     val (scopeSession, fir) = session.runResolution(rawFir)
     // checkers

@@ -18,11 +18,7 @@ import org.jetbrains.kotlin.cli.pipeline.AbstractConfigurationPhase
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationUpdater
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.config.targetPlatform
-import org.jetbrains.kotlin.config.zipFileSystemAccessor
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -116,7 +112,7 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
 
         configuration.zipFileSystemAccessor = arguments.getZipFileSystemAccessor(
             zipFileAccessorCacheLimitArgument = K2MetadataCompilerArguments::klibZipFileAccessorCacheLimit,
-            collector = collector,
+            configuration = configuration,
             rootDisposable = rootDisposable,
         )
     }

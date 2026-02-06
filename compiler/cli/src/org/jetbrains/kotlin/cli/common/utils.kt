@@ -22,9 +22,14 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
+import org.jetbrains.kotlin.cli.CliDiagnostics.KOTLIN_PACKAGE_USAGE
+import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
@@ -50,7 +55,6 @@ fun incrementalCompilationIsEnabledForJs(arguments: CommonCompilerArguments): Bo
 fun <F> checkKotlinPackageUsage(
     configuration: CompilerConfiguration,
     files: Collection<F>,
-    messageCollector: MessageCollector,
     getPackage: (F) -> FqName,
     getMessageLocation: (F) -> CompilerMessageSourceLocation?,
 ): Boolean {
@@ -60,8 +64,8 @@ fun <F> checkKotlinPackageUsage(
     val kotlinPackage = FqName("kotlin")
     for (file in files) {
         if (getPackage(file).isSubpackageOf(kotlinPackage)) {
-            messageCollector.report(
-                CompilerMessageSeverity.ERROR,
+            configuration.report(
+                KOTLIN_PACKAGE_USAGE,
                 "Only the Kotlin standard library is allowed to use the 'kotlin' package",
                 getMessageLocation(file),
             )
@@ -74,24 +78,24 @@ fun <F> checkKotlinPackageUsage(
 fun checkKotlinPackageUsageForPsi(
     configuration: CompilerConfiguration,
     files: Collection<KtFile>,
-    messageCollector: MessageCollector = configuration.messageCollector,
-) =
-    checkKotlinPackageUsage(
-        configuration, files, messageCollector,
+): Boolean {
+    return checkKotlinPackageUsage(
+        configuration, files,
         getPackage = { it.packageFqName },
         getMessageLocation = { MessageUtil.psiElementToMessageLocation(it.packageDirective!!) },
     )
+}
 
 fun checkKotlinPackageUsageForLightTree(
     configuration: CompilerConfiguration,
     files: Collection<FirFile>,
-    messageCollector: MessageCollector = configuration.messageCollector,
-) =
-    checkKotlinPackageUsage(
-        configuration, files, messageCollector,
+): Boolean {
+    return checkKotlinPackageUsage(
+        configuration, files,
         getPackage = { it.packageFqName },
         getMessageLocation = { it.packageDirective.source?.getLocationWithin(it) },
     )
+}
 
 private fun KtSourceElement.getLocationWithin(file: FirFile): CompilerMessageLocationWithRange? {
     val sourceFile = file.sourceFile ?: return null
@@ -113,7 +117,7 @@ fun <PathProvider : Any> getLibraryFromHome(
     paths: PathProvider?,
     getLibrary: (PathProvider) -> File,
     libraryName: String,
-    messageCollector: MessageCollector,
+    configuration: CompilerConfiguration,
     noLibraryArgument: String
 ): File? {
     if (paths != null) {
@@ -123,8 +127,9 @@ fun <PathProvider : Any> getLibraryFromHome(
         }
     }
 
-    messageCollector.report(
-        CompilerMessageSeverity.STRONG_WARNING, "Unable to find " + libraryName + " in the Kotlin home directory. " +
+    configuration.report(
+        ROOTS_RESOLUTION_WARNING,
+        "Unable to find " + libraryName + " in the Kotlin home directory. " +
                 "Pass either " + noLibraryArgument + " to prevent adding it to the classpath, " +
                 "or the correct '-kotlin-home'", null
     )

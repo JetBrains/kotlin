@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.cli.common.output
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportOutput
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import java.io.File
 import java.io.FileNotFoundException
@@ -50,7 +52,7 @@ fun OutputFileCollection.writeAllTo(outputDir: File) {
 
 fun OutputFileCollection.writeAll(
     outputDir: File,
-    messageCollector: MessageCollector,
+    configuration: CompilerConfiguration,
     reportOutputFiles: Boolean,
     fileMappingTracker: ICFileMappingTracker?,
 ) {
@@ -67,13 +69,13 @@ fun OutputFileCollection.writeAll(
                 }
             }
             if (reportOutputFiles) {
-                messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(outputInfo.sourceFiles, output))
+                configuration.reportOutput(OutputMessageUtil.formatOutputMessage(outputInfo.sourceFiles, output))
             }
         }
     } catch (e: NoPermissionException) {
-        messageCollector.report(CompilerMessageSeverity.ERROR, e.message!!)
+        configuration.report(CliDiagnostics.IO_ERROR, e.message!!)
     } catch (e: FileNotFoundException) {
-        messageCollector.report(CompilerMessageSeverity.ERROR, "directory not found: $outputDir")
+        configuration.report(CliDiagnostics.IO_ERROR, "directory not found: $outputDir")
     }
 }
 

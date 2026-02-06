@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.cli
 
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
-import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
-import org.jetbrains.kotlin.diagnostics.errorWithoutSource
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.strongWarningWithoutSource
@@ -30,7 +27,14 @@ object CliDiagnostics : KtDiagnosticsContainer() {
     val COMPILER_ARGUMENTS_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
     val COMPILER_ARGUMENTS_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
+    val JAVAC_INTEGRATION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
     val JAVAC_INTEGRATION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val KOTLIN_PACKAGE_USAGE: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val IO_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val SCRIPTING_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val SCRIPTING_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = Messages
 
@@ -49,12 +53,17 @@ object CliDiagnostics : KtDiagnosticsContainer() {
 
             map.put(INITIALIZATION_WARNING, MESSAGE_PLACEHOLDER)
 
-
-
             map.put(COMPILER_ARGUMENTS_WARNING, MESSAGE_PLACEHOLDER)
             map.put(COMPILER_ARGUMENTS_ERROR, MESSAGE_PLACEHOLDER)
 
+            map.put(JAVAC_INTEGRATION_WARNING, MESSAGE_PLACEHOLDER)
             map.put(JAVAC_INTEGRATION_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(KOTLIN_PACKAGE_USAGE, MESSAGE_PLACEHOLDER)
+            map.put(IO_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(SCRIPTING_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(SCRIPTING_ERROR, MESSAGE_PLACEHOLDER)
         }
     }
 }

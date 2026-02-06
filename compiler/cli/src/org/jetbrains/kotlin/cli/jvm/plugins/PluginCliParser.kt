@@ -18,17 +18,14 @@ package org.jetbrains.kotlin.cli.jvm.plugins
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
-import org.jetbrains.kotlin.cli.plugins.PluginOrderConstraint
-import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
-import org.jetbrains.kotlin.cli.plugins.extractPluginOrderConstraint
-import org.jetbrains.kotlin.cli.plugins.processCompilerPluginOptions
-import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
+import org.jetbrains.kotlin.cli.plugins.*
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.util.ServiceLoaderLite
 import org.jetbrains.kotlin.utils.topologicalSort
 import java.io.File
@@ -101,7 +98,6 @@ object PluginCliParser {
         configuration: CompilerConfiguration,
         parentDisposable: Disposable,
     ): ExitCode {
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         try {
             // Parse order constraints before creating class loaders and loading services.
             val orderConstraints = pluginOrderConstraints.map { rawConstraint ->
@@ -113,14 +109,14 @@ object PluginCliParser {
             loadPluginsModernStyle(pluginConfigurations, orderConstraints, configuration, parentDisposable)
             return ExitCode.OK
         } catch (e: PluginProcessingException) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, e.message!!)
+            configuration.report(COMPILER_ARGUMENTS_ERROR, e.message!!)
         } catch (e: PluginCliOptionProcessingException) {
             val message = e.message + "\n\n" + cliPluginUsageString(e.pluginId, e.options)
-            messageCollector.report(CompilerMessageSeverity.ERROR, message)
+            configuration.report(COMPILER_ARGUMENTS_ERROR, message)
         } catch (e: CliOptionProcessingException) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, e.message!!)
+            configuration.report(COMPILER_ARGUMENTS_ERROR, e.message!!)
         } catch (t: Throwable) {
-            MessageCollectorUtil.reportException(messageCollector, t)
+            MessageCollectorUtil.reportException(configuration.messageCollector, t)
         }
         return ExitCode.INTERNAL_ERROR
     }

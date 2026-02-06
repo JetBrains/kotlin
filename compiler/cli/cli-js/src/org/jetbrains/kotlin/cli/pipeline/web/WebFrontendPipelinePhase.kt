@@ -79,8 +79,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             val groupedSources =
                 collectSources(
                     configuration,
-                    environmentForJS.toVfsBasedProjectEnvironment(),
-                    messageCollector
+                    environmentForJS.toVfsBasedProjectEnvironment()
                 )
 
             if (

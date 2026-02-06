@@ -234,7 +234,7 @@ fun <PathProvider : Any> CompilerConfiguration.configureStandardLibs(
     fun addRoot(moduleName: String, libraryName: String, getLibrary: (PathProvider) -> File, noLibraryArgument: String) {
         addModularRootIfNotNull(
             isModularJava, moduleName,
-            getLibraryFromHome(paths, getLibrary, libraryName, messageCollector, noLibraryArgument)
+            getLibraryFromHome(paths, getLibrary, libraryName, this, noLibraryArgument)
         )
     }
 

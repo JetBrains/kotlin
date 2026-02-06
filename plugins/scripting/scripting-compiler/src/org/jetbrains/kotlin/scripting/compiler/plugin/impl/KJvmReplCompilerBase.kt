@@ -106,7 +106,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
 
                 val ktFiles = sourceFiles.map { it.getKtFile(definition, context.environment.project) }
 
-                checkKotlinPackageUsageForPsi(context.environment.configuration, ktFiles, messageCollector)
+                checkKotlinPackageUsageForPsi(context.environment.configuration, ktFiles)
 
                 if (messageCollector.hasErrors()) return failure(messageCollector)
 

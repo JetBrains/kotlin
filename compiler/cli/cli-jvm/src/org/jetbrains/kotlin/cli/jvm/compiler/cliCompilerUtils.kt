@@ -83,7 +83,7 @@ private fun writeOutput(
             resetJarTimestamps,
             mainClassFqName,
             outputFiles,
-            messageCollector
+            configuration
         )
         val sourceFiles = outputFiles.asList().flatMap { it.sourceFiles }.distinct()
         configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(
@@ -97,7 +97,12 @@ private fun writeOutput(
         return
     }
 
-    outputFiles.writeAll(configuration.outputDirOrCurrentDirectory(), messageCollector, reportOutputFiles, configuration.fileMappingTracker)
+    outputFiles.writeAll(
+        configuration.outputDirOrCurrentDirectory(),
+        configuration,
+        reportOutputFiles,
+        configuration.fileMappingTracker
+    )
 }
 
 private fun CompilerConfiguration.outputDirOrCurrentDirectory(): File =
