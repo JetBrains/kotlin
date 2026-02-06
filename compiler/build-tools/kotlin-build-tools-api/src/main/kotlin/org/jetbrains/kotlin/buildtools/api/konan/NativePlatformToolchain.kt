@@ -9,8 +9,12 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.getToolchain
 import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeCInteropOperation
+import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeCacheLinkingOperation
 import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeFullCacheOperation
+import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeHeaderCacheOperation
 import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeLinkingOperation
+import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeKlibResolverOperation
 import java.nio.file.Path
 
 @ExperimentalBuildToolsApi
@@ -38,6 +42,36 @@ public interface NativePlatformToolchain : KotlinToolchains.Toolchain {
         klibs: List<Path>,
         destinationDirectory: Path,
     ): NativeLinkingOperation
+
+    /**
+     * Given a list of [klibs], extend it with the used platform libraries and resolve their dependency order
+     */
+    public fun createNativeKlibResolverOperation(
+        klibs: List<Path>,
+    ): NativeKlibResolverOperation
+
+    /**
+     * Given a [klib], build its [NativeHeaderCache].
+     */
+    public fun createNativeHeaderCacheOperation(
+        klib: NativeResolvedKlib,
+    ): NativeHeaderCacheOperation
+
+    /**
+     * Given a [klib], build its [NativeFullCache].
+     */
+    public fun createNativeFullCacheOperation(
+        klib: NativeResolvedKlib,
+    ): NativeFullCacheOperation
+
+    /**
+     * Given a list of all resolved [klibs], and a list of klibs with already built caches, produce the final artifacts
+     */
+    public fun createNativeCacheLinkingOperation(
+        klibs: List<NativeResolvedKlib>,
+        caches: List<NativeFullCache>,
+        destinationDirectory: Path,
+    ): NativeCacheLinkingOperation
 
     public companion object {
         /**
