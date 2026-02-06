@@ -59,7 +59,9 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         name = "jdk-home"
         description =
             "Include a custom JDK from the specified location in the classpath instead of the default 'JAVA_HOME'.".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        @Suppress("DEPRECATION")
+        valueType = StringType.defaultNull
+        argumentType = PathType.defaultNull
         argumentTypeDescription = "<path>".asReleaseDependent()
 
         lifecycle(
