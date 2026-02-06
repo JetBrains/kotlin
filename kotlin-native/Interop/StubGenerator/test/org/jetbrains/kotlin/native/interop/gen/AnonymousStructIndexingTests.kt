@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.native.interop.gen
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class AnonymousStructIndexingTests : IndexerTestsBase() {
@@ -80,5 +82,20 @@ class AnonymousStructIndexingTests : IndexerTestsBase() {
         val (nested, s) = structs.partition { it.isAnonymous }
         assertEquals("struct S", s.single().spelling)
         assertTrue(nested.single().isAnonymous)
+    }
+
+    @Test
+    fun `type definition lookups - anonymous structs don't get incorrectly conflated`() {
+        val structs = indexStructs("""
+            struct { int i; } a;
+            struct { int i; } b;
+        """.trimIndent()).toList()
+        assertEquals(
+                listOf(true, true),
+                structs.map { it.isAnonymous },
+        )
+        assertNotNull(structs[0].def)
+        assertNotNull(structs[1].def)
+        assertNotEquals(structs[0].def, structs[1].def)
     }
 }
