@@ -37,9 +37,9 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -165,7 +165,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val commonKtFiles = commonFiles.map { it.toKtFile(project) }
         val platformKtFiles = platformFiles.map { it.toKtFile(project) }
 
-        val reporter = DiagnosticReporterFactory.createReporter()
+        val reporter = DiagnosticsCollectorImpl()
         val commonAnalysis =
             buildResolveAndCheckFirFromKtFiles(commonSession, commonKtFiles, reporter)
         val platformAnalysis =
