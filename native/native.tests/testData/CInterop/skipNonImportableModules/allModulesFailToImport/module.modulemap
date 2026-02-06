@@ -1,6 +1,0 @@
-module failure_one {
-    header "failure_one.h"
-}
-module failure_two {
-    header "failure_two.h"
-}
