@@ -50,7 +50,14 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
             produceCustomDependencies(sourceFile, klibAbiLevel).map(TestCompilationArtifact.KLIB::asLibraryDependency)
 
         val compilerArgs = klibAbiLevel?.let { abiLevel ->
-            TestCompilerArgs(listOf("-XXLanguage:+ExportKlibToOlderAbiVersion", "-language-version", abiLevel.toString()))
+            TestCompilerArgs(
+                listOf(
+                    "-XXLanguage:+ExportKlibToOlderAbiVersion",
+                    "-language-version",
+                    abiLevel.toString(),
+                    "-Xskip-library-special-compatibility-checks"
+                )
+            )
         } ?: TestCompilerArgs.EMPTY
 
         val library = compileToLibrary(
