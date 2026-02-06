@@ -126,7 +126,7 @@ internal val KonanTarget.isCurrentHost: Boolean
 @Deprecated("Use crossCompilationOnCurrentHostSupported instead")
 internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     provider: PropertiesProvider,
-) = if (HostManager.hostOrNull != null) {
+) = if (HostManager.hostIsSupported) {
     if (provider.enableKlibsCrossCompilation) {
         // If cross-compilation is enabled, allow compilation for all targets
         true
@@ -146,7 +146,7 @@ internal val AbstractKotlinNativeCompilation.crossCompilationSharedData: KotlinP
 internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Boolean
     get() = when (this) {
         is KotlinNativeCompilation -> target.crossCompilationOnCurrentHostSupported.getOrThrow()
-        else -> HostManager.hostOrNull != null
+        else -> HostManager.hostIsSupported
     }
 
 // KT-81134 with a fallback to `enabledOnCurrentHostForKlibCompilation`
@@ -156,7 +156,7 @@ internal val KotlinNativeTarget.publishableWithFallback: Boolean
         ?: konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
 
 internal val KonanTarget.enabledOnCurrentHostForBinariesCompilation
-    get() = if (HostManager.hostOrNull != null) HostManager().isEnabled(this) else false
+    get() = if (HostManager.hostIsSupported) HostManager().isEnabled(this) else false
 
 internal val HostManager.supportedHosts: List<String> get() = enabledByHost.keys.map { it.formattedHostName }
 

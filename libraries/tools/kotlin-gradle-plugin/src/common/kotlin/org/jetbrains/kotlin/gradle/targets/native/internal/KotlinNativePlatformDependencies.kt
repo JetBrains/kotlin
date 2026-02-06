@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 @JvmName("isAllowCommonizer")
 internal fun Project.isAllowCommonizer(): Boolean {
     assert(state.executed) { "'isAllowCommonizer' can only be called after project evaluation" }
-    if (HostManager.hostOrNull == null) return false
+    if (!HostManager.hostIsSupported) return false
     multiplatformExtensionOrNull ?: return false
 
     return multiplatformExtension.targets.any { it.platformType == KotlinPlatformType.native }
