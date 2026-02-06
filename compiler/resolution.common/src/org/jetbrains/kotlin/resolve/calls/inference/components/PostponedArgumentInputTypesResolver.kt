@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
@@ -556,6 +557,7 @@ class PostponedArgumentInputTypesResolver(
         }
     }
 
+    @K1Deprecation
     context(c: Context)
     fun fixNextReadyVariableForParameterTypeIfNeeded(
         argument: PostponedResolvedAtomMarker,
@@ -564,21 +566,38 @@ class PostponedArgumentInputTypesResolver(
         dependencyProvider: TypeVariableDependencyInformationProvider,
         resolvedAtomProvider: ResolvedAtomProvider,
     ): Boolean {
-        val expectedType = argument.expectedFunctionType() ?: return false
+        return fixNextReadyVariableForParameterType(
+            resolvedAtomProvider,
+            findNextReadyVariableForParameterType(
+                argument,
+                postponedArguments,
+                topLevelType,
+                dependencyProvider,
+            ),
+        )
+    }
+
+    context(c: Context)
+    fun findNextReadyVariableForParameterType(
+        argument: PostponedResolvedAtomMarker,
+        postponedArguments: List<PostponedResolvedAtomMarker>,
+        topLevelType: KotlinTypeMarker,
+        dependencyProvider: TypeVariableDependencyInformationProvider,
+    ): VariableFixationFinder.VariableForFixation? {
+        val expectedType = argument.expectedFunctionType() ?: return null
 
         if (c.lexicographicVariableReadinessCalculation) {
-            if (argument is LambdaWithTypeVariableAsExpectedTypeMarker) return false
+            if (argument is LambdaWithTypeVariableAsExpectedTypeMarker) return null
 
-            if (argument is PostponedCallableReferenceMarker && !argument.needsResolution) return false
+            if (argument is PostponedCallableReferenceMarker && !argument.needsResolution) return null
         }
 
-        return fixNextReadyVariableForParameterType(
-            if (!c.lexicographicVariableReadinessCalculation) expectedType.extractArgumentsForFunctionTypeOrSubtype()
-            else argument.inputTypes,
-            postponedArguments,
-            topLevelType,
-            dependencyProvider,
-            resolvedAtomProvider,
+        return findNextVariableForParameterType(
+            if (!c.lexicographicVariableReadinessCalculation)
+                expectedType.extractArgumentsForFunctionTypeOrSubtype()
+            else
+                argument.inputTypes,
+            dependencyProvider, postponedArguments, topLevelType,
         )
     }
 
@@ -588,16 +607,12 @@ class PostponedArgumentInputTypesResolver(
         return expectedType?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() }
     }
 
+    @K1Deprecation
     context(c: Context)
     private fun fixNextReadyVariableForParameterType(
-        types: Collection<KotlinTypeMarker>,
-        postponedArguments: List<PostponedResolvedAtomMarker>,
-        topLevelType: KotlinTypeMarker,
-        dependencyProvider: TypeVariableDependencyInformationProvider,
         resolvedAtomByTypeVariableProvider: ResolvedAtomProvider,
+        variableForFixation: VariableFixationFinder.VariableForFixation?,
     ): Boolean = with(resolutionTypeSystemContext) {
-        val variableForFixation = findNextVariableForParameterType(types, dependencyProvider, postponedArguments, topLevelType)
-
         if (variableForFixation == null || !variableForFixation.isReady)
             return false
 
