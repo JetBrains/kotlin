@@ -98,6 +98,8 @@ where advanced options include:
                              Use partial linkage mode.
   -Xpartial-linkage-loglevel={info|warning|error}
                              Define the compile-time log level for partial linkage.
+  -Xskip-library-special-compatibility-checks
+                             Skip library compatibility checks for stdlib and kotlin.test library.
   -Xallow-any-scripts-in-source-roots
                              Allow compiling scripts along with regular Kotlin sources.
   -Xallow-condition-implies-returns-contracts

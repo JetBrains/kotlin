@@ -114,4 +114,14 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Argument(
+        value = "-Xskip-library-special-compatibility-checks",
+        description = "Skip library compatibility checks for stdlib and kotlin.test library.",
+    )
+    var skipLibrarySpecialCompatibilityChecks: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
 }

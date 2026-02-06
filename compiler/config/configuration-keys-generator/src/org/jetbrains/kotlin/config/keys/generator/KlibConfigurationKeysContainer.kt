@@ -26,4 +26,6 @@ object KlibConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.conf
     val KLIB_ABI_COMPATIBILITY_LEVEL by key<KlibAbiCompatibilityLevel>(defaultValue = "KlibAbiCompatibilityLevel.LATEST_STABLE")
 
     val ZIP_FILE_SYSTEM_ACCESSOR by key<ZipFileSystemAccessor>("Zip file system accessor, used for klib reading.")
+
+    val SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS by key<Boolean>("Skip library compatibility checks for stdlib and kotlin.test library.")
 }

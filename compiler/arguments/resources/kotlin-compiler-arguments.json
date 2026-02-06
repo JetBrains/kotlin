@@ -9730,6 +9730,52 @@
                                     "deprecatedVersion": null,
                                     "removedVersion": null
                                 }
+                            },
+                            {
+                                "name": "Xskip-library-special-compatibility-checks",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Skip library compatibility checks for stdlib and kotlin.test library.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "argumentType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "argumentTypeDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.4.0",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                }
                             }
                         ],
                         "nestedLevels": [

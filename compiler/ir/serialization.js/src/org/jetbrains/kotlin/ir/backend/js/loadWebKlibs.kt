@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.klibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.skipLibrarySpecialCompatibilityChecks
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.ir.backend.js.checkers.WasmLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.js.config.friendLibraries
@@ -42,9 +43,11 @@ fun loadWebKlibsInProductionPipeline(
         useStricterChecks = false // That's only necessary in tests. So, false.
     )
 
-    val isWasm = platformChecker is KlibPlatformChecker.Wasm
-    val checker = if (isWasm) WasmLibrarySpecialCompatibilityChecker else JsLibrarySpecialCompatibilityChecker
-    checker.check(klibs.all, configuration.messageCollector, configuration.klibAbiCompatibilityLevel)
+    if (!configuration.skipLibrarySpecialCompatibilityChecks) {
+        val isWasm = platformChecker is KlibPlatformChecker.Wasm
+        val checker = if (isWasm) WasmLibrarySpecialCompatibilityChecker else JsLibrarySpecialCompatibilityChecker
+        checker.check(klibs.all, configuration.messageCollector, configuration.klibAbiCompatibilityLevel)
+    }
 
     return klibs
 }

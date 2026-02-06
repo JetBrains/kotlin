@@ -128,4 +128,15 @@ The only observable effect is that a custom ABI version is written to KLIB manif
             introducedVersion = KotlinReleaseVersion.v2_3_0
         )
     }
+
+    compilerArgument {
+        name = "Xskip-library-special-compatibility-checks"
+        compilerName = "skipLibrarySpecialCompatibilityChecks"
+        description = "Skip library compatibility checks for stdlib and kotlin.test library.".asReleaseDependent()
+        argumentType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
 }

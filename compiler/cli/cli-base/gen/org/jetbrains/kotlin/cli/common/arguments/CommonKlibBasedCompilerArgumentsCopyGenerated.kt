@@ -19,6 +19,7 @@ fun copyCommonKlibBasedCompilerArguments(from: CommonKlibBasedCompilerArguments,
     to.partialLinkageLogLevel = from.partialLinkageLogLevel
     to.partialLinkageMode = from.partialLinkageMode
     to.relativePathBases = from.relativePathBases?.copyOf()
+    to.skipLibrarySpecialCompatibilityChecks = from.skipLibrarySpecialCompatibilityChecks
 
     return to
 }
