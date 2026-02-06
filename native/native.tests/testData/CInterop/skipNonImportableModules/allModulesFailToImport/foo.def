@@ -1,3 +1,0 @@
-language = Objective-C
-modules = failure_one failure_two
-skipNonImportableModules = true
