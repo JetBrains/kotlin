@@ -8,6 +8,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.javadoc.PsiDocTag
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.analysis.java.parsers.CommentResolutionContext
+import org.jetbrains.dokka.analysis.java.parsers.doctag.markdown.JavaDocMarkdownFlavourDescriptor
+import org.jetbrains.dokka.analysis.java.parsers.doctag.markdown.MarkdownToHtmlConverter
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.plugability.DokkaContext
 
@@ -18,6 +20,9 @@ internal class PsiDocTagParser(
     private val context: DokkaContext,
     private val inheritDocTagResolver: InheritDocTagResolver
 ) {
+
+    private val markdownToHtmlConverter by lazy { MarkdownToHtmlConverter(JavaDocMarkdownFlavourDescriptor()) }
+
     fun parse(
         psiElements: Iterable<PsiElement>,
         commentResolutionContext: CommentResolutionContext,
@@ -38,7 +43,12 @@ internal class PsiDocTagParser(
     ): List<DocTag> {
         val docTagParserContext = DocTagParserContext()
 
-        val psiToHtmlConverter = PsiElementToHtmlConverter(inheritDocTagResolver, sourceSet, context.logger)
+        val psiToHtmlConverter = PsiElementToHtmlConverter(
+            inheritDocTagResolver = inheritDocTagResolver,
+            sourceSet = sourceSet,
+            logger = context.logger,
+            markdownToHtmlConverterProvider = { markdownToHtmlConverter }
+        )
 
         val elementsHtml = psiToHtmlConverter.convert(psiElements, docTagParserContext, commentResolutionContext)
             ?: return emptyList()
