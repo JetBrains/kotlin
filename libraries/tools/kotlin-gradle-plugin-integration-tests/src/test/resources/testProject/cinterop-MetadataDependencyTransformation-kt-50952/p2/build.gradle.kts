@@ -36,7 +36,7 @@ kotlin {
 
             "repository" -> {
                 logger.quiet("dependencyMode = 'repository'")
-                implementation("kotlin-multiplatform-projects:p1:1.0.0-SNAPSHOT")
+                implementation("kotlin-multiplatform-projects:p1:1.0.0")
             }
         }
     }

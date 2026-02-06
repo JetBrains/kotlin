@@ -390,7 +390,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
             // Replace dependency to :p2 with coordinates directly
             p3BuildGradleKts.writeText(
-                p3BuildGradleKtsContent.replace("""project(":p2")""", """"kotlin-multiplatform-projects:p1:1.0.0-SNAPSHOT"""")
+                p3BuildGradleKtsContent.replace("""project(":p2")""", """"kotlin-multiplatform-projects:p1:1.0.0"""")
             )
             build(":p3:transformNativeMainCInteropDependenciesMetadata", repositoryDependencyMode) {
                 /* Same binaries to transform; but project(":p2") is excluded from Task Inputs now */
