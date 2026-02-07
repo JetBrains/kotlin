@@ -43,10 +43,10 @@ fun testWhen() {
     if (true) [42] else ListA.of()
     if (true) [42] else ListA.of<Int>()
 
-    val p1: ListA<*> = if (true) <!CANNOT_INFER_PARAMETER_TYPE!>[]<!> else ListB.<!CANNOT_INFER_PARAMETER_TYPE!>of<!>()
-    val p2: ListA<Int> = if (true) [] else ListB.of()
-    val p3: ListA<*> = if (true) <!CANNOT_INFER_PARAMETER_TYPE!>[]<!> else ListB.of(42)
-    val p4: ListA<Int> = if (true) [42] else ListB.of()
+    val p1: ListA<*> = if (true) <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!> else ListB.<!CANNOT_INFER_PARAMETER_TYPE!>of<!>()
+    val p2: ListA<Int> = if (true) <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!> else ListB.of()
+    val p3: ListA<*> = if (true) <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!> else ListB.of(42)
+    val p4: ListA<Int> = if (true) <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!> else ListB.of()
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, collectionLiteral, companionObject, functionDeclaration,

@@ -134,7 +134,7 @@ fun testWhen() {
                 cond() -> mutableSetOf<Int>()
                 else -> mutableSetOf<String>()
             }
-            else -> []
+            else -> <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>
         }
 
     // ambiguity (?)
@@ -142,7 +142,7 @@ fun testWhen() {
         when {
             cond() -> setOf()
             cond() -> mutableSetOf()
-            else -> [42]
+            else -> <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>
         }
 
     // ambiguity (?)
@@ -152,7 +152,7 @@ fun testWhen() {
                 cond() -> setOf()
                 else -> mutableSetOf()
             }
-            else -> [42]
+            else -> <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>
         }
 
     val _: Set<Int> =
@@ -183,7 +183,7 @@ fun testWhen() {
                 cond() -> hashSetOf()
                 else -> mutableSetOf()
             }
-            else -> [42]
+            else -> <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>
         }
     val _: MutableCollection<Any> =
         when {

@@ -99,7 +99,7 @@ FILE: selectAndWhen.kt
 
         lval p1: R|ListA<*>| = when () {
             Boolean(true) ->  {
-                ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
+                <collectionLiteralCall>()
             }
             else ->  {
                 Q|ListB|.R|/ListB.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter B>>()
@@ -108,7 +108,7 @@ FILE: selectAndWhen.kt
 
         lval p2: R|ListA<kotlin/Int>| = when () {
             Boolean(true) ->  {
-                Q|ListA.Companion|.R|/ListA.Companion.of|<R|kotlin/Int|>()
+                <collectionLiteralCall>()
             }
             else ->  {
                 Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>()
@@ -117,7 +117,7 @@ FILE: selectAndWhen.kt
 
         lval p3: R|ListA<*>| = when () {
             Boolean(true) ->  {
-                ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
+                <collectionLiteralCall>()
             }
             else ->  {
                 Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))
@@ -126,7 +126,7 @@ FILE: selectAndWhen.kt
 
         lval p4: R|ListA<kotlin/Int>| = when () {
             Boolean(true) ->  {
-                Q|ListA.Companion|.R|/ListA.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))
+                <collectionLiteralCall>(Int(42))
             }
             else ->  {
                 Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>()
