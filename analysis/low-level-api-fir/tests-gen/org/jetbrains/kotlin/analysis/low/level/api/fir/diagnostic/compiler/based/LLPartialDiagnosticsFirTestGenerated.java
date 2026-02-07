@@ -825,6 +825,18 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
     }
 
     @Test
+    @TestMetadata("typeArgsInQualifiersInPackages.kt")
+    public void testTypeArgsInQualifiersInPackages() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/typeArgsInQualifiersInPackages.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgsInTypeRefsInPackages.kt")
+    public void testTypeArgsInTypeRefsInPackages() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/typeArgsInTypeRefsInPackages.kt");
+    }
+
+    @Test
     @TestMetadata("typeFromGetter.kt")
     public void testTypeFromGetter() {
       runTest("compiler/fir/analysis-tests/testData/resolve/typeFromGetter.kt");
