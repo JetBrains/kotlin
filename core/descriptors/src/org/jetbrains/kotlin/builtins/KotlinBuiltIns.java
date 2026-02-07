@@ -88,11 +88,7 @@ public abstract class KotlinBuiltIns {
         this.builtInClassesByName = storageManager.createMemoizedFunction(new Function1<Name, ClassDescriptor>() {
             @Override
             public ClassDescriptor invoke(Name name) {
-                if(name.toString().equals("Function1")) {
-                    System.out.println("Reached built-ins module");
-                }
-                MemberScope bultinsPackage = getBuiltInsPackageScope();
-                ClassifierDescriptor classifier = bultinsPackage.getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS);
+                ClassifierDescriptor classifier = getBuiltInsPackageScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS);
                 if (classifier == null) {
                     throw new AssertionError("Built-in class " + BUILT_INS_PACKAGE_FQ_NAME.child(name) + " is not found");
                 }

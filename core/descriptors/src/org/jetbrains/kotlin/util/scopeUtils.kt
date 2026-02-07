@@ -90,12 +90,7 @@ fun listOfNonEmptyScopes(scopes: Iterable<MemberScope?>): SmartList<MemberScope>
 inline fun <Scope, T : ClassifierDescriptor> getFirstClassifierDiscriminateHeaders(scopes: Array<Scope>, callback: (Scope) -> T?): T? {
     // NOTE: This is performance-sensitive; please don't replace with map().firstOrNull()
     var result: T? = null
-    var index: Int = 0
     for (scope in scopes) {
-        index++
-        if (index == 93) {
-            println("95")
-        }
         val newResult = callback(scope)
         if (newResult != null) {
             if (newResult is ClassifierDescriptorWithTypeParameters && newResult.isExpect) {
