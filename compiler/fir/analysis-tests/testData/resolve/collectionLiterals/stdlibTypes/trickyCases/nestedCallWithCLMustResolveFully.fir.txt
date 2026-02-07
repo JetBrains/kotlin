@@ -1,0 +1,25 @@
+FILE: nestedCallWithCLMustResolveFully.kt
+    public final fun <T, R> myRun(x: R|T|, y: R|T|, b: R|(T) -> R|): R|R| {
+        ^myRun R|kotlin/TODO|()
+    }
+    public final fun <T : R|kotlin/collections/Set<*>|, R> dubRun(x: R|T|, y: R|T|, b: R|(T) -> R|): R|R| {
+        ^dubRun R|kotlin/TODO|()
+    }
+    public final fun foo(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun foo(x: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        <Ambiguity: foo, [/foo, /foo]>#(R|/myRun|<R|kotlin/collections/Set<kotlin/Int>|, R|kotlin/String|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))), R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(4), Int(5), Int(6))), <L> = myRun@fun <anonymous>(it: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/String| <inline=NoInline>  {
+            ^ String()
+        }
+        ))
+        <Ambiguity: foo, [/foo, /foo]>#(R|/dubRun|<R|kotlin/collections/Set<kotlin/Int>|, R|kotlin/Int|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(vararg(Int(4), Int(5), Int(6))), <L> = dubRun@fun <anonymous>(it: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(42)
+        }
+        ))
+        <Ambiguity: foo, [/foo, /foo]>#(R|/dubRun|<R|kotlin/collections/MutableSet<kotlin/Int>|, R|kotlin/Int|>(<collectionLiteralCall>(Int(1), Int(2), Int(3)), R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(vararg(Int(4), Int(5), Int(6))), <L> = dubRun@fun <anonymous>(it: R|kotlin/collections/MutableSet<kotlin/Int>|): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(42)
+        }
+        ))
+    }

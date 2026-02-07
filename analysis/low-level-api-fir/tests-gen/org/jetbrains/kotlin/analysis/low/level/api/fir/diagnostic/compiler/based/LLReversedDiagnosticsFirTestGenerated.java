@@ -2684,6 +2684,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
           }
 
           @Test
+          @TestMetadata("nestedCallWithCLMustResolveFully.kt")
+          public void testNestedCallWithCLMustResolveFully() {
+            runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/trickyCases/nestedCallWithCLMustResolveFully.kt");
+          }
+
+          @Test
           @TestMetadata("orderOfFixationMatters.kt")
           public void testOrderOfFixationMatters() {
             runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/trickyCases/orderOfFixationMatters.kt");
