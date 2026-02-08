@@ -1,11 +1,9 @@
-/*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
 package org.jetbrains.kotlin.cli.common.arguments
 
+import com.intellij.util.xmlb.annotations.Transient
+
 import org.jetbrains.kotlin.config.*
+import java.io.Serializable
 
 class K2JKlibCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -262,6 +260,8 @@ Modes:
 
     override fun copyOf(): Freezable = TODO() // copyK2JKlibCompilerArguments(this, K2JKlibCompilerArguments())
 
+    @get:Transient
+    @field:kotlin.jvm.Transient
     override val configurator: CommonCompilerArgumentsConfigurator = K2JKlibCompilerArgumentsConfigurator()
 
 }

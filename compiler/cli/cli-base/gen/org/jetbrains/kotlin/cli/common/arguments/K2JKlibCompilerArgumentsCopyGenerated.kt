@@ -12,11 +12,25 @@ fun copyK2JKlibCompilerArguments(from: K2JKlibCompilerArguments, to: K2JKlibComp
 
     to.classpath = from.classpath
     to.destination = from.destination
+    to.enhanceTypeParameterTypesToDefNotNull = from.enhanceTypeParameterTypesToDefNotNull
+    to.expectBuiltinsAsPartOfStdlib = from.expectBuiltinsAsPartOfStdlib
+    to.friendModules = from.friendModules
     to.friendPaths = from.friendPaths?.copyOf()
+    to.inheritMultifileParts = from.inheritMultifileParts
+    to.jspecifyAnnotations = from.jspecifyAnnotations
+    to.jsr305 = from.jsr305?.copyOf()
+    to.jvmDefault = from.jvmDefault
     to.klibLibraries = from.klibLibraries
     to.moduleName = from.moduleName
+    to.noJdk = from.noJdk
     to.noReflect = from.noReflect
     to.noStdlib = from.noStdlib
+    to.nullabilityAnnotations = from.nullabilityAnnotations?.copyOf()
+    to.outputBuiltinsMetadata = from.outputBuiltinsMetadata
+    to.produce = from.produce
+    to.supportCompatqualCheckerFrameworkAnnotations = from.supportCompatqualCheckerFrameworkAnnotations
+    to.typeEnhancementImprovementsInStrictMode = from.typeEnhancementImprovementsInStrictMode
+    to.valueClasses = from.valueClasses
 
     return to
 }
