@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.cli.jvm.configureJdkHomeFromSystemProperty
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MODULE_NAME
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
@@ -40,7 +40,11 @@ import org.jetbrains.kotlin.ir.backend.jklib.JKlibModuleSerializer
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
+import org.jetbrains.kotlin.library.writer.KlibWriter
+import org.jetbrains.kotlin.library.writer.includeIr
+import org.jetbrains.kotlin.library.writer.includeMetadata
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
@@ -71,6 +75,7 @@ val JKLIB_OUTPUT_DESTINATION = CompilerConfigurationKey.create<String>("jklib ou
 object JKlibConfigurationPhase : PipelinePhase<ArgumentsPipelineArtifact<K2JKlibCompilerArguments>, ConfigurationPipelineArtifact>(
     name = "JKlibConfigurationPhase"
 ) {
+@OptIn(CompilerConfiguration.Internals::class)
     override fun executePhase(input: ArgumentsPipelineArtifact<K2JKlibCompilerArguments>): ConfigurationPipelineArtifact? {
         val arguments = input.arguments
         val configuration = CompilerConfiguration()
@@ -166,7 +171,7 @@ object JKlibConfigurationPhase : PipelinePhase<ArgumentsPipelineArtifact<K2JKlib
 
         return ConfigurationPipelineArtifact(
             configuration,
-            DiagnosticReporterFactory.createPendingReporter(),
+            DiagnosticsCollectorImpl(),
             rootDisposable
         )
     }
@@ -196,7 +201,7 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
 
         val klibFiles = configuration.getList(JVMConfigurationKeys.KLIB_PATHS)
         val resolvedLibraries = klibFiles.map { KotlinResolvedLibraryImpl(resolveSingleFileKlib(KFile(it), messageCollector)) }
-        val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
+        val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val ltFiles = groupedSources.let { it.commonSources + it.platformSources }.toList()
 
         val moduleName = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
@@ -275,7 +280,7 @@ object JKlibFir2IrPipelinePhase : PipelinePhase<JKlibFrontendPipelineArtifact, J
         val rootDisposable = input.rootDisposable
 
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
-        val irGenerationExtensions = IrGenerationExtension.getInstances(projectEnvironment.project)
+        val irGenerationExtensions = configuration.getCompilerExtensions(IrGenerationExtension)
         
         val fir2IrResult = firResult.convertToIrAndActualizeForJvm(
             fir2IrExtensions,
@@ -362,18 +367,15 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
                 metadataVersion = configuration.klibMetadataVersionOrDefault(),
             )
 
-            buildKotlinLibrary(
-                ir = serializerOutput.serializedIr,
-                metadata = serializerOutput.serializedMetadata ?: error("expected serialized metadata"),
-                versions = versions,
-                output = destination.absolutePath,
-                moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-                nopack = false,
-                manifestProperties = null,
-                // Check arguments for builtins platform? We don't have arguments here.
-                builtInsPlatform = BuiltInsPlatform.COMMON, // Defaulting to Common for now or JVM? 
-                nativeTargets = emptyList(),
-            )
+            KlibWriter {
+                manifest {
+                    moduleName(configuration[CommonConfigurationKeys.MODULE_NAME]!!)
+                    versions(versions)
+                    platformAndTargets(BuiltInsPlatform.COMMON, emptyList())
+                }
+                includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
+                includeIr(serializerOutput.serializedIr)
+            }.writeTo(destination.absolutePath)
         } catch (e: CompilationException) {
             val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             messageCollector.report(
