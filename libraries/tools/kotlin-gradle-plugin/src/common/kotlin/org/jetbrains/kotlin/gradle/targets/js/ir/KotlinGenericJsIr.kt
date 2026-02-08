@@ -20,6 +20,10 @@ internal constructor(
 ) :
     KotlinJsIrSubTarget(target, "generic"),
     KotlinJsGenericDsl {
+
+    override val testTaskDescription: String
+        get() = "Run all ${target.name} tests in a generic environment using the builtin test framework"
+
     @ExperimentalMainFunctionArgumentsDsl
     override fun passProcessArgvToMainFunction() {
         target.passAsArgumentToMainFunction("process.argv")
