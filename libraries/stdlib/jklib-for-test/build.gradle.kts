@@ -290,7 +290,6 @@ fun JavaExec.configureJklibCompilation(
             "-Xcompile-builtins-as-part-of-stdlib",
             "-Xreturn-value-checker=full",
             "-Xcommon-sources=${(commonSourceFiles).joinToString(",")}",
-            "-Xoutput-builtins-metadata",
         )
         
         
