@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_NOT_CALLED: testLabelInline
 // CHECK_LABELS_COUNT: function=testLabel name=loop count=1

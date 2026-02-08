@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JS_IR, JS_IR_ES6
 // MODULE: lib
 // FILE: lib.kt
 

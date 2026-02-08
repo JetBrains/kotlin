@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_FUNCTION_EXISTS: runNoinline
 // CHECK_NOT_CALLED: runNoinline

@@ -1,4 +1,7 @@
+// IGNORE_BACKEND: JVM_IR
+// ^^^ Local inline functions are not yet supported.
 package foo
+import kotlin.test.*
 
 fun multiplyBy(a: Int): (Int) -> Int {
     inline fun multiply(b: Int): Int = a * b

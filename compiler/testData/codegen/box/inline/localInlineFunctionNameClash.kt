@@ -1,4 +1,7 @@
+// IGNORE_BACKEND: JVM_IR
+// ^^^ Local inline functions are not yet supported.
 package foo
+import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: myAdd
 

@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 class X
 class Y

@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JS_IR, JS_IR_ES6
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: test

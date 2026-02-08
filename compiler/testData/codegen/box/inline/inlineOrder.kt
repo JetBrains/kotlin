@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_BREAKS_COUNT: function=declaredBefore count=0
 // CHECK_LABELS_COUNT: function=declaredBefore name=$l$block count=0

@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 inline fun <reified T> isInstance(x: Any?): Boolean =
     x is T

@@ -1,4 +1,4 @@
-
+// TARGET_BACKEND: JS_IR, JS_IR_ES6
 import kotlin.js.Console
 
 external val consoleAccessCounter: Int

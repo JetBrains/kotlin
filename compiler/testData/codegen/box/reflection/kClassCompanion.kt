@@ -1,3 +1,5 @@
+import kotlin.test.*
+
 class A {
     companion object {
         fun getSimpleName() = this::class.simpleName

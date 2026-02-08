@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JS_IR, JS_IR_ES6
 package foo
 
 inline fun assertRegex(regexFactory: () -> dynamic, expectedPattern: String, expectedFlags: String, testString: String) {

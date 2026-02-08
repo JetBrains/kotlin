@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JS_IR, JS_IR_ES6
 private fun `+`(a: Int, b: Int) = a + b
 
 @JsName("minus")

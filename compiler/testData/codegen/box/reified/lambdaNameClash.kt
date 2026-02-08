@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_CALLED: doRun
 // CHECK_NOT_CALLED: test

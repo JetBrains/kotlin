@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 inline fun <T> buzz(x: T): T {
     log("buzz($x)")

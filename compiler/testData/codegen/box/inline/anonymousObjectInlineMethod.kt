@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_BREAKS_COUNT: function=add count=0
 // CHECK_LABELS_COUNT: function=add name=$l$block count=0

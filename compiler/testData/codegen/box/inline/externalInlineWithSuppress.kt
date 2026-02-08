@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JS_IR, JS_IR_ES6
 // FILE: main.kt
 @file:Suppress(
     "NESTED_CLASS_IN_EXTERNAL_INTERFACE",

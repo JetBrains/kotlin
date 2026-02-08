@@ -1,6 +1,7 @@
 // KJS_WITH_FULL_RUNTIME
 // See KT-11711
 package foo
+import kotlin.test.*
 
 inline fun <T> buzz(x: T): T {
     log("buzz($x)")

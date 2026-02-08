@@ -1,5 +1,6 @@
 // See KT-8005
 package foo
+import kotlin.test.*
 
 private inline fun bar(predicate: (Char) -> Boolean): Int {
     var i = 0

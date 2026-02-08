@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: factAbsNoInline1 except=imul;Unit_getInstance
 

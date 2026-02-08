@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 inline fun bar(f: () -> Int): Array<Int> = arrayOf(f())
 

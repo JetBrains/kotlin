@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: test1 except=imul
 // CHECK_CONTAINS_NO_CALLS: test2 except=imul

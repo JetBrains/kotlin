@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 var flag = false
 fun toggle(): Boolean {

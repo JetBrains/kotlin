@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_NOT_CALLED: component1
 // CHECK_NOT_CALLED: component2

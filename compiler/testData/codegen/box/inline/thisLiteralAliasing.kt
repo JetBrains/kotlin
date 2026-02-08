@@ -1,4 +1,7 @@
+// IGNORE_BACKEND: JVM_IR
+// ^^^ CIRCULAR REFERENCE: java.lang.AssertionError: D8 dexing warning: Ignoring an implementation of the method `void foo.A.setParam(int)` because it has multiple definitions]
 package foo
+import kotlin.test.*
 
 class A() {
     public var param: Int = 0

@@ -1,4 +1,7 @@
+// IGNORE_BACKEND: JVM_IR
+// ^^^ CIRCULAR REFERENCE: java.lang.AssertionError: D8 dexing warning: Ignoring an implementation of the method `int foo.IntPair.getFst()` because it has multiple definitions
 package foo
+import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: myAdd
 

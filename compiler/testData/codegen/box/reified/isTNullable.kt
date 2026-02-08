@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_NOT_CALLED: isTypeOfOrNull
 // CHECK_NULLS_COUNT: function=box count=10

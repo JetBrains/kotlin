@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // FUNCTION_CALLED_TIMES: abs count=1
 // ^ This single call is in the standard library, not here

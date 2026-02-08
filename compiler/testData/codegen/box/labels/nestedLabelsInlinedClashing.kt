@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: test except=Unit_getInstance
 // CHECK_LABELS_COUNT: function=test name=loop count=1

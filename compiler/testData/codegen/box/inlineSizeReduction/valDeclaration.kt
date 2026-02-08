@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: test
 // CHECK_VARS_COUNT: function=test count=2

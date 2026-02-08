@@ -1,5 +1,6 @@
 // See KT-7043, KT-11711
 package foo
+import kotlin.test.*
 
 inline fun foo(b: Any) {
     val t = aa[0]

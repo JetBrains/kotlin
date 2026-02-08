@@ -1,5 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
 package foo
+import kotlin.test.*
 
 // CHECK_CALLED: doFilter
 // CHECK_NOT_CALLED: filterIsInstance

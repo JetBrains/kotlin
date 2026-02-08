@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 data class IntPair(public var fst: Int, public var snd: Int)
 

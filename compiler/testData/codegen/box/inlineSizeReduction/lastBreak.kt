@@ -1,5 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
 package foo
+import kotlin.test.*
 
 // CHECK_NOT_CALLED: f1
 // CHECK_NOT_CALLED: f2

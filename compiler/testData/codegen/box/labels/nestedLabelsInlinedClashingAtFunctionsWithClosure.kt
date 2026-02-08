@@ -1,4 +1,7 @@
+// IGNORE_BACKEND: JVM_IR
+// Local inline functions are not yet supported
 package foo
+import kotlin.test.*
 
 // CHECK_LABELS_COUNT: function=test name=loop count=1
 // CHECK_LABELS_COUNT: function=test name=loop_0 count=1

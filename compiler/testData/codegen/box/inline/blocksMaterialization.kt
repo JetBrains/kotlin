@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 inline fun dangerCall() {
     assertEquals("A", "A")

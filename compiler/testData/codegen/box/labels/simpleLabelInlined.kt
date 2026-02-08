@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_NOT_CALLED: testBreak
 // CHECK_NOT_CALLED: testContinue

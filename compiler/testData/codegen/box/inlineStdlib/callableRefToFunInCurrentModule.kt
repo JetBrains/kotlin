@@ -1,5 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
 package foo
+import kotlin.test.*
 
 internal inline fun even(x: Int) = x % 2 == 0
 

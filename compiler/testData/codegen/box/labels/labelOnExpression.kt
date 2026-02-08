@@ -2,6 +2,7 @@
 // CHECK_LABELS_COUNT: function=test2 count=0
 
 package foo
+import kotlin.test.*
 
 fun <R> myRun(f: () -> R) = f()
 

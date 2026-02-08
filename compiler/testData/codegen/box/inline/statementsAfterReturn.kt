@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 data class State(public var value: Int = 10)
 

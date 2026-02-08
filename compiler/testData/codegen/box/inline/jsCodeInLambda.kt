@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JS_IR, JS_IR_ES6
 package foo
 
 inline fun foo(action: (x: Int, y: Int) -> Int): Int = action(1, 2)

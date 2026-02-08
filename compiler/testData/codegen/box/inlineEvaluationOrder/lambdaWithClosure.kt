@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 /* This tests checks, that lambda fabric invocation is not extracted.
 

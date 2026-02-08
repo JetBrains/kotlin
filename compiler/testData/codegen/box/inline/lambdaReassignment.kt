@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 inline fun run(func: () -> Int): Int {
     return func()

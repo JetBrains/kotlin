@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 inline fun block(p: () -> Int) = p()
 

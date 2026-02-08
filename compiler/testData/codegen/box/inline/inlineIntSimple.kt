@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: doNothing1
 // CHECK_CONTAINS_NO_CALLS: doNothing2

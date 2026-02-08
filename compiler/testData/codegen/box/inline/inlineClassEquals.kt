@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JS_IR, JS_IR_ES6
 // The test checks an optimization which is implemented only for JS_IR backend
 
 @file:Suppress("RESERVED_MEMBER_INSIDE_VALUE_CLASS")

@@ -1,4 +1,5 @@
 package foo
+import kotlin.test.*
 
 // CHECK_FUNCTION_EXISTS: multiplyBy2$lambda
 // HAS_NO_CAPTURED_VARS: function=multiplyBy2 except=multiplyBy2$lambda
