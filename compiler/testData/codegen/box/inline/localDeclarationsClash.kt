@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR, WASM_JS
 // FILE: 1.kt
 
 package o

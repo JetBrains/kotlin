@@ -6,6 +6,18 @@ inline fun foo(b: Any) {
     val a = b
 }
 
+private var LOG = ""
+
+fun log(string: String) {
+    LOG += "$string;"
+}
+
+fun pullLog(): String {
+    val string = LOG
+    LOG = ""
+    return string
+}
+
 val a: Array<String>
     get() {
         log("a.get")

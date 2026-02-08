@@ -1,5 +1,8 @@
 package foo
 
+inline fun <reified T> isInstance(x: Any?): Boolean =
+    x is T
+
 // CHECK_NOT_CALLED: isInstance
 
 fun box(): String {

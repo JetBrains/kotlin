@@ -23,6 +23,30 @@ package foo
    Thus, we need to be sure, that foo$() is not extracted to some temporary var.
  */
 
+inline fun <T> buzz(x: T): T {
+    log("buzz($x)")
+    return x
+}
+
+// CHECK_NOT_CALLED: buzz
+
+private var LOG = ""
+
+fun log(string: String) {
+    LOG += "$string;"
+}
+
+fun pullLog(): String {
+    val string = LOG
+    LOG = ""
+    return string
+}
+
+fun <T> fizz(x: T): T {
+    log("fizz($x)")
+    return x
+}
+
 // CHECK_NOT_CALLED: max_0
 // CHECK_NOT_CALLED: box$f_0
 // CHECK_NOT_CALLED: box$f_1

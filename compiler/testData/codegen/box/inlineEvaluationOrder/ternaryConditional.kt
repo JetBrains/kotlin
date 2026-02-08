@@ -1,5 +1,29 @@
 package foo
 
+inline fun <T> buzz(x: T): T {
+    log("buzz($x)")
+    return x
+}
+
+// CHECK_NOT_CALLED: buzz
+
+private var LOG = ""
+
+fun log(string: String) {
+    LOG += "$string;"
+}
+
+fun pullLog(): String {
+    val string = LOG
+    LOG = ""
+    return string
+}
+
+fun <T> fizz(x: T): T {
+    log("fizz($x)")
+    return x
+}
+
 // CHECK_NOT_CALLED: bar_vux9f0$
 
 inline fun bar(n: Int, x: Int) = if (n <= 5) x else 10
