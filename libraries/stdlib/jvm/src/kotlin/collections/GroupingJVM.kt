@@ -19,9 +19,10 @@ package kotlin.collections
 @SinceKotlin("1.1")
 public actual fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int> =
 // fold(0) { acc, e -> acc + 1 } optimized for boxing
-    foldTo(destination = mutableMapOf(),
-           initialValueSelector = { _, _ -> kotlin.jvm.internal.Ref.IntRef() },
-           operation = { _, acc, _ -> acc.apply { element += 1 } })
+    foldTo(
+        destination = mutableMapOf(),
+        initialValueSelector = { _, _ -> kotlin.jvm.internal.Ref.IntRef() },
+        operation = { _, acc, _ -> acc.apply { element += 1 } })
         .mapValuesInPlace { it.value.element }
 
 /*
