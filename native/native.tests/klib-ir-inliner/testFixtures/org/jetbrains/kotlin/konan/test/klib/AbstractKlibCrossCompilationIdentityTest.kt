@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.konan.test.klib
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
-import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
+import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
+import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
+import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
 import org.jetbrains.kotlin.konan.test.blackbox.support.RegularKotlinNativeClassLoader
 import org.jetbrains.kotlin.konan.test.blackbox.support.copyNativeHomeProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpIr
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
-import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -116,26 +116,26 @@ open class AbstractFirKlibCrossCompilationIdentityTestBase(val irFileSuffix: Str
         )
         useAdditionalService(::LibraryProvider)
 
-        facadeStep(::FirFrontendFacade)
+        facadeStep(::FirCliNativeFacade)
         firHandlersStep {
             useHandlers(::NoFirCompilationErrorsHandler)
             useHandlers(::FirDiagnosticsHandler)
         }
-        facadeStep(::Fir2IrNativeResultsConverter)
+        facadeStep(::Fir2IrCliNativeFacade)
         irHandlersStep {
             useHandlers(
                 ::IrDiagnosticsHandler,
                 ::NoIrCompilationErrorsHandler,
             )
         }
-        facadeStep(::NativePreSerializationLoweringFacade)
+        facadeStep(::NativePreSerializationLoweringCliFacade)
         loweredIrHandlersStep{
             useHandlers(
                 ::IrDiagnosticsHandler,
                 ::NoIrCompilationErrorsHandler,
             )
         }
-        facadeStep(::NativeKlibSerializerFacade)
+        facadeStep(::KlibSerializerNativeCliFacade)
         klibArtifactsHandlersStep {
             useHandlers(::NativeKlibCrossCompilationIdentityHandler.bind(irFileSuffix))
         }

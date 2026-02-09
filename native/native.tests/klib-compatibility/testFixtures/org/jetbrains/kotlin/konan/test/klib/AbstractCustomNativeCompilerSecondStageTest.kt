@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
-import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
+import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
+import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
+import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCoreTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
-import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.konan.test.handlers.NativeBoxRunner
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.test.FirParser
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_MUL
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.API_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -66,11 +66,11 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
         )
         commonConfigurationForNativeFirstStageUpToSerialization(
             FrontendKinds.FIR,
-            ::FirFrontendFacade,
-            ::Fir2IrNativeResultsConverter,
-            ::NativePreSerializationLoweringFacade,
+            ::FirCliNativeFacade,
+            ::Fir2IrCliNativeFacade,
+            ::NativePreSerializationLoweringCliFacade,
         )
-        facadeStep(::NativeKlibSerializerFacade)
+        facadeStep(::KlibSerializerNativeCliFacade)
         klibArtifactsHandlersStep {
             useHandlers(::KlibAbiDumpHandler)
         }
