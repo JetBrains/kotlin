@@ -35744,6 +35744,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("mappingWithWrongNullabilityLegacy.kt")
+      public void testMappingWithWrongNullabilityLegacy() {
+        runTest("compiler/testData/diagnostics/tests/platformTypes/mappingWithWrongNullabilityLegacy.kt");
+      }
+
+      @Test
       @TestMetadata("mappingWithWrongNullabilityWithoutWrtHack.kt")
       public void testMappingWithWrongNullabilityWithoutWrtHack() {
         runTest("compiler/testData/diagnostics/tests/platformTypes/mappingWithWrongNullabilityWithoutWrtHack.kt");

@@ -550,7 +550,6 @@ enum class LanguageFeature(
     // NB: Currently, leads to regression KT-82132
     DisableSimplificationOfFlexibleUpperConstraintWithDnnLowerBound(sinceVersion = null, "KT-52283"),
 
-    DontMakeExplicitJavaTypeArgumentsFlexible(sinceVersion = null, "KTLC-284"),
     PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621"),
     DiscriminateSuspendInOverloadResolution(sinceVersion = null, "KT-23610"), // Postponed because of KT-82869
 

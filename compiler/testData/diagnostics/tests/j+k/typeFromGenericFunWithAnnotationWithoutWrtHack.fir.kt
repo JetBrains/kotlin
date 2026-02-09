@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +DontMakeExplicitJavaTypeArgumentsFlexible +PreciseSimplificationToFlexibleLowerConstraint
+// LANGUAGE: +PreciseSimplificationToFlexibleLowerConstraint
 
 // FILE: GenericFunWithAnnotation.java
 import org.jetbrains.annotations.NotNull;

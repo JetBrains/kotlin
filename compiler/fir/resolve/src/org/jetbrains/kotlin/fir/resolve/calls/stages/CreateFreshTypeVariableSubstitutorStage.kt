@@ -139,7 +139,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
      * }
      * ```
      *
-     * TODO: Get rid of this function once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+     * See also KDoc for [shouldExplicitArgumentBeFlexibleForGivenParameter] below.
      *
      * @return type which is chosen for EQUALS constraint
      */
@@ -167,7 +167,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                     isTrivial = false,
                 )
             }.run {
-                if (LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible.isEnabled()) {
+                if (LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible.isEnabled()) {
                     return@run this
                 }
                 if (!type.isMarkedNullable) {
@@ -176,7 +176,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 withAttributes(
                     attributes.add(
                         ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
-                            type, LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible
+                            type, relevantFeature = LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible
                         )
                     )
                 )
@@ -202,9 +202,6 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     context(context: ResolutionContext)
     private fun ConeKotlinType.shouldExplicitArgumentBeFlexibleForGivenParameter(typeParameter: FirTypeParameterRef): Boolean {
         val languageVersionSettings = context.session.languageVersionSettings
-        if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)) {
-            return false
-        }
         if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible) &&
             with(context.typeContext) { isNullableType() }
         ) {

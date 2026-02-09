@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.expressions.explicitTypeArgumentIfMadeFlexibleSynthetically
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -214,17 +213,9 @@ private fun reportUpperBoundViolationWarningIfNecessary(
 ): Boolean {
     val additionalUpperBound = additionalUpperBoundsProvider.getAdditionalUpperBound(upperBound) ?: return false
 
-    /**
-     * While [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible]
-     * is here, to obtain original explicit type arguments, we need to look into special attribute.
-     * TODO: Get rid of this unwrapping once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
-     */
-    val properArgumentType =
-        argumentType.attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.coneType ?: argumentType
-
     if (!AbstractTypeChecker.isSubtypeOf(
             typeSystemContext,
-            properArgumentType,
+            argumentType,
             additionalUpperBound,
             stubTypesEqualToAnything = true
         )
@@ -233,7 +224,7 @@ private fun reportUpperBoundViolationWarningIfNecessary(
             isReportExpansionError && argumentTypeRef == null -> additionalUpperBoundsProvider.diagnosticForTypeAlias
             else -> additionalUpperBoundsProvider.diagnostic
         }
-        reporter.reportOn(argumentSource, factory, upperBound, properArgumentType)
+        reporter.reportOn(argumentSource, factory, upperBound, argumentType)
         return true
     }
     return false

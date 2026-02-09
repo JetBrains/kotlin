@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_JAVAC
-// LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated +DontMakeExplicitJavaTypeArgumentsFlexible +PreciseSimplificationToFlexibleLowerConstraint
+// LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated +PreciseSimplificationToFlexibleLowerConstraint
 // FILE: SLRUMap.java
 
 import org.jetbrains.annotations.NotNull;

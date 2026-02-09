@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +DontMakeExplicitJavaTypeArgumentsFlexible
 
 // FILE: J.java
 public interface J<T> {
