@@ -159,8 +159,10 @@ internal class JvmCompilationOperationImpl private constructor(
     }
 
     override fun executeCancellableImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
-        val loggerAdapter =
-            logger?.let { KotlinLoggerMessageCollectorAdapter(it) } ?: KotlinLoggerMessageCollectorAdapter(DefaultKotlinLogger)
+        val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
+        val kotlinLogger = logger ?: DefaultKotlinLogger
+        val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer)
+
         return when (executionPolicy) {
             InProcessExecutionPolicyImpl -> {
                 compileInProcess(loggerAdapter)
@@ -523,12 +525,14 @@ internal class JvmCompilationOperationImpl private constructor(
             Option("COMPILER_ARGUMENTS_LOG_LEVEL", default = CompilerArgumentsLogLevel.DEBUG)
 
         val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", false)
+
+        val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> = Option("COMPILER_MESSAGE_RENDERER", default = DefaultCompilerMessageRenderer)
     }
 }
 
 private class BtaCompilerServicesWithResultsFacade(
     loggerAdapter: KotlinLoggerMessageCollectorAdapter,
-    val lookupTracker: CompilerLookupTracker? = null
+    val lookupTracker: CompilerLookupTracker? = null,
 ) :
     BasicCompilerServicesWithResultsFacadeServer(loggerAdapter) {
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {

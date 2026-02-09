@@ -9,12 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
-import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
-import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
-import org.jetbrains.kotlin.buildtools.internal.DefaultKotlinLogger
-import org.jetbrains.kotlin.buildtools.internal.KotlinLoggerMessageCollectorAdapter
-import org.jetbrains.kotlin.buildtools.internal.Options
-import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
+import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import java.nio.file.Path
@@ -38,7 +33,7 @@ internal class DiscoverScriptExtensionsOperationImpl private constructor(
         val definitions = ScriptDefinitionsFromClasspathDiscoverySource(
             classpath.map(Path::toFile),
             defaultJvmScriptingHostConfiguration,
-            KotlinLoggerMessageCollectorAdapter(logger ?: DefaultKotlinLogger).reporter
+            KotlinLoggerMessageCollectorAdapter(logger ?: DefaultKotlinLogger, DefaultCompilerMessageRenderer).reporter
         ).definitions
 
         return definitions.mapTo(arrayListOf()) { it.fileExtension }

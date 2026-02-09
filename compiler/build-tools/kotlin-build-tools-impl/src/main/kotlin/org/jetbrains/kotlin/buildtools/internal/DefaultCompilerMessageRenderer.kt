@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import java.io.File
 
-internal object KotlinMessageRenderer : MessageRenderer {
+internal object DefaultCompilerMessageRenderer : CompilerMessageRenderer {
     // This is a temporary solution specifically for the Kotlin Playground and should not be used by anyone else.
     // It should be deleted after KT-80963 is implemented and the Kotlin Playground migrates to this new API.
     private val extendedLocations: Boolean by lazy(LazyThreadSafetyMode.NONE) {
         java.lang.Boolean.getBoolean("org.jetbrains.kotlin.buildtools.logger.extendedLocation")
     }
 
-    override fun render(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?): String {
+    override fun render(
+        severity: CompilerMessageRenderer.Severity,
+        message: String,
+        location: CompilerMessageRenderer.SourceLocation?,
+    ): String {
         return buildString {
             location?.apply {
                 val fileUri = File(path).toPath().toUri()
@@ -34,12 +36,4 @@ internal object KotlinMessageRenderer : MessageRenderer {
             append(message)
         }
     }
-
-    override fun renderPreamble() = ""
-
-    override fun renderUsage(usage: String) = usage
-
-    override fun renderConclusion() = ""
-
-    override fun getName() = "BuildToolsApi"
 }
