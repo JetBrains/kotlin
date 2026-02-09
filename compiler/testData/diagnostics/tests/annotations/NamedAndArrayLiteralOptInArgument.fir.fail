@@ -1,6 +1,0 @@
-Caused by: java.lang.IndexOutOfBoundsException: Index: 1, Size: 1
-	at java.util.ArrayList.rangeCheck(ArrayList.java:659)
-	at java.util.ArrayList.get(ArrayList.java:435)
-	at org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.getSourceForIsMarkerDiagnostic(FirOptInUsageBaseChecker.kt:430)
-	at org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInAnnotationCallChecker.check(FirOptInAnnotationCallChecker.kt:50)
-	at org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInAnnotationCallChecker.check(FirOptInAnnotationCallChecker.kt:34)

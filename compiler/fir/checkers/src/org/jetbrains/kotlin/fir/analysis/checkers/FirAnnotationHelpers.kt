@@ -88,6 +88,12 @@ fun FirExpression.extractClassesFromArgument(session: FirSession): List<FirRegul
     }
 }
 
+fun FirExpression.extractClassesAndSourcesFromArgument(session: FirSession): List<Pair<FirRegularClassSymbol, KtSourceElement?>> {
+    return unwrapAndFlattenArgument(flattenArrays = true).mapNotNull {
+        it.extractClassFromArgument(session)?.to(it.source)
+    }
+}
+
 fun FirExpression.extractClassFromArgument(session: FirSession): FirRegularClassSymbol? {
     if (this !is FirGetClassCall) return null
     return when (val argument = argument) {
