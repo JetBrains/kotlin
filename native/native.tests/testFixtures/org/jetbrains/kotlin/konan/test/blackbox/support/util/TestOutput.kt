@@ -47,7 +47,7 @@ interface TestOutputFilter {
  *   ##teamcity[testIgnored name='two']
  *   ##teamcity[testSuiteFinished name='sample.test.SampleTestKt']
  */
-internal object TCTestOutputFilter : TestOutputFilter {
+object TCTestOutputFilter : TestOutputFilter {
     override fun filter(testOutput: String): TestOutputFilter.FilteredOutput {
         val callback = TCTestMessageParserCallback()
         ServiceMessagesParser().parse(testOutput, callback)

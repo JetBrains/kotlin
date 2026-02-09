@@ -15,12 +15,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestRunnerType
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.test.blackbox.support.parseTestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.test.backend.handlers.NativeBinaryArtifactHandler
@@ -52,9 +54,13 @@ class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(
     }
 
     private fun createTestRun(executable: File): TestRun {
+        val testKind = parseTestKind(testServices.moduleStructure.allDirectives) ?: testServices.testRunSettings.get<TestKind>()
         val checks = TestRunChecks(
             executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(30.seconds),
-            testFiltering = TestRunCheck.TestFiltering(TestOutputFilter.NO_FILTERING),
+            testFiltering = TestRunCheck.TestFiltering(
+                if (testKind in listOf(TestKind.REGULAR, TestKind.STANDALONE)) TCTestOutputFilter
+                else TestOutputFilter.NO_FILTERING
+            ),
             exitCodeCheck = TestRunCheck.ExitCode.Expected(0),
             outputDataFile = null,
             outputMatcher = null,
