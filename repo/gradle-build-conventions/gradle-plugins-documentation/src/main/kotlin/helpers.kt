@@ -1,5 +1,7 @@
 import gradle.GradlePluginVariant
 import gradle.commonSourceSetName
+import gradle.kotlin.dsl.accessors._5b414b80c33e971da78124b484e96576.dokka
+import gradle.kotlin.dsl.accessors._5b414b80c33e971da78124b484e96576.dokkaGeneratePublicationHtml
 import gradle.publishGradlePluginsJavadoc
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
@@ -18,18 +20,15 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
-import org.jetbrains.dokka.gradle.DokkaTask
-import org.jetbrains.dokka.gradle.DokkaTaskPartial
-import org.jetbrains.dokka.gradle.GradleExternalDocumentationLinkBuilder
+import org.jetbrains.dokka.gradle.DokkaExtension
+import org.jetbrains.dokka.gradle.engine.parameters.DokkaExternalDocumentationLinkSpec
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import java.io.File
-import java.net.URI
 
 // Workaround for https://github.com/Kotlin/dokka/issues/2097
 // Gradle 7.6 javadoc does not have published 'package-list' file
-internal fun GradleExternalDocumentationLinkBuilder.addWorkaroundForElementList(pluginVariant: GradlePluginVariant) {
+internal fun DokkaExternalDocumentationLinkSpec.addWorkaroundForElementList(pluginVariant: GradlePluginVariant) {
     if (pluginVariant == GradlePluginVariant.GRADLE_MIN ||
         pluginVariant == GradlePluginVariant.GRADLE_80 ||
         pluginVariant == GradlePluginVariant.GRADLE_81 ||
@@ -39,62 +38,39 @@ internal fun GradleExternalDocumentationLinkBuilder.addWorkaroundForElementList(
         pluginVariant == GradlePluginVariant.GRADLE_88 ||
         pluginVariant == GradlePluginVariant.GRADLE_811
     ) {
-        packageListUrl.set(URI("${pluginVariant.gradleApiJavadocUrl}element-list").toURL())
+        packageListUrl("${pluginVariant.gradleApiJavadocUrl}element-list")
     }
 }
 
-internal fun Project.generateJavadocForPluginVariant(gradlePluginVariant: GradlePluginVariant) {
+fun Project.generateJavadocForPluginVariant(gradlePluginVariant: GradlePluginVariant) {
+    if (!kotlinBuildProperties.publishGradlePluginsJavadoc) return
     val javaExtension = extensions.getByType<JavaPluginExtension>()
     val commonSourceSet = javaExtension.sourceSets.getByName(commonSourceSetName)
     val variantSourceSet = javaExtension.sourceSets.getByName(gradlePluginVariant.sourceSetName)
 
-    val dokkaTaskSuffix = if (gradlePluginVariant == GradlePluginVariant.GRADLE_MIN) {
-        ""
-    } else {
-        gradlePluginVariant.sourceSetName.replaceFirstChar { it.uppercaseChar() }
-    }
-    val dokkaTaskName = "dokka${dokkaTaskSuffix}Html"
+    val dokkaExtension = project.dokka
+    val dokkaSourceSet = dokkaExtension.dokkaSourceSets.named(variantSourceSet.name)
 
-    val dokkaTask = if (tasks.names.contains(dokkaTaskName)) {
-        tasks.named<DokkaTask>(dokkaTaskName)
-    } else {
-        tasks.register<DokkaTask>(dokkaTaskName)
-    }
-
-    dokkaTask.configure {
+    dokkaSourceSet.configure {
         description = "Generates API documentation for '${variantSourceSet.name}' variant"
-        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
-
-        configureCommonDokkaConfiguration(gradlePluginVariant, commonSourceSet, variantSourceSet)
     }
+
+    dokkaExtension.configureCommonDokkaConfiguration(gradlePluginVariant, commonSourceSet, variantSourceSet)
 
     tasks.named<Jar>(variantSourceSet.javadocJarTaskName).configure {
-        from(dokkaTask.flatMap { it.outputDirectory })
+        from(tasks.dokkaGeneratePublicationHtml.flatMap { it.outputDirectory })
     }
 }
 
-internal fun Project.configureTaskForKotlinlang() {
-    if (!kotlinBuildProperties.publishGradlePluginsJavadoc) return
-
-    tasks.named<DokkaTaskPartial>("dokkaHtmlPartial").configure {
-        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
-
-        val gradlePluginVariant = GradlePluginVariant.GRADLE_MIN
-        val javaExtension = this@configureTaskForKotlinlang.extensions.getByType<JavaPluginExtension>()
-        val commonSourceSet = javaExtension.sourceSets.getByName(commonSourceSetName)
-        val variantSourceSet = javaExtension.sourceSets.getByName(gradlePluginVariant.sourceSetName)
-
-        configureCommonDokkaConfiguration(gradlePluginVariant, commonSourceSet, variantSourceSet)
-    }
-}
-
-fun AbstractDokkaLeafTask.configureCommonDokkaConfiguration(
+fun DokkaExtension.configureCommonDokkaConfiguration(
     gradlePluginVariant: GradlePluginVariant,
     commonSourceSet: SourceSet,
     variantSourceSet: SourceSet,
 ) {
-    suppressInheritedMembers.set(true)
-    suppressObviousFunctions.set(true)
+    dokkaPublications.configureEach {
+        suppressInheritedMembers.set(true)
+        suppressObviousFunctions.set(true)
+    }
 
     dokkaSourceSets.named(commonSourceSet.name) {
         suppress.set(false)
@@ -102,14 +78,11 @@ fun AbstractDokkaLeafTask.configureCommonDokkaConfiguration(
     }
 
     dokkaSourceSets.named(variantSourceSet.name) {
-        dependsOn(commonSourceSet)
         suppress.set(false)
         jdkVersion.set(8)
 
-
-        externalDocumentationLink {
-            url.set(URI(gradlePluginVariant.gradleApiJavadocUrl).toURL())
-
+        externalDocumentationLinks.register("gradleApi") {
+            url(gradlePluginVariant.gradleApiJavadocUrl)
             addWorkaroundForElementList(gradlePluginVariant)
         }
     }
@@ -171,7 +144,7 @@ internal fun Project.consumeEmbeddedSources(embedProject: ProjectDependency) {
     val resConf = configurations.resolvable("dokkaEmbeddedResolvable") {
         extendsFrom(decConf.get())
         attributes.attribute(DOKKA_EMBEDDED_SOURCES_ATTRIBUTE, attributeDefaultValue)
-    }
+    }.map { it.incoming.files }
 
     dependencies.add(decConf.name, embedProject)
     val embedSources = objects.fileCollection()
@@ -184,10 +157,4 @@ internal fun Project.consumeEmbeddedSources(embedProject: ProjectDependency) {
             }
         }
     )
-
-    project.tasks.named<DokkaTaskPartial>("dokkaHtmlPartial").configure {
-        dokkaSourceSets.register("jvm") {
-            sourceRoots.from(embedSources)
-        }
-    }
 }

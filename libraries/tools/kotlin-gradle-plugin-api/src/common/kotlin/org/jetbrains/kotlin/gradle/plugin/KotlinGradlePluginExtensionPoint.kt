@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
  *
  * #### Kotlin Gradle Plugin Entry Point:
  * Extensions registered by the Kotlin Gradle Plugin directly will use the
- * [org.jetbrains.kotlin.gradle.plugin.registerKotlinPluginExtensions] entry point.
+ * org.jetbrains.kotlin.gradle.plugin.registerKotlinPluginExtensions entry point.
  */
 @ExperimentalKotlinGradlePluginApi
 interface KotlinGradlePluginExtensionPoint<T> {

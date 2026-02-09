@@ -9,17 +9,19 @@ plugins {
 
 pluginApiReference {
     enableForAllGradlePluginVariants()
-    enableKotlinlangDocumentation()
 
     failOnWarning = true
     moduleName("The Kotlin Gradle plugins API")
 
     additionalDokkaConfiguration {
-        reportUndocumented.set(true)
-        if (name != "main") {
-            includes.setFrom("api-reference-description.md")
-        } else if (name == "main") {
-            suppress = true
+        dokkaSourceSets.configureEach {
+            if (name != "common") {
+                suppress = true
+                return@configureEach
+            }
+
+            reportUndocumented = true
+            includes.from("api-reference-description.md")
         }
     }
 
@@ -113,7 +115,7 @@ fun Project.generatedSourcesTask(
     generatorRoot: String,
     generatorMainClass: String,
     argsProvider: JavaExec.(generationRoot: Directory) -> List<String> = { listOf(it.toString()) },
-    dependOnTaskOutput: Boolean = true
+    dependOnTaskOutput: Boolean = true,
 ): TaskProvider<JavaExec> {
     val generatorClasspath: Configuration by configurations.creating
 
