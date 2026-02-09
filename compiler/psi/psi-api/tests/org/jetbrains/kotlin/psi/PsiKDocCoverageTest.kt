@@ -13,12 +13,12 @@ class PsiKDocCoverageTest : AbstractKDocCoverageTest() {
     override val sourceDirectories: List<SourceDirectory.ForDumpFileComparison> = listOf(
         SourceDirectory.ForDumpFileComparison(
             listOf(
-                "compiler/psi/psi-api/src/org/jetbrains/kotlin",
-                "compiler/psi/psi-impl/src/org/jetbrains/kotlin",
-                "compiler/psi/psi-utils/src/org/jetbrains/kotlin",
-                "compiler/psi/psi-frontend-utils/src/org/jetbrains/kotlin",
+                "src/org/jetbrains/kotlin",
+                "../psi-impl/src/org/jetbrains/kotlin",
+                "../psi-utils/src/org/jetbrains/kotlin",
+                "../psi-frontend-utils/src/org/jetbrains/kotlin",
             ),
-            "compiler/psi/psi-api/api/psi-api.undocumented",
+            "api/psi-api.undocumented",
         )
     )
 

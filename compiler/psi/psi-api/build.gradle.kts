@@ -56,11 +56,12 @@ kotlin {
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        workingDir = rootDir
-    }
+    testTask(jUnitMode = JUnitMode.JUnit5)
 
-    testData(project.isolated, "api")
+    /** The 'test' task inputs cannot depend on [checkForeignClassUsage] outputs. */
+    testData(project.isolated, "api/psi-api.api")
+    testData(project.isolated, "api/psi-api.undocumented")
+
     testData(project.isolated, "src")
     testData(project(":compiler:psi:psi-impl").isolated, "src")
     testData(project(":compiler:psi:psi-utils").isolated, "src")
@@ -70,4 +71,12 @@ projectTests {
 val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
     outputFile = file("api/psi-api.foreign")
     nonPublicMarkers.addAll(stableNonPublicMarkers)
+}
+
+tasks.named("checkKotlinAbi").configure {
+    /**
+     * The ABI task depends on the whole 'api/' directory which contains output of the [checkForeignClassUsage] task.
+     * Gradle requires having an explicit task dependency when inputs of a certain task contain outputs of another.
+     */
+    dependsOn(checkForeignClassUsage)
 }
