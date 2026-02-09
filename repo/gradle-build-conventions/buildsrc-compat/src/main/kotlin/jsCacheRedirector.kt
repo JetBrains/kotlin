@@ -9,9 +9,8 @@ import com.github.gradle.node.npm.exec.NpmExecRunner
 import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.the
-import org.gradle.kotlin.dsl.withType
+import org.gradle.api.provider.Property
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 
 const val DEFAULT_YARN_REGISTRY = "https://registry.yarnpkg.com"
@@ -27,8 +26,14 @@ fun Project.configureJsCacheRedirector() {
     }
 
     project.allprojects {
+        pluginManager.withPlugin("com.github.node-gradle.node") {
+            project.extensions.create<JsCacheRedirectorExtension>("jsCacheRedirector").apply {
+                redirectNpmRegistry.convention(kotlinBuildProperties.isCacheRedirectorEnabled)
+            }
+        }
         afterEvaluate {
             pluginManager.withPlugin("com.github.node-gradle.node") {
+                val jsCacheRedirectorExtension = project.extensions.getByType<JsCacheRedirectorExtension>()
                 tasks.withType<NpmTask>().configureEach {
                     val command = npmCommand.orNull?.takeIf { it.isNotEmpty() }
                         ?: args.get() // some tasks may be configured by putting command into args instead of npmCommand
@@ -38,11 +43,18 @@ fun Project.configureJsCacheRedirector() {
 
                         outputs.file(npmRcFile)
 
+                        val redirectNpmRegistry = jsCacheRedirectorExtension.redirectNpmRegistry
+                        inputs.property("redirectNpmRegistry", redirectNpmRegistry)
+
                         doFirst {
                             logger.info("Setting Npm registry for $path to $NPM_REGISTRY_CACHE")
                             val nodeExecConfiguration =
                                 NodeExecConfiguration(
-                                    listOf("config", "set", "registry", NPM_REGISTRY_CACHE, "--location=project"),
+                                    if (redirectNpmRegistry.orNull != false) {
+                                        listOf("config", "set", "registry", NPM_REGISTRY_CACHE, "--location=project")
+                                    } else {
+                                        listOf("config", "delete", "registry", "--location=project")
+                                    },
                                     environment.get(),
                                     workingDir.asFile.orNull,
                                     ignoreExitValue.get(),
@@ -80,4 +92,8 @@ fun Project.configureJsCacheRedirector() {
             rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().yarnLockMismatchReport.set(YarnLockMismatchReport.WARNING)
         }
     }
+}
+
+abstract class JsCacheRedirectorExtension internal constructor() {
+    abstract val redirectNpmRegistry: Property<Boolean>
 }

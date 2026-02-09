@@ -159,6 +159,10 @@ val generateAll by tasks.registering {
     )
 }
 
+// disable cache-redirector because it fails to resolve @swc/helpers
+// (It replaces the slash `/` with `%2f` and tries to resolve https://abc.cloudfront.net/registry.npmjs.org/@swc%2fhelpers)
+jsCacheRedirector.redirectNpmRegistry = false
+
 abstract class CustomCopyTask : DefaultTask() {
     @get:Inject
     abstract val fs: FileSystemOperations
