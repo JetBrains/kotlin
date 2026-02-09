@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.native.interop.indexer
 import clang.*
 import clang.CXIdxEntityKind.CXIdxEntity_ObjCClass
 import clang.CXIdxEntityKind.CXIdxEntity_ObjCProtocol
-import clang.CXIdxEntityKind.CXIdxEntity_Typedef
 import clang.CXIdxEntityKind.CXIdxEntity_Struct
 import clang.CXIdxEntityKind.CXIdxEntity_Union
 import kotlinx.cinterop.*
@@ -680,12 +679,10 @@ data class TypesDefinitions(
         private val protocolDefinitionBySpelling: Map<String, CValue<CXCursor>>,
         private val classDefinitionBySpelling: Map<String, CValue<CXCursor>>,
         private val structDefinitionBySpelling: Map<String, CValue<CXCursor>>,
-        private val typedefDefinitionBySpelling: Map<String, CValue<CXCursor>>,
 ) {
     fun protocolDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, protocolDefinitionBySpelling)
     fun classDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, classDefinitionBySpelling)
     fun structDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, structDefinitionBySpelling)
-    fun typedefDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, typedefDefinitionBySpelling)
     private fun getIfNonEmpty(value: String, map: Map<String, CValue<CXCursor>>): CValue<CXCursor>? =
             if (value.isNotEmpty()) map[value] else null
 }
@@ -697,7 +694,6 @@ fun indexTranslationUnitsForTypesDefinitions(
     val protocolDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
     val classDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
     val structDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
-    val typedefDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
 
     translationUnits.forEach {
         indexTranslationUnit(index, it, CXIndexOpt_IndexGeneratedDeclarations, object : Indexer {
@@ -708,11 +704,6 @@ fun indexTranslationUnitsForTypesDefinitions(
                 val entityInfo = info.entityInfo!!.pointed
                 val kind = entityInfo.kind
                 when (kind) {
-                    CXIdxEntity_Typedef -> {
-                        val type = clang_getCursorType(cursor)
-                        val declCursor = clang_getTypeDeclaration(type)
-                        typedefDefinitionByName.getOrPut(getCursorSpelling(declCursor)) { declCursor }
-                    }
                     CXIdxEntity_Union, CXIdxEntity_Struct -> {
                         if (!isStructDeclForward(cursor)) {
                             structDefinitionByName.getOrPut(getCursorSpelling(cursor)) { cursor }
@@ -738,7 +729,6 @@ fun indexTranslationUnitsForTypesDefinitions(
             protocolDefinitionBySpelling = protocolDefinitionByName,
             classDefinitionBySpelling = classDefinitionByName,
             structDefinitionBySpelling = structDefinitionByName,
-            typedefDefinitionBySpelling = typedefDefinitionByName,
     )
 }
 
