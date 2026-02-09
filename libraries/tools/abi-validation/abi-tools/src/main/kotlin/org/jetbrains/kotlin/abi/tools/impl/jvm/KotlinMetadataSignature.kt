@@ -37,7 +37,8 @@ internal interface MemberBinarySignature {
 
     fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?) =
         access.isPublic && !(access.isProtected && classAccess.isFinal)
-                && (findMemberVisibility(classVisibility)?.isPublic(isPublishedApi) ?: true)
+                && (findMemberVisibility(classVisibility)?.isPublic(isPublishedApi, classVisibility?.classKind, classVisibility?.modality)
+            ?: true)
 
     fun findMemberVisibility(classVisibility: ClassVisibility?): MemberVisibility? {
         return classVisibility?.findMember(jvmMember)
