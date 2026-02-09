@@ -1202,6 +1202,12 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     }
 
     @Test
+    @TestMetadata("outerClassAsSuper.kt")
+    public void testOuterClassAsSuper() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/outerClassAsSuper.kt");
+    }
+
+    @Test
     @TestMetadata("outerTypeParameterDirectly.kt")
     public void testOuterTypeParameterDirectly() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/outerTypeParameterDirectly.kt");

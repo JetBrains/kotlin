@@ -105,9 +105,6 @@ private class LLFirSuperTypeTargetResolver(
     }
 
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
-        val isVisited = !visitedElements.add(target)
-        if (isVisited) return true
-
         when (target) {
             is FirRegularClass -> performResolve(
                 declaration = target,
@@ -158,6 +155,10 @@ private class LLFirSuperTypeTargetResolver(
         // To avoid redundant work, because a publication won't be executed
         if (checkAnalysisReadiness(declaration, containingDeclarations, resolverPhase)) return
 
+        // After the readiness check to properly log information,
+        // but the check itself is still required since performResolve might lead to SOE due to the outer class resolution
+        if (declaration in visitedElements) return
+
         declaration.lazyResolveToPhase(resolverPhase.previous)
 
         var superTypeRefs: S? = null
@@ -167,6 +168,10 @@ private class LLFirSuperTypeTargetResolver(
 
         // "null" means that some other thread is already resolved [declaration] to [resolverPhase]
         if (superTypeRefs == null) return
+
+        // The declaration is marked as visited as soon as the real resolution has started.
+        // Not early to not mark already resolved declarations as visited since they have to be processed separately
+        visitedElements += declaration
 
         // 1. Resolve declaration super type refs
         @Suppress("UNCHECKED_CAST")
@@ -242,10 +247,10 @@ private class LLFirSuperTypeTargetResolver(
         /**
          * [resolveToSupertypePhase] doesn't guarantee that the declaration is checked since at that moment it might
          * be already resolved, so the explicit traversal is required.
-         * [visitedElements] cannot be relyibly used here to prevent the declaration check
+         * [visitedElements] guarantees that the declaration is present in the set only if it wasn't resolved yet
          */
-        if (classLikeDeclaration.resolvePhase >= resolverPhase) {
-            visitedElements += classLikeDeclaration
+        val crawlIsRequired = visitedElements.add(classLikeDeclaration)
+        if (crawlIsRequired && classLikeDeclaration.resolvePhase >= resolverPhase) {
             crawlSupertypeFromResolvedDeclaration(classLikeDeclaration)
         }
     }
