@@ -234,16 +234,19 @@ private class LLFirSuperTypeTargetResolver(
         if (classLikeDeclaration !is FirClassLikeDeclaration) return
         if (classLikeDeclaration in visitedElements) return
 
-        if (classLikeDeclaration.resolvePhase >= resolverPhase) {
-            visitedElements += classLikeDeclaration
-            crawlSupertypeFromResolvedDeclaration(classLikeDeclaration)
-
-            return
-        }
-
         val resolveTarget = classLikeDeclaration.asResolveTarget()
         if (resolveTarget != null) {
             resolveToSupertypePhase(resolveTarget)
+        }
+
+        /**
+         * [resolveToSupertypePhase] doesn't guarantee that the declaration is checked since at that moment it might
+         * be already resolved, so the explicit traversal is required.
+         * [visitedElements] cannot be relyibly used here to prevent the declaration check
+         */
+        if (classLikeDeclaration.resolvePhase >= resolverPhase) {
+            visitedElements += classLikeDeclaration
+            crawlSupertypeFromResolvedDeclaration(classLikeDeclaration)
         }
     }
 
