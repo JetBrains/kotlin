@@ -66,15 +66,24 @@ sourceSets {
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        workingDir = rootDir
-    }
+    testTask(jUnitMode = JUnitMode.JUnit5)
 
     testData(project.isolated, "src")
-    testData(project.isolated, "api")
+
+    /** The 'test' task inputs cannot depend on [checkForeignClassUsage] outputs. */
+    testData(project.isolated, "api/analysis-api.api")
+    testData(project.isolated, "api/analysis-api.undocumented")
 }
 
 val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
     outputFile = file("api/analysis-api.foreign")
     nonPublicMarkers.addAll(stableNonPublicMarkers)
+}
+
+tasks.named("checkKotlinAbi").configure {
+    /**
+     * The ABI task depends on the whole 'api/' directory which contains output of the [checkForeignClassUsage] task.
+     * Gradle requires having an explicit task dependency when inputs of a certain task contain outputs of another.
+     */
+    dependsOn(checkForeignClassUsage)
 }
