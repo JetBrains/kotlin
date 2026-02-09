@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.addNonFatalDiagnostics
+import org.jetbrains.kotlin.fir.resolve.transformers.appendNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -117,7 +118,7 @@ class FirCallResolver(
 
         functionCall.replaceCalleeReference(nameReference)
         if (result.forwardedDiagnostics.isNotEmpty()) {
-            functionCall.replaceNonFatalDiagnostics(functionCall.nonFatalDiagnostics + convertForwardedDiagnostics(result))
+            functionCall.appendNonFatalDiagnostics(convertForwardedDiagnostics(result))
         }
         val candidate = (nameReference as? FirNamedReferenceWithCandidate)?.candidate
         candidate?.updateSourcesOfReceivers()
