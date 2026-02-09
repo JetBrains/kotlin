@@ -10,24 +10,22 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArgument
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
-import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.test.blackbox.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CInteropCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
+import org.jetbrains.kotlin.konan.test.klib.TestKlibModule
+import org.jetbrains.kotlin.konan.test.klib.compileModules
+import org.jetbrains.kotlin.konan.test.klib.createModules
+import org.jetbrains.kotlin.konan.test.klib.runWithCustomWorkingDir
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.loader.KlibLoader
-import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolverLegacy
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertContainsElements
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
@@ -37,14 +35,12 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.utils.assertCompilerOutputHasKlibResolverIncompatibleAbiMessages
 import org.jetbrains.kotlin.test.utils.patchManifestAsMap
 import org.jetbrains.kotlin.test.utils.patchManifestToBumpAbiVersion
-import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.Isolated
-import org.jetbrains.kotlin.konan.file.File as KlibFile
 import java.io.File
 
 /**
@@ -61,34 +57,14 @@ import java.io.File
 @Isolated // Run this test class in isolation from other test classes.
 @Execution(ExecutionMode.SAME_THREAD) // Run all test functions sequentially in the same thread.
 class KlibResolverTest : AbstractNativeSimpleTest() {
-    private data class Module(val name: String, val dependencyNames: List<String>, val kind: Kind = Kind.REGULAR) {
-        constructor(name: String, vararg dependencyNames: String, kind: Kind = Kind.REGULAR) : this(
-            name,
-            dependencyNames.asList(),
-            kind
-        )
-
-        lateinit var dependencies: List<Module>
-        lateinit var sourceFile: File
-
-        fun initDependencies(resolveDependency: (String) -> Module) {
-            dependencies = dependencyNames.map(resolveDependency)
-        }
-
-        enum class Kind {
-            REGULAR,
-            CINTEROP,
-        }
-    }
-
     @Test
     @DisplayName("Test resolving all dependencies recorded in `depends` / `dependency_version` properties (KT-63931)")
     fun testResolvingDependenciesRecordedInManifest() {
         val modules = createModules(
-            Module("a"),
-            Module("b", "a"),
-            Module("c", "a"),
-            Module("d", "b", "c", "a"),
+            TestKlibModule("a"),
+            TestKlibModule("b", "a"),
+            TestKlibModule("c", "a"),
+            TestKlibModule("d", "b", "c", "a"),
         )
 
         listOf(
@@ -104,9 +80,9 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     @Test
     @DisplayName("Test resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
     fun testResolvingTransitiveDependenciesRecordedInManifest() {
-        val moduleA = Module("a")
-        val moduleB = Module("b", "a")
-        val moduleC = Module("c", "b")
+        val moduleA = TestKlibModule("a")
+        val moduleB = TestKlibModule("b", "a")
+        val moduleC = TestKlibModule("c", "b")
         val modules = createModules(moduleA, moduleB, moduleC)
 
         var aKlib: KLIB? = null
@@ -131,9 +107,9 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     @Test
     @DisplayName("Test cinterop resolving nonexistent transitive Kotlin dependency recorded in `depends` property (KT-80593)")
     fun testCinteropResolvingTransitiveKotlinDependenciesRecordedInManifest() {
-        val moduleA = Module("a")
-        val moduleB = Module("b", "a")
-        val moduleC = Module("c", "b", kind = Module.Kind.CINTEROP)
+        val moduleA = TestKlibModule("a")
+        val moduleB = TestKlibModule("b", "a")
+        val moduleC = TestKlibModule("c", "b", kind = TestKlibModule.Kind.CINTEROP)
         val modules = createModules(moduleA, moduleB, moduleC)
 
         var aKlib: KLIB? = null
@@ -158,8 +134,8 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     @Test
     @DisplayName("Test cinterop resolving nonexistent cinterop transitive dependency recorded in `depends` property")
     fun testCinteropResolvingTransitiveCinteropDependenciesRecordedInManifest() {
-        val moduleB = Module("b", kind = Module.Kind.CINTEROP)
-        val moduleC = Module("c", "b", kind = Module.Kind.CINTEROP)
+        val moduleB = TestKlibModule("b", kind = TestKlibModule.Kind.CINTEROP)
+        val moduleC = TestKlibModule("c", "b", kind = TestKlibModule.Kind.CINTEROP)
         val modules = createModules(moduleB, moduleC)
 
         modules.compileModules(produceUnpackedKlibs = true, useLibraryNamesInCliArguments = true) { module, successKlib ->
@@ -187,8 +163,8 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     @Test
     fun testWarningAboutRejectedLibraryIsNotSuppressed() {
         val modules = createModules(
-            Module("lib1"),
-            Module("lib2", "lib1"),
+            TestKlibModule("lib1"),
+            TestKlibModule("lib2", "lib1"),
         )
 
         // Control compilation -- should finish successfully.
@@ -258,9 +234,9 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         freeCompilerArgs: List<String>? = null,
     ) {
         val modules = createModules(
-            Module("a"),
-            Module("b"),
-            Module("c", "a", "b"),
+            TestKlibModule("a"),
+            TestKlibModule("b"),
+            TestKlibModule("c", "a", "b"),
         )
 
         try {
@@ -314,9 +290,9 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
     private fun testAllKlibsUsed(extraCmdLineParams: List<String>) {
         val modules = createModules(
-            Module("a"),
-            Module("b"),
-            Module("c", "a", "b"),
+            TestKlibModule("a"),
+            TestKlibModule("b"),
+            TestKlibModule("c", "a", "b"),
         )
 
         modules.compileModules(
@@ -360,9 +336,9 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     @Test
     fun testDependencyVersionsAreNotEnforced() {
         val modules = createModules(
-            Module("liba"),
-            Module("libb", "liba"),
-            Module("libc", "liba", "libb"),
+            TestKlibModule("liba"),
+            TestKlibModule("libb", "liba"),
+            TestKlibModule("libc", "liba", "libb"),
         )
 
         // Control compilation -- should finish successfully.
@@ -407,8 +383,8 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     @Test
     fun testDependencyVersionsAreNotAdded() {
         val modules = createModules(
-            Module("liba"),
-            Module("libb", "liba"),
+            TestKlibModule("liba"),
+            TestKlibModule("libb", "liba"),
         )
 
         // Control compilation -- should finish successfully.
@@ -442,167 +418,6 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                     }
                 }
             }
-        }
-    }
-
-    /**
-     * This is a special test needed to make sure that the external users of the KLIB resolver that cannot migrate to [KlibLoader]
-     * can still use the KLIB resolver and get the correct results.
-     *
-     * Related tickets: KT-82882, KT-83328.
-     */
-    @Nested
-    inner class LegacyKlibResolverUser {
-        @Test
-        fun `Minimal required set of dependencies written to manifest of Native libraries`() {
-            createModules(
-                Module("usesOnlyStdlib")
-            ).compileModules(
-                produceUnpackedKlibs = true,
-                useLibraryNamesInCliArguments = false,
-            ) { module, successKlib ->
-                assertEquals("usesOnlyStdlib", module.name)
-
-                patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
-                    assertEquals("stdlib", properties[KLIB_PROPERTY_DEPENDS])
-                }
-            }
-
-            createModules(
-                Module("usesStdlibAndPosix")
-            ).also { modules ->
-                modules[0].sourceFile.appendText(
-                    """
-                        @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
-                        fun makePosixCall() {
-                            platform.posix.fopen("test.txt", "r")
-                        }
-                    """.trimIndent()
-                )
-            }.compileModules(
-                produceUnpackedKlibs = true,
-                useLibraryNamesInCliArguments = false,
-            ) { module, successKlib ->
-                assertEquals("usesStdlibAndPosix", module.name)
-
-                patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
-                    assertEquals(
-                        setOf("stdlib", "org.jetbrains.kotlin.native.platform.posix"),
-                        properties[KLIB_PROPERTY_DEPENDS]?.split(" ")?.toSet()
-                    )
-                }
-            }
-        }
-
-        @Test
-        fun `Resolve non-Native libraries in kotlinx-benchmarks Gradle plugins`() = doTest(isForKotlinNative = false)
-
-        @Test
-        fun `Resolve Native libraries in kotlinx-benchmarks Gradle plugins`() = doTest(isForKotlinNative = true)
-
-        private fun doTest(isForKotlinNative: Boolean) {
-            val moduleToKlibMapping: MutableMap<Module, File> = hashMapOf()
-
-            /*
-             * "e" -> "d" -> "c" -> "b" -> "a"
-             *  |      |             ^      ^
-             *  |      +-------------+      |
-             *  +---------------------------+
-             */
-            createModules(
-                Module("a"),
-                Module("b", "a"),
-                Module("c", "b"),
-                Module("d", "c", "b"),
-                Module("e", "d", "a"),
-            ).compileModules(
-                produceUnpackedKlibs = true,
-                useLibraryNamesInCliArguments = false
-            ) { module, successKlib ->
-                // Remember the location of a KLIB dir.
-                val libraryLocation = File(successKlib.resultingArtifact.path)
-                moduleToKlibMapping[module] = libraryLocation
-
-                if (!isForKotlinNative) {
-                    // Simulate the absence of `depends=` property, which is in effect for Kotlin/JS and Kotlin/Wasm.
-                    patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
-                        properties.remove(KLIB_PROPERTY_DEPENDS)
-                    }
-                }
-            }
-
-            // There should be 5 generated KLIBs in total.
-            assertEquals(5, moduleToKlibMapping.size)
-
-            val targetModule: Module = moduleToKlibMapping.keys.single { it.name == "e" }
-            val targetModuleLocation: File = moduleToKlibMapping.getValue(targetModule)
-
-            val dependencyModules: Set<Module> = moduleToKlibMapping.keys - targetModule
-            val dependencyModuleLocations: Set<File> = dependencyModules.map { moduleToKlibMapping.getValue(it) }.toSet()
-
-            val allDependencyLocations: Set<File> = dependencyModuleLocations + stdlibLocation // also add stdlib
-
-            val resolvedDependencies = resolveLibrariesInKotlinxBenchmarksGradlePlugin(
-                libraryFile = targetModuleLocation,
-                dependencyFiles = allDependencyLocations,
-                isForKotlinNative = isForKotlinNative,
-            )
-
-            assertEquals(allDependencyLocations.size, resolvedDependencies.size)
-
-            assertEquals(
-                dependencyModules.map { it.name }.toSet() + "stdlib",
-                resolvedDependencies.map { it.uniqueName }.toSet()
-            )
-        }
-
-        private val stdlibLocation: File
-            get() = testRunSettings.get<KotlinNativeHome>().librariesDir.resolve("common/stdlib")
-
-        /**
-         * This is an emulation of `KlibResolver.createModuleDescriptor(File, Set<File>, StorageManager)` function
-         * from the kotlinx-benchmarks Gradle plugin.
-         */
-        @Suppress("DEPRECATION", "UNRESOLVED_REFERENCE", "OVERRIDE_DEPRECATION", "DEPRECATION_ERROR")
-        private fun resolveLibrariesInKotlinxBenchmarksGradlePlugin(
-            libraryFile: File,
-            dependencyFiles: Set<File>,
-            isForKotlinNative: Boolean,
-        ): Collection<KotlinLibrary> {
-            val logger = object : Logger {
-                override fun log(message: String) = Unit
-                override fun error(message: String) = kotlin.error("e: $message")
-                override fun warning(message: String) = Unit
-                override fun fatal(message: String) = kotlin.error("e: $message")
-            }
-
-            val knownIrProviders = if (isForKotlinNative) listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER) else emptyList()
-
-            class KotlinxBenchmarksLibraryResolverSimulation(
-                klibs: List<String>
-            ) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
-                repositories = emptyList(),
-                directLibs = klibs,
-                distributionKlib = null,
-                localKotlinDir = null,
-                skipCurrentDir = false,
-                logger = logger,
-                knownIrProviders = knownIrProviders
-            ) {
-                override fun libraryComponentBuilder(file: KlibFile, isDefault: Boolean): List<KotlinLibrary> =
-                    createKotlinLibraryComponents(file, isDefault, null as ZipFileSystemAccessor?)
-            }
-
-            val library = resolveSingleFileKlib(KlibFile(libraryFile.path).canonicalFile)
-
-            return KotlinxBenchmarksLibraryResolverSimulation(
-                klibs = dependencyFiles.map { it.path }
-            ).libraryResolverLegacy().resolveWithDependencies(
-                unresolvedLibraries = library.unresolvedDependencies,
-                noStdLib = !isForKotlinNative,
-                noDefaultLibs = !isForKotlinNative,
-                noEndorsedLibs = !isForKotlinNative,
-            ).getFullList()
         }
     }
 
@@ -867,7 +682,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             cliArgs: List<String>,
         ): File {
             val moduleNames = generateModuleNames(moduleBaseName)
-            val module = createModules(Module(moduleNames.uniqueName)).single()
+            val module = createModules(TestKlibModule(moduleNames.uniqueName)).single()
 
             val klibsDir = buildDir.resolve("klibs").apply(File::mkdirs)
             val libraryFile = klibsDir.resolve(moduleNames.fileName + if (produceUnpackedKlib) "" else ".klib")
@@ -944,128 +759,6 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         runExecutableAndVerify(testCase, testExecutable)
     }
 
-    private fun createModules(vararg modules: Module): List<Module> {
-        val mapping: Map<String, Module> = modules.groupBy(Module::name).mapValues {
-            it.value.singleOrNull() ?: error("Duplicated modules: ${it.value}")
-        }
-
-        modules.forEach { it.initDependencies(mapping::getValue) }
-
-        val generatedSourcesDir = buildDir.resolve("generated-sources")
-        generatedSourcesDir.mkdirs()
-
-        modules.forEach { module ->
-            when (module.kind) {
-                Module.Kind.REGULAR -> {
-                    module.sourceFile = generatedSourcesDir.resolve(module.name + ".kt")
-                    module.sourceFile.writeText(buildString {
-                        appendLine("package ${module.name}")
-                        appendLine()
-                        appendLine("fun ${module.name}(indent: Int) {")
-                        appendLine("    repeat(indent) { print(\"  \") }")
-                        appendLine("    println(\"${module.name}\")")
-                        module.dependencyNames.forEach { dependencyName ->
-                            appendLine("    $dependencyName.$dependencyName(indent + 1)")
-                        }
-                        appendLine("}")
-                    })
-                }
-                Module.Kind.CINTEROP -> {
-                    module.sourceFile = generatedSourcesDir.resolve(module.name + ".def")
-                    module.sourceFile.writeText(buildString {
-                        appendLine("---")
-                        appendLine("#include <stdio.h>")
-                        appendLine("static void ${module.name}(int indent) {")
-                        appendLine("    for (int i = 0; i < indent; i++) printf(\" \");")
-                        appendLine("    printf(\"%s\\n\", \"${module.name}\");")
-                        appendLine("}")
-                    })
-                }
-            }
-        }
-
-        return modules.asList()
-    }
-
-    private fun List<Module>.compileModules(
-        produceUnpackedKlibs: Boolean,
-        useLibraryNamesInCliArguments: Boolean,
-        extraCmdLineParams: List<String> = emptyList(),
-        transform: ((module: Module, successKlib: TestCompilationResult.Success<out KLIB>) -> Unit)? = null
-    ) {
-        val klibFilesDir = buildDir.resolve(
-            listOf(
-                "klib-files",
-                if (produceUnpackedKlibs) "unpacked" else "packed",
-                if (useLibraryNamesInCliArguments) "names" else "paths",
-                if (transform != null) "transformed" else "non-transformed"
-            ).joinToString(".")
-        )
-        klibFilesDir.mkdirs()
-
-        fun Module.computeArtifactPath(): String {
-            val basePath: String = if (useLibraryNamesInCliArguments) name else klibFilesDir.resolve(name).path
-            return if (produceUnpackedKlibs) basePath else "$basePath.klib"
-        }
-
-        runWithCustomWorkingDir(klibFilesDir) {
-            forEach { module ->
-                val commonCompilerAndCInteropArgs = buildList {
-                    if (produceUnpackedKlibs) add("-nopack")
-                    module.dependencies.forEach { dependency ->
-                        add("-l")
-                        add(dependency.computeArtifactPath())
-                    }
-                }
-                val testCase = generateTestCaseWithSingleFile(
-                    sourceFile = module.sourceFile,
-                    moduleName = module.name,
-                    TestCompilerArgs(
-                        commonCompilerAndCInteropArgs + extraCmdLineParams,
-                        cinteropArgs = commonCompilerAndCInteropArgs,
-                    )
-                )
-
-                val expectedArtifact = KLIB(klibFilesDir.resolve(module.computeArtifactPath()))
-                val compilation = when (module.kind) {
-                    Module.Kind.REGULAR -> {
-                        LibraryCompilation(
-                            settings = testRunSettings,
-                            freeCompilerArgs = testCase.freeCompilerArgs,
-                            sourceModules = testCase.modules,
-                            dependencies = emptySet(),
-                            expectedArtifact = expectedArtifact
-                        )
-                    }
-                    Module.Kind.CINTEROP -> {
-                        check(extraCmdLineParams.isEmpty()) { "extraCmdLineParams are not allowed for cinterop modules" }
-                        CInteropCompilation(
-                            settings = testRunSettings,
-                            freeCompilerArgs = testCase.freeCompilerArgs,
-                            defFile = module.sourceFile,
-                            sources = emptyList(),
-                            dependencies = emptySet(),
-                            expectedArtifact = expectedArtifact
-                        )
-                    }
-                }
-
-                val success = compilation.result.assertSuccess()
-                transform?.invoke(module, success)
-            }
-        }
-    }
-
-    private inline fun runWithCustomWorkingDir(customWorkingDir: File, block: () -> Unit) {
-        val previousWorkingDir: String = System.getProperty(USER_DIR)
-        try {
-            System.setProperty(USER_DIR, customWorkingDir.absolutePath)
-            block()
-        } finally {
-            System.setProperty(USER_DIR, previousWorkingDir)
-        }
-    }
-
     /**
      * Helps to avoid generating modules with same names and paths when [compileModules] is called repetitively
      * within a single test method execution.
@@ -1083,7 +776,6 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     }
 
     companion object {
-        private const val USER_DIR = "user.dir"
         private val irProvidersMismatchSrcDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/irProvidersMismatch")
 
         private const val DUPLICATED_UNIQUE_NAME = "DUPLICATED_UNIQUE_NAME"
