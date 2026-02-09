@@ -26,4 +26,4 @@ excludedFunctions = LLVMInitializeAllAsmParsers LLVMInitializeAllAsmPrinters LLV
     LLVMParseBitcode LLVMParseBitcode2 LLVMGetBitcodeModule LLVMGetBitcodeModule2 LLVMGetGlobalContext LLVMModuleCreateWithName \
     LLVMBuildLoad LLVMBuildGEP LLVMBuildStructGEP LLVMConstGEP LLVMConstInBoundsGEP LLVMAddAlias LLVMBuildInvoke LLVMBuildCall
 
-strictEnums = LLVMIntPredicate LLVMOpcode LLVMDLLStorageClass LLVMCallConv LLVMThreadLocalMode LLVMAtomicOrdering
+strictEnums = LLVMIntPredicate LLVMOpcode LLVMDLLStorageClass LLVMCallConv LLVMThreadLocalMode LLVMAtomicOrdering LLVMTypeKind
