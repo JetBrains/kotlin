@@ -75,6 +75,12 @@ private fun ObjCExportContext.getEnumEntriesProperty(symbol: KaClassSymbol): Obj
     )
 }
 
+internal fun ObjCExportContext.getNSEnumEntryName(symbol: KaEnumEntrySymbol, forSwift: Boolean): String {
+    val objCEnumEntryNameAnnotation = symbol.resolveObjCEnumEntryNameAnnotation()
+    val name = if (forSwift) objCEnumEntryNameAnnotation?.swiftName else objCEnumEntryNameAnnotation?.objCName
+    return if (name.isNullOrBlank()) getEnumEntryName(symbol, forSwift) else name
+}
+
 /**
  * See K1 implementation as [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getEnumEntryName]
  */

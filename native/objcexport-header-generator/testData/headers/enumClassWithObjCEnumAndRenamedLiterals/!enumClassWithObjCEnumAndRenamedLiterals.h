@@ -44,6 +44,7 @@ typedef NS_ENUM(int32_t, FooNSEnum) {
   FooNSEnumTheCopy NS_SWIFT_NAME(theCopy) = 2,
   FooNSEnumFooBarObjC NS_SWIFT_NAME(fooBarObjC) = 3,
   FooNSEnumBarFooObjC NS_SWIFT_NAME(barFooSwift) = 4,
+  FooNSEnumWithEntryObjcEntryNameObjc NS_SWIFT_NAME(withObjcEntryName) = 5,
 } NS_SWIFT_NAME(FooNSEnum);
 
 
@@ -58,6 +59,7 @@ __attribute__((objc_subclassing_restricted))
 @property (class, readonly) Foo *theCopy __attribute__((swift_name("theCopy")));
 @property (class, readonly) Foo *fooBarObjC __attribute__((swift_name("fooBarObjC")));
 @property (class, readonly) Foo *barFooObjC __attribute__((swift_name("barFooSwift")));
+@property (class, readonly) Foo *withObjcEntryName __attribute__((swift_name("withObjcEntryName")));
 + (KotlinArray<Foo *> *)values __attribute__((swift_name("values()")));
 @property (class, readonly) NSArray<Foo *> *entries __attribute__((swift_name("entries")));
 @end

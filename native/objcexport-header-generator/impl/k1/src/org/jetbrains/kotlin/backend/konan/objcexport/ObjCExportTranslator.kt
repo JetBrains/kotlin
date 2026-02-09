@@ -298,10 +298,14 @@ class ObjCExportTranslatorImpl(
                                 swiftName = nsEnumTypeName.swiftName,
                                 origin = ObjCExportStubOrigin(descriptor),
                                 entries = descriptor.enumEntries.mapIndexed { ordinal, entry ->
+                                    val objcEnumEntryName = entry.getObjCEnumEntryName()
+                                    val objCName =
+                                        if (objcEnumEntryName.objCName.isNullOrBlank()) namer.getEnumEntrySelector(entry) else objcEnumEntryName.objCName
+                                    val swiftName =
+                                        if (objcEnumEntryName.swiftName.isNullOrBlank()) namer.getEnumEntrySwiftName(entry) else objcEnumEntryName.swiftName
                                     ObjCNSEnum.Entry(
-                                        objCName = nsEnumTypeName.objCName + namer.getEnumEntrySelector(entry)
-                                            .replaceFirstChar { it.uppercaseChar() },
-                                        swiftName = namer.getEnumEntrySwiftName(entry),
+                                        objCName = nsEnumTypeName.objCName + objCName.replaceFirstChar { it.uppercaseChar() },
+                                        swiftName = swiftName,
                                         value = ordinal
                                     )
                                 }

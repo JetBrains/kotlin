@@ -37,8 +37,8 @@ private fun ObjCExportContext.getNSEnumEntries(symbol: KaClassSymbol, objCTypeNa
     // Map the enum entries in declaration order, preserving the ordinal
     return staticMembers.filterIsInstance<KaEnumEntrySymbol>().mapIndexed { ordinal, entry ->
         ObjCNSEnum.Entry(
-            getEnumEntryName(entry, true),
-            objCTypeName + getEnumEntryName(entry, false).replaceFirstChar { it.uppercaseChar() },
+            getNSEnumEntryName(entry, true),
+            objCTypeName + getNSEnumEntryName(entry, false).replaceFirstChar { it.uppercaseChar() },
             ordinal
         )
     }

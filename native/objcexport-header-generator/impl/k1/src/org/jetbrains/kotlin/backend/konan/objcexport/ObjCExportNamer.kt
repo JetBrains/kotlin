@@ -1086,6 +1086,21 @@ private class ObjCName(
         swiftName.takeIf { forSwift } ?: objCName ?: default(kotlinName)
 }
 
+class ObjCEnumEntryName(
+    val objCName: String?,
+    val swiftName: String?,
+)
+
+fun DeclarationDescriptor.getObjCEnumEntryName(): ObjCEnumEntryName {
+    var objCName: String? = null
+    var swiftName: String? = null
+    annotations.findAnnotation(KonanFqNames.objCEnumEntryName)?.let { annotation ->
+        objCName = annotation.argumentValue("name")?.value as String?
+        swiftName = annotation.argumentValue("swiftName")?.value as String?
+    }
+    return ObjCEnumEntryName(objCName, swiftName)
+}
+
 private fun DeclarationDescriptor.getObjCName(): ObjCName {
     var objCName: String? = null
     var swiftName: String? = null

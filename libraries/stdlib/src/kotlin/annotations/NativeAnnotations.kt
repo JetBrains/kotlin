@@ -85,7 +85,12 @@ public expect annotation class ObjCName(val name: String = "", val swiftName: St
 @OptionalExpectation
 @ExperimentalObjCEnum
 @SinceKotlin("2.3")
-public expect annotation class ObjCEnum(val name: String = "", val swiftName: String = "")
+public expect annotation class ObjCEnum(val name: String = "", val swiftName: String = "") {
+    /** Overrides the implied enum entry name. */
+    @Target(AnnotationTarget.CLASS)
+    @Retention(AnnotationRetention.BINARY)
+    public annotation class EntryName(val name: String, val swiftName: String = "")
+}
 
 /**
  * Meta-annotation that instructs the Kotlin compiler to remove the annotated class, function or property from the public Objective-C API.

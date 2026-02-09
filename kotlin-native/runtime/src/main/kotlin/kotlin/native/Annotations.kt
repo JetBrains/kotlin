@@ -129,7 +129,12 @@ public actual annotation class ObjCName(actual val name: String = "", actual val
 @MustBeDocumented
 @ExperimentalObjCEnum
 @SinceKotlin("2.3")
-public actual annotation class ObjCEnum(actual val name: String = "", actual val swiftName: String = "")
+public actual annotation class ObjCEnum(actual val name: String = "", actual val swiftName: String = "") {
+    /** Overrides the implied enum entry name. */
+    @Target(AnnotationTarget.CLASS)
+    @Retention(AnnotationRetention.BINARY)
+    public actual annotation class EntryName(actual val name: String, actual val swiftName: String = "")
+}
 
 /**
  * Meta-annotation that instructs the Kotlin compiler to remove the annotated class, function or property from the public Objective-C API.

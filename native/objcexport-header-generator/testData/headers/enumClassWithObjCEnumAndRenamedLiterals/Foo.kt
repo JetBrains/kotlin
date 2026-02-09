@@ -12,4 +12,6 @@ enum class Foo {
     COPY,
     @ObjCName("fooBarObjC") FOO_BAR,
     @ObjCName(name = "barFooObjC", swiftName = "barFooSwift") BAR_FOO,
+    @ObjCEnum.EntryName(name="withEntryObjcEntryNameObjc") WITH_OBJC_ENTRY_NAME
+    @ObjCEnum.EntryName(name="withEntryNameObjc", swiftName="withEntryNameSwift") WITH_ENTRY_NAME
 }
