@@ -94,7 +94,7 @@ FILE: [ResolvedTo(IMPORTS)] base.kt
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] interface TransitiveInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TransitiveInterface : R|kotlin/Any| {
     }
     public final? [ResolvedTo(SUPER_TYPES)] class MyClass : R|example/MyBaseInterface| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] base.kt
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] interface TransitiveInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TransitiveInterface : R|kotlin/Any| {
     }
     public final? [ResolvedTo(TYPES)] class MyClass : R|example/MyBaseInterface| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
@@ -136,7 +136,7 @@ FILE: [ResolvedTo(IMPORTS)] base.kt
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] interface TransitiveInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TransitiveInterface : R|kotlin/Any| {
     }
     public final [ResolvedTo(STATUS)] class MyClass : R|example/MyBaseInterface| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] base.kt
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] interface TransitiveInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TransitiveInterface : R|kotlin/Any| {
     }
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|example/MyBaseInterface| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
@@ -178,7 +178,7 @@ FILE: [ResolvedTo(IMPORTS)] base.kt
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] interface TransitiveInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TransitiveInterface : R|kotlin/Any| {
     }
     public final [ResolvedTo(CONTRACTS)] class MyClass : R|example/MyBaseInterface| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
@@ -199,7 +199,7 @@ FILE: [ResolvedTo(IMPORTS)] base.kt
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] interface TransitiveInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TransitiveInterface : R|kotlin/Any| {
     }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|example/MyBaseInterface| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] base.kt
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] interface TransitiveInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TransitiveInterface : R|kotlin/Any| {
     }
     public final [ResolvedTo(CONSTANT_EVALUATION)] class MyClass : R|example/MyBaseInterface| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
@@ -241,7 +241,7 @@ FILE: [ResolvedTo(IMPORTS)] base.kt
 FILE: [ResolvedTo(IMPORTS)] main.kt
     public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceToSubstitute : R|kotlin/Any| {
     }
-    public final? [ResolvedTo(RAW_FIR)] interface TransitiveInterface : R|kotlin/Any| {
+    public final? [ResolvedTo(SUPER_TYPES)] interface TransitiveInterface : R|kotlin/Any| {
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|example/MyBaseInterface| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {

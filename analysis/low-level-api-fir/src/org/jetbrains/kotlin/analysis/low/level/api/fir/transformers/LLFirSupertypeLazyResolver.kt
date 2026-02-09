@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -237,15 +236,7 @@ private class LLFirSuperTypeTargetResolver(
 
         if (classLikeDeclaration.resolvePhase >= resolverPhase) {
             visitedElements += classLikeDeclaration
-            if (classLikeDeclaration is FirJavaClass) {
-                // We do not have phases guarantees for Java classes, so we should process them with an assumption
-                // that there are some unresolved supertypes from the declaration site point of view
-                supertypeComputationSession.withDeclarationSession(classLikeDeclaration) {
-                    crawlSupertypeFromResolvedDeclaration(classLikeDeclaration)
-                }
-            } else {
-                crawlSupertypeFromResolvedDeclaration(classLikeDeclaration)
-            }
+            crawlSupertypeFromResolvedDeclaration(classLikeDeclaration)
 
             return
         }
@@ -256,26 +247,33 @@ private class LLFirSuperTypeTargetResolver(
         }
     }
 
+    /**
+     * We should process [classLikeDeclaration] with an assumption that there are some unresolved supertypes from
+     * the declaration site point of view since the phase provide guarantees only for Kotlin classes that are entry points to the hierarchy.
+     * In other words, classes for which [lazyResolveToPhase] with [FirResolvePhase.SUPER_TYPES] was called
+     */
     private fun crawlSupertypeFromResolvedDeclaration(classLikeDeclaration: FirClassLikeDeclaration) {
-        val parentClass = classLikeDeclaration.outerClass()
-        if (parentClass != null) {
-            crawlSupertype(parentClass.defaultType())
-        }
-
-        val superTypeRefs = when (classLikeDeclaration) {
-            is FirTypeAlias -> listOf(classLikeDeclaration.expandedTypeRef)
-            is FirClass -> classLikeDeclaration.superTypeRefs
-        }
-
-        for (typeRef in superTypeRefs) {
-            val coneType = typeRef.coneTypeOrNull ?: errorWithFirSpecificEntries(
-                "The declaration super type must be resolved, but the actual type reference is not resolved",
-                fir = classLikeDeclaration,
-            ) {
-                withFirEntry("typeRef", typeRef)
+        supertypeComputationSession.withDeclarationSession(classLikeDeclaration) {
+            val parentClass = classLikeDeclaration.outerClass()
+            if (parentClass != null) {
+                crawlSupertype(parentClass.defaultType())
             }
 
-            crawlSupertype(coneType)
+            val superTypeRefs = when (classLikeDeclaration) {
+                is FirTypeAlias -> listOf(classLikeDeclaration.expandedTypeRef)
+                is FirClass -> classLikeDeclaration.superTypeRefs
+            }
+
+            for (typeRef in superTypeRefs) {
+                val coneType = typeRef.coneTypeOrNull ?: errorWithFirSpecificEntries(
+                    "The declaration super type must be resolved, but the actual type reference is not resolved",
+                    fir = classLikeDeclaration,
+                ) {
+                    withFirEntry("typeRef", typeRef)
+                }
+
+                crawlSupertype(coneType)
+            }
         }
     }
 
