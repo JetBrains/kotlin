@@ -5,6 +5,7 @@ data class B(val name: String)
 
 fun test1(a: A, b: B): Boolean = <!PROBLEMATIC_EQUALS!>a == b<!>
 fun test1b(a: A?, b: B?): Boolean = a == b
+fun test1c(a: A?, b: B): Boolean = <!PROBLEMATIC_EQUALS!>a == b<!>
 
 fun test2(a: Any?, b: B): Boolean = a == b
 fun test2b(a: Any?, b: B?): Boolean = a == b

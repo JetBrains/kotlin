@@ -79,36 +79,81 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         }
 
         if (expression.operation == FirOperation.EQ || expression.operation == FirOperation.NOT_EQ) {
-            if (l.smartCastType.isMarkedNullable && r.smartCastType.isMarkedNullable) return
-
-            val lType = l.smartCastTypeInfo
-            val rType = r.smartCastTypeInfo
-            val problematicType =
-                lType.notNullType.takeIf { lType.hasBuiltinEquals } ?: rType.notNullType.takeIf { rType.hasBuiltinEquals } ?: return
-            if (areUnrelated(lType, rType)) {
-                reporter.reportOn(expression.source, FirErrors.PROBLEMATIC_EQUALS, problematicType)
+            val problematicType = checkStrictEqualityCase(l.smartCastTypeInfo, r.smartCastTypeInfo)
+            if (problematicType != null) {
+                return reporter.reportOn(expression.source, FirErrors.PROBLEMATIC_EQUALS, problematicType)
             }
         }
     }
 
+    context(context: CheckerContext)
+    fun checkStrictEqualityCase(leftTypeInfo: TypeInfo, rightTypeInfo: TypeInfo): ConeKotlinType? {
+        val leftType = leftTypeInfo.type
+        val leftCanBeNull = leftType.canBeNull(context.session)
+
+        val rightType = rightTypeInfo.type
+        val rightCanBeNull = rightType.canBeNull(context.session)
+
+        if (leftCanBeNull && rightCanBeNull) return null
+        if (areRelated(leftTypeInfo, rightTypeInfo)) return null
+
+        fun problematicCase(strictness: EqualityStrictness, otherCanBeNull: Boolean): Boolean =
+            strictness == EqualityStrictness.Strict || (strictness == EqualityStrictness.StrictModuloNullability && !otherCanBeNull)
+
+        return when {
+            problematicCase(leftTypeInfo.computeEqualityStrictness(), rightCanBeNull) -> leftType
+            problematicCase(rightTypeInfo.computeEqualityStrictness(), leftCanBeNull) -> rightType
+            else -> null
+        }
+    }
+
+    enum class EqualityStrictness {
+        Strict, StrictModuloNullability, NonStrict;
+
+        fun nullable(): EqualityStrictness = when (this) {
+            Strict, StrictModuloNullability -> StrictModuloNullability
+            NonStrict -> NonStrict
+        }
+
+        fun definitelyNotNullable(): EqualityStrictness = when (this) {
+            Strict, StrictModuloNullability -> Strict
+            NonStrict -> NonStrict
+        }
+    }
+
+    context(context: CheckerContext)
+    fun TypeInfo.computeEqualityStrictness(): EqualityStrictness =
+        computeEqualityStrictnessNotNull().let {
+            if (this.type.canBeNull(context.session)) it.nullable() else it
+        }
+
+    context(context: CheckerContext)
+    fun ConeKotlinType.computeEqualityStrictness(): EqualityStrictness =
+        toTypeInfo(context.session).computeEqualityStrictness()
+
     @OptIn(SymbolInternals::class)
     context(context: CheckerContext)
-    val TypeInfo.hasBuiltinEquals: Boolean
-        get() {
-            if (isBuiltin) return true
-            if (isIdentityLess(context.session)) return true
-            val classInfo = this.notNullType.toRegularClassSymbol() ?: return false
-            return when {
-                classInfo.isData || classInfo.isInlineOrValue -> !classInfo.overridesEquals
-                classInfo.isSealed ->
-                    !classInfo.overridesEquals &&
-                            classInfo.fir.getSealedClassInheritors(context.session).all loop@{
-                                val symbol = it.toSymbol() as? FirRegularClassSymbol ?: return@loop false
-                                symbol.defaultType().toTypeInfo(context.session).hasBuiltinEquals
-                            }
-                else -> false
+    fun TypeInfo.computeEqualityStrictnessNotNull(): EqualityStrictness {
+        if (isBuiltin || isIdentityLess(context.session)) return EqualityStrictness.Strict
+        return when (val type = this.notNullType) {
+            is ConeIntegerLiteralType -> EqualityStrictness.Strict
+            is ConeIntersectionType -> type.intersectedTypes.minOf { it.computeEqualityStrictness() }
+            is ConeDefinitelyNotNullType -> type.original.computeEqualityStrictness().definitelyNotNullable()
+            is ConeFlexibleType -> listOf(type.lowerBound.computeEqualityStrictness(), type.upperBound.computeEqualityStrictness()).max()
+            else -> {
+                val classInfo = type.toRegularClassSymbol() ?: return EqualityStrictness.NonStrict
+                when {
+                    classInfo.overridesEquals -> EqualityStrictness.NonStrict
+                    classInfo.isData || classInfo.isInlineOrValue -> EqualityStrictness.Strict
+                    classInfo.isSealed -> classInfo.fir.getSealedClassInheritors(context.session).maxOf loop@{
+                        val symbol = it.toSymbol() as? FirRegularClassSymbol ?: return@loop EqualityStrictness.NonStrict
+                        symbol.defaultType().computeEqualityStrictness()
+                    }
+                    else -> EqualityStrictness.NonStrict
+                }
             }
         }
+    }
 
     context(context: CheckerContext)
     val FirRegularClassSymbol.overridesEquals: Boolean
