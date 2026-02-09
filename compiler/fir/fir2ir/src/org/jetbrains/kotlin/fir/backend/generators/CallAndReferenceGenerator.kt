@@ -882,8 +882,7 @@ class CallAndReferenceGenerator(
             .applyReceiversAndArguments(lValue, firSymbol, explicitReceiverExpression, irAssignmentRhs = irRhsWithCast)
     }
 
-    // TODO(KT-82578): split property declaration and initializer to hopefully simplify FIR2IR
-    fun convertToIrSetCall(
+     fun convertToIrSetCall(
         rValue: FirExpression,
         property: FirPropertySymbol,
     ): IrExpression = convertCatching(rValue, conversionScope) {

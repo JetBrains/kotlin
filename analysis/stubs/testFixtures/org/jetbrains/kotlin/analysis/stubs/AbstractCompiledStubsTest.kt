@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -38,21 +38,23 @@ abstract class AbstractCompiledStubsTest(defaultTargetPlatform: TargetPlatform) 
         override val testPrefixes: List<String>
             get() {
                 val simplePlatform = defaultTargetPlatform.singleOrNull()
-                val additionalNames = buildList {
-                    if (simplePlatform != null) {
-                        add(simplePlatform.platformName)
-                    } else {
-                        add("Common")
-                    }
-
-                    // All supported platforms except for the JVM might be compiled as .knm files,
-                    // so their output should be the same in most cases
-                    if (simplePlatform !is JvmPlatform) {
+                val variantChain = if (simplePlatform is JvmPlatform) {
+                    // JVM is golden output
+                    emptyList()
+                } else {
+                    buildList {
+                        // All supported platforms except for the JVM might be compiled as .knm files,
+                        // so their output should be the same in most cases
+                        // knm is also a default for the Common platform
                         add("knm")
+
+                        if (simplePlatform != null) {
+                            add(simplePlatform.platformName)
+                        }
                     }
                 }
 
-                return additionalNames + super.testPrefixes
+                return variantChain
             }
 
         override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {

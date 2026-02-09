@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.driver
 
-import org.jetbrains.kotlin.backend.common.DisposableContext
-import org.jetbrains.kotlin.backend.common.ErrorReportingContext
-import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.phaser.PhaserState
@@ -20,9 +17,9 @@ import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.util.PerformanceManager
 
 /**
- * A version of [PhaseContext] that is specific to the Native backend.
+ * A version of [NativePhaseContext] that is specific to the Native backend.
  */
-internal interface NativeBackendPhaseContext : PhaseContext, ConfigChecks
+internal interface NativeBackendPhaseContext : NativePhaseContext, ConfigChecks
 
 internal open class BasicNativeBackendPhaseContext(
         override val config: KonanConfig,

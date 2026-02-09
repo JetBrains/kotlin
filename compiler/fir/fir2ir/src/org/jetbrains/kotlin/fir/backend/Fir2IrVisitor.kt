@@ -973,21 +973,9 @@ class Fir2IrVisitor(
                 !isUnnamedLocalVariable -> null
                 else -> initializer?.accept(this@Fir2IrVisitor, null) as IrStatement
             }
-            is FirReplDeclarationReference -> {
-                // REPL snippet properties are initialized within the `$$eval` function.
-                // TODO(KT-82578): split property declaration and initializer to hopefully simplify FIR2IR
-                val symbol = symbol
-                if (symbol is FirPropertySymbol) {
-                    val rValue = symbol.fir.initializer ?: symbol.fir.delegate
-                    if (rValue != null) {
-                        callGenerator.convertToIrSetCall(rValue, symbol)
-                    } else {
-                        null
-                    }
-                } else {
-                    null
-                }
-            }
+            is FirReplPropertyInitializer -> callGenerator.convertToIrSetCall(initializer, propertySymbol)
+            is FirReplPropertyDelegate -> callGenerator.convertToIrSetCall(delegate, propertySymbol)
+            is FirReplDeclarationReference -> null
             else -> accept(this@Fir2IrVisitor, null) as IrStatement
         }
     }

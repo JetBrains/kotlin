@@ -247,7 +247,6 @@ class CustomK2ReplTest {
     }
 
     @Test
-    @Disabled("Dataframe compiler-plugin is not currently supported: KT-82554")
     fun testDataFrame() {
         if (!isK2) return
         val dataFramePluginClasspath = System.getProperty("kotlin.script.test.kotlin.dataframe.plugin.classpath")!!
@@ -351,6 +350,49 @@ class CustomK2ReplTest {
             ),
             sequenceOf(null, 42, null, true),
         )
+    }
+
+    @Test
+    fun testNestedClassMetadata() {
+        val results = withMessageCollectorAndDisposable { messageCollector, disposable ->
+            val compiler = K2ReplCompiler(K2ReplCompiler.createCompilationState(messageCollector, disposable, baseCompilationConfiguration))
+            val evaluator = K2ReplEvaluator()
+
+            @Suppress("DEPRECATION_ERROR")
+            internalScriptingRunSuspend {
+                var i = 1
+                listOf(
+                    """
+                        class A
+                        
+                        interface B {
+                          interface C
+                          
+                          interface D {
+                            class E
+                          }
+                        }
+                    """.trimIndent()
+                ).mapSuccess { snippet ->
+                    compiler.compile(snippet.toScriptSource("s${i++}.repl.kts")).onSuccess {
+                        evaluator.eval(it, baseEvaluationConfiguration)
+                    }
+                }
+            }
+        }.valueOrThrow()
+
+        val snippetClass = results.last().get().result.scriptClass!!
+
+        val layer1 = snippetClass.nestedClasses.toList()
+        assertEquals(layer1.map { it.simpleName }, listOf("A", "B"))
+        val (_, bClass) = layer1
+
+        val layer2 = bClass.nestedClasses.toList()
+        assertEquals(layer2.map { it.simpleName }, listOf("C", "D"))
+        val (_, dClass) = layer2
+
+        val layer3 = dClass.nestedClasses.toList()
+        assertEquals(layer3.map { it.simpleName }, listOf("E"))
     }
 
     @Test

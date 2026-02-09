@@ -19,7 +19,7 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
         name = "Xir-inliner"
         compilerName = "enableIrInliner"
         description = "Inline functions using the IR inliner instead of the bytecode inliner.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
@@ -30,7 +30,7 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
     compilerArgument {
         name = "Xuse-k2-kapt"
         description = "Enable the experimental support for K2 KAPT.".asReleaseDependent()
-        valueType = BooleanType.defaultNull
+        argumentType = BooleanType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
@@ -42,7 +42,7 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
         name = "Xcompile-builtins-as-part-of-stdlib"
         compilerName = "expectBuiltinsAsPartOfStdlib"
         description = "Enable behaviour needed to compile builtins as part of JVM stdlib".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -53,7 +53,7 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
     compilerArgument {
         name = "Xuse-javac"
         description = "Use javac for Java source and class file analysis.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,
@@ -64,7 +64,7 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
     compilerArgument {
         name = "Xcompile-java"
         description = "Reuse 'javac' analysis and compile Java source files.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        argumentType = BooleanType.defaultFalse
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_50,
@@ -75,8 +75,8 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
     compilerArgument {
         name = "Xjavac-arguments"
         description = "Java compiler arguments.".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
-        valueDescription = "<option[,]>".asReleaseDependent()
+        argumentType = StringArrayType.defaultNull
+        argumentDescription = "<option[,]>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,

@@ -426,6 +426,7 @@
 /third-party/ @JetBrains/kotlin-frontend
 
 /wasm/ @JetBrains/kotlin-wasm
+/wasm/wasm.tests/klib-compatibility/ @JetBrains/kotlin-common-backend
 
 *Generated.java
 

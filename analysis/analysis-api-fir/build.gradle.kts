@@ -5,6 +5,7 @@ plugins {
     id("generated-sources")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-data-manager")
 }
 
 dependencies {
@@ -82,9 +83,10 @@ projectTests {
         dependsOn(":dist")
         workingDir = rootDir
         useJUnitPlatform()
-    }.also { confugureFirPluginAnnotationsDependency(it) }
+    }
 
     withJvmStdlibAndReflect()
+    withPluginSandboxAnnotations()
 }
 
 testsJar()

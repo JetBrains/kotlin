@@ -11,12 +11,11 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.FirOperation.*
-import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind.ClassHeader
-import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind.OuterClassOfNonInner
-import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind.SecondaryConstructor
+import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -64,7 +63,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.isError
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
@@ -187,7 +185,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
             is FirDelegateFieldReference -> {
                 val delegateFieldSymbol = callee.resolvedSymbol
-                qualifiedAccessExpression.resultType = delegateFieldSymbol.fir.delegate!!.resolvedType
+                qualifiedAccessExpression.resultType = delegateFieldSymbol.fir.delegate!!.unwrapReplExpressionRef().resolvedType
                 qualifiedAccessExpression
             }
             is FirResolvedNamedReference, is FirErrorNamedReference -> {
@@ -2130,13 +2128,65 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     ): FirStatement {
         whileAnalysing(session, replDeclarationReference) {
             val symbol = replDeclarationReference.symbol
-            val classSymbol = symbol.getContainingClassSymbol()!!.fir as FirClass
-            // TODO(KT-82554): withScopesForClass may cause problems for FirFunctionCallRefinementExtension
-            context.withScopesForClass(classSymbol, components) {
-                symbol.fir.transformSingle(transformer, data)
-            }
+            symbol.fir.transformSingle(transformer, data)
         }
         return replDeclarationReference
+    }
+
+    override fun transformReplExpressionReference(
+        replExpressionReference: FirReplExpressionReference,
+        data: ResolutionMode,
+    ): FirStatement {
+        // Do nothing.
+        return replExpressionReference
+    }
+
+    override fun transformReplPropertyInitializer(
+        replPropertyInitializer: FirReplPropertyInitializer,
+        data: ResolutionMode,
+    ): FirStatement {
+        whileAnalysing(session, replPropertyInitializer) {
+            val property = replPropertyInitializer.propertySymbol.fir
+            transformer.declarationsTransformer?.transformMemberPropertyInternal(
+                property = property,
+                data = data,
+                transformInitializer = {
+                    val resolutionMode = withExpectedType(property.returnTypeRef)
+                    replPropertyInitializer.transformInitializer(transformer, resolutionMode)
+
+                    // Update REPL expression reference in case initializer expression was replaced.
+                    (property.initializer as? FirReplExpressionReference)?.expressionRef?.bind(replPropertyInitializer.initializer)
+                },
+                transformDelegate = { _, _ -> },
+            )
+        }
+        return replPropertyInitializer
+    }
+
+    override fun transformReplPropertyDelegate(
+        replPropertyDelegate: FirReplPropertyDelegate,
+        data: ResolutionMode,
+    ): FirStatement {
+        whileAnalysing(session, replPropertyDelegate) {
+            val property = replPropertyDelegate.propertySymbol.fir
+            transformer.declarationsTransformer?.transformMemberPropertyInternal(
+                property = property,
+                data = data,
+                transformInitializer = {},
+                transformDelegate = { _, shouldResolveEverything ->
+                    transformer.declarationsTransformer?.transformPropertyAccessorsWithDelegate(
+                        property = property,
+                        delegateContainer = replPropertyDelegate.delegate,
+                        shouldResolveEverything = shouldResolveEverything,
+                        replaceDelegate = replPropertyDelegate::replaceDelegate,
+                    )
+
+                    // Update REPL expression reference in case delegate expression was replaced.
+                    (property.delegate as? FirReplExpressionReference)?.expressionRef?.bind(replPropertyDelegate.delegate)
+                }
+            )
+        }
+        return replPropertyDelegate
     }
 
     // ------------------------------------------------------------------------------------------------

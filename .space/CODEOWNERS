@@ -486,6 +486,7 @@
 /third-party/ "Kotlin Frontend"
 
 /wasm/ "Kotlin Wasm"
+/wasm/wasm.tests/klib-compatibility/ "Kotlin Common Backend"
 
 # NO_OWNER: *Generated.java
 *Generated.java

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.native
 
 import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
 import org.jetbrains.kotlin.backend.common.serialization.addLanguageFeaturesToManifest
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.konan.config.konanDontCompressKlib
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import java.util.Properties
 
-fun PhaseContext.writeKlib(input: KlibWriterInput) {
+fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
     val suffix = ".klib"
     val outputPath = input.outputPath
     val dontCompressKlib = config.configuration.konanDontCompressKlib
@@ -70,7 +70,7 @@ fun PhaseContext.writeKlib(input: KlibWriterInput) {
         val usedDependenciesFile = File(path)
         // We write out the absolute path instead of canonical here to avoid resolving symbolic links
         // as that can make it difficult to map the dependencies back to the command line arguments.
-        usedDependenciesFile.writeLines(linkDependencies.map { it.location.absolutePath })
+        usedDependenciesFile.writeLines(linkDependencies.map { it.location.absolutePath }.sorted())
     }
 
     val nativeTargetsForManifest = config.nativeTargetsForManifest?.map { it.visibleName }

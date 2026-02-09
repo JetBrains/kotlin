@@ -291,11 +291,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                 type = delegate.resolvedType.toIrType(),
                             )
                         } else {
-                            // REPL snippet properties are initialized within the `$$eval` function.
-                            // TODO(KT-82578): split declaration and initializer to hopefully simplify FIR2IR
-                            val initializer = runIf(property.isReplSnippetDeclaration != true) {
-                                getEffectivePropertyInitializer(property, resolveIfNeeded = true)
-                            }
+                            val initializer = getEffectivePropertyInitializer(property, resolveIfNeeded = true)
 
                             // There are cases when we get here for properties
                             // that have no backing field. For example, in the

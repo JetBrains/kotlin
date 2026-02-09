@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,17 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
 
+/**
+ * Represents an annotation use-site target that specifies where the annotation should be applied.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ *    @get:JvmName("getFoo")
+ * // ^__^
+ * val foo: String = "bar"
+ * ```
+ */
 class KtAnnotationUseSiteTarget : KtElementImplStub<KotlinAnnotationUseSiteTargetStub> {
 
     constructor(node: ASTNode) : super(node)

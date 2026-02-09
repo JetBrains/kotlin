@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-data-manager")
 }
 
 dependencies {
@@ -68,9 +69,10 @@ projectTests {
             // Ensure golden tests run first
             mustRunAfter(":analysis:analysis-api-fir:test")
         }
-    }.also { confugureFirPluginAnnotationsDependency(it) }
+    }
 
     withJvmStdlibAndReflect()
+    withPluginSandboxAnnotations()
 }
 
 testsJar()

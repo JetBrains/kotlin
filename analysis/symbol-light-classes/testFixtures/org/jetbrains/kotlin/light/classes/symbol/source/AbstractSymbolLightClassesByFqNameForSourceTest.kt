@@ -7,24 +7,20 @@ package org.jetbrains.kotlin.light.classes.symbol.source
 
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesByFqNameTest
 import org.jetbrains.kotlin.light.classes.symbol.base.SymbolLightClassScriptTestConfigurator
-import org.jetbrains.kotlin.light.classes.symbol.base.SymbolLightClassSourceTestConfigurator
-import org.jetbrains.kotlin.platform.js.JsPlatforms
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.light.classes.symbol.base.SymbolLightClassSourceJsTestConfigurator
+import org.jetbrains.kotlin.light.classes.symbol.base.SymbolLightClassSourceJvmTestConfigurator
 
 abstract class AbstractSymbolLightClassesByFqNameForSourceTest : AbstractSymbolLightClassesByFqNameTest(
-    configurator = SymbolLightClassSourceTestConfigurator(defaultTargetPlatform = JvmPlatforms.defaultJvmPlatform),
-    currentExtension = EXTENSIONS.JAVA,
+    configurator = SymbolLightClassSourceJvmTestConfigurator,
     isTestAgainstCompiledCode = false,
 )
 
 abstract class AbstractScriptSymbolLightClassesByFqNameForSourceTest : AbstractSymbolLightClassesByFqNameTest(
     configurator = SymbolLightClassScriptTestConfigurator,
-    currentExtension = EXTENSIONS.JAVA,
     isTestAgainstCompiledCode = false,
 )
 
 abstract class AbstractJsSymbolLightClassesByFqNameForSourceTest : AbstractSymbolLightClassesByFqNameTest(
-    configurator = SymbolLightClassSourceTestConfigurator(defaultTargetPlatform = JsPlatforms.defaultJsPlatform),
-    currentExtension = EXTENSIONS.KMP_JAVA,
+    configurator = SymbolLightClassSourceJsTestConfigurator,
     isTestAgainstCompiledCode = false,
 )

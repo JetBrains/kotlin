@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,12 +30,10 @@ private const val VALUE_DELIMITER = ": "
 
 open class AbstractSymbolLightClassesStructureTestBase(
     configurator: AnalysisApiTestConfigurator,
-    protected val testPrefix: String,
     override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
-    override val currentExtension: String get() = throw UnsupportedOperationException()
     protected fun doTestInheritors(ktFiles: List<KtFile>, testServices: TestServices) {
-        val testData = getTestOutputFile(extension = INHERITORS_EXTENSION, testPrefixes = listOf(testPrefix))
+        val testData = getTestOutputFile(extension = INHERITORS_EXTENSION)
         if (testData.notExists()) return
         val project = ktFiles.first().project
 
@@ -64,7 +62,6 @@ open class AbstractSymbolLightClassesStructureTestBase(
         testServices.assertions.assertEqualsToTestOutputFile(
             actual = result,
             extension = INHERITORS_EXTENSION,
-            testPrefixes = listOf(testPrefix),
         )
     }
 

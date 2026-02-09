@@ -86,7 +86,10 @@ internal fun IrFunction.continuationClass(): IrClass? =
             as IrClass?
 
 internal fun IrExpression?.isReadOfInlineLambda(): Boolean = isReadOfCrossinline() ||
-        (this is IrGetValue && origin == IrStatementOrigin.VARIABLE_AS_FUNCTION && (symbol.owner as? IrValueParameter)?.isNoinline == false)
+        (this is IrGetValue && origin == IrStatementOrigin.VARIABLE_AS_FUNCTION && (symbol.owner as? IrValueParameter)?.isInlineable() == true)
+
+private fun IrValueParameter.isInlineable(): Boolean =
+    !isNoinline && (parent as? IrFunction)?.isInline == true
 
 internal fun IrFunction.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(): IrType? {
     if (this !is IrSimpleFunction || !isSuspend) return null

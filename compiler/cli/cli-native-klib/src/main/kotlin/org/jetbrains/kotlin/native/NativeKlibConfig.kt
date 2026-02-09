@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.native
 
 import org.jetbrains.kotlin.backend.konan.NativeKlibCompilationConfig
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
@@ -41,9 +41,9 @@ class NativeKlibConfig(
         }
 }
 
-class NativePhaseContext(
+class NativeFirstStagePhaseContext(
     override val config: NativeKlibConfig,
-) : PhaseContext {
+) : NativePhaseContext {
     override var inVerbosePhase: Boolean = false
 
     override val messageCollector: MessageCollector

@@ -731,6 +731,30 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(replDeclarationReference)
     }
 
+    final override fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference, data: Nothing?) {
+        visitReplExpressionReference(replExpressionReference)
+    }
+
+    open fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference) {
+        visitElement(replExpressionReference)
+    }
+
+    final override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: Nothing?) {
+        visitReplPropertyInitializer(replPropertyInitializer)
+    }
+
+    open fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer) {
+        visitElement(replPropertyInitializer)
+    }
+
+    final override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: Nothing?) {
+        visitReplPropertyDelegate(replPropertyDelegate)
+    }
+
+    open fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate) {
+        visitElement(replPropertyDelegate)
+    }
+
     final override fun visitPackageDirective(packageDirective: FirPackageDirective, data: Nothing?) {
         visitPackageDirective(packageDirective)
     }

@@ -731,6 +731,30 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformReplDeclarationReference(replDeclarationReference, data)
     }
 
+    open fun transformReplExpressionReference(replExpressionReference: FirReplExpressionReference, data: D): FirStatement {
+        return transformElement(replExpressionReference, data)
+    }
+
+    final override fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference, data: D): FirStatement {
+        return transformReplExpressionReference(replExpressionReference, data)
+    }
+
+    open fun transformReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: D): FirStatement {
+        return transformElement(replPropertyInitializer, data)
+    }
+
+    final override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: D): FirStatement {
+        return transformReplPropertyInitializer(replPropertyInitializer, data)
+    }
+
+    open fun transformReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: D): FirStatement {
+        return transformElement(replPropertyDelegate, data)
+    }
+
+    final override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: D): FirStatement {
+        return transformReplPropertyDelegate(replPropertyDelegate, data)
+    }
+
     open fun transformPackageDirective(packageDirective: FirPackageDirective, data: D): FirPackageDirective {
         return transformElement(packageDirective, data)
     }

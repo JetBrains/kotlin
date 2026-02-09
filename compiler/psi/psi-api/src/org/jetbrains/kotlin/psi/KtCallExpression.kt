@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.psi
@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
-import org.jetbrains.kotlin.resolution.KtResolvableCall
 
 /**
- * The code example:
+ * Represents a function call expression, including the callee and arguments.
+ *
+ * ### Example:
  *
  * ```kotlin
  * fun main() {
  *     println(0)
- * // ^__________^
+ * //  ^________^
  * }
  * ```
  *

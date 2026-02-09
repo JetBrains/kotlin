@@ -11,6 +11,5 @@ import org.jetbrains.kotlin.light.classes.symbol.base.SymbolLightClassScriptTest
 abstract class AbstractScriptSymbolLightClassesEqualityByFqNameForSourceTest :
     AbstractSymbolLightClassesEqualityByFqNameTest(
         configurator = SymbolLightClassScriptTestConfigurator,
-        currentExtension = EXTENSIONS.JAVA,
         stopIfCompilationErrorDirectivePresent = false,
     )

@@ -28,13 +28,14 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
     val deprecatedSinceVersion: KotlinReleaseVersion?,
     val removedSinceVersion: KotlinReleaseVersion?,
 ) {
+
     class SSoTCompilerArgument(
         val effectiveCompilerName: String,
         origin: KotlinCompilerArgument,
     ) : BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>(
         name = origin.name,
         description = origin.description.current,
-        valueType = BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType(origin.valueType),
+        valueType = BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType(origin.argumentType),
         introducedSinceVersion = origin.releaseVersionsMetadata.introducedVersion,
         deprecatedSinceVersion = origin.releaseVersionsMetadata.deprecatedVersion,
         removedSinceVersion = origin.releaseVersionsMetadata.removedVersion

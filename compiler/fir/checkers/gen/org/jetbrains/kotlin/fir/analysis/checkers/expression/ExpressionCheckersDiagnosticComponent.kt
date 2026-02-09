@@ -91,6 +91,18 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allReplDeclarationReferenceCheckers.check(replDeclarationReference, data)
     }
 
+    override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: CheckerContext) {
+        checkers.allReplPropertyInitializerCheckers.check(replPropertyInitializer, data)
+    }
+
+    override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: CheckerContext) {
+        checkers.allReplPropertyDelegateCheckers.check(replPropertyDelegate, data)
+    }
+
+    override fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference, data: CheckerContext) {
+        checkers.allReplExpressionReferenceCheckers.check(replExpressionReference, data)
+    }
+
     override fun visitAnnotation(annotation: FirAnnotation, data: CheckerContext) {
         checkers.allAnnotationCheckers.check(annotation, data)
     }
