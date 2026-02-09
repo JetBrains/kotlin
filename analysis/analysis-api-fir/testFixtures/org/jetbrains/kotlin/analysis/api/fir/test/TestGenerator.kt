@@ -11,11 +11,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.AnalysisApiTestGenerator
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.analysisSessionModeIs
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.and
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.frontendIs
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.testModuleKindIs
+import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
 import org.jetbrains.kotlin.generators.tests.analysis.api.generateAnalysisApiTests
 
 fun main(args: Array<String>) {
