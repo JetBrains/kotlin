@@ -1489,8 +1489,24 @@ internal fun FirQualifiedAccessExpression.addNonFatalDiagnostics(candidate: Cand
         }
     }
 
-    if (newNonFatalDiagnostics.isNotEmpty()) {
-        replaceNonFatalDiagnostics(nonFatalDiagnostics + newNonFatalDiagnostics)
+    appendNonFatalDiagnostics(newNonFatalDiagnostics)
+}
+
+fun FirQualifiedAccessExpression.appendNonFatalDiagnostics(newDiagnostics: List<ConeDiagnostic>) {
+    if (newDiagnostics.isNotEmpty()) {
+        replaceNonFatalDiagnostics(nonFatalDiagnostics + newDiagnostics)
+    }
+}
+
+fun FirQualifiedAccessExpression.appendNonFatalDiagnostics(vararg newDiagnostics: ConeDiagnostic) {
+    if (newDiagnostics.isNotEmpty()) {
+        replaceNonFatalDiagnostics(nonFatalDiagnostics + newDiagnostics)
+    }
+}
+
+fun FirResolvedQualifier.appendNonFatalDiagnostics(vararg newDiagnostics: ConeDiagnostic) {
+    if (newDiagnostics.isNotEmpty()) {
+        replaceNonFatalDiagnostics(nonFatalDiagnostics + newDiagnostics)
     }
 }
 
