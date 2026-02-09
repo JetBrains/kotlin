@@ -1245,7 +1245,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                     nativeIndex.getHeaderId(it)
                 }
 
-                val allTranslationUnits = unitsHolder.loadedTranslationUnits.union(ownTranslationUnits)
+                val allTranslationUnits = unitsHolder.loadedTranslationUnits.union(unitsToProcess)
                 nativeIndex.typesDefinitions = indexTranslationUnitsForTypesDefinitions(index, allTranslationUnits)
 
                 unitsToProcess.forEach {
