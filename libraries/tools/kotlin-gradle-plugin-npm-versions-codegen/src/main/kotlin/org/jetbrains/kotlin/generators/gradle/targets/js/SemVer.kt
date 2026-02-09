@@ -12,8 +12,9 @@ data class SemVer(
     val minor: BigInteger,
     val patch: BigInteger,
     val preRelease: String? = null,
-    val build: String? = null
+    val build: String? = null,
 ) : Comparable<SemVer> {
+
     override fun compareTo(other: SemVer): Int {
         val compareMajor = major.compareTo(other.major)
         if (compareMajor != 0) return compareMajor
@@ -32,7 +33,6 @@ data class SemVer(
 
         return 0
     }
-
 
     override fun toString() = "$major.$minor.$patch" +
             (if (preRelease != null) "-$preRelease" else "") +

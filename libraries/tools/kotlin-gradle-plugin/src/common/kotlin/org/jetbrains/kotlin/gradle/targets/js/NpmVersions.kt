@@ -12,21 +12,30 @@ import java.io.Serializable
  */
 // DO NOT MODIFY DIRECTLY! Use org.jetbrains.kotlin.generators.gradle.targets.js.MainKt
 class NpmVersions : Serializable {
-    val webpack = NpmPackageVersion("webpack", "5.101.3")
-    val karma = NpmPackageVersion("karma", "github:Kotlin/karma#6.4.5")
-    val swcHelpers = NpmPackageVersion("@swc/helpers", "0.5.18")
-    val webpackCli = NpmPackageVersion("webpack-cli", "6.0.1")
-    val webpackDevServer = NpmPackageVersion("webpack-dev-server", "5.2.3")
-    val sourceMapLoader = NpmPackageVersion("source-map-loader", "5.0.0")
-    val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.21")
     val cssLoader = NpmPackageVersion("css-loader", "7.1.3")
-    val styleLoader = NpmPackageVersion("style-loader", "4.0.0")
-    val sassLoader = NpmPackageVersion("sass-loader", "16.0.7")
-    val sass = NpmPackageVersion("sass", "1.97.3")
-    val toStringLoader = NpmPackageVersion("to-string-loader", "1.2.0")
+    val karma = NpmPackageVersion("karma", "github:Kotlin/karma#6.4.5")
+    val karmaChromeLauncher = NpmPackageVersion("karma-chrome-launcher", "3.2.0")
+    val karmaFirefoxLauncher = NpmPackageVersion("karma-firefox-launcher", "2.1.3")
+    val karmaIeLauncher = NpmPackageVersion("karma-ie-launcher", "1.0.0")
+    val karmaMocha = NpmPackageVersion("karma-mocha", "2.0.1")
+    val karmaOperaLauncher = NpmPackageVersion("karma-opera-launcher", "1.0.0")
+    val karmaSafariLauncher = NpmPackageVersion("karma-safari-launcher", "1.0.0")
+    val karmaSourcemapLoader = NpmPackageVersion("karma-sourcemap-loader", "0.4.0")
+    val karmaWebpack = NpmPackageVersion("karma-webpack", "5.0.1")
+    val kotlinWebHelpers = NpmPackageVersion("kotlin-web-helpers", "3.0.0")
     val miniCssExtractPlugin = NpmPackageVersion("mini-css-extract-plugin", "2.10.0")
     val mocha = NpmPackageVersion("mocha", "11.7.5")
-    val karmaChromeLauncher = NpmPackageVersion("karma-chrome-launcher", "3.2.0")
+    val sass = NpmPackageVersion("sass", "1.97.3")
+    val sassLoader = NpmPackageVersion("sass-loader", "16.0.7")
+    val sourceMapLoader = NpmPackageVersion("source-map-loader", "5.0.0")
+    val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.21")
+    val styleLoader = NpmPackageVersion("style-loader", "4.0.0")
+    val swcHelpers = NpmPackageVersion("@swc/helpers", "0.5.18")
+    val toStringLoader = NpmPackageVersion("to-string-loader", "1.2.0")
+    val typescript = NpmPackageVersion("typescript", "5.9.3")
+    val webpack = NpmPackageVersion("webpack", "5.101.3")
+    val webpackCli = NpmPackageVersion("webpack-cli", "6.0.1")
+    val webpackDevServer = NpmPackageVersion("webpack-dev-server", "5.2.3")
 
     @Deprecated(
         "Phantom JS is deprecated. Scheduled for removal in Kotlin 2.4.",
@@ -35,40 +44,30 @@ class NpmVersions : Serializable {
     @Suppress("unused")
     val karmaPhantomjsLauncher = NpmPackageVersion("karma-phantomjs-launcher", "1.0.4")
 
-    val karmaFirefoxLauncher = NpmPackageVersion("karma-firefox-launcher", "2.1.3")
-    val karmaOperaLauncher = NpmPackageVersion("karma-opera-launcher", "1.0.0")
-    val karmaIeLauncher = NpmPackageVersion("karma-ie-launcher", "1.0.0")
-    val karmaSafariLauncher = NpmPackageVersion("karma-safari-launcher", "1.0.0")
-    val karmaMocha = NpmPackageVersion("karma-mocha", "2.0.1")
-    val karmaWebpack = NpmPackageVersion("karma-webpack", "5.0.1")
-    val karmaSourcemapLoader = NpmPackageVersion("karma-sourcemap-loader", "0.4.0")
-    val typescript = NpmPackageVersion("typescript", "5.9.3")
-    val kotlinWebHelpers = NpmPackageVersion("kotlin-web-helpers", "3.0.0")
-
     val allDependencies = listOf(
+        cssLoader,
         karma,
+        karmaChromeLauncher,
+        karmaFirefoxLauncher,
+        karmaIeLauncher,
+        karmaMocha,
+        karmaOperaLauncher,
+        karmaSafariLauncher,
+        karmaSourcemapLoader,
+        karmaWebpack,
+        kotlinWebHelpers,
+        miniCssExtractPlugin,
+        mocha,
+        sass,
+        sassLoader,
+        sourceMapLoader,
+        sourceMapSupport,
+        styleLoader,
         swcHelpers,
+        toStringLoader,
+        typescript,
         webpack,
         webpackCli,
         webpackDevServer,
-        sourceMapLoader,
-        sourceMapSupport,
-        cssLoader,
-        styleLoader,
-        sassLoader,
-        sass,
-        toStringLoader,
-        miniCssExtractPlugin,
-        mocha,
-        karmaChromeLauncher,
-        karmaFirefoxLauncher,
-        karmaOperaLauncher,
-        karmaIeLauncher,
-        karmaSafariLauncher,
-        karmaMocha,
-        karmaWebpack,
-        karmaSourcemapLoader,
-        typescript,
-        kotlinWebHelpers,
     )
 }

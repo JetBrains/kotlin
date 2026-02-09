@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.generators.gradle.targets.js
 
+import java.util.*
+
 data class Package(
     val name: String,
     val version: String,
     val displayName: String,
 ) {
-    // Used in velocity template
-    @Suppress("unused")
-    fun camelize(): String =
+    // Note: this property is also used in the Velocity template
+    val camelize: String =
         displayName
             .removePrefix("@")
             .split("-", "/")
-            .mapIndexed { index, item ->
-                if (index == 0) item else item.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-            }
-            .joinToString("")
+            .joinToString("") { s -> s.replaceFirstChar { it.titlecase(Locale.ROOT) } }
+            .replaceFirstChar { c -> c.lowercase(Locale.ROOT) }
 }
 
 sealed class PackageInformation {

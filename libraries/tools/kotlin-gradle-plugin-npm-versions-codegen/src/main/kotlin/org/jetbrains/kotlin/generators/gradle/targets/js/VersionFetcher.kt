@@ -9,63 +9,55 @@ import com.google.gson.Gson
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-
-class VersionFetcher : AutoCloseable {
+internal class VersionFetcher : AutoCloseable {
     private val client = HttpClient()
 
-    suspend fun fetch(): List<PackageInformation> {
-        return coroutineScope {
-            npmPackages
-                .filter { it.version != null }
-                .map {
-                    HardcodedPackageInformation(
-                        it.name,
-                        it.version!!,
-                        it.displayName
-                    )
-                } +
-                    npmPackages
-                        .filter { it.version == null }
-                        .map {
-                            async {
-                                val fetched = fetchPackageInformationAsync(it.name)
-                                object {
-                                    val name = it.name
-                                    val displayName = it.displayName
-                                    val fetched = fetched
-                                }
-                            }
-                        }
-                        .map { fetched ->
-                            val await = fetched.await()
-                            val name = await.name
-                            val displayName = await.displayName
-                            val awaitFetched = await.fetched
-                            val fetchedPackageInformation = Gson().fromJson(awaitFetched, FetchedPackageInformation::class.java)
-                            RealPackageInformation(
-                                name,
-                                fetchedPackageInformation.versions.keys,
-                                displayName
-                            )
-                        }
+    suspend fun fetch(): List<PackageInformation> = coroutineScope {
+        npmPackages
+            .map { npmPackage ->
+                async(Dispatchers.IO) {
+                    getPackageInformation(npmPackage)
+                }
+            }
+            .awaitAll()
+    }
+
+    private suspend fun getPackageInformation(npmPackage: NpmPackage): PackageInformation {
+        return if (npmPackage.version != null) {
+            HardcodedPackageInformation(
+                name = npmPackage.name,
+                version = npmPackage.version,
+                displayName = npmPackage.displayName,
+            )
+        } else {
+            val packageInfoData = fetchPackageInformation(npmPackage.name)
+            val packageInfo = Gson().fromJson(packageInfoData, FetchedPackageInformation::class.java)
+            RealPackageInformation(
+                name = npmPackage.name,
+                versions = packageInfo.versions.keys,
+                displayName = npmPackage.displayName,
+            )
         }
     }
 
-    private suspend fun fetchPackageInformationAsync(
+    private suspend fun fetchPackageInformation(
         packageName: String,
     ): String {
         val namespacePrefix = "@"
         val packagePath =
-            if (packageName.startsWith(namespacePrefix))
+            if (packageName.startsWith(namespacePrefix)) {
                 namespacePrefix + encodeURIComponent(packageName.removePrefix(namespacePrefix))
-            else
+            } else {
                 encodeURIComponent(packageName)
+            }
 
         return client.get("https://registry.npmjs.org/$packagePath").bodyAsText()
     }
@@ -76,7 +68,7 @@ class VersionFetcher : AutoCloseable {
 }
 
 private data class FetchedPackageInformation(
-    val versions: Map<String, Any>
+    val versions: Map<String, Any>,
 )
 
 fun encodeURIComponent(s: String): String {
@@ -89,7 +81,7 @@ fun encodeURIComponent(s: String): String {
             .replace("%29", ")")
             .replace("%7E", "~")
             .replace("%2F", "/")
-    } catch (e: UnsupportedEncodingException) {
+    } catch (_: UnsupportedEncodingException) {
         s
     }
 }

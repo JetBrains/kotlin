@@ -35,5 +35,5 @@ val npmPackages = listOf(
 data class NpmPackage(
     val name: String,
     val version: String? = null,
-    val displayName: String = name
+    val displayName: String = name,
 )

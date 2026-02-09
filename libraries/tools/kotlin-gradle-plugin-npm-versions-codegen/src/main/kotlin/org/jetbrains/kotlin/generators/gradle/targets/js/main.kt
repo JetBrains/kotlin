@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.generators.gradle.targets.js
 
-import kotlinx.coroutines.runBlocking
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import org.apache.velocity.runtime.RuntimeConstants.RESOURCE_LOADER
@@ -13,10 +12,10 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 
-fun main() {
-    val outputSourceRoot = System.getProperties()["org.jetbrains.kotlin.generators.gradle.targets.js.outputSourceRoot"]
-    val npmPackageRoot = System.getProperties()["org.jetbrains.kotlin.generators.gradle.targets.js.npmPackageRoot"]
-    val npmToolingName = System.getProperties()["org.jetbrains.kotlin.npm.tooling.name"]
+suspend fun main() {
+    val outputSourceRoot = System.getProperty("org.jetbrains.kotlin.generators.gradle.targets.js.outputSourceRoot")
+    val npmPackageRoot = System.getProperty("org.jetbrains.kotlin.generators.gradle.targets.js.npmPackageRoot")
+    val npmToolingName = System.getProperty("org.jetbrains.kotlin.npm.tooling.name")
     val packageName = "org.jetbrains.kotlin.gradle.targets.js"
     val className = "NpmVersions"
     val fileName = "$className.kt"
@@ -40,15 +39,13 @@ fun main() {
     val template = velocityEngine.getTemplate("$fileName.vm")
 
     val packages = VersionFetcher().use {
-        runBlocking {
-            it.fetch()
-        }
+        it.fetch()
     }
 
     val dependencies = findLastVersions(packages)
-        .also {
-            context.put("dependencies", it)
-        }
+        .sortedBy { it.camelize }
+
+    context.put("dependencies", dependencies)
 
     targetFile.writer().use {
         template.merge(context, it)
@@ -68,7 +65,6 @@ fun main() {
 
     val packageJsonContext = VelocityContext()
         .apply {
-            @OptIn(ExperimentalStdlibApi::class)
             put("version", md.digest().toHexString())
             put("dependencies", dependencies.map { "    \"${it.name}\": \"${it.version}\"" })
             put("newline", "\n")
@@ -80,7 +76,7 @@ fun main() {
     }
 }
 
-fun findLastVersions(packages: List<PackageInformation>): List<Package> {
+private fun findLastVersions(packages: List<PackageInformation>): List<Package> {
     return packages
         .map { packageInformation ->
             val maximumVersion = when (packageInformation) {
@@ -96,7 +92,7 @@ fun findLastVersions(packages: List<PackageInformation>): List<Package> {
             Package(
                 packageInformation.name,
                 maximumVersion,
-                packageInformation.displayName
+                packageInformation.displayName,
             )
         }
 }

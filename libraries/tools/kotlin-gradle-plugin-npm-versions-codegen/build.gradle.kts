@@ -1,5 +1,6 @@
 import com.github.gradle.node.npm.task.NpmTask
 import com.github.gradle.node.yarn.task.YarnTask
+import org.gradle.kotlin.dsl.support.serviceOf
 
 plugins {
     kotlin("jvm")
@@ -17,6 +18,7 @@ dependencies {
     constraints {
         api(libs.apache.commons.lang)
     }
+    implementation("org.slf4j:slf4j-simple:1.7.36")
 }
 
 node {
@@ -24,9 +26,13 @@ node {
     version.set(nodejsVersion)
 }
 
-val npmProjectDefault = project.layout.buildDirectory.map { it.dir("npm-project") }
+val npmProjectDefault: Provider<Directory> = project.layout.buildDirectory.dir("npm-project")
+val npmProjectInstallationDir: Provider<Directory> = project.layout.buildDirectory.dir("npm-project-installed")
+val yarnProjectInstallationDir: Provider<Directory> = project.layout.buildDirectory.dir("yarn-project-installed")
+
 val kotlinGradlePluginProjectDir = project(":kotlin-gradle-plugin").projectDir
 val kotlinGradlePluginIntegrationTestsProjectDir = project(":kotlin-gradle-plugin-integration-tests").projectDir
+
 val generateNpmVersions by generator(
     "org.jetbrains.kotlin.generators.gradle.targets.js.MainKt",
     sourceSets["main"]
@@ -62,33 +68,40 @@ val allLocationsForPackageJsonFile = listOf(
 val allLocationsForLockFiles = allLocationsForPackageJsonFile +
         mainGradlePluginLocationForLockFiles
 
-val npmProjectSetup = project.layout.buildDirectory.map { it.dir("npm-project-installed") }
 val setupNpmProject by tasks.registering(Sync::class) {
-    dependsOn(generateNpmVersions)
-    from(npmProjectDefault)
-    into(npmProjectSetup)
+    from(generateNpmVersions) {
+        include("package.json")
+    }
+    into(npmProjectInstallationDir)
 }
 
 val npmInstallDeps by tasks.registering(NpmTask::class) {
-    workingDir.set(npmProjectSetup.map { it.file(".") })
+    workingDir.set(npmProjectInstallationDir.map { it.file(".") })
     dependsOn(setupNpmProject)
     args.set(listOf("install", "--package-lock-only"))
 }
 
-val yarnProjectSetup = project.layout.buildDirectory.map { it.dir("yarn-project-installed") }
 val setupYarnProject by tasks.registering(Sync::class) {
-    dependsOn(generateNpmVersions)
-    from(npmProjectDefault)
-    into(yarnProjectSetup)
+    val yarnProjectInstallationDir = yarnProjectInstallationDir
+
+    from(generateNpmVersions) {
+        include("package.json")
+    }
+    into(yarnProjectInstallationDir)
+
+    val fs = serviceOf<FileSystemOperations>()
+    doFirst {
+        fs.delete { delete(yarnProjectInstallationDir) }
+    }
 }
 
 val yarnInstallDeps by tasks.registering(YarnTask::class) {
-    workingDir.set(yarnProjectSetup)
+    workingDir.set(yarnProjectInstallationDir)
     dependsOn(setupYarnProject)
     args.set(listOf("install", "--ignore-scripts"))
 }
 
-val setupNpmFiles by tasks.registering(CustomCopyTask::class) {
+val setupNpmFiles by tasks.registering {
     dependsOn(yarnInstallDeps)
     dependsOn(npmInstallDeps)
 
@@ -98,13 +111,11 @@ val setupNpmFiles by tasks.registering(CustomCopyTask::class) {
 
     inputs.dir(npmProjectDefault)
 
-    val packageLockLocation = npmProjectSetup.map { it.file("package-lock.json") }.also {
-        inputs.file(it)
-    }
+    val packageLockLocation = npmProjectInstallationDir.map { it.file("package-lock.json") }
+    inputs.file(packageLockLocation)
 
-    val yarnLockLocation = yarnProjectSetup.map { it.file("yarn.lock") }.also {
-        inputs.file(it)
-    }
+    val yarnLockLocation = yarnProjectInstallationDir.map { it.file("yarn.lock") }
+    inputs.file(yarnLockLocation)
 
     val allLocationsForNpmLockFiles = allLocationsForLockFiles.map { file: File ->
         file.resolve("npm").also {
@@ -129,30 +140,35 @@ val setupNpmFiles by tasks.registering(CustomCopyTask::class) {
         )
     }
 
-    copySpecProperty.set(Action {
-        into(rootDir)
+    val fs = serviceOf<FileSystemOperations>()
 
-        allLocationsForNpmLockFiles.forEach { file: File ->
-            from(packageLockLocation) {
-                into(file)
-            }
-        }
-        allLocationsForYarnLockFiles.forEach { file: File ->
-            from(yarnLockLocation) {
-                into(file)
-            }
-        }
+    doLast {
+        fs.copy {
+            into(rootDir)
 
-        allLocationsForPackageJsonFile.forEach { file: File ->
-            from(npmProjectDefault) {
-                into(file)
+            allLocationsForNpmLockFiles.forEach { file: File ->
+                from(packageLockLocation) {
+                    into(file)
+                }
+            }
+            allLocationsForYarnLockFiles.forEach { file: File ->
+                from(yarnLockLocation) {
+                    into(file)
+                }
+            }
+
+            allLocationsForPackageJsonFile.forEach { file: File ->
+                from(npmProjectDefault) {
+                    into(file)
+                }
             }
         }
-    })
+    }
 }
 
-// The task is supposed to run manually to upgrade NPM versions and lock files
 val generateAll by tasks.registering {
+    description = "Upgrade NPM versions and lock files." +
+            "Should be run manually, see https://youtrack.jetbrains.com/articles/KT-A-530/Upgrade-NPM-dependencies-versions"
     dependsOn(
         generateNpmVersions,
         setupNpmFiles,
@@ -162,18 +178,3 @@ val generateAll by tasks.registering {
 // disable cache-redirector because it fails to resolve @swc/helpers
 // (It replaces the slash `/` with `%2f` and tries to resolve https://abc.cloudfront.net/registry.npmjs.org/@swc%2fhelpers)
 jsCacheRedirector.redirectNpmRegistry = false
-
-abstract class CustomCopyTask : DefaultTask() {
-    @get:Inject
-    abstract val fs: FileSystemOperations
-
-    @get:Internal
-    abstract val copySpecProperty: Property<Action<CopySpec>>
-
-    @TaskAction
-    fun copy() {
-        fs.copy {
-            copySpecProperty.get().execute(this)
-        }
-    }
-}
