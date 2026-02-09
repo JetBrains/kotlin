@@ -28,7 +28,6 @@ class NativeKlibCliPipeline(
         arguments: K2NativeCompilerArguments
     ): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<K2NativeCompilerArguments>, *> {
         return NativeConfigurationPhase then
-                NativeEnvironmentPhase then
                 NativeFrontendPhase.thenIf(
                     condition = ::skipIrGeneration,
                     onTrue = NativeMetadataSerializationPhase,

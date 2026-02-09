@@ -22,7 +22,7 @@ object NativeFir2IrPhase : PipelinePhase<NativeFrontendArtifact, NativeFir2IrArt
     postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeFrontendArtifact): NativeFir2IrArtifact {
-        val (frontendOutput, configuration, environment, phaseContext) = input
+        val (frontendOutput, configuration, phaseContext) = input
         val fir2IrResult = phaseContext.fir2Ir(frontendOutput)
         SpecialBackendChecksTraversal(
             phaseContext,
@@ -32,7 +32,6 @@ object NativeFir2IrPhase : PipelinePhase<NativeFrontendArtifact, NativeFir2IrArt
         return NativeFir2IrArtifact(
             fir2IrOutput = fir2IrResult,
             configuration = configuration,
-            environment = environment,
             phaseContext = phaseContext,
         )
     }
@@ -44,15 +43,14 @@ object NativePreSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeF
     postActions = setOf(PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeFir2IrArtifact): NativeFir2IrArtifact {
-        val (fir2IrOutput, configuration, environment, phaseContext) = input
+        val (fir2IrOutput, configuration, phaseContext) = input
         val phaseConfig = configuration.phaseConfig ?: PhaseConfig()
         val phaserState = PhaserState()
         val engine = PhaseEngine(phaseConfig, phaserState, phaseContext)
-        val loweredResult = engine.runPreSerializationLowerings(fir2IrOutput, environment)
+        val loweredResult = engine.runPreSerializationLowerings(fir2IrOutput, configuration)
         return NativeFir2IrArtifact(
             fir2IrOutput = loweredResult,
             configuration = configuration,
-            environment = environment,
             phaseContext = phaseContext,
         )
     }

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
@@ -27,15 +27,18 @@ internal val testProcessorModulePhase = makeIrModulePhase(
     name = "TestProcessor",
 )
 
-public fun <T : NativePhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
+fun <T : NativePhaseContext> PhaseEngine<T>.runPreSerializationLowerings(
+    fir2IrOutput: Fir2IrOutput,
+    configuration: CompilerConfiguration
+): Fir2IrOutput {
     val diagnosticReporter = DiagnosticsCollectorImpl()
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         diagnosticReporter,
-        environment.configuration.languageVersionSettings
+        configuration.languageVersionSettings
     )
     val loweringContext = NativePreSerializationLoweringContext(
         fir2IrOutput.fir2irActualizedResult.irBuiltIns,
-        environment.configuration,
+        configuration,
         irDiagnosticReporter,
     )
     val preSerializationLowered = newEngine(loweringContext) { engine ->
@@ -43,9 +46,9 @@ public fun <T : NativePhaseContext> PhaseEngine<T>.runPreSerializationLowerings(
         // Unfortunately, this needs K/N to be turned on by default in the Kotlin repository.
         val lowerings = buildList {
             val runTestProcessorModulePhase =
-                environment.configuration.languageVersionSettings.supportsFeature(LanguageFeature.NativeTestProcessorBeforeSerialization)
+                configuration.languageVersionSettings.supportsFeature(LanguageFeature.NativeTestProcessorBeforeSerialization)
             if (runTestProcessorModulePhase) add(testProcessorModulePhase)
-            addAll(nativeLoweringsOfTheFirstPhase(environment.configuration.languageVersionSettings))
+            addAll(nativeLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
         }
         engine.runPreSerializationLoweringPhases(
             fir2IrOutput.fir2irActualizedResult,
@@ -55,8 +58,8 @@ public fun <T : NativePhaseContext> PhaseEngine<T>.runPreSerializationLowerings(
     // TODO: After KT-73624, generate native diagnostic tests for `compiler/testData/diagnostics/irInliner/syntheticAccessors`
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
         diagnosticReporter,
-        environment.configuration.messageCollector,
-        environment.configuration.renderDiagnosticInternalName,
+        configuration.messageCollector,
+        configuration.renderDiagnosticInternalName,
     )
     if (diagnosticReporter.hasErrors) {
         throw CompilationErrorException("Compilation failed: there were some diagnostics during IR Inliner")

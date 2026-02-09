@@ -16,7 +16,7 @@ object NativeMetadataSerializationPhase : PipelinePhase<NativeFrontendArtifact, 
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeFrontendArtifact): NativeSerializationArtifact {
-        val (frontendOutput, configuration, _, phaseContext) = input
+        val (frontendOutput, configuration, phaseContext) = input
 
         val serializerOutput = phaseContext.firSerializerBase(frontendOutput, fir2IrOutput = null)
         return NativeSerializationArtifact(

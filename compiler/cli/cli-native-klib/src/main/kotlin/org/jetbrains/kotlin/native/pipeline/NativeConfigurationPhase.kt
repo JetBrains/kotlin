@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.cli.common.checkForUnexpectedKlibLibraries
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.setupCommonKlibArguments
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
@@ -33,7 +35,7 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 object NativeConfigurationPhase : AbstractConfigurationPhase<K2NativeCompilerArguments>(
     name = "NativeConfigurationPhase",
     preActions = setOf(PerformanceNotifications.InitializationStarted),
-    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector),
+    postActions = setOf(PerformanceNotifications.InitializationFinished, CheckCompilationErrors.CheckDiagnosticCollector),
     configurationUpdaters = listOf(NativeKlibConfigurationUpdater)
 ) {
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {

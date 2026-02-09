@@ -28,7 +28,7 @@ object NativeIrSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeSe
     postActions = setOf(PerformanceNotifications.IrSerializationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: NativeFir2IrArtifact): NativeSerializationArtifact? {
-        val (fir2IrOutput, configuration, _, phaseContext) = input
+        val (fir2IrOutput, configuration, phaseContext) = input
         val headerKlibPath = configuration.konanGeneratedHeaderKlibPath?.removeSuffix(".klib")
         val outputKlibPath = phaseContext.config.outputPath
         if (!headerKlibPath.isNullOrEmpty()) {
