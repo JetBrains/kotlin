@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
@@ -71,7 +72,16 @@ internal class KaFirExpressionInformationProvider(
             val realVariable = storage.get(firExpression, createReal = true, unwrapAlias = { it }) as? RealVariable ?: return false
             val smartcastStability = realVariable.getStability(flow, analysisSession.firSession)
 
-            return smartcastStability == SmartcastStability.STABLE_VALUE
+            return when (smartcastStability) {
+                SmartcastStability.STABLE_VALUE -> true
+                SmartcastStability.CAPTURED_VARIABLE -> {
+                    // For captured variables (local `var`s), check if they're actually stable at this position.
+                    // A local `var` is stable if there are no capturing lambdas that could reassign it.
+                    val property = realVariable.symbol.fir as? FirProperty ?: return false
+                    context.isLocalVariableStable(property)
+                }
+                else -> false
+            }
         }
 
     private class AdditionalInfoCollector() {

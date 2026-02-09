@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Con
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ClassExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.smartCastedType
+import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.addReceiversFromExtensions
@@ -80,12 +82,29 @@ object ContextCollector {
      *
      * @param flow the data flow information at this context point, containing the state of variables and their type constraints
      * as computed by the control flow graph analysis. `null` if no control flow information is available for this context.
+     *
+     * @param stableLocalVariables a set of local `var` properties that are stable at this context point.
+     * A local `var` is stable if there are no capturing lambdas that could reassign it.
      */
     class Context(
         val towerDataContext: FirTowerDataContext,
         val smartCasts: Map<RealVariable, Set<ConeKotlinType>>,
         val flow: Flow?,
-    )
+        private val stableLocalVariables: Set<FirProperty>,
+    ) {
+        /**
+         * Checks if a local variable (typically a `var`) is stable for smart casting at this context point.
+         *
+         * A local `var` is considered stable if there are no capturing lambdas that could reassign it
+         * in a way that would invalidate a smart cast.
+         *
+         * @param property The property to check.
+         * @return `true` if the variable is stable, `false` if it's unstable.
+         */
+        fun isLocalVariableStable(property: FirProperty): Boolean {
+            return property in stableLocalVariables
+        }
+    }
 
     enum class FilterResponse {
         /** Store context for the element and continue the traversal. */
@@ -362,7 +381,40 @@ private class ContextCollectorVisitor(
             }
         }
 
-        return Context(towerDataContextSnapshot, smartCasts, flow)
+        // Compute the set of stable local variables at this context point.
+        // A local `var` is stable if it's NOT assigned inside any nested declaration (lambda, local function, etc.).
+        // We use isLocalVariableAssignedInNestedDeclaration which checks the MiniCfg Fork data directly,
+        // rather than relying on scope-tracking which doesn't work correctly in the ContextCollector.
+        val stableLocalVariables = mutableSetOf<FirProperty>()
+
+        // Collect local var properties from flow's known variables.
+        if (flow != null) {
+            for (variable in flow.knownVariables) {
+                if (variable is RealVariable) {
+                    val firElement = variable.symbol.fir
+                    if (firElement is FirProperty && firElement.isLocal && firElement.isVar) {
+                        if (!context.dataFlowAnalyzerContext.isLocalVariableAssignedInNestedDeclaration(firElement)) {
+                            stableLocalVariables.add(firElement)
+                        }
+                    }
+                }
+            }
+        }
+
+        // Also check local var properties from tower data context's local scopes.
+        // This includes variables from outer scopes that might not be in flow.knownVariables.
+        for (localScope in context.towerDataContext.localScopes) {
+            for ((_, variableSymbol) in localScope.properties) {
+                val firElement = variableSymbol.fir
+                if (firElement is FirProperty && firElement.isLocal && firElement.isVar && firElement !in stableLocalVariables) {
+                    if (!context.dataFlowAnalyzerContext.isLocalVariableAssignedInNestedDeclaration(firElement)) {
+                        stableLocalVariables.add(firElement)
+                    }
+                }
+            }
+        }
+
+        return Context(towerDataContextSnapshot, smartCasts, flow, stableLocalVariables)
     }
 
     private fun getClosestControlFlowNode(fir: FirElement, kind: ContextKind): CFGNode<*>? {
@@ -609,20 +661,25 @@ private class ContextCollectorVisitor(
         onActive {
             regularClass.lazyResolveToPhase(FirResolvePhase.STATUS)
 
-            context.withContainingClass(regularClass) {
-                processClassHeader(regularClass)
+            context.dataFlowAnalyzerContext.enterClass(regularClass)
+            try {
+                context.withContainingClass(regularClass) {
+                    processClassHeader(regularClass)
 
-                val holder = getSessionHolder(regularClass)
+                    val holder = getSessionHolder(regularClass)
 
-                context.forRegularClassBody(regularClass, holder) {
-                    dumpContext(regularClass, ContextKind.BODY)
+                    context.forRegularClassBody(regularClass, holder) {
+                        dumpContext(regularClass, ContextKind.BODY)
 
-                    onActive {
-                        withInterceptor {
-                            processChildren(regularClass)
+                        onActive {
+                            withInterceptor {
+                                processChildren(regularClass)
+                            }
                         }
                     }
                 }
+            } finally {
+                context.dataFlowAnalyzerContext.exitClass()
             }
         }
 
@@ -647,15 +704,43 @@ private class ContextCollectorVisitor(
         onActive {
             dumpContext(doWhileLoop, ContextKind.BODY)
 
-            context.forBlock(bodyHolder.session) {
-                process(doWhileLoop.block) { block ->
-                    doVisitBlock(block, isolateBlock = false)
+            context.dataFlowAnalyzerContext.enterLoop(doWhileLoop)
+            try {
+                context.forBlock(bodyHolder.session) {
+                    process(doWhileLoop.block) { block ->
+                        doVisitBlock(block, isolateBlock = false)
+                    }
+
+                    process(doWhileLoop.condition)
                 }
 
-                process(doWhileLoop.condition)
+                processChildren(doWhileLoop)
+            } finally {
+                context.dataFlowAnalyzerContext.exitLoop()
             }
+        }
+    }
 
-            processChildren(doWhileLoop)
+    override fun visitWhileLoop(whileLoop: FirWhileLoop) = withProcessor(whileLoop) {
+        dumpContext(whileLoop, ContextKind.SELF)
+
+        onActive {
+            dumpContext(whileLoop, ContextKind.BODY)
+
+            context.dataFlowAnalyzerContext.enterLoop(whileLoop)
+            try {
+                context.forBlock(bodyHolder.session) {
+                    process(whileLoop.condition)
+
+                    process(whileLoop.block) { block ->
+                        doVisitBlock(block, isolateBlock = false)
+                    }
+                }
+
+                processChildren(whileLoop)
+            } finally {
+                context.dataFlowAnalyzerContext.exitLoop()
+            }
         }
     }
 
@@ -708,23 +793,28 @@ private class ContextCollectorVisitor(
                 val holder = getSessionHolder(constructor)
                 val containingClass = context.containerIfAny as? FirRegularClass
 
-                context.forConstructorParameters(constructor, containingClass, holder) {
-                    processList(constructor.valueParameters)
-                }
-
-                context.forConstructorBody(constructor, holder.session) {
-                    processList(constructor.valueParameters)
-
-                    dumpContext(constructor, ContextKind.BODY)
-                    processBody(constructor)
-                }
-
-                onActive {
-                    context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder) {
-                        process(constructor.delegatedConstructor)
+                context.dataFlowAnalyzerContext.enterFunction(constructor)
+                try {
+                    context.forConstructorParameters(constructor, containingClass, holder) {
+                        processList(constructor.valueParameters)
                     }
 
-                    process(constructor.contractDescription)
+                    context.forConstructorBody(constructor, holder.session) {
+                        processList(constructor.valueParameters)
+
+                        dumpContext(constructor, ContextKind.BODY)
+                        processBody(constructor)
+                    }
+
+                    onActive {
+                        context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder) {
+                            process(constructor.delegatedConstructor)
+                        }
+
+                        process(constructor.contractDescription)
+                    }
+                } finally {
+                    context.dataFlowAnalyzerContext.exitFunction()
                 }
             }
         }
@@ -774,22 +864,27 @@ private class ContextCollectorVisitor(
 
             val holder = getSessionHolder(namedFunction)
 
-            context.withNamedFunction(namedFunction, holder.session) {
-                processList(namedFunction.typeParameters)
-                process(namedFunction.receiverParameter)
+            context.dataFlowAnalyzerContext.enterFunction(namedFunction)
+            try {
+                context.withNamedFunction(namedFunction, holder.session) {
+                    processList(namedFunction.typeParameters)
+                    process(namedFunction.receiverParameter)
 
-                onActive {
-                    context.forFunctionBody(namedFunction, holder) {
-                        dumpContext(namedFunction, ContextKind.BODY)
+                    onActive {
+                        context.forFunctionBody(namedFunction, holder) {
+                            dumpContext(namedFunction, ContextKind.BODY)
 
-                        processList(namedFunction.contextParameters)
-                        processList(namedFunction.valueParameters)
-                        processBody(namedFunction)
+                            processList(namedFunction.contextParameters)
+                            processList(namedFunction.valueParameters)
+                            processBody(namedFunction)
+                        }
+
+                        process(namedFunction.returnTypeRef)
+                        process(namedFunction.contractDescription)
                     }
-
-                    process(namedFunction.returnTypeRef)
-                    process(namedFunction.contractDescription)
                 }
+            } finally {
+                context.dataFlowAnalyzerContext.exitFunction()
             }
         }
     }
@@ -941,30 +1036,35 @@ private class ContextCollectorVisitor(
         processAnnotations(anonymousFunction)
 
         onActive {
-            @OptIn(PrivateForInline::class)
-            context.withTypeParametersOf(anonymousFunction) {
-                processList(anonymousFunction.typeParameters)
-                process(anonymousFunction.receiverParameter)
+            context.dataFlowAnalyzerContext.enterFunction(anonymousFunction)
+            try {
+                @OptIn(PrivateForInline::class)
+                context.withTypeParametersOf(anonymousFunction) {
+                    processList(anonymousFunction.typeParameters)
+                    process(anonymousFunction.receiverParameter)
 
-                onActive {
-                    context.withAnonymousFunction(anonymousFunction, bodyHolder) {
-                        for (contextParameter in anonymousFunction.contextParameters) {
-                            context.storeValueParameterIfNeeded(contextParameter, bodyHolder.session)
+                    onActive {
+                        context.withAnonymousFunction(anonymousFunction, bodyHolder) {
+                            for (contextParameter in anonymousFunction.contextParameters) {
+                                context.storeValueParameterIfNeeded(contextParameter, bodyHolder.session)
+                            }
+
+                            for (valueParameter in anonymousFunction.valueParameters) {
+                                context.storeValueParameterIfNeeded(valueParameter, bodyHolder.session)
+                            }
+
+                            dumpContext(anonymousFunction, ContextKind.BODY)
+
+                            processList(anonymousFunction.contextParameters)
+                            processList(anonymousFunction.valueParameters)
+                            process(anonymousFunction.body)
                         }
 
-                        for (valueParameter in anonymousFunction.valueParameters) {
-                            context.storeValueParameterIfNeeded(valueParameter, bodyHolder.session)
-                        }
-
-                        dumpContext(anonymousFunction, ContextKind.BODY)
-
-                        processList(anonymousFunction.contextParameters)
-                        processList(anonymousFunction.valueParameters)
-                        process(anonymousFunction.body)
+                        processChildren(anonymousFunction)
                     }
-
-                    processChildren(anonymousFunction)
                 }
+            } finally {
+                context.dataFlowAnalyzerContext.exitFunction()
             }
         }
     }
@@ -977,9 +1077,14 @@ private class ContextCollectorVisitor(
         onActive {
             processAnonymousObjectHeader(anonymousObject)
 
-            context.withAnonymousObject(anonymousObject, bodyHolder) {
-                dumpContext(anonymousObject, ContextKind.BODY)
-                processChildren(anonymousObject)
+            context.dataFlowAnalyzerContext.enterClass(anonymousObject)
+            try {
+                context.withAnonymousObject(anonymousObject, bodyHolder) {
+                    dumpContext(anonymousObject, ContextKind.BODY)
+                    processChildren(anonymousObject)
+                }
+            } finally {
+                context.dataFlowAnalyzerContext.exitClass()
             }
         }
     }

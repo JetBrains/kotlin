@@ -118,6 +118,95 @@ class DataFlowAnalyzerContext private constructor(
     fun newAssignmentIndex(): Int {
         return assignmentCounter++
     }
+
+    /**
+     * Checks whether a local variable is stable for smart casting at the current scope.
+     *
+     * A local `var` is considered stable if there are no capturing lambdas that could reassign it
+     * in a way that would invalidate a smart cast. This delegates to the [FirLocalVariableAssignmentAnalyzer]
+     * which tracks variable assignments across scopes.
+     *
+     * @param declaration The declaration to check (typically a [FirProperty]).
+     * @param types Optional set of types to check against. If provided, assignments are filtered
+     *              by whether they would invalidate these specific types.
+     * @param session The FIR session.
+     * @return `true` if the variable is stable, `false` otherwise.
+     */
+    fun isLocalVariableStable(declaration: FirDeclaration, types: Set<ConeKotlinType>?, session: FirSession): Boolean {
+        return !variableAssignmentAnalyzer.isUnstableInCurrentScope(declaration, types, session)
+    }
+
+    /**
+     * Checks if a local variable is assigned inside any nested declaration (lambda, local function, etc.).
+     *
+     * This method is useful for determining variable stability from the Analysis API where we don't
+     * traverse the FIR tree in the same way as the compiler does. A local `var` that is assigned
+     * inside any nested declaration is considered unstable for smart casting purposes.
+     *
+     * @param declaration The local variable to check.
+     * @return `true` if the variable is assigned in any nested declaration, `false` otherwise.
+     */
+    fun isLocalVariableAssignedInNestedDeclaration(declaration: FirDeclaration): Boolean {
+        return variableAssignmentAnalyzer.isAssignedInAnyNestedDeclaration(declaration)
+    }
+
+    /**
+     * Enters a function scope for local variable assignment tracking.
+     * This should be called when entering a function during context collection.
+     *
+     * @param function The function being entered.
+     * @return Set of property symbols that are assigned within this function.
+     */
+    fun enterFunction(function: FirFunction): Set<FirPropertySymbol> {
+        return variableAssignmentAnalyzer.enterFunction(function)
+    }
+
+    /**
+     * Exits a function scope for local variable assignment tracking.
+     * This should be called when exiting a function during context collection.
+     */
+    fun exitFunction() {
+        variableAssignmentAnalyzer.exitFunction()
+    }
+
+    /**
+     * Enters a class scope for local variable assignment tracking.
+     * This should be called when entering a class during context collection.
+     *
+     * @param klass The class being entered.
+     */
+    fun enterClass(klass: FirClass) {
+        variableAssignmentAnalyzer.enterClass(klass)
+    }
+
+    /**
+     * Exits a class scope for local variable assignment tracking.
+     * This should be called when exiting a class during context collection.
+     */
+    fun exitClass() {
+        variableAssignmentAnalyzer.exitClass()
+    }
+
+    /**
+     * Enters a loop scope for local variable assignment tracking.
+     * This should be called when entering a loop during context collection.
+     *
+     * @param loop The loop being entered.
+     * @return Set of property symbols that are assigned within this loop.
+     */
+    fun enterLoop(loop: FirLoop): Set<FirPropertySymbol> {
+        return variableAssignmentAnalyzer.enterLoop(loop)
+    }
+
+    /**
+     * Exits a loop scope for local variable assignment tracking.
+     * This should be called when exiting a loop during context collection.
+     *
+     * @return Set of property symbols that were assigned within the loop.
+     */
+    fun exitLoop(): Set<FirPropertySymbol> {
+        return variableAssignmentAnalyzer.exitLoop()
+    }
 }
 
 /**

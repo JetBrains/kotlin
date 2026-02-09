@@ -110,14 +110,62 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
     /** Checks whether the given access is an unstable access to a local variable at this moment. */
     fun isUnstableInCurrentScope(declaration: FirDeclaration, types: Set<ConeKotlinType>?, session: FirSession): Boolean {
         // Only captured local vars can be stable/unstable depending on scope; everything else has the same stability everywhere.
-        if (assignedLocalVariablesByDeclaration == null) return false
         if (declaration !is FirProperty || !declaration.isEffectivelyLocal || !declaration.isVar) return false
+
+        // Ensure the assignment analysis data is populated. This is important when called from
+        // ContextCollector where we may have entered a function (set rootSymbol) but haven't yet
+        // triggered the analysis by entering a nested declaration.
+        val root = rootSymbol ?: return false
+        if (assignedLocalVariablesByDeclaration == null) {
+            buildInfoForRoot(root)
+        }
+
         return !allAssignmentsPreserveType(scopes.top().second[declaration], types, session) || postponedLambdas.all().any { lambdas ->
             // Control-flow-postponed lambdas' assignments should be in `functionScopes.top()`.
             // The reason we can't check them here is that one of the entries may be the lambda
             // that is currently being analyzed, and assignments in it are, in fact, totally fine.
             lambdas.any { (lambda, dataFlowOnly) -> dataFlowOnly && declaration in lambda.assignedInside }
         }
+    }
+
+    /**
+     * Checks if a local variable is assigned inside any nested declaration (lambda, local function, etc.).
+     *
+     * This method is useful for determining variable stability from the Analysis API where we don't
+     * traverse the FIR tree in the same way as the compiler does. It checks if the variable appears
+     * in the `assignedInside` of any Fork, which means it's assigned inside some nested scope.
+     *
+     * @param declaration The local variable to check.
+     * @return `true` if the variable is assigned in any nested declaration, `false` otherwise.
+     */
+    fun isAssignedInAnyNestedDeclaration(declaration: FirDeclaration): Boolean {
+        if (declaration !is FirProperty || !declaration.isEffectivelyLocal || !declaration.isVar) return false
+
+        val root = rootSymbol ?: return false
+        val forks = buildInfoForRoot(root)
+
+        // Check if the variable is assigned inside any nested declaration
+        return forks.values.any { fork -> declaration in fork.assignedInside }
+    }
+
+    /**
+     * Checks if a local variable has any assignments (excluding the initial declaration).
+     *
+     * This method is useful for determining variable stability from the Analysis API.
+     * A local `var` that has no assignments after its declaration is considered stable.
+     *
+     * @param declaration The local variable to check.
+     * @return `true` if the variable has assignments, `false` otherwise.
+     */
+    fun hasAnyAssignments(declaration: FirDeclaration): Boolean {
+        if (declaration !is FirProperty || !declaration.isEffectivelyLocal || !declaration.isVar) return false
+
+        val root = rootSymbol ?: return false
+        buildInfoForRoot(root)
+
+        val assignments = variableAssignments?.get(declaration) ?: return false
+        // Filter out operator assignments (like ++) as they don't affect smart cast stability
+        return assignments.any { !it.operatorAssignment }
     }
 
     // Variables are only stable for smart casting if there are no assignments that could make the smart
