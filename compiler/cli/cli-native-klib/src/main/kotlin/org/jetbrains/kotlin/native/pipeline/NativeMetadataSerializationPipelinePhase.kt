@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.native.firSerializerBase
 
-object NativeMetadataSerializationPhase : PipelinePhase<NativeFrontendArtifact, NativeSerializationArtifact>(
+object NativeMetadataSerializationPipelinePhase : PipelinePhase<NativeFrontendArtifact, NativeSerializationArtifact>(
     name = "NativeMetadataSerializationPhase",
     preActions = setOf(PerformanceNotifications.KlibWritingStarted),
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)

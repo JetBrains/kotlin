@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.native.fir2Ir
 import org.jetbrains.kotlin.native.runPreSerializationLowerings
 
-object NativeFir2IrPhase : PipelinePhase<NativeFrontendArtifact, NativeFir2IrArtifact>(
+object NativeFir2IrPipelinePhase : PipelinePhase<NativeFrontendArtifact, NativeFir2IrArtifact>(
     name = "NativeFir2IrPhase",
     preActions = setOf(PerformanceNotifications.TranslationToIrStarted),
     postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
@@ -37,7 +37,7 @@ object NativeFir2IrPhase : PipelinePhase<NativeFrontendArtifact, NativeFir2IrArt
     }
 }
 
-object NativePreSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeFir2IrArtifact>(
+object NativePreSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, NativeFir2IrArtifact>(
     name = "NativePreSerializationPhase",
     preActions = setOf(PerformanceNotifications.IrPreLoweringStarted),
     postActions = setOf(PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector)

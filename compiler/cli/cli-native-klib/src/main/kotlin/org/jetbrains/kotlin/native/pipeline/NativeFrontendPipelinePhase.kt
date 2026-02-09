@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.NativeFirstStagePhaseContext
 import org.jetbrains.kotlin.native.createFirstStageCompilationConfig
 
-object NativeFrontendPhase : PipelinePhase<ConfigurationPipelineArtifact, NativeFrontendArtifact>(
+object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, NativeFrontendArtifact>(
     name = "NativeFrontendPhase",
     preActions = setOf(PerformanceNotifications.AnalysisStarted),
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
