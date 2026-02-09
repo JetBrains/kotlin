@@ -6011,6 +6011,8 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/GradleCompileTaskProvide
 	public final fun getPath ()Lorg/gradle/api/provider/Provider;
 	public final fun getProjectDir ()Lorg/gradle/api/provider/Provider;
 	public final fun getProjectName ()Lorg/gradle/api/provider/Provider;
+	public final fun getProjectPath ()Lorg/gradle/api/provider/Provider;
+	public final fun getRootProjectName ()Lorg/gradle/api/provider/Provider;
 	public final fun getSessionsDir ()Lorg/gradle/api/provider/Provider;
 }
 

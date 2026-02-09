@@ -2197,8 +2197,8 @@ internal object KotlinToolingDiagnostics {
         WARNING,
         DiagnosticGroup.Kgp.Misconfiguration,
     ) {
-        operator fun invoke() = build {
-            title("Skipping the Compiler Reference Index data generation")
+        operator fun invoke(projectName: String, projectPath: String) = build {
+            title("Skipping the Compiler Reference Index data generation in '$projectName' ('$projectPath')")
                 .description("Compiler Reference Index data can be generated only when compilation is performed via Build Tools API.")
                 .solution("Please set `kotlin.compiler.runViaBuildToolsApi=true` to enable compilation via Build Tools API.")
         }
