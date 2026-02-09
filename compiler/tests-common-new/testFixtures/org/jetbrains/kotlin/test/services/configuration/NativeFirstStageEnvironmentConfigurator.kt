@@ -27,5 +27,9 @@ class NativeFirstStageEnvironmentConfigurator(testServices: TestServices) : Nati
             testServices.klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name).absolutePath
         )
         configuration.put(NativeConfigurationKeys.KONAN_DONT_COMPRESS_KLIB, true)
+
+        if (testServices.cliBasedFacadesEnabled) {
+            configuration.addSourcesForDependsOnClosure(module, testServices)
+        }
     }
 }
