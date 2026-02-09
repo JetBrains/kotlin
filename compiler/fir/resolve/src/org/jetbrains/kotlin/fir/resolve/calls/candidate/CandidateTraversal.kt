@@ -53,6 +53,7 @@ private fun Context.processCandidatesAndPostponedAtoms(atom: ConeResolutionAtom?
         }
 
         is ConeSimpleNameForContextSensitiveResolution -> postponedAtomsProcessor(atom)
+        is ConeContextSensitiveAlternativeForQualifierAtom -> postponedAtomsProcessor(atom)
 
         is ConeCollectionLiteralAtom -> {
             postponedAtomsProcessor(atom)

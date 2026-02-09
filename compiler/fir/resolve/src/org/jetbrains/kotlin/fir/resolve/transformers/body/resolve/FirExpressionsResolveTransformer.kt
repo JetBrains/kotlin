@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
-import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.FirOperation.*
@@ -22,11 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildErrorSuperReference
-import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
@@ -205,8 +201,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         else -> qualifiedAccessExpression
                     },
                     data,
-                ).let {
-                    runContextSensitiveResolutionIfNeeded(it, data) ?: it
+                ).let { resolved ->
+                    handleContextSensitiveResolution(resolved, qualifiedAccessExpression, data)
                 }
 
                 fun FirExpression.alsoRecordLookup() = also {
@@ -233,6 +229,90 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return result.addSmartcastIfNeeded(data)
     }
 
+    private fun handleContextSensitiveResolution(
+        resolvedPropertyAccess: FirExpression, // Likely either FirPropertyAccessExpression or FirResolvedQualifier
+        expressionBeforeResolution: FirQualifiedAccessExpression,
+        mode: ResolutionMode,
+    ): FirExpression {
+        runContextSensitiveResolutionIfNeeded(resolvedPropertyAccess, mode)?.let { return it }
+
+        when {
+            AnalysisFlags.ideMode.isSet() && expressionBeforeResolution is FirPropertyAccessExpression ->
+                @OptIn(FirIdeOnly::class)
+                resolvedPropertyAccess.prepareContextSensitiveAlternativeIfNeeded(original = expressionBeforeResolution, mode)
+        }
+
+        return resolvedPropertyAccess
+    }
+
+    /**
+     * For expression in a form like `MyEnum.X` and mode=[ResolutionMode.ContextDependent], it sets `contextSensitiveAlternative` to `X`
+     *   to resolve it later.
+     *
+     * For expression in a form like `MyEnum.X` and mode=[ResolutionMode.WithExpectedType], it tries to resolve `X` via CSR and given
+     *   expected type and adds non-fatal diagnostic if it's successful.
+     *
+     * Effectively does nothing for other cases.
+     *
+     * @receiver resolved version of [original]
+     */
+    @FirIdeOnly
+    private fun FirExpression.prepareContextSensitiveAlternativeIfNeeded(
+        original: FirPropertyAccessExpression,
+        mode: ResolutionMode
+    ) {
+        if (original.explicitReceiver == null) return
+        if (original.calleeReference is FirErrorNamedReference || original.calleeReference is FirNamedReferenceWithCandidate) return
+        if (this !is FirQualifierWithContextSensitiveAlternative) return
+
+        when (mode) {
+            is ResolutionMode.AssignmentLValue, is ContextIndependent,
+            is ResolutionMode.ReceiverResolution, is ResolutionMode.Delegate
+                -> return
+
+            // Only two modes for which CSR might be applied, but we keep the `when` exhaustive not to miss anything
+            is ResolutionMode.ContextDependent, is ResolutionMode.WithExpectedType -> {}
+
+            is ResolutionMode.UpdateImplicitTypeRef, is ResolutionMode.WithStatus -> error("Unexpected mode for expression: $mode")
+        }
+
+        if (this is FirPropertyAccessExpression && explicitReceiver !is FirResolvedQualifier) return
+
+        val name = original.calleeReference.name
+
+        val simpleNameAlternative = buildPropertyAccessExpression {
+            explicitReceiver = null
+            source =
+                this@prepareContextSensitiveAlternativeIfNeeded.source?.fakeElement(KtFakeSourceElementKind.ContextSensitiveAlternative)
+            calleeReference = buildSimpleNamedReference {
+                this.name = name
+                source = this@prepareContextSensitiveAlternativeIfNeeded.source
+                    ?.fakeElement(KtFakeSourceElementKind.ReferenceForContextSensitiveAlternative)
+            }
+        }
+
+        val resolvedAlternative =
+            transformQualifiedAccessExpression(simpleNameAlternative, mode)
+
+        // the simple name has been resolved to something different from erroneous expression => we can't run CSR
+        if (resolvedAlternative !is FirPropertyAccessExpression || !resolvedAlternative.shouldBeResolvedInContextSensitiveMode()) return
+
+        when {
+            mode is ResolutionMode.WithExpectedType || mode.hintForContextSensitiveResolution != null ->
+                runContextSensitiveResolutionIfNeeded(resolvedAlternative, mode, forceResolutionInIdeMode = true)?.let { resolvedCSR ->
+                    this.appendContextResolutionSensitiveHintIfNeeded(resolvedCSR)
+                }
+
+            mode is ResolutionMode.ContextDependent ->
+                // For context-dependent leave it for call completer to proceed with
+                replaceContextSensitiveAlternative(resolvedAlternative)
+
+            else -> error("When should be exhaustive: $mode")
+        }
+
+        return
+    }
+
     private fun FirExpression.addSmartcastIfNeeded(resolutionMode: ResolutionMode): FirExpression {
         // If we're resolving the LHS of an assignment, skip DFA to prevent the access being treated as a variable read and
         // smart-casts being applied.
@@ -245,7 +325,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     private fun transformExpressionUsingSmartcastInfo(original: FirExpression): FirExpression {
         when (val expression = original.unwrapDesugaredAssignmentValueRef()) {
             is FirFunctionCall -> {}
-            is FirQualifiedAccessExpression -> dataFlowAnalyzer.exitQualifiedAccessExpression(expression)
+            // We should not create the nodes for CSR alternative
+            is FirQualifiedAccessExpression if expression.source?.kind != KtFakeSourceElementKind.ContextSensitiveAlternative ->
+                dataFlowAnalyzer.exitQualifiedAccessExpression(expression)
             is FirResolvedQualifier -> dataFlowAnalyzer.exitResolvedQualifierNode(expression)
             else -> return original
         }
@@ -259,9 +341,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     private fun runContextSensitiveResolutionIfNeeded(
         originalExpression: FirExpression,
         data: ResolutionMode,
+        forceResolutionInIdeMode: Boolean = false,
     ): FirExpression? {
         if (originalExpression !is FirPropertyAccessExpression) return null
-        if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return null
+        if (!forceResolutionInIdeMode && !LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return null
 
         val expectedType = data.hintForContextSensitiveResolution ?: data.expectedType ?: return null
 

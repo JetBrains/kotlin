@@ -31,6 +31,13 @@ open class CandidateCollector(
     private var bestGroup = TowerGroup.Last
 
     /**
+     * It's not expected to affect resolution semantics in any sense.
+     * Currently, it's only used for checking if context-sensitive overload might be successfully resolved.
+     */
+    var metInapplicableCandidate: Boolean = false
+        private set
+
+    /**
      * Diagnostics that should not be bound to specific candidates but should be put to the resulting call.
      * For instance, a case when declaration order affects resolution (see KT-76240).
      */
@@ -42,10 +49,15 @@ open class CandidateCollector(
         currentApplicability = CandidateApplicability.HIDDEN
         bestGroup = TowerGroup.Last
         forwardedDiagnostics.clear()
+        metInapplicableCandidate = false
     }
 
     open fun consumeCandidate(group: TowerGroup, candidate: Candidate, context: ResolutionContext): CandidateApplicability {
         val applicability = resolutionStageRunner.processCandidate(candidate, context)
+
+        if (applicability == CandidateApplicability.INAPPLICABLE) {
+            metInapplicableCandidate = true
+        }
 
         if (applicability > currentApplicability || (applicability == currentApplicability && group < bestGroup)) {
             // Only throw away previous candidates if the new one is successful. If we don't find a successful candidate, we keep all

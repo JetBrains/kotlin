@@ -23,12 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -468,4 +463,12 @@ object ConePostponedInferenceDiagnostic : ConeDiagnostic {
 class ConeImplicitPropertyTypeMakesBehaviorOrderDependant(val property: FirPropertySymbol) : ConeDiagnostic {
     override val reason: String
         get() = "The resolution result with the property ${property.callableId} depends on the declaration order."
+}
+
+/**
+ * It should be used just as a hint for IDE shortener or an inspection, but not a compiler diagnostic
+ */
+object ContextSensitiveResolutionMightBeUsed : ConeDiagnostic {
+    override val reason: String
+        get() = "Context-sensitive resolution might be used"
 }

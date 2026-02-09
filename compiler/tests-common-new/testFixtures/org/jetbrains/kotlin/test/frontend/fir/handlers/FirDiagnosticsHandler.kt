@@ -24,12 +24,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.pipeline.collectLostDiagnosticsOnFile
 import org.jetbrains.kotlin.fir.pipeline.runCheckers
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsed
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -210,6 +212,15 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 if (element is FirExpression) {
                     consumer.reportExpressionTypeDiagnostic(element)
                 }
+
+                if (element is FirPropertyAccessExpression) {
+                    reportCSRMightBeUsed(element, element.nonFatalDiagnostics)
+                }
+
+                if (element is FirResolvedQualifier) {
+                    reportCSRMightBeUsed(element, element.nonFatalDiagnostics)
+                }
+
                 if (shouldRenderDynamic && element is FirResolvable) {
                     reportDynamic(element)
                 }
@@ -217,6 +228,15 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                     element.originalExpression.acceptChildren(this)
                 } else {
                     element.acceptChildren(this)
+                }
+            }
+
+            private fun reportCSRMightBeUsed(
+                element: FirExpression,
+                nonFatalDiagnostics: List<ConeDiagnostic>
+            ) {
+                if (ContextSensitiveResolutionMightBeUsed in nonFatalDiagnostics) {
+                    consumer.report(KtDebugInfoDiagnostics.CSR_MIGHT_BE_USED, element.source)
                 }
             }
 
@@ -443,6 +463,10 @@ private class DebugDiagnosticConsumer(
             KtFakeSourceElementKind.DesugaredPostfixDec,
             KtFakeSourceElementKind.DesugaredPostfixInc
         )
+
+        private val FORCE_REPORTING = setOf(
+            KtDebugInfoDiagnostics.CSR_MIGHT_BE_USED,
+        )
     }
 
     fun report(factory: KtDiagnosticFactory0, sourceElement: KtSourceElement?) {
@@ -453,7 +477,8 @@ private class DebugDiagnosticConsumer(
         if (sourceElement.elementType == KtNodeTypes.LAMBDA_ARGUMENT || sourceElement.elementType == KtNodeTypes.BLOCK) return
 
         val availableDiagnostics = diagnosedRangesToDiagnosticNames[sourceElement.startOffset..sourceElement.endOffset]
-        if (availableDiagnostics == null || factory.name !in availableDiagnostics) {
+        val noDiagnosticInTestDataFile = availableDiagnostics == null || factory.name !in availableDiagnostics
+        if (noDiagnosticInTestDataFile && factory !in FORCE_REPORTING) {
             return
         }
 
@@ -802,6 +827,7 @@ val TestServices.firDiagnosticCollectorService: FirDiagnosticCollectorService by
 
 private object KtDebugInfoDiagnostics : KtDiagnosticsContainer() {
     val DYNAMIC by debugInfo0()
+    val CSR_MIGHT_BE_USED by debugInfo0()
     val EXPRESSION_TYPE by debugInfo1()
     val CALL by debugInfo1()
     val CALLABLE_OWNER by debugInfo1()
@@ -811,6 +837,7 @@ private object KtDebugInfoDiagnostics : KtDiagnosticsContainer() {
     private object Renderers : BaseDiagnosticRendererFactory() {
         override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("DebugInfo") {
             it.put(DYNAMIC, "")
+            it.put(CSR_MIGHT_BE_USED, "")
             it.put(EXPRESSION_TYPE, "{0}", TO_STRING)
             it.put(CALL, "{0}", TO_STRING)
             it.put(CALLABLE_OWNER, "{0}", TO_STRING)

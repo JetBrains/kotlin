@@ -4342,6 +4342,76 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ideHint")
+      @TestDataPath("$PROJECT_ROOT")
+      public class IdeHint {
+        @Test
+        public void testAllFilesPresentInIdeHint() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ideHint"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("equalityWithEnum.kt")
+        public void testEqualityWithEnum() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ideHint/equalityWithEnum.kt");
+        }
+
+        @Test
+        @TestMetadata("equalityWithSealedSubObject.kt")
+        public void testEqualityWithSealedSubObject() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ideHint/equalityWithSealedSubObject.kt");
+        }
+
+        @Test
+        @TestMetadata("inAnnotations.kt")
+        public void testInAnnotations() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ideHint/inAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleOverloads.kt")
+        public void testMultipleOverloads() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ideHint/multipleOverloads.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ideHint/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleNonIDE.kt")
+        public void testSimpleNonIDE() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ideHint/simpleNonIDE.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleSealedSubObject.kt")
+        public void testSimpleSealedSubObject() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ideHint/simpleSealedSubObject.kt");
+        }
+
+        @Test
+        @TestMetadata("withInference.kt")
+        public void testWithInference() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ideHint/withInference.kt");
+        }
+
+        @Test
+        @TestMetadata("withInferenceSealedSubObjects.kt")
+        public void testWithInferenceSealedSubObjects() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ideHint/withInferenceSealedSubObjects.kt");
+        }
+
+        @Test
+        @TestMetadata("wouldBeResolvedToVariable.kt")
+        public void testWouldBeResolvedToVariable() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ideHint/wouldBeResolvedToVariable.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/nestedInheritors")
       @TestDataPath("$PROJECT_ROOT")
       public class NestedInheritors {
