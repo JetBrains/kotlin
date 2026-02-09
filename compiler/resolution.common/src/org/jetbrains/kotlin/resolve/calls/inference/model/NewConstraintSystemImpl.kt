@@ -254,6 +254,7 @@ class NewConstraintSystemImpl(
         private val beforeTypeVariablesTransactionSize: Int,
         private val beforeConstraintCountByVariables: Map<TypeConstructorMarker, Int>,
         private val beforeConstraintsFromAllForks: Int,
+        private val beforeHasContradictionInForkPointsCache: Boolean?,
     ) : ConstraintSystemTransaction() {
         override fun closeTransaction() {
             checkState(State.TRANSACTION)
@@ -284,6 +285,9 @@ class NewConstraintSystemImpl(
             }
 
             addedInitialConstraints.clear() // remove constraint from storage.initialConstraints
+
+            hasContradictionInForkPointsCache = beforeHasContradictionInForkPointsCache
+
             closeTransaction(beforeState, beforeTypeVariablesTransactionSize)
         }
     }
@@ -298,6 +302,7 @@ class NewConstraintSystemImpl(
             beforeTypeVariablesTransactionSize = typeVariablesTransaction.size,
             beforeConstraintCountByVariables = storage.notFixedTypeVariables.mapValues { it.value.rawConstraintsCount },
             beforeConstraintsFromAllForks = storage.constraintsFromAllForkPoints.size,
+            beforeHasContradictionInForkPointsCache = hasContradictionInForkPointsCache,
         ).also {
             state = State.TRANSACTION
         }
