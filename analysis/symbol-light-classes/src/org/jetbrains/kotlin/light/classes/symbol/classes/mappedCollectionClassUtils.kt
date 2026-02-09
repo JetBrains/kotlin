@@ -328,15 +328,12 @@ private fun createWrappersForJavaCollectionMethod(
 
     return when {
         kotlinGetterNameWithDifferentAbi != null -> {
-            val hasImplementation = methodName == "size" && containingClass.withClassSymbol { classSymbol ->
-                classSymbol.delegatedMemberScope.callables(Name.identifier("size")).toList().isNotEmpty()
-            }
             val finalBridgeForJava = method.finalBridge(containingClass, substitutor)
             val abstractKotlinGetter = method.wrap(
                 containingClass,
                 substitutor,
                 name = kotlinGetterNameWithDifferentAbi,
-                hasImplementation = hasImplementation
+                hasImplementation = false
             )
 
             listOf(finalBridgeForJava, abstractKotlinGetter)
