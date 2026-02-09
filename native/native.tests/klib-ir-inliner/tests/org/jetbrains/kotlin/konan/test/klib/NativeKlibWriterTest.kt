@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.library.writer.includeNativeIncludedBinaries
 import org.jetbrains.kotlin.konan.library.writer.legacyNativeDependenciesInManifest
 import org.jetbrains.kotlin.konan.library.writer.legacyNativeShortNameInManifest
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.test.klib.NewNativeKlibWriterTest.NewNativeKlibWriterParameters
+import org.jetbrains.kotlin.konan.test.klib.NativeKlibWriterTest.NewNativeKlibWriterParameters
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.Properties
 
-class NewNativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterParameters>(::NewNativeKlibWriterParameters) {
+class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterParameters>(::NewNativeKlibWriterParameters) {
     class NewNativeKlibWriterParameters : NativeParameters() {
         var targetsForManifest: List<KonanTarget>? = null
     }
