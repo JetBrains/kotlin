@@ -57,8 +57,6 @@ fun Project.generateJavadocForPluginVariant(gradlePluginVariant: GradlePluginVar
 
     dokkaExtension.configureCommonDokkaConfiguration(gradlePluginVariant, commonSourceSet, variantSourceSet)
 
-
-    logger.quiet("The task you're looking for is called '${variantSourceSet.javadocJarTaskName}'")
     tasks.named<Jar>(variantSourceSet.javadocJarTaskName).configure {
         from(tasks.dokkaGeneratePublicationHtml.flatMap { it.outputDirectory })
     }
