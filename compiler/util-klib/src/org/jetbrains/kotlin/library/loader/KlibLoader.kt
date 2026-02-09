@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.hasAbi
 import org.jetbrains.kotlin.library.impl.KlibImpl
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.IncompatibleAbiVersion
@@ -264,7 +265,7 @@ private class KlibLoaderImpl(
             return LibraryStatus.FailedToLoad(ProblematicLibrary(rawPath, platformCheckMismatch))
         }
 
-        if (maxPermittedAbiVersion != null) {
+        if (maxPermittedAbiVersion != null && library.hasAbi) {
             val libraryAbiVersion: KotlinAbiVersion? = library.versions.abiVersion
             if (libraryAbiVersion == null || !libraryAbiVersion.isAtMost(maxPermittedAbiVersion)) {
                 return LibraryStatus.FailedToLoad(
