@@ -112,7 +112,6 @@ fun foo() {
         baz(y)
     }
 
-
     val person = MutablePerson("Alice")
 
     barRegular {

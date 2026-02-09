@@ -52191,6 +52191,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         public void testNonInPlaceVariableCapture() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/varCapturing/nonInPlaceVariableCapture.kt");
         }
+
+        @Test
+        @TestMetadata("repeatedCases.kt")
+        public void testRepeatedCases() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/varCapturing/repeatedCases.kt");
+        }
       }
     }
 

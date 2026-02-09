@@ -15,6 +15,16 @@ private fun testStable() = barRegular {
     }
 }
 
+private fun testUnstable() = barRegular {
+    var another = "hello"
+
+    barRegular {
+        println(another)
+    }
+
+    another = "hi"
+}
+
 private fun testNotCaptured() {
     barRegular {
         var another = "hello"

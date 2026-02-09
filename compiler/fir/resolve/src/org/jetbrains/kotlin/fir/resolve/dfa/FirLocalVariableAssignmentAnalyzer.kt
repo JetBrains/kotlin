@@ -515,7 +515,6 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
                 visitLocalDeclaration(anonymousObject, data)
 
             private fun visitLocalDeclaration(declaration: FirDeclaration, data: MiniCfgData) {
-                println("visitLocalDeclaration: ${declaration.render()}")
                 val flow = data.flow
                 val assignedInside = visitElementWithLexicalScope(declaration, data)
                 // Now that the inner variables have been discarded, the rest can be propagated to prevent smartcasts
