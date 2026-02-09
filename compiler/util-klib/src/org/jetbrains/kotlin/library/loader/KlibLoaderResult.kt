@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.IncompatibleAbiVersion
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.InvalidLibraryFormat
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.LibraryNotFound
+import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.OtherCheckMismatch
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.PlatformCheckMismatch
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblematicLibrary
 
@@ -64,6 +65,16 @@ class KlibLoaderResult(
             override val defaultSeverity: ProblemSeverity get() = ProblemSeverity.INFO
         }
 
+
+        /**
+         * A valid library is found, but it can't be used due to some specific reason. User shall be notified about this
+         * to avoid confusion.
+         */
+        sealed class ExistingKlibProblem : ProblemCase {
+            /** Such problem cases are reported with [ProblemSeverity.WARNING] level. */
+            final override val defaultSeverity: ProblemSeverity get() = ProblemSeverity.WARNING
+        }
+
         /**
          * The library has not passed the platform and target check by [KlibPlatformChecker] that was set
          * in [KlibLoaderSpec.platformChecker].
@@ -79,13 +90,7 @@ class KlibLoaderResult(
             val property: String,
             val expected: String,
             val actual: String,
-        ) : ProblemCase {
-            /**
-             * The default severity is [ProblemSeverity.WARNING]: A valid library has been found, but it can't be used.
-             * User shall be notified about this to avoid confusion.
-             */
-            override val defaultSeverity: ProblemSeverity get() = ProblemSeverity.WARNING
-        }
+        ) : ExistingKlibProblem()
 
         /**
          * The library does not match the ABI version requirements that were set in [KlibLoaderSpec.maxPermittedAbiVersion].
@@ -99,16 +104,21 @@ class KlibLoaderResult(
             val libraryVersions: KotlinLibraryVersioning,
             val minPermittedAbiVersion: KotlinAbiVersion?,
             val maxPermittedAbiVersion: KotlinAbiVersion?,
-        ) : ProblemCase {
-            init {
-                check(minPermittedAbiVersion != null || maxPermittedAbiVersion != null)
-            }
+        ) : ExistingKlibProblem()
 
-            /**
-             * The default severity is [ProblemSeverity.WARNING]: A valid library has been found, but it can't be used.
-             * User shall be notified about this to avoid confusion.
-             */
-            override val defaultSeverity: ProblemSeverity get() = ProblemSeverity.WARNING
+        /**
+         * The library does not pass some other (custom) check that was not set in [KlibLoaderSpec].
+         *
+         * Note: This class is intentionally made abstract to allow having multiple implementations
+         * for different purposes.
+         *
+         * @property caption The brief description of the problem that is going to be
+         *  shown in the first line of the error message: "<caption>: <libraryPath>".
+         * @property details The detailed description of the problem. May contain multiple lines.
+         */
+        abstract class OtherCheckMismatch : ExistingKlibProblem() {
+            abstract val caption: String
+            abstract val details: String
         }
     }
 }
@@ -175,6 +185,11 @@ private fun ProblematicLibrary.computeMessageText(): String {
             }
 
             lines.joinToString("\n")
+        }
+
+        is OtherCheckMismatch -> buildString {
+            append(problemCase.caption).append(": ").appendLine(libraryPath)
+            append(problemCase.details)
         }
     }
 
