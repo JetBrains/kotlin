@@ -13,22 +13,18 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
-import org.jetbrains.kotlin.fir.analysis.collectors.components.ControlFlowAnalysisDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
-import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirAugmentedAssignment
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
@@ -38,13 +34,9 @@ import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.FirLocalVariableAssignmentAnalyzer
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.renderControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
-import org.jetbrains.kotlin.fir.types.refinedTypeForDataFlowOrSelf
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import kotlin.reflect.full.memberProperties
@@ -58,19 +50,27 @@ object FirCapturedVariableStabilityFunctionChecker : FirFunctionChecker(MppCheck
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
         // process functions, inside which can be FirAnonymousFunction
-        println("my tree : ${declaration.renderControlFlowGraph()}")
-        if (declaration is FirAnonymousFunction) return
+        // println("my tree : ${declaration.renderControlFlowGraph()}")
+        if (context.containingElements.any { it is FirFunction && it != declaration }) return
         val analyzer = FirLocalVariableAssignmentAnalyzer()
         val visitor = FirFunctionDeepVisitorWithData()
-        visitor.visitFunction(declaration, CapturedVariableCheckerData(context, reporter, analyzer = analyzer))
+        visitor.visitFunction(
+            declaration,
+            CapturedVariableCheckerData(
+                context,
+                reporter,
+                analyzer = analyzer,
+            )
+        )
     }
 }
 
 data class CapturedVariableCheckerData(
     val context: CheckerContext,
     val reporter: DiagnosticReporter,
-    val propertiesStack: MutableList<Set<FirPropertySymbol>> = mutableListOf(),
+    val lambdaScopeStack: MutableList<FirAnonymousFunction> = mutableListOf(),
     val analyzer: FirLocalVariableAssignmentAnalyzer,
+    val visitedAnonymousFunctions: MutableSet<FirAnonymousFunction> = mutableSetOf()
 )
 
 class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableCheckerData>() {
@@ -86,36 +86,31 @@ class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableC
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CapturedVariableCheckerData) {
-        println("visitAnonymousFunction: ${anonymousFunction.render()}")
-
+        if (data.visitedAnonymousFunctions.contains(anonymousFunction)) return
+        data.visitedAnonymousFunctions.add(anonymousFunction)
         data.analyzer.enterFunction(anonymousFunction)
 
-        val lambdaSymbol = anonymousFunction.symbol
-        if (lambdaSymbol.inlineStatus == InlineStatus.Inline) return
-        val invocationKind = anonymousFunction.invocationKind
-        if (invocationKind.isInPlace) return
+        try {
+            val lambdaSymbol = anonymousFunction.symbol
+            if (lambdaSymbol.inlineStatus == InlineStatus.Inline) return
+            val invocationKind = anonymousFunction.invocationKind
+            if (invocationKind.isInPlace) return
 
-        val graph = (anonymousFunction as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return
-
-        val collector = ControlFlowAnalysisDiagnosticComponent.LocalPropertyCollector().apply {
-            anonymousFunction.acceptChildren(this, graph.subGraphs.toSet())
+            data.lambdaScopeStack.add(anonymousFunction)
+            super.visitAnonymousFunction(anonymousFunction, data)
+            data.lambdaScopeStack.removeLast()
+        } finally {
+            data.analyzer.exitFunction()
         }
 
-        data.propertiesStack.add(collector.properties)
-        super.visitAnonymousFunction(anonymousFunction, data)
-        data.propertiesStack.removeLast()
-
-        data.analyzer.exitFunction()
     }
 
     // -------------------------
-    // Assignments: attach RHS types to assignments recorded by the analyzer’s mini-CFG
+    // Assignments
     // -------------------------
 
     @OptIn(SymbolInternals::class)
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: CapturedVariableCheckerData) {
-        // variableAssignment.rValue.accept(this, data)
-
         super.visitVariableAssignment(variableAssignment, data)
 
         if (variableAssignment.explicitReceiver != null) return
@@ -131,13 +126,12 @@ class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableC
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: CapturedVariableCheckerData,
     ) {
-        if (data.propertiesStack.isEmpty()) return
         val variableSymbol = qualifiedAccessExpression.calleeReference.toResolvedVariableSymbol() ?: return
         checkCapturedVariable(variableSymbol, data, qualifiedAccessExpression.source)
     }
 
     // -------------------------
-    // Top-level scopes (when traversal starts from non-function root)
+    // Top-level scopes
     // -------------------------
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: CapturedVariableCheckerData) {
@@ -205,7 +199,7 @@ class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableC
     }
 
     // -------------------------
-    // Function calls (postponed lambdas)
+    // Function calls
     // -------------------------
 
     override fun visitFunctionCall(
@@ -231,11 +225,10 @@ class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableC
 
     @OptIn(SymbolInternals::class)
     private fun checkCapturedVariable(variableSymbol: FirVariableSymbol<*>, data: CapturedVariableCheckerData, source: KtSourceElement?) {
-        if (data.propertiesStack.isEmpty()) return
+        if (data.lambdaScopeStack.isEmpty()) return
         if (variableSymbol.isVal) return
         if (variableSymbol.resolvedReturnType is ConeDynamicType) return
         if (!variableSymbol.isLocal) return
-        if (variableSymbol in data.propertiesStack.last()) return
         val report = IEReporter(source, data.context, data.reporter, FirErrors.CV_DIAGNOSTIC)
         val declaration = variableSymbol.fir as? FirDeclaration ?: return
         val isUnstable = data.analyzer.isUnstableInCurrentScopeWithoutPreservingType(declaration)

@@ -61,8 +61,8 @@ private fun testWithClient() = barRegular {
 
     barRegularString(clientvar) {
         barRegularString(another) {
-        println("Hi")
-    }
+            println("Hi")
+        }
     }
 }
 
@@ -154,8 +154,8 @@ fun foo() {
     var count = false
     barRegular {
         if (!count) {
-        print(2)
-    }
+            print(2)
+        }
     }
     var accumulator = ""
     processChunked { chunk ->
