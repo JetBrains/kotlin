@@ -411,6 +411,29 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
     }
 
     @Test
+    fun `typedef redefinition - first encountered definition is used to dereference a typedef`() {
+        val files = testFiles()
+        val def = files.file("dup.def", """
+            language = Objective-C
+            ---
+            typedef int one;
+            typedef int two;
+            typedef one override;
+            typedef two override;
+        """.trimIndent())
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(def, argsWithFmodulesAndSearchPath(files.directory)),
+                verbose = false
+        ).index
+
+        val override = index.typedefs.single { it.name == "override" }
+        val two = index.typedefs.single { it.name == "two" }
+
+        assertEquals(two.name, assertIs<Typedef>(override.aliased).def.name)
+    }
+
+    @Test
     fun `KT-81695 repeated NS_ENUM with -fmodules - reference the same underlying typedef`() {
         val markerFunctionOne = "foo"
         val markerFunctionTwo = "bar"
