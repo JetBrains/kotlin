@@ -38,7 +38,8 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out, anno
         val checkZero = """if (step == $zero) throw kotlin.IllegalArgumentException("Step must be non-zero.")"""
 
         val stepMinValue = "$incrementType.MIN_VALUE"
-        val checkMin = """if (step == $stepMinValue) throw kotlin.IllegalArgumentException("Step must be greater than $stepMinValue to avoid overflow on negation.")"""
+        val checkMin =
+            """if (step == $stepMinValue) throw kotlin.IllegalArgumentException("Step must be greater than $stepMinValue to avoid overflow on negation.")"""
 
         val hashCode = "=\n" + when (kind) {
             CHAR ->
@@ -46,7 +47,7 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out, anno
             INT ->
                 "        if (isEmpty()) -1 else (31 * (31 * first + last) + step)"
             LONG ->
-                "        if (isEmpty()) -1 else (31 * (31 * ${hashLong("first")} + ${hashLong("last")}) + ${hashLong("step")}).toInt()"
+                "        if (isEmpty()) -1 else (31 * (31 * first.hashCode() + last.hashCode()) + step.hashCode())"
         }
         val elementToIncrement = when (kind) {
             CHAR -> ".code"
