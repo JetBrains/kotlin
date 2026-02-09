@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.native.writeKlib
  * Serializes IR to klib format and writes it to disk.
  * Also handles header klib generation if configured.
  */
-object NativeIrSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeSerializationArtifact>(
+object NativeIrSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, NativeSerializationArtifact>(
     name = "NativeIrSerializationPhase",
     preActions = setOf(PerformanceNotifications.IrSerializationStarted),
     postActions = setOf(PerformanceNotifications.IrSerializationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
@@ -59,7 +59,7 @@ object NativeIrSerializationPhase : PipelinePhase<NativeFir2IrArtifact, NativeSe
     }
 }
 
-object NativeKlibWritingPhase : PipelinePhase<NativeSerializationArtifact, NativeKlibSerializedArtifact>(
+object NativeKlibWritingPipelinePhase : PipelinePhase<NativeSerializationArtifact, NativeKlibSerializedArtifact>(
     name = "NativeKlibWritingPhase",
     preActions = setOf(PerformanceNotifications.KlibWritingStarted),
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
