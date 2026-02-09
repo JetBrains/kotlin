@@ -9884,6 +9884,15 @@ open annotation class kotlin.native/ObjCEnum : kotlin/Annotation { // kotlin.nat
         final fun <get-name>(): kotlin/String // kotlin.native/ObjCEnum.name.<get-name>|<get-name>(){}[0]
     final val swiftName // kotlin.native/ObjCEnum.swiftName|{}swiftName[0]
         final fun <get-swiftName>(): kotlin/String // kotlin.native/ObjCEnum.swiftName.<get-swiftName>|<get-swiftName>(){}[0]
+
+    open annotation class EntryName : kotlin/Annotation { // kotlin.native/ObjCEnum.EntryName|null[0]
+        constructor <init>(kotlin/String, kotlin/String = ...) // kotlin.native/ObjCEnum.EntryName.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+        final val name // kotlin.native/ObjCEnum.EntryName.name|{}name[0]
+            final fun <get-name>(): kotlin/String // kotlin.native/ObjCEnum.EntryName.name.<get-name>|<get-name>(){}[0]
+        final val swiftName // kotlin.native/ObjCEnum.EntryName.swiftName|{}swiftName[0]
+            final fun <get-swiftName>(): kotlin/String // kotlin.native/ObjCEnum.EntryName.swiftName.<get-swiftName>|<get-swiftName>(){}[0]
+    }
 }
 
 // Targets: [native]
@@ -13813,6 +13822,15 @@ open annotation class kotlin.native/ObjCEnum : kotlin/Annotation { // kotlin.nat
         final fun <get-name>(): kotlin/String // kotlin.native/ObjCEnum.name.<get-name>|<get-name>(){}[1]
     final val swiftName // kotlin.native/ObjCEnum.swiftName|{}swiftName[1]
         final fun <get-swiftName>(): kotlin/String // kotlin.native/ObjCEnum.swiftName.<get-swiftName>|<get-swiftName>(){}[1]
+
+    open annotation class EntryName : kotlin/Annotation { // kotlin.native/ObjCEnum.EntryName|null[1]
+        constructor <init>(kotlin/String, kotlin/String = ...) // kotlin.native/ObjCEnum.EntryName.<init>|<init>(kotlin.String;kotlin.String){}[1]
+
+        final val name // kotlin.native/ObjCEnum.EntryName.name|{}name[1]
+            final fun <get-name>(): kotlin/String // kotlin.native/ObjCEnum.EntryName.name.<get-name>|<get-name>(){}[1]
+        final val swiftName // kotlin.native/ObjCEnum.EntryName.swiftName|{}swiftName[1]
+            final fun <get-swiftName>(): kotlin/String // kotlin.native/ObjCEnum.EntryName.swiftName.<get-swiftName>|<get-swiftName>(){}[1]
+    }
 }
 
 // Targets: [js, wasmJs, wasmWasi]
