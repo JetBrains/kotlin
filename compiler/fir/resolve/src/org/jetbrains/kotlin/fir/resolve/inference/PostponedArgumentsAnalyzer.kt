@@ -8,27 +8,17 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.isEnabled
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.lookupTracker
-import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.CollectionLiteralOuterCandidateContext
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPositionWithCoercionToUnit
-import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
-import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
-import org.jetbrains.kotlin.fir.resolve.runCollectionLiteralResolution
-import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -36,7 +26,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompat
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.UnstableSystemMergeMode
 import org.jetbrains.kotlin.types.model.freshTypeConstructor
+import org.jetbrains.kotlin.types.model.isTypeVariable
 import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.types.model.typeConstructor
 
 data class ReturnArgumentsAnalysisResult(
     val returnArguments: Collection<ConeResolutionAtom>,
@@ -87,6 +79,8 @@ class PostponedArgumentsAnalyzer(
             is ConeResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
             is ConeSimpleNameForContextSensitiveResolution ->
                 processSimpleNameForContextSensitiveResolution(argument, candidate)
+            is ConeContextSensitiveAlternativeForQualifierAtom ->
+                processSimpleNameForContextSensitiveResolutionIdeAlternative(argument, candidate)
             is ConeCollectionLiteralAtom ->
                 processCollectionLiteral(argument, candidate, precalculatedBoundsForCL)
         }
@@ -174,6 +168,32 @@ class PostponedArgumentsAnalyzer(
                 isDispatch = false,
             )
         }
+    }
+
+    private fun processSimpleNameForContextSensitiveResolutionIdeAlternative(
+        atom: ConeContextSensitiveAlternativeForQualifierAtom,
+        topLevelCandidate: Candidate,
+    ): Unit = context(session.typeContext) {
+        check(!atom.analyzed)
+
+        if (atom.expectedType.typeConstructor().isTypeVariable()) {
+            atom.markDiscarded()
+            return
+        }
+
+        atom.analyzed = true
+
+        val substitutor = topLevelCandidate.csBuilder.buildCurrentSubstitutor(emptyMap()).asCone()
+        val substitutedExpectedType = substitutor.safeSubstitute(topLevelCandidate.csBuilder, atom.expectedType).asCone()
+
+        val resolvedShortNameExpression =
+            resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
+                atom.alternative,
+                substitutedExpectedType,
+            )
+
+        atom.originalExpression.appendCSRAlternativeDiagnosticIfNeeded(resolvedShortNameExpression)
+        atom.originalExpression.replaceContextSensitiveAlternative(null)
     }
 
     /**

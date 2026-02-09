@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
@@ -38,6 +39,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     private val postponedArgumentsInputTypesResolver = inferenceComponents.postponedArgumentInputTypesResolver
     private val languageVersionSettings = components.session.languageVersionSettings
 
+    /**
+     * see basic impl at [org.jetbrains.kotlin.fir.resolve.inference.PostponedArgumentsAnalyzer.analyze]
+     */
     fun interface PostponedAtomAnalyzer {
         fun analyzeInternal(
             postponedResolvedAtom: ConePostponedResolvedAtom,
@@ -88,6 +92,8 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
             if (completionMode.isUntilFirstLambda() && hasLambdaToAnalyze(postponedArguments)) return
 
+            if (analyzeContextSensitiveResolutionAlternatives(postponedArguments, analyzer)) continue
+
             // Stage 1: analyze postponed arguments with fixed parameter types
             if (analyzeArgumentWithFixedParameterTypes(postponedArguments) {
                     analyzer.analyze(it)
@@ -123,7 +129,8 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                     languageVersionSettings,
                 )
 
-            val collectionLiteralWithBoundsForFixation = findFirstCollectionLiteralForFixation(postponedArguments, context, dependencyProvider)
+            val collectionLiteralWithBoundsForFixation =
+                findFirstCollectionLiteralForFixation(postponedArguments, context, dependencyProvider)
 
             // Stage 1 for collection literals: CLs with `Set<Tv>`-like expected type can be analyzed right away
             if (collectionLiteralWithBoundsForFixation is CollectionLiteralBounds.NonTvExpected) {
@@ -308,6 +315,23 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         return true
     }
 
+    private fun analyzeContextSensitiveResolutionAlternatives(
+        postponedArguments: List<ConePostponedResolvedAtom>,
+        analyzer: PostponedAtomAnalyzer,
+    ): Boolean {
+        if (!languageVersionSettings.getFlag(AnalysisFlags.ideMode)) return false
+        var wasAny = false
+
+        for (atom in postponedArguments) {
+            if (atom is ConeContextSensitiveAlternativeForQualifierAtom) {
+                analyzer.analyze(atom, withPCLASession = false)
+                wasAny = true
+            }
+        }
+
+        return wasAny
+    }
+
     private fun ConstraintSystemCompletionContext.reportNotEnoughTypeInformation(
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<ConeResolutionAtom>,
@@ -396,7 +420,10 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                             postponedAtom.collectNotFixedVariables()
                         }
                     }
-                    is ConeSimpleNameForContextSensitiveResolution, is ConeCollectionLiteralAtom -> {
+                    is ConeSimpleNameForContextSensitiveResolution,
+                    is ConeContextSensitiveAlternativeForQualifierAtom,
+                    is ConeCollectionLiteralAtom,
+                        -> {
                         // No type variables for yet unresolved reference
                         // And after resolution, the candidate type variables are integrated into
                     }
