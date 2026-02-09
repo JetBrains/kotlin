@@ -91,6 +91,7 @@ projectTests {
 
     testData(project.isolated, "src")
     testData(project.isolated, "api")
+    testData(project.isolated, "api-unstable")
     testData(project.isolated, "testData")
     testData(project(":analysis:analysis-api").isolated, "testData")
     testData(project(":analysis:low-level-api-fir").isolated, "testData/resolveToFirSymbolPsiClass")

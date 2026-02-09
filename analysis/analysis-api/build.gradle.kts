@@ -70,14 +70,8 @@ projectTests {
         workingDir = rootDir
     }
 
-    testData(project(":analysis:analysis-api").isolated, "src")
-    testData(project(":analysis:analysis-api").isolated, "api")
-    testData(project(":analysis:analysis-api-standalone").isolated, "src")
-    testData(project(":analysis:analysis-api-standalone").isolated, "api")
-    testData(project(":analysis:analysis-api-standalone").isolated, "api-unstable")
-    testData(project(":analysis:analysis-api-platform-interface").isolated, "src")
-    testData(project(":analysis:analysis-api-platform-interface").isolated, "api")
-    testData(project(":analysis:analysis-api-platform-interface").isolated, "api-unstable")
+    testData(project.isolated, "src")
+    testData(project.isolated, "api")
 }
 
 val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {

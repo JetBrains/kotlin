@@ -58,4 +58,5 @@ projectTests {
 
     testData(project.isolated, "src")
     testData(project.isolated, "api")
+    testData(project.isolated, "api-unstable")
 }
