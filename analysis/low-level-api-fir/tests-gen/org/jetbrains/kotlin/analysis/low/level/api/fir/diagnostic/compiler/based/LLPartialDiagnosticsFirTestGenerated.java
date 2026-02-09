@@ -3060,6 +3060,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("falsePositiveCausedByForkPoint.kt")
+      public void testFalsePositiveCausedByForkPoint() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/falsePositiveCausedByForkPoint.kt");
+      }
+
+      @Test
       @TestMetadata("inaccessibleReceiver.kt")
       public void testInaccessibleReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/inaccessibleReceiver.kt");
