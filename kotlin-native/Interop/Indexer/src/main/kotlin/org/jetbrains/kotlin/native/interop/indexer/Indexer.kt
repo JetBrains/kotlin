@@ -279,7 +279,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     private fun createStructDecl(cursor: CValue<CXCursor>): StructDeclImpl =
             StructDeclImpl(
                     cursor.type.name,
-                    isAnonymous = isAnonymous(cursor),
+                    isAnonymous = clang_Cursor_isAnonymous(cursor) != 0,
                     getLocation(cursor)
             )
 
@@ -327,7 +327,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
                 // Behavior of clang_Cursor_isAnonymous is changing starting from LLVM 8.
                 // Use lately introduced clang_Cursor_isAnonymousRecordDecl when available (LLVM 9)
-                val isAnonymousRecordType = (fieldCursor.type.kind == CXType_Record) && (isAnonymous(declCursor))
+                val isAnonymousRecordType = (fieldCursor.type.kind == CXType_Record) && (clang_Cursor_isAnonymous(declCursor) == 1)
                 when {
                     isAnonymousRecordType -> {
                         // TODO: clang_Cursor_getOffsetOfField is OK for anonymous, but only for the 1st level of such nesting
@@ -394,7 +394,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         return EnumDefImpl(
                 typeSpelling,
                 baseType,
-                isAnonymous = isAnonymous(cursor),
+                isAnonymous = clang_Cursor_isAnonymous(cursor) != 0,
                 getLocation(cursor)
         )
     }
