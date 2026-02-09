@@ -33,7 +33,7 @@ abstract class PluginApiReferenceExtension @Inject constructor(
         if (!project.kotlinBuildProperties.publishGradlePluginsJavadoc) return
 
         project.dokka {
-            moduleName(name)
+            this.moduleName.set(name)
         }
     }
 
