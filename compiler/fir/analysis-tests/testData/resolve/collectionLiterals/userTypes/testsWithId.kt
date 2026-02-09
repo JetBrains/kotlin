@@ -42,12 +42,12 @@ fun test() {
     restrictedId<MyList<*>>(["42"])
     restrictedId<MyList<*>>([null])
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>restrictedId<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>restrictedId<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>restrictedId<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    restrictedId(["42"])
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>fullyRestrictedId<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>fullyRestrictedId<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>fullyRestrictedId<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[null]<!>)
+    fullyRestrictedId([])
+    fullyRestrictedId(["42"])
+    <!CANNOT_INFER_PARAMETER_TYPE!>fullyRestrictedId<!>(<!ARGUMENT_TYPE_MISMATCH!>[null]<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, companionObject, functionDeclaration, nullableType,

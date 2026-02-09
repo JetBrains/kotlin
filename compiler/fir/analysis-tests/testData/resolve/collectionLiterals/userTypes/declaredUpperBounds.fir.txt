@@ -63,14 +63,14 @@ FILE: declaredUpperBounds.kt
         ^idC R|<local>/u|
     }
     public final fun testIdA(): R|kotlin/Unit| {
-        lval x: <ERROR TYPE REF: Cannot infer argument for type parameter T> = R|/idA<CS errors: /idA>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>(Int(42)))
+        lval x: R|MyListA<kotlin/Int>| = R|/idA|<R|MyListA<kotlin/Int>|>(Q|MyListA.Companion|.R|/MyListA.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
         lval y: R|MyListB<*>| = R|/idA|<R|it(MyListA<*> & MyListB<*>)|>(<collectionLiteralCall>(Int(42)))
-        lval z: R|MyListA<*>| = R|/idA|<R|MyListA<*>|>(Q|MyListA.Companion|.R|/MyListA.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
-        lval t: R|MyListC<*>| = R|/idA|<R|MyListC<*>|>(Q|MyListC.Companion|.R|/MyListC.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        lval z: R|MyListA<*>| = R|/idA|<R|MyListA<kotlin/Int>|>(Q|MyListA.Companion|.R|/MyListA.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        lval t: R|MyListC<*>| = R|/idA|<R|MyListC<kotlin/Int>|>(Q|MyListC.Companion|.R|/MyListC.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
     }
     public final fun testIdC(): R|kotlin/Unit| {
-        lval x: <ERROR TYPE REF: Cannot infer argument for type parameter U> = R|/idC<CS errors: /idC>#|<<ERROR TYPE REF: Cannot infer argument for type parameter U>>(<collectionLiteralCall>(Int(42)))
-        lval y: R|MyListA<*>| = R|/idC|<R|MyListC<*>|>(Q|MyListC.Companion|.R|/MyListC.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        lval x: R|MyListC<kotlin/Int>| = R|/idC|<R|MyListC<kotlin/Int>|>(Q|MyListC.Companion|.R|/MyListC.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        lval y: R|MyListA<*>| = R|/idC|<R|MyListC<kotlin/Int>|>(Q|MyListC.Companion|.R|/MyListC.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
     }
     public abstract interface MyListOutA<out A> : R|kotlin/Any| {
         public final companion object Companion : R|kotlin/Any| {
@@ -150,20 +150,20 @@ FILE: declaredUpperBounds.kt
         ^idOutB R|<local>/u|
     }
     public final fun testIdOutA(): R|kotlin/Unit| {
-        R|/idOutA<CS errors: /idOutA>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>())
-        R|/idOutA<CS errors: /idOutA>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>(Int(42)))
-        R|/idOutA<CS errors: /idOutA>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>(R|/xx|()))
-        R|/idOutA<CS errors: /idOutA>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>(R|/zz|()))
+        R|/idOutA|<R|MyListOutA<X>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|X|>())
+        R|/idOutA<Inapplicable(INAPPLICABLE): /idOutA>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        R|/idOutA|<R|MyListOutA<X>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|X|>(vararg(R|/xx|())))
+        R|/idOutA|<R|MyListOutA<Z>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|Z|>(vararg(R|/zz|())))
         lval p0: R|MyListOutA<Z>| = R|/idOutA|<R|MyListOutA<Z>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|Z|>())
-        lval p1: R|MyListOutA<Y>| = R|/idOutA|<R|it(MyListOutA<X> & MyListOutA<Y>)|>(<collectionLiteralCall>())
-        lval p2: R|MyListOutA<Y>| = R|/idOutA|<R|it(MyListOutA<X> & MyListOutA<Y>)|>(<collectionLiteralCall>(R|/zz|()))
-        lval p3: R|MyListOutA<Y>| = R|/idOutA|<R|it(MyListOutA<X> & MyListOutA<Y>)|>(<collectionLiteralCall>(R|/yy|()))
+        lval p1: R|MyListOutA<Y>| = R|/idOutA|<R|MyListOutA<it(X & Y)>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|it(X & Y)|>())
+        lval p2: R|MyListOutA<Y>| = R|/idOutA|<R|MyListOutA<Z>|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|Z|>(vararg(R|/zz|())))
+        lval p3: R|MyListOutA<Y>| = R|/idOutA<Inapplicable(INAPPLICABLE): /idOutA>#|<R|it(MyListOutA<X> & MyListOutA<Y>)|>(Q|MyListOutA.Companion|.R|/MyListOutA.Companion.of|<R|Y|>(vararg(R|/yy|())))
         lval p4: R|MyListOutB<X>| = R|/idOutA|<R|MyListOutB<X>|>(Q|MyListOutB.Companion|.R|/MyListOutB.Companion.of|<R|X|>())
         lval p5: R|MyListOutB<Z>| = R|/idOutA|<R|MyListOutB<Z>|>(Q|MyListOutB.Companion|.R|/MyListOutB.Companion.of|<R|Z|>())
-        lval p6: R|MyListOutB<Y>| = R|/idOutA|<R|it(MyListOutA<X> & MyListOutB<Y>)|>(<collectionLiteralCall>())
+        lval p6: R|MyListOutB<Y>| = R|/idOutA|<R|MyListOutB<it(X & Y)>|>(Q|MyListOutB.Companion|.R|/MyListOutB.Companion.of|<R|it(X & Y)|>())
     }
     public final fun testIdOutB(): R|kotlin/Unit| {
         lval p1: R|MyListOutA<X>| = R|/idOutB|<R|MyListOutB<X>|>(Q|MyListOutB.Companion|.R|/MyListOutB.Companion.of|<R|X|>())
-        lval p2: R|MyListOutA<Y>| = R|/idOutB|<R|it(MyListOutB<X> & MyListOutA<Y>)|>(<collectionLiteralCall>())
-        lval p3: R|MyListOutA<Z>| = R|/idOutB|<R|it(MyListOutB<X> & MyListOutA<Z>)|>(<collectionLiteralCall>())
+        lval p2: R|MyListOutA<Y>| = R|/idOutB|<R|MyListOutB<it(X & Y)>|>(Q|MyListOutB.Companion|.R|/MyListOutB.Companion.of|<R|it(X & Y)|>())
+        lval p3: R|MyListOutA<Z>| = R|/idOutB|<R|MyListOutB<Z>|>(Q|MyListOutB.Companion|.R|/MyListOutB.Companion.of|<R|Z|>())
     }

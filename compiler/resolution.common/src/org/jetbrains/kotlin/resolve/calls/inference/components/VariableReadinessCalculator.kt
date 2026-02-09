@@ -100,6 +100,7 @@ class VariableReadinessCalculator(
         val forbidden = !c.notFixedTypeVariables.contains(this)
                 || dependencyProvider.isVariableRelatedToTopLevelType(this)
                 || hasUnprocessedConstraintsInForks()
+                || dependencyProvider.isRelatedToCollectionLiteral(this)
         val areAllProperConstraintsSelfTypeBased = areAllProperConstraintsSelfTypeBased()
 
         // These values go in the same order as they are defined in `TypeVariableFixationReadinessQuality`,

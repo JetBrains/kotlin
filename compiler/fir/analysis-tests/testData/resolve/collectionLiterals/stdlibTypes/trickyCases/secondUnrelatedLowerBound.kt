@@ -1,5 +1,5 @@
 // LANGUAGE: +CollectionLiterals
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 
 fun cond(): Boolean = true
 fun <K> select(vararg k: K): K = k[0]
@@ -8,10 +8,10 @@ fun test() {
     val a = when {
         cond() -> 42
         cond() -> intArrayOf()
-        else -> <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>
+        else -> []
     }
 
-    select(42, intArrayOf(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+    select(42, intArrayOf(), [])
 }
 
 /* GENERATED_FIR_TAGS: capturedType, collectionLiteral, functionDeclaration, integerLiteral, localProperty, nullableType,

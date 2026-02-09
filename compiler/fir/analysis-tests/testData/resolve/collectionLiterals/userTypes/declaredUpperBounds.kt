@@ -24,7 +24,7 @@ fun <U: MyListC<*>> idC(u: U): U = u
 
 fun testIdA() {
     // no non-declared upper bounds
-    val x = <!CANNOT_INFER_PARAMETER_TYPE!>idA<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
+    val x = idA([42])
 
     // non-declared upper bound is `MyListB<*>`, `MyListA<*> & MyListB<*>` is used for lookup
     // ==> fallback
@@ -38,7 +38,7 @@ fun testIdA() {
 }
 
 fun testIdC() {
-    val x = <!CANNOT_INFER_PARAMETER_TYPE!>idC<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
+    val x = idC([42])
 
     // non-declared is `MyListA<*>`, but we must use declared to resolve to `MyListC.of`
     val y: MyListA<*> = idC([42])
@@ -69,25 +69,25 @@ fun <T: MyListOutA<X>> idOutA(t: T): T = t
 fun <U: MyListOutB<X>> idOutB(u: U): U = u
 
 fun testIdOutA() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>idOutA<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>idOutA<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>idOutA<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[xx()]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>idOutA<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[zz()]<!>)
+    idOutA([])
+    <!CANNOT_INFER_PARAMETER_TYPE!>idOutA<!>(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
+    idOutA([xx()])
+    idOutA([zz()])
 
     val p0: MyListOutA<Z> = idOutA([])
-    val p1: MyListOutA<Y> = idOutA(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    val p2: MyListOutA<Y> = idOutA(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[zz()]<!>)
-    val p3: MyListOutA<Y> = idOutA(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[yy()]<!>)
+    val p1: MyListOutA<Y> = idOutA([])
+    val p2: MyListOutA<Y> = idOutA([zz()])
+    val p3: MyListOutA<Y> = idOutA(<!ARGUMENT_TYPE_MISMATCH!>[yy()]<!>)
 
     val p4: MyListOutB<X> = idOutA([])
     val p5: MyListOutB<Z> = idOutA([])
-    val p6: MyListOutB<Y> = idOutA(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+    val p6: MyListOutB<Y> = idOutA([])
 }
 
 fun testIdOutB() {
     val p1: MyListOutA<X> = idOutB([])
-    val p2: MyListOutA<Y> = idOutB(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    val p3: MyListOutA<Z> = idOutB(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+    val p2: MyListOutA<Y> = idOutB([])
+    val p3: MyListOutA<Z> = idOutB([])
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, collectionLiteral, companionObject, functionDeclaration,

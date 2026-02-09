@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-80500
 //LANGUAGE: +CollectionLiterals
 
@@ -15,7 +15,7 @@ fun MyList<String>.impl() {
 
 fun main() {
     val w: MyList<CharSequence> = foo([""]) { x ->
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>impl<!>()
+        x.impl()
     }
 }
 

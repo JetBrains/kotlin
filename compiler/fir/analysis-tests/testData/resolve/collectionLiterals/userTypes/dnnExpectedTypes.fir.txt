@@ -29,8 +29,8 @@ FILE: dnnExpectedTypes.kt
     public final fun test(): R|kotlin/Unit| {
         R|/expectThroughTV|<R|C<kotlin/Int>|>(Q|C|.R|/C.Companion.regular|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>())
         R|/expectThroughTV|<R|C<kotlin/Int>?|>(Q|C|.R|/C.Companion.nullable|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>())
-        R|/expectThroughTV<CS errors: /expectThroughTV>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(Q|C|.R|/C.Companion.regular|<<ERROR TYPE REF: Cannot infer argument for type parameter H>>(), <collectionLiteralCall>(Int(42)))
-        R|/expectThroughTV<CS errors: /expectThroughTV>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(Q|C|.R|/C.Companion.nullable|<<ERROR TYPE REF: Cannot infer argument for type parameter G>>(), <collectionLiteralCall>(Int(42)))
-        R|/expectThroughTV<Inapplicable(INAPPLICABLE): /expectThroughTV>#|<R|C<kotlin/Int>?|>(Q|C|.R|/C.Companion.nullable|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Long|>(vararg(Long(42))))
-        R|/expectThroughTV|<R|C<kotlin/Long>?|>(Q|C|.R|/C.Companion.nullable|<R|kotlin/Long|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Long|>(vararg(Long(42))))
+        R|/expectThroughTV|<R|C<kotlin/Int>|>(Q|C|.R|/C.Companion.regular|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        R|/expectThroughTV|<R|C<kotlin/Int>?|>(Q|C|.R|/C.Companion.nullable|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        R|/expectThroughTV|<R|C<out it(kotlin/Number & kotlin/Comparable<*>)>?|>(Q|C|.R|/C.Companion.nullable|<R|kotlin/Int|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Long|>(vararg(Long(42))))
+        R|/expectThroughTV|<R|C<out it(kotlin/Number & kotlin/Comparable<*>)>?|>(Q|C|.R|/C.Companion.nullable|<R|kotlin/Long|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
     }

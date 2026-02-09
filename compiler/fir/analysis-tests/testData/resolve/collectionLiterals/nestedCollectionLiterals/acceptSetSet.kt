@@ -9,7 +9,7 @@ fun testMutableFoo() {
     <!CANNOT_INFER_PARAMETER_TYPE!>mutableFoo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     mutableFoo<String>([])
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>mutableFoo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>mutableFoo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>]<!>)
     mutableFoo<String>([[]])
 
 //     type([["42"]]) <: MutableSet<MutableSet<Tv(U)>>
@@ -22,10 +22,10 @@ fun testMutableFoo() {
 //      => Tv(L) == Tv(U)
 //     String <: Tv(L)
 //      => fix Tv(L) to String
-    <!CANNOT_INFER_PARAMETER_TYPE!>mutableFoo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>]<!>)
+    mutableFoo([["42"]])
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>mutableFoo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>]<!>)
-    mutableFoo([mutableSetOf("42"), <!ARGUMENT_TYPE_MISMATCH!>[42]<!>])
+    mutableFoo([["42"], [42]])
+    mutableFoo([mutableSetOf("42"), [42]])
 }
 
 fun <T> foo(x: Set<Set<T>>) { }
@@ -33,7 +33,7 @@ fun <T> foo(x: Set<Set<T>>) { }
 fun testFoo() {
     <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     foo<String>([])
-    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>]<!>)
     foo<String>([[]])
 
     // type([["42"]]) <: Set<Set<Tv(U)>>
@@ -49,14 +49,16 @@ fun testFoo() {
     //  => fix Tv(L) to String
     //  => fix Tv(U) to String
     //  => fix Tv(K) to Set<String>
-    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>]<!>)
+    foo([["42"]])
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>]<!>)
+    foo([["42"], [42]])
     foo([setOf("42")])
     foo<String>([setOf("42")])
     foo<String>([setOf()])
-    foo([setOf("42"), <!ARGUMENT_TYPE_MISMATCH!>[42]<!>])
-    foo([mutableSetOf("42"), <!ARGUMENT_TYPE_MISMATCH!>[42]<!>])
+    foo([setOf("42"), [42]])
+
+    // ambiguity because from expansion of outer CL LOWER(MutableSet), from foo UPPER(Set)
+    foo([mutableSetOf("42"), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>])
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, nullableType, stringLiteral,

@@ -6,17 +6,17 @@ FILE: upperAndLower.kt
         ^cond Boolean(true)
     }
     public final fun test(): R|kotlin/Unit| {
-        lval a: R|kotlin/collections/Set<*>| = R|/select<CS errors: /select>#|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(vararg(R|kotlin/collections/mutableListOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), <collectionLiteralCall>(Int(42))))
-        lval b: R|kotlin/collections/Set<*>| = R|/select<CS errors: /select>#|<R|kotlin/collections/Set<*>|>(vararg(R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))))
-        lval c: R|kotlin/collections/Collection<*>| = R|/select<CS errors: /select>#|<R|kotlin/collections/Collection<*>|>(vararg(R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), <collectionLiteralCall>(Int(42))))
+        lval a: R|kotlin/collections/Set<*>| = R|/select|<R|kotlin/collections/MutableList<kotlin/Int>|>(vararg(R|kotlin/collections/mutableListOf|<R|kotlin/Int|>(), Q|kotlin/collections|.R|kotlin/collections/mutableListOf|<R|kotlin/Int|>(vararg(Int(42)))))
+        lval b: R|kotlin/collections/Set<*>| = R|/select|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(R|kotlin/collections/setOf|<R|kotlin/Int|>(), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))))
+        lval c: R|kotlin/collections/Collection<*>| = R|/select|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(R|kotlin/collections/setOf|<R|kotlin/Int|>(), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))))
         lval d: R|kotlin/collections/Collection<*>| = R|/select<CS errors: /select>#|<R|kotlin/collections/Collection<*>|>(vararg(R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), R|kotlin/collections/listOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), <collectionLiteralCall>(Int(42))))
         lval e: R|kotlin/collections/Collection<*>| = R|/select<CS errors: /select>#|<R|kotlin/collections/Collection<*>|>(vararg(R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), R|kotlin/collections/mutableSetOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), <collectionLiteralCall>(Int(42))))
         lval f: R|kotlin/collections/Collection<*>| = R|/select|<R|kotlin/collections/MutableSet<out it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(R|/select|<R|kotlin/collections/MutableSet<out it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(), R|kotlin/collections/mutableSetOf|<R|kotlin/String|>())), Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>()))
-        lval g: R|kotlin/collections/Set<*>| = R|/select|<R|kotlin/collections/MutableSet<out it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(R|/select|<R|kotlin/collections/MutableSet<out it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(), R|kotlin/collections/mutableSetOf|<R|kotlin/String|>())), Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>()))
-        lval h: R|kotlin/collections/Set<*>| = R|/select<CS errors: /select>#|<R|kotlin/collections/Set<*>|>(vararg(R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), R|kotlin/collections/mutableSetOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))))
-        lval i: R|kotlin/collections/Set<*>| = R|/select<CS errors: /select>#|<R|kotlin/collections/Set<*>|>(vararg(R|/select|<R|kotlin/collections/Set<*>|>(vararg(R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), R|kotlin/collections/mutableSetOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))))
-        lval j: R|kotlin/collections/Set<*>| = R|/select<CS errors: /select>#|<R|kotlin/collections/Set<*>|>(vararg(R|/select|<R|kotlin/collections/Set<*>|>(vararg(R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), R|kotlin/collections/hashSetOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))))
-        lval k: R|kotlin/collections/Set<*>| = R|/select<CS errors: /select>#|<R|kotlin/collections/Set<*>|>(vararg(R|kotlin/collections/hashSetOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))))
+        lval g: R|kotlin/collections/Set<*>| = R|/select|<R|kotlin/collections/MutableSet<out it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(R|/select|<R|kotlin/collections/MutableSet<out it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(), R|kotlin/collections/mutableSetOf|<R|kotlin/String|>())), <collectionLiteralCall>()))
+        lval h: R|kotlin/collections/Set<*>| = R|/select<CS errors: /select>#|<R|kotlin/collections/Set<*>|>(vararg(R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), R|kotlin/collections/mutableSetOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), <collectionLiteralCall>(Int(42))))
+        lval i: R|kotlin/collections/Set<*>| = R|/select<CS errors: /select>#|<R|kotlin/collections/Set<*>|>(vararg(R|/select|<R|kotlin/collections/Set<*>|>(vararg(R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), R|kotlin/collections/mutableSetOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())), <collectionLiteralCall>(Int(42))))
+        lval j: R|kotlin/collections/Set<*>| = R|/select|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(R|/select|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(R|kotlin/collections/setOf|<R|kotlin/Int|>(), R|kotlin/collections/hashSetOf|<R|kotlin/Int|>())), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))))
+        lval k: R|kotlin/collections/Set<*>| = R|/select|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(R|kotlin/collections/hashSetOf|<R|kotlin/Int|>(), Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))))
     }
     public final fun testWhen(): R|kotlin/Unit| {
         lval a: R|kotlin/collections/Set<*>| = when () {
@@ -42,7 +42,7 @@ FILE: upperAndLower.kt
                 R|kotlin/collections/setOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
             }
             else ->  {
-                <collectionLiteralCall>(Int(42))
+                Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))
             }
         }
 
@@ -83,7 +83,7 @@ FILE: upperAndLower.kt
 
             }
             else ->  {
-                <collectionLiteralCall>()
+                Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
             }
         }
 

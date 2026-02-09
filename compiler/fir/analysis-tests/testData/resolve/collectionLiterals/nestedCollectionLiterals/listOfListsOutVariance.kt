@@ -15,8 +15,8 @@ fun <M> foo(lst: MyList<MyList<M>>) {
 
 fun test() {
     foo<String>([[]])
-    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>]<!>)
+    foo([["42"]])
     foo<String>([])
     <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
 
@@ -25,7 +25,7 @@ fun test() {
     foo<String>([myListOf("42")])
 
     foo([myListOf("42"), []])
-    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>myListOf<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>]<!>)
+    foo([myListOf(), ["42"]])
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, companionObject, functionDeclaration, nullableType,

@@ -4,7 +4,8 @@ FILE: twoUpperBounds.kt
     }
     public final fun <K> throughTwoLambdas(k: R|K|, vararg l: R|kotlin/Array<out (K) -> kotlin/Unit>|): R|kotlin/Unit| {
     }
-    public final fun <K : R|kotlin/collections/MutableSet<kotlin/Int>|> throughDeclared(k: R|K|, l: R|(K) -> kotlin/Unit|): R|kotlin/Unit|
+    public final fun <K : R|kotlin/collections/MutableSet<kotlin/Int>|> throughDeclared(k: R|K|, l: R|(K) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
     public final fun test(): R|kotlin/Unit| {
         R|/throughTwoLambdas|<R|it(kotlin/collections/Set<kotlin/Int> & kotlin/collections/List<kotlin/Int>)|>(<collectionLiteralCall>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
             ^@throughTwoLambdas Unit
@@ -20,14 +21,21 @@ FILE: twoUpperBounds.kt
             ^@throughTwoLambdas Unit
         }
         ))
-        R|/throughTwoLambdas|<R|it(kotlin/collections/Set<kotlin/Int> & kotlin/collections/MutableSet<kotlin/String>)|>(<collectionLiteralCall>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+        R|/throughTwoLambdas|<R|kotlin/collections/MutableSet<kotlin/String>|>(Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|kotlin/String|>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/CharSequence>|): R|kotlin/Unit| <inline=Unknown>  {
             ^@throughTwoLambdas Unit
         }
         , throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
             ^@throughTwoLambdas Unit
         }
         ))
-        R|/throughTwoLambdas|<R|it(kotlin/collections/Set<kotlin/Int> & kotlin/collections/Set<kotlin/String>)|>(<collectionLiteralCall>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+        R|/throughTwoLambdas<Inapplicable(INAPPLICABLE): /throughTwoLambdas>#|<R|it(kotlin/collections/Set<kotlin/Int> & kotlin/collections/MutableSet<kotlin/String>)|>(Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        , throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
+            ^@throughTwoLambdas Unit
+        }
+        ))
+        R|/throughTwoLambdas<CS errors: /throughTwoLambdas>#|<R|kotlin/collections/Set<it(kotlin/Int & kotlin/String)>|>(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|it(kotlin/Int & kotlin/String)|>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
             ^@throughTwoLambdas Unit
         }
         , throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
@@ -41,7 +49,7 @@ FILE: twoUpperBounds.kt
             ^@throughTwoLambdas Unit
         }
         ))
-        R|/throughTwoLambdas|<R|it(kotlin/collections/MutableSet<kotlin/Int> & kotlin/collections/MutableSet<kotlin/String>)|>(<collectionLiteralCall>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/MutableSet<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+        R|/throughTwoLambdas<Inapplicable(INAPPLICABLE): /throughTwoLambdas>#|<R|it(kotlin/collections/MutableSet<kotlin/Int> & kotlin/collections/MutableSet<kotlin/String>)|>(Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/MutableSet<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
             ^@throughTwoLambdas Unit
         }
         , throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| <inline=Unknown>  {
@@ -56,7 +64,7 @@ FILE: twoUpperBounds.kt
             ^@throughDeclared Unit
         }
         )
-        R|/throughDeclared|<R|it(kotlin/collections/MutableSet<kotlin/Int> & kotlin/collections/MutableSet<kotlin/String>)|>(<collectionLiteralCall>(), <L> = throughDeclared@fun <anonymous>(<unused var>: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| <inline=NoInline>  {
+        R|/throughDeclared<Inapplicable(INAPPLICABLE): /throughDeclared>#|<R|it(kotlin/collections/MutableSet<kotlin/Int> & kotlin/collections/MutableSet<kotlin/String>)|>(Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), <L> = throughDeclared@fun <anonymous>(<unused var>: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| <inline=NoInline>  {
             ^@throughDeclared Unit
         }
         )

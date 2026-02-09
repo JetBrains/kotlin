@@ -34,9 +34,9 @@ fun test() {
     Utils.expectFlexibleGeneric([42, "42"])
     Utils.expectFlexibleGeneric<String>([])
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>expectThroughTV<!>(Utils.<!CANNOT_INFER_PARAMETER_TYPE!>flexible<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
+    expectThroughTV(Utils.flexible(), [42])
     expectThroughTV(Utils.flexible<Int>(), [42])
-    expectThroughTV(Utils.flexible<String>(), <!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
+    expectThroughTV(Utils.flexible<String>(), [42])
     expectThroughTV(Utils.flexible<String>(), [])
 }
 

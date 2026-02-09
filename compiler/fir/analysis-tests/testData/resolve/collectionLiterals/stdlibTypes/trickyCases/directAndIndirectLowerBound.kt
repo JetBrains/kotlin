@@ -1,5 +1,5 @@
 // LANGUAGE: +CollectionLiterals
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 
 fun <K> select(vararg k: K): K = k[0]
 fun <L> id(l: L): L = l
@@ -18,7 +18,7 @@ fun test() {
     select(
         mutableSetOf<Int>(),
         select(
-            [],
+            <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>,
             setOf<Int>(),
         ),
     )
@@ -37,7 +37,7 @@ fun testWhen() {
     when {
         cond() -> when {
             cond() -> setOf<Int>()
-            else -> []
+            else -> <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>
         }
         else -> mutableSetOf<Int>()
     }
@@ -54,7 +54,14 @@ fun deepTests() {
     // still ambiguity
     select(
         id(id(id(
-            select([], mutableSetOf<Int>()),
+            select(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, mutableSetOf<Int>()),
+        ))),
+        setOf<Int>(),
+    )
+
+    select(
+        id(id(id(
+            select(run { <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!> }, mutableSetOf<Int>()),
         ))),
         setOf<Int>(),
     )

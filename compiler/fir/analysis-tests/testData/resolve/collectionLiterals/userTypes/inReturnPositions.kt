@@ -42,7 +42,7 @@ fun <H> returnIfElseWithGenericExpectedType(h: H): MyList<H> = if (returnBoolean
 fun returnIfElseWithRunLike(): MyList<Int> = if (returnBoolean()) runLike { [1, 2, 3] } else runLikeListInt { [] }
 
 fun returnInElvis(): MyList<Int> = myNullableList() ?: []
-fun returnInElvisNoExpectedType() = <!CANNOT_INFER_PARAMETER_TYPE!>myNullableList<!>() ?: <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>
+fun returnInElvisNoExpectedType() = <!CANNOT_INFER_PARAMETER_TYPE!>myNullableList<!>() ?: <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
 fun returnInElvisListInt() = myNullableListInt() ?: []
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, elvisExpression, functionDeclaration, functionalType, getter,

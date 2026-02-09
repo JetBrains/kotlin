@@ -14,9 +14,9 @@ FILE: secondUnrelatedLowerBound.kt
                 R|kotlin/intArrayOf|()
             }
             else ->  {
-                <collectionLiteralCall>()
+                Q|kotlin|.R|kotlin/intArrayOf|()
             }
         }
 
-        R|/select|<R|java/io/Serializable|>(vararg(Int(42), R|kotlin/intArrayOf|(), <collectionLiteralCall>()))
+        R|/select|<R|java/io/Serializable|>(vararg(Int(42), R|kotlin/intArrayOf|(), Q|kotlin|.R|kotlin/intArrayOf|()))
     }

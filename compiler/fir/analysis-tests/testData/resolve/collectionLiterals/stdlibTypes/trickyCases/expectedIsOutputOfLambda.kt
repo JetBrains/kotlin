@@ -1,5 +1,5 @@
 // LANGUAGE: +CollectionLiterals
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 
 fun <T> assertEq(expected: T, calc: () -> T) { }
 
@@ -9,14 +9,14 @@ fun <L> id(l: L): L = l
 
 fun test() {
     assertEq([]) { setOf<Int>() }
-    assertEq(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>) { setOf<String>() }
+    assertEq([42]) { setOf<String>() }
     assertEqWithInput([], 42) { setOf(it) }
-    assertEqWithInput(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>, "") { setOf(it) }
+    assertEqWithInput([42], "") { setOf(it) }
 
     assertEq(id([])) { setOf<Int>() }
-    assertEq(id(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>)) { setOf<String>() }
+    assertEq(id([42])) { setOf<String>() }
     assertEqWithInput(id([]), 42) { setOf(it) }
-    assertEqWithInput(id(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>), "") { setOf(it) }
+    assertEqWithInput(id([42]), "") { setOf(it) }
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, nullableType, stringLiteral,

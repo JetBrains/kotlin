@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-abstract class CollectionLiteralResolver(protected val context: ResolutionContext) {
+abstract class CollectionLiteralResolutionStrategy(protected val context: ResolutionContext) {
     protected val components: BodyResolveComponents get() = context.bodyResolveComponents
 
     fun resolveCollectionLiteral(
@@ -46,6 +46,8 @@ abstract class CollectionLiteralResolver(protected val context: ResolutionContex
         }
     }
 
+    internal abstract fun declaresOperatorOf(expectedType: FirRegularClassSymbol): Boolean
+
     protected abstract fun prepareRawCall(
         collectionLiteral: FirCollectionLiteral,
         topLevelCandidate: Candidate,
@@ -53,7 +55,8 @@ abstract class CollectionLiteralResolver(protected val context: ResolutionContex
     ): FirFunctionCall?
 }
 
-class CollectionLiteralResolverThroughCompanion(context: ResolutionContext) : CollectionLiteralResolver(context) {
+private class CollectionLiteralResolutionStrategyThroughCompanion(context: ResolutionContext) :
+    CollectionLiteralResolutionStrategy(context) {
 
     private fun FirCallableSymbol<*>.canBeMainOperatorOfOverload(outerClass: FirRegularClassSymbol): Boolean {
         return when {
@@ -81,6 +84,10 @@ class CollectionLiteralResolverThroughCompanion(context: ResolutionContext) : Co
             return overloadFound.ifTrue { companionObjectSymbol }
         }
 
+    override fun declaresOperatorOf(expectedType: FirRegularClassSymbol): Boolean {
+        return expectedType.companionObjectIfDefinedOperatorOf != null
+    }
+
     override fun prepareRawCall(
         collectionLiteral: FirCollectionLiteral,
         topLevelCandidate: Candidate,
@@ -107,7 +114,11 @@ class CollectionLiteralResolverThroughCompanion(context: ResolutionContext) : Co
     }
 }
 
-class CollectionLiteralResolverForStdlibType(context: ResolutionContext) : CollectionLiteralResolver(context) {
+private class CollectionLiteralResolutionStrategyForStdlibType(context: ResolutionContext) : CollectionLiteralResolutionStrategy(context) {
+    override fun declaresOperatorOf(expectedType: FirRegularClassSymbol): Boolean {
+        return toCollectionOfFactoryPackageAndName(expectedType, context.session) != null
+    }
+
     override fun prepareRawCall(
         collectionLiteral: FirCollectionLiteral,
         topLevelCandidate: Candidate,
@@ -133,6 +144,12 @@ class CollectionLiteralResolverForStdlibType(context: ResolutionContext) : Colle
         }
     }
 
+}
+
+context(context: ResolutionContext)
+fun <T : Any> tryAllCLResolutionStrategies(attempt: CollectionLiteralResolutionStrategy.() -> T?): T? {
+    CollectionLiteralResolutionStrategyThroughCompanion(context).attempt()?.let { return it }
+    return CollectionLiteralResolutionStrategyForStdlibType(context).attempt()
 }
 
 fun ResolutionContext.runResolutionForDanglingCollectionLiteral(collectionLiteral: FirCollectionLiteral) {
@@ -172,5 +189,37 @@ fun ConeKotlinType.getClassRepresentativeForCollectionLiteralResolution(): FirRe
                 is FirRegularClassSymbol -> symbol
                 is FirTypeAliasSymbol -> fullyExpandedType().getClassRepresentativeForCollectionLiteralResolution()
             }
+    }
+}
+
+/**
+ * For Kotlin class:
+ *  There is a companion && in this companion at least one operator `of` is declared.
+ *  If all the `of` operators are deprecated with `level=HIDDEN`, the class must be considered as not-having `of` operator
+ *   ([KT-83165](https://youtrack.jetbrains.com/issue/KT-83165)).
+ *  If the overloads of `of` are not visible from the call-site, the class must be considered as not-having `of` operator
+ *   ([KT-84072](https://youtrack.jetbrains.com/issue/KT-84072)).
+ *
+ * For Java class:
+ *  Static `of` with vararg is declared which fulfills all the restrictions on `of` (KT-80494).
+ *
+ * Additionally:
+ *  `List`, `Set`, `MutableList`, `MutableSet`, `Sequence`, `Array`, primitive arrays, and unsigned arrays all declare operator `of`.
+ *  ([KT-81722](https://youtrack.jetbrains.com/issue/KT-81722) for stdlib support).
+ */
+context(resolutionContext: ResolutionContext)
+fun FirRegularClassSymbol.declaresOperatorOf(): Boolean {
+    return tryAllCLResolutionStrategies {
+        if (declaresOperatorOf(this@declaresOperatorOf)) true
+        else null
+    } ?: false
+}
+
+context(context: ResolutionContext)
+fun Collection<FirRegularClassSymbol>.chooseSingleClassFromIntersectionComponents(): FirRegularClassSymbol? {
+    return firstOrNull { candidate ->
+        all { other ->
+            candidate.fir.isSubclassOf(other.toLookupTag(), context.session, isStrict = false)
+        }
     }
 }

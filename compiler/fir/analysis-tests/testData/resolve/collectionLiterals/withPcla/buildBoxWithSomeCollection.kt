@@ -19,29 +19,29 @@ fun <Z> buildBoxWithMutableSet(block: BoxWithMutableSet<Z>.() -> Unit) { }
 
 fun test() {
     <!CANNOT_INFER_PARAMETER_TYPE!>buildBoxWithSet<!> {
-        set = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>idWithSetUB<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+        set = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>idWithSetUB<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>buildBoxWithSet<!> {
-        set = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>idWithSetUB<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
+    buildBoxWithSet {
+        set = idWithSetUB([1, 2, 3])
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>buildBoxWithSet<!> {
-        set = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>idWithSetUB<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
-        set = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>idWithSetUB<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>)
-    }
-
-    <!CANNOT_INFER_PARAMETER_TYPE!>buildBoxWithMutableSet<!> {
-        set = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>idWithMutableSetUB<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+    buildBoxWithSet {
+        set = idWithSetUB([42])
+        set = idWithSetUB(["42"])
     }
 
     <!CANNOT_INFER_PARAMETER_TYPE!>buildBoxWithMutableSet<!> {
-        set = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>idWithMutableSetUB<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
+        set = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>idWithMutableSetUB<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>buildBoxWithMutableSet<!> {
-        set = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>idWithMutableSetUB<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
-        set = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>idWithMutableSetUB<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>)
+    buildBoxWithMutableSet {
+        set = idWithMutableSetUB([1, 2, 3])
+    }
+
+    buildBoxWithMutableSet {
+        set = idWithMutableSetUB([42])
+        set = idWithMutableSetUB(["42"])
     }
 }
 

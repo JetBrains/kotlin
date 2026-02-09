@@ -9,7 +9,7 @@ fun test() {
     select(setOf<String>(), setOf<Int>(), [42])
 
     // ambiguity
-    select(setOf<String>(), mutableSetOf<String>(), [])
+    select(setOf<String>(), mutableSetOf<String>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
 
     // ambiguity
     <!CANNOT_INFER_PARAMETER_TYPE!>select<!>(<!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>(), <!CANNOT_INFER_PARAMETER_TYPE!>listOf<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
