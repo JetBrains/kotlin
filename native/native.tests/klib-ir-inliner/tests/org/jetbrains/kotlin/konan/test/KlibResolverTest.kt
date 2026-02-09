@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHom
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.klib.compileToKlibsViaCli
 import org.jetbrains.kotlin.konan.test.klib.newSourceModules
-import org.jetbrains.kotlin.konan.test.klib.runWithCustomWorkingDir
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
@@ -67,9 +66,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         }
 
         modules.compileToKlibsViaCli()
-        modules.compileToKlibsViaCli(useLibraryNamesInCliArguments = true)
         modules.compileToKlibsViaCli(produceUnpackedKlibs = false)
-        modules.compileToKlibsViaCli(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true)
     }
 
     @Test
@@ -177,7 +174,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             assertCompilerOutputHasKlibResolverIncompatibleAbiMessages(
                 assertions = JUnit5Assertions,
                 compilerOutput = cte.reason,
-                missingLibrary = "/klib-files.unpacked.paths.transformed/lib1",
+                missingLibrary = "/klib-files.unpacked.transformed/lib1",
                 baseDir = buildDir
             )
         }
@@ -751,8 +748,20 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
         private const val DUPLICATED_UNIQUE_NAME = "DUPLICATED_UNIQUE_NAME"
 
+        private const val USER_DIR = "user.dir"
+
         private fun DuplicatedUniqueNameStrategy.asCliArgument(): String {
             return CommonKlibBasedCompilerArguments::duplicatedUniqueNameStrategy.cliArgument(alias)
+        }
+
+        private inline fun runWithCustomWorkingDir(customWorkingDir: File, block: () -> Unit) {
+            val previousWorkingDir: String = System.getProperty(USER_DIR)
+            try {
+                System.setProperty(USER_DIR, customWorkingDir.absolutePath)
+                block()
+            } finally {
+                System.setProperty(USER_DIR, previousWorkingDir)
+            }
         }
     }
 }

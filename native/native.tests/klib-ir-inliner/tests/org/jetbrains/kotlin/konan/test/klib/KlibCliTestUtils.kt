@@ -153,7 +153,6 @@ internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): Kl
 context(testRunner: AbstractNativeSimpleTest)
 internal fun KlibTestSourceModules.compileToKlibsViaCli(
     produceUnpackedKlibs: Boolean = true,
-    useLibraryNamesInCliArguments: Boolean = false,
     extraCliArgs: List<String> = emptyList(),
     transform: ((module: KlibTestSourceModule, successKlib: TestCompilationResult.Success<out KLIB>) -> Unit)? = null
 ) {
@@ -161,79 +160,59 @@ internal fun KlibTestSourceModules.compileToKlibsViaCli(
         listOf(
             "klib-files",
             if (produceUnpackedKlibs) "unpacked" else "packed",
-            if (useLibraryNamesInCliArguments) "names" else "paths",
             if (transform != null) "transformed" else "non-transformed"
         ).joinToString(".")
     )
     klibFilesDir.mkdirs()
 
     fun KlibTestSourceModule.computeArtifactPath(): String {
-        val basePath: String = if (useLibraryNamesInCliArguments) name else klibFilesDir.resolve(name).path
+        val basePath: String = klibFilesDir.resolve(name).path
         return if (produceUnpackedKlibs) basePath else "$basePath.klib"
     }
 
-    fun doCompileModules() {
-        modules.forEach { module ->
-            val commonCompilerAndCInteropArgs = buildList {
-                if (produceUnpackedKlibs) add("-nopack")
-                module.dependencies.forEach { dependency ->
-                    add("-l")
-                    add(dependency.computeArtifactPath())
-                }
+    modules.forEach { module ->
+        val commonCompilerAndCInteropArgs = buildList {
+            if (produceUnpackedKlibs) add("-nopack")
+            module.dependencies.forEach { dependency ->
+                add("-l")
+                add(dependency.computeArtifactPath())
             }
-            val testCase = testRunner.generateTestCaseWithSingleFile(
-                sourceFile = module.sourceFile,
-                moduleName = module.name,
-                TestCompilerArgs(
-                    commonCompilerAndCInteropArgs + extraCliArgs,
-                    cinteropArgs = commonCompilerAndCInteropArgs,
-                )
-            )
-
-            val expectedArtifact = KLIB(klibFilesDir.resolve(module.computeArtifactPath()))
-            val compilation = when (module.kind) {
-                KlibTestSourceModule.Kind.REGULAR -> {
-                    LibraryCompilation(
-                        settings = testRunner.testRunSettings,
-                        freeCompilerArgs = testCase.freeCompilerArgs,
-                        sourceModules = testCase.modules,
-                        dependencies = emptySet(),
-                        expectedArtifact = expectedArtifact
-                    )
-                }
-
-                KlibTestSourceModule.Kind.CINTEROP -> {
-                    check(extraCliArgs.isEmpty()) { "extraCmdLineParams are not allowed for cinterop modules" }
-                    CInteropCompilation(
-                        settings = testRunner.testRunSettings,
-                        freeCompilerArgs = testCase.freeCompilerArgs,
-                        defFile = module.sourceFile,
-                        sources = emptyList(),
-                        dependencies = emptySet(),
-                        expectedArtifact = expectedArtifact
-                    )
-                }
-            }
-
-            val success = compilation.result.assertSuccess()
-            transform?.invoke(module, success)
         }
+        val testCase = testRunner.generateTestCaseWithSingleFile(
+            sourceFile = module.sourceFile,
+            moduleName = module.name,
+            TestCompilerArgs(
+                commonCompilerAndCInteropArgs + extraCliArgs,
+                cinteropArgs = commonCompilerAndCInteropArgs,
+            )
+        )
+
+        val expectedArtifact = KLIB(klibFilesDir.resolve(module.computeArtifactPath()))
+        val compilation = when (module.kind) {
+            KlibTestSourceModule.Kind.REGULAR -> {
+                LibraryCompilation(
+                    settings = testRunner.testRunSettings,
+                    freeCompilerArgs = testCase.freeCompilerArgs,
+                    sourceModules = testCase.modules,
+                    dependencies = emptySet(),
+                    expectedArtifact = expectedArtifact
+                )
+            }
+
+            KlibTestSourceModule.Kind.CINTEROP -> {
+                check(extraCliArgs.isEmpty()) { "extraCmdLineParams are not allowed for cinterop modules" }
+                CInteropCompilation(
+                    settings = testRunner.testRunSettings,
+                    freeCompilerArgs = testCase.freeCompilerArgs,
+                    defFile = module.sourceFile,
+                    sources = emptyList(),
+                    dependencies = emptySet(),
+                    expectedArtifact = expectedArtifact
+                )
+            }
+        }
+
+        val success = compilation.result.assertSuccess()
+        transform?.invoke(module, success)
     }
-
-    if (useLibraryNamesInCliArguments)
-        runWithCustomWorkingDir(klibFilesDir) { doCompileModules() }
-    else
-        doCompileModules()
 }
-
-internal inline fun runWithCustomWorkingDir(customWorkingDir: File, block: () -> Unit) {
-    val previousWorkingDir: String = System.getProperty(USER_DIR)
-    try {
-        System.setProperty(USER_DIR, customWorkingDir.absolutePath)
-        block()
-    } finally {
-        System.setProperty(USER_DIR, previousWorkingDir)
-    }
-}
-
-private const val USER_DIR = "user.dir"
