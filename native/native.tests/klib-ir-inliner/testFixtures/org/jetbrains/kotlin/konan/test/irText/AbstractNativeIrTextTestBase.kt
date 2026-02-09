@@ -21,16 +21,12 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
-import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
-import org.jetbrains.kotlin.test.model.FrontendFacade
-import org.jetbrains.kotlin.test.model.FrontendKind
-import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.model.IrPreSerializationLoweringFacade
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractNonJvmIrTextTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 
 abstract class AbstractNativeIrTextTestBase(private val parser: FirParser) :
     AbstractNonJvmIrTextTest<FirOutputArtifact>(NativePlatforms.unspecifiedNativePlatform, TargetBackend.NATIVE) {
@@ -58,7 +54,7 @@ abstract class AbstractNativeIrTextTestBase(private val parser: FirParser) :
     final override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::NativeEnvironmentConfigurator,
+            ::NativeFirstStageEnvironmentConfigurator,
         )
 
         useAdditionalService(::LibraryProvider)

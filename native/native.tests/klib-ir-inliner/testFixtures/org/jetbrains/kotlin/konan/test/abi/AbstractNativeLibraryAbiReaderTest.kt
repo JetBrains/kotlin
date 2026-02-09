@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 import org.junit.jupiter.api.Tag
 
 @Tag("klib")
@@ -52,7 +52,7 @@ open class AbstractNativeLibraryAbiReaderTest :
         }
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::NativeEnvironmentConfigurator,
+            ::NativeFirstStageEnvironmentConfigurator,
         )
         super.configure(builder)
     }

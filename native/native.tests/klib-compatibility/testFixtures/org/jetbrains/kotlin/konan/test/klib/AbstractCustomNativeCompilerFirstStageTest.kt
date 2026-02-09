@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.TargetBackendTestSkipper
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
@@ -40,7 +40,7 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest()
         }
 
         useConfigurators(
-            ::NativeEnvironmentConfigurator,
+            ::NativeFirstStageEnvironmentConfigurator,
         )
         useAdditionalSourceProviders(
             ::NativeLauncherAdditionalSourceProvider,

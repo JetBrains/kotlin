@@ -16,21 +16,26 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
-import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.ArtifactKind
+import org.jetbrains.kotlin.test.model.DependencyKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 
 abstract class AbstractNativeLoadCompiledKotlinTest :
     AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE)
 {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useConfigurators(
-            ::NativeEnvironmentConfigurator,
+            ::NativeFirstStageEnvironmentConfigurator,
         )
         globalDefaults {
             frontend = FrontendKinds.FIR

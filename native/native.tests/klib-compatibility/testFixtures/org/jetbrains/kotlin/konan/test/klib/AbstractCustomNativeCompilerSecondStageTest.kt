@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppresso
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.TargetBackendTestSkipper
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Tag
@@ -57,10 +57,7 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
             }
         }
 
-        val customNativeHome = customNativeCompilerSettings.nativeHome.absoluteFile.takeIf {
-            customNativeCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE
-        }
-        useConfigurators(::NativeEnvironmentConfigurator.bind(customNativeHome))
+        useConfigurators(::NativeSecondStageEnvironmentConfigurator)
         useAdditionalSourceProviders(
             ::NativeLauncherAdditionalSourceProvider,
         )

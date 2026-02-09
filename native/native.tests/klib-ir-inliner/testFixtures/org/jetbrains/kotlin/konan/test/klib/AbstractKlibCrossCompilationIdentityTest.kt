@@ -21,14 +21,10 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibArtifactHandler
-import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.irHandlersStep
-import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
-import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -40,7 +36,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackend
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.utils.bind
@@ -112,7 +108,7 @@ open class AbstractFirKlibCrossCompilationIdentityTestBase(val irFileSuffix: Str
         enableMetaInfoHandler()
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::NativeEnvironmentConfigurator,
+            ::NativeFirstStageEnvironmentConfigurator,
         )
         useAdditionalService(::LibraryProvider)
 

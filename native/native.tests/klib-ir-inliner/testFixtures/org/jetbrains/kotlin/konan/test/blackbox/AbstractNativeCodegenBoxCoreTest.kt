@@ -37,7 +37,8 @@ import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.objcinterop.ObjCInteropFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.LibraryProvider
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
@@ -50,7 +51,10 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractNativeCoreTest() {
         super.configure(builder)
         configureFirParser(FirParser.LightTree)
         useAdditionalService(::LibraryProvider)
-        useConfigurators(::NativeEnvironmentConfigurator)
+        useConfigurators(
+            ::NativeFirstStageEnvironmentConfigurator,
+            ::NativeSecondStageEnvironmentConfigurator,
+        )
         useDirectives(NativeEnvironmentConfigurationDirectives, TestDirectives, LanguageSettingsDirectives)
         useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper, ::FileCheckTestSkipper)
         enableMetaInfoHandler()
