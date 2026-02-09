@@ -614,6 +614,9 @@ public class KmEnumEntry(public var name: String) {
     internal val extensions: List<KmEnumEntryExtension> =
         MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createEnumEntryExtension)
 
+    /**
+     * Returns the name of the enum entry.
+     */
     override fun toString(): String = name
 }
 
