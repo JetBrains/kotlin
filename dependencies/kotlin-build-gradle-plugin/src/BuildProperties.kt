@@ -50,7 +50,7 @@ class KotlinBuildProperties internal constructor(
 
     val pushToBuildCache: Provider<Boolean> = booleanProperty("kotlin.build.cache.push", false)
 
-    val localBuildCacheEnabled: Provider<Boolean> = booleanProperty("kotlin.build.cache.local.enabled", isTeamcityBuild.map { !it })
+    val localBuildCacheEnabled: Provider<Boolean> = booleanProperty("kotlin.build.cache.local.enabled", true)
 
     /**
      * Nullable
