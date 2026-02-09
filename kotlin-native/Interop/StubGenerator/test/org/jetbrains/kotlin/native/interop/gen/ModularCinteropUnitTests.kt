@@ -276,7 +276,7 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
             module forward { header "forward.h" }
             module original { header "original.h" }
         """.trimIndent())
-        files.file("forward.h", """
+        val forwardH = files.file("forward.h", """
             struct S;
             void consumeS(struct S *);
             
@@ -287,7 +287,7 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
             union U;
             void consumeU(union U *);
         """.trimIndent())
-        files.file("original.h", """
+        val originalH = files.file("original.h", """
             struct S {
                 int a;
             };
@@ -340,6 +340,8 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
                     }
                 }
         )
+        assertEquals(structS.location.headerId.value, headerContentsHash(forwardH.path))
+
         assertEquals(
                 listOf(unionU),
                 index.functions.single {
@@ -364,7 +366,6 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
                 }
         )
     }
-
 
     @Test
     fun `multimodular import - type definition in def file - is indexed for definition lookup`() {
