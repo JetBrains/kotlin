@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.testImplementation
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
@@ -23,6 +24,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
+    testImplementation(testFixtures(project(":compiler:psi:psi-api")))
 
     testFixturesApi(kotlinTest("junit"))
     testCompileOnly(toolsJarApi())
@@ -87,6 +89,8 @@ projectTests {
     @OptIn(KotlinCompilerDistUsage::class)
     withDist()
 
+    testData(project.isolated, "src")
+    testData(project.isolated, "api")
     testData(project.isolated, "testData")
     testData(project(":analysis:analysis-api").isolated, "testData")
     testData(project(":analysis:low-level-api-fir").isolated, "testData/resolveToFirSymbolPsiClass")

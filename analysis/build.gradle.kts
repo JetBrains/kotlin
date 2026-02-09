@@ -3,6 +3,7 @@ tasks.register("analysisAllTests") {
         ":analysis:analysis-api-fe10:test",
         ":analysis:analysis-api-fir:test",
         ":analysis:analysis-api-platform-interface:checkKotlinAbi",
+        ":analysis:analysis-api-platform-interface:test",
         ":analysis:analysis-api-standalone:checkKotlinAbi",
         ":analysis:analysis-api-standalone:test",
         ":analysis:analysis-api:checkKotlinAbi",
