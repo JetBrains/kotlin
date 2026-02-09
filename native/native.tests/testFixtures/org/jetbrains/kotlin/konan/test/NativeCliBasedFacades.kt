@@ -5,32 +5,18 @@
 
 package org.jetbrains.kotlin.konan.test
 
-import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibsInTestPipeline
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
-import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.native.pipeline.*
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_GENERATING_KLIB
-import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliFacade
-import org.jetbrains.kotlin.test.frontend.fir.getAllNativeDependenciesPaths
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.defaultsProvider
-import org.jetbrains.kotlin.test.services.libraryProvider
 import java.io.File
 
 // NativeCliBasedFacades
@@ -74,38 +60,7 @@ class KlibSerializerNativeCliFacade(
         val serializedOutput = NativeIrSerializationPipelinePhase.executePhase(input) ?: return null
         val output = NativeKlibWritingPipelinePhase.executePhase(serializedOutput)
         val outputFile = File(output.outputKlibPath)
-        updateTestConfiguration(input.configuration, module, input.fir2IrOutput.fir2irActualizedResult.irModuleFragment, outputFile)
         return BinaryArtifacts.KLib(outputFile, diagnosticsCollector)
-    }
-
-    private fun updateTestConfiguration(
-        configuration: CompilerConfiguration,
-        module: TestModule,
-        irModuleFragment: IrModuleFragment,
-        outputFile: File
-    ) {
-        val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
-
-        val dependencyPaths = getAllNativeDependenciesPaths(module, testServices)
-
-        val library = loadNativeKlibsInTestPipeline(
-            configuration = configuration,
-            libraryPaths = listOf(outputFile.path),
-            nativeTarget = testServices.nativeEnvironmentConfigurator.getNativeTarget(module),
-        ).all.single()
-
-        val moduleDescriptor = nativeFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-            library,
-            configuration.languageVersionSettings,
-            LockBasedStorageManager("ModulesStructure"),
-            irModuleFragment.descriptor.builtIns,
-            packageAccessHandler = null,
-            lookupTracker = LookupTracker.DO_NOTHING
-        )
-        moduleDescriptor.setDependencies(dependencyPaths.map { testServices.libraryProvider.getDescriptorByPath(it) as ModuleDescriptorImpl } + moduleDescriptor)
-
-        testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
-        testServices.libraryProvider.setDescriptorAndLibraryByName(outputFile.path, moduleDescriptor, library)
     }
 
     override fun shouldTransform(module: TestModule): Boolean {
