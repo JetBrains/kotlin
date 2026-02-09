@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
-class NativeEnvironmentConfigurator(testServices: TestServices, customNativeHome: File? = null) : EnvironmentConfigurator(testServices),
+abstract class NativeEnvironmentConfigurator(testServices: TestServices, customNativeHome: File? = null) : EnvironmentConfigurator(testServices),
     KlibBasedEnvironmentConfigurator
 {
     companion object {

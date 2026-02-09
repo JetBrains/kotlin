@@ -18,6 +18,7 @@ dependencies {
     testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
     testFixturesImplementation(project(":compiler:backend.jvm.lower"))
     testFixturesImplementation(project(":kotlin-util-klib-abi"))
+    testFixturesImplementation(project(":compiler:ir.backend.native"))
     testFixturesImplementation(intellijCore())
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 

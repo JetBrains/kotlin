@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrSecondPhaseSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.klib.AbstractSymbolsValidationTest
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 
 @Suppress("JUnitTestCaseWithNoTests")
 class NativeSymbolsTest : AbstractSymbolsValidationTest(
@@ -39,7 +39,7 @@ class NativeSymbolsTest : AbstractSymbolsValidationTest(
     ::NativeSymbolValidationHandler,
 ) {
     override fun TestConfigurationBuilder.applyConfigurators() {
-        useConfigurators(::NativeEnvironmentConfigurator)
+        useConfigurators(::NativeFirstStageEnvironmentConfigurator)
     }
 }
 
