@@ -93,9 +93,9 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
     private sealed class DeclarationID {
         data class USR(val usr: String) : DeclarationID()
+        data class Spelling(val spelling: String) : DeclarationID()
         object VaList : DeclarationID()
         object VaListTag : DeclarationID()
-        object BuiltinVaList : DeclarationID()
         object Protocol : DeclarationID()
     }
 
@@ -236,20 +236,32 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     private fun getDeclarationId(cursor: CValue<CXCursor>): DeclarationID {
-        val usr = getUsr(cursor)
-        if (usr == "") {
-            val kind = cursor.kind
-            val spelling = getCursorSpelling(cursor)
-            return when (kind to spelling) {
-                CXCursorKind.CXCursor_StructDecl to "__va_list_tag" -> DeclarationID.VaListTag
-                CXCursorKind.CXCursor_StructDecl to "__va_list" -> DeclarationID.VaList
-                CXCursorKind.CXCursor_TypedefDecl to "__builtin_va_list" -> DeclarationID.BuiltinVaList
-                CXCursorKind.CXCursor_ObjCInterfaceDecl to "Protocol" -> DeclarationID.Protocol
-                else -> error(kind to spelling)
-            }
+        val declarationId: DeclarationID
+        if (CXCursorKind.CXCursor_TypedefDecl == cursor.kind) {
+            /**
+             * For typedefs we want to use the name of the typedef because the USR is distinct if typedef is redeclared across 2 modules
+             * -fmodules when the modules are independent. We also decided to not use [indexTranslationUnitsForTypesDefinitions] approach
+             * because that leads to a change in the ABI of platform libraries: in the past we duplicated typedefs in typedef redeclaration
+             * cases, and we want to preserve this behavior. In [indexTranslationUnitsForTypesDefinitions] we traverse excluded headers and
+             * if a typedef is encountered in the excluded header, we would override the typedef redefinition.
+             *
+             * See: KT-81695
+             */
+            declarationId = DeclarationID.Spelling(getCursorSpelling(cursor))
+        } else {
+            val usr = getUsr(cursor)
+            declarationId = if (usr == "") {
+                val kind = cursor.kind
+                val spelling = getCursorSpelling(cursor)
+                when (kind to spelling) {
+                    CXCursorKind.CXCursor_StructDecl to "__va_list_tag" -> DeclarationID.VaListTag
+                    CXCursorKind.CXCursor_StructDecl to "__va_list" -> DeclarationID.VaList
+                    CXCursorKind.CXCursor_ObjCInterfaceDecl to "Protocol" -> DeclarationID.Protocol
+                    else -> error(kind to spelling)
+                }
+            } else DeclarationID.USR(usr)
         }
-
-        return DeclarationID.USR(usr)
+        return declarationId
     }
 
     protected fun getStructDeclAt(
@@ -567,9 +579,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     fun getTypedef(type: CValue<CXType>): Type {
-        val originalDeclCursor = clang_getTypeDeclaration(type)
-        val name = getCursorSpelling(originalDeclCursor)
-        val declCursor = typesDefinitions.typedefDefinition(name) ?: originalDeclCursor
+        val declCursor = clang_getTypeDeclaration(type)
+        val name = getCursorSpelling(declCursor)
 
         val underlying = convertType(clang_getTypedefDeclUnderlyingType(declCursor))
 

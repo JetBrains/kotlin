@@ -365,8 +365,43 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         )
     }
 
+
     @Test
-    fun `KT-81695 repeated typedefs with -fmodules - reference the same underlying typedef`() {
+    fun `multimodular import - type definition in def file - is indexed for definition lookup`() {
+        val files = testFiles()
+        files.file("module.modulemap", """
+            module forward { header "forward.h" }
+        """.trimIndent())
+        files.file("forward.h", """
+            @class Foo;
+            void consume(Foo *);
+        """.trimIndent())
+        val def = files.file("forward.def", """
+            language = Objective-C
+            modules = forward
+            ---
+            @interface Foo
+            @end
+        """.trimIndent())
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(def, argsWithFmodulesAndSearchPath(files.directory)),
+                verbose = false
+        ).index
+
+        data class TypeCheck(
+                val name: String,
+                val isForwardDeclaration: Boolean,
+        )
+
+        assertEquals(
+                listOf(TypeCheck("Foo", false)),
+                index.objCClasses.map { TypeCheck(it.name, it.isForwardDeclaration) }
+        )
+    }
+
+    @Test
+    fun `KT-81695 typedef redeclaration with -fmodules - reference the same underlying typedef - when headers are independent`() {
         val markerFunctionOne = "foo"
         val markerFunctionTwo = "bar"
         val files = testFiles()
@@ -379,11 +414,11 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
             }
         """.trimIndent())
         val typedefDecl = "typedef unsigned char char8_t;"
-        files.file("one.h", """
+        val oneH = files.file("one.h", """
             $typedefDecl
             void ${markerFunctionOne}(char8_t);
         """.trimIndent())
-        files.file("two.h", """
+        val twoH = files.file("two.h", """
             $typedefDecl
             void ${markerFunctionTwo}(char8_t);
         """.trimIndent())
@@ -402,6 +437,11 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
                 index.typedefs.map { it.name },
         )
 
+        assertEquals(
+                listOf(headerContentsHash(oneH.path)),
+                index.typedefs.map { it.location.headerId.value },
+        )
+
         val typedef = index.typedefs.single()
 
         assertEquals(
@@ -410,8 +450,78 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         )
     }
 
+    /**
+     * See [org.jetbrains.kotlin.native.interop.indexer.NativeIndexImpl.getDeclarationId] for details about this behavior
+     */
     @Test
-    fun `typedef redefinition - first encountered definition is used to dereference a typedef`() {
+    fun `KT-81695 typedef redeclaration - uses the last visible declaration - when typedef is redeclared and headers have visibility of redeclaration`() {
+        val markerFunctionOne = "foo"
+        val markerFunctionTwo = "bar"
+        val files = testFiles()
+        val typedefDecl = "typedef unsigned char char8_t;"
+        val oneH = files.file("one.h", """
+            $typedefDecl
+            void ${markerFunctionOne}(char8_t);
+        """.trimIndent())
+        val twoH = files.file("two.h", """
+            #include "one.h"
+            $typedefDecl
+            void ${markerFunctionTwo}(char8_t);
+        """.trimIndent())
+        files.file("module.modulemap", """
+            module one {
+                header "one.h"
+            }
+            module two {
+                header "two.h"
+            }
+        """.trimIndent())
+
+        val def = files.file("dup.def", """
+            language = Objective-C
+            modules = two
+        """.trimIndent())
+
+        val definitionHeaderId = HeaderId(headerContentsHash(oneH.path))
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(
+                        def,
+                        // Here we intentionally don't use -fmodules since this is how the platform libraries are built
+                        arrayOf("-compiler-option", "-I${files.directory}"),
+                        imports = ImportsMock(
+                                mapOf(
+                                        definitionHeaderId to "original"
+                                )
+                        )
+                ),
+                verbose = false
+        ).index
+
+        assertEquals(
+                listOf(headerContentsHash(twoH.path)),
+                index.includedHeaders.map { it.value },
+        )
+        assertEquals(
+                listOf("char8_t"),
+                index.typedefs.map { it.name },
+        )
+        assertEquals(
+                listOf(headerContentsHash(twoH.path)),
+                index.typedefs.map { it.location.headerId.value },
+        )
+
+        val typedef = index.typedefs.single()
+
+        assertEquals(
+                listOf(markerFunctionTwo to typedef),
+                index.functions.map { it.name to assertIs<Typedef>(it.parameters.single().type).def },
+        )
+    }
+
+
+    @Test
+    fun `KT-81695 typedef redeclaration - first encountered definition is used - when redeclaration happens in 1 header`() {
         val files = testFiles()
         val def = files.file("dup.def", """
             language = Objective-C
@@ -615,6 +725,10 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
                 verbose = false
         ).index
 
+        assertEquals(
+                listOf(headerContentsHash(multiModularImportBaseCase.forwardHeader.path)),
+                index.includedHeaders.map { it.value },
+        )
         assertEquals(
                 emptyList(),
                 index.objCClasses,
