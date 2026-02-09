@@ -75,7 +75,7 @@ abstract class GenerateCrossCompilationWrappers : DefaultTask() {
         |DIR="${'$'}{BASH_SOURCE[0]%/*}"
         |: ${'$'}{DIR:="."}
         |
-        |"${'$'}{DIR}"/run_konan clang $compiler $target "${'$'}@"
+        |"${'$'}{DIR}"/../run_konan clang $compiler $target "${'$'}@"
     """.trimMargin() + "\n"
 
     private fun batchTemplate(compiler: String, target: String) = """
@@ -86,6 +86,6 @@ abstract class GenerateCrossCompilationWrappers : DefaultTask() {
         |
         |rem Wrapper for running $compiler with Kotlin/Native's $target sysroot.
         |
-        |call %~dps0run_konan.bat clang $compiler $target %*
+        |call %~dps0..\run_konan.bat clang $compiler $target %*
     """.trimMargin() + "\n"
 }

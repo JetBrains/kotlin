@@ -454,6 +454,9 @@ For easier cross-compilation of C/C++ code, Kotlin/Native provides wrapper scrip
 the LLVM target triple naming convention. These scripts are auto-generated from `konan/konan.properties`
 during the distribution build (via the `generateCrossCompilationWrappers` Gradle task).
 
+The scripts are placed in `$dist/bin/cross-compile/` rather than directly in `$dist/bin/` to avoid
+PATH pollution and name collisions with system-installed toolchains.
+
 The script names use the full LLVM target triple from `konan.properties`, for example:
 
 | Target | C Compiler | C++ Compiler |
@@ -477,16 +480,16 @@ Users run only the scripts that work on their host platform.
 Usage example:
 ```bash
 # Compile a C file for Linux x64
-$dist/bin/x86_64-unknown-linux-gnu-clang -c myfile.c -o myfile.o
+$dist/bin/cross-compile/x86_64-unknown-linux-gnu-clang -c myfile.c -o myfile.o
 
 # Compile a C++ file for Windows (MinGW)
-$dist/bin/x86_64-pc-windows-gnu-clang++ -c myfile.cpp -o myfile.o
+$dist/bin/cross-compile/x86_64-pc-windows-gnu-clang++ -c myfile.cpp -o myfile.o
 
 # Compile a C file for Linux ARM64
-$dist/bin/aarch64-unknown-linux-gnu-clang -c myfile.c -o myfile.o
+$dist/bin/cross-compile/aarch64-unknown-linux-gnu-clang -c myfile.c -o myfile.o
 
 # Compile a C++ file for Android ARM64
-$dist/bin/aarch64-unknown-linux-android-clang++ -c myfile.cpp -o myfile.o
+$dist/bin/cross-compile/aarch64-unknown-linux-android-clang++ -c myfile.cpp -o myfile.o
 ```
 
 These wrappers automatically use Kotlin/Native's sysroot and the correct compiler flags,
