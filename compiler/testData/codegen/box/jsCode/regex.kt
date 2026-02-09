@@ -6,6 +6,8 @@
 // FILE: lib.kt
 package foo
 
+import kotlin.test.*
+
 inline fun assertRegex(regexFactory: () -> dynamic, expectedPattern: String, expectedFlags: String, testString: String) {
     val reg = regexFactory()
     assertEquals(expectedPattern, reg.source)
