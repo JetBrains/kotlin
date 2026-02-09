@@ -85,7 +85,7 @@ sealed class JsIrBinary(
 
                 task.from.from(linkSyncTaskRegisteredResources)
 
-                task.destinationDirectory.set(if (target.isNodejsConfigured || target.isBrowserConfigured) compilation.npmProject.dist.mapToFile() else project.layout.buildDirectory.dir(KotlinPlatformType.js.name).dir(compilation.outputModuleName))
+                task.destinationDirectory.set(if (target.isNodejsConfigured || target.isBrowserConfigured) compilation.npmProject.dist.mapToFile() else project.layout.buildDirectory.dir(KotlinPlatformType.js.name).map { it.dir(compilation.outputModuleName) }.get().mapToFile())
             }
         }
 

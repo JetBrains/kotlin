@@ -9,6 +9,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalMainFunctionArgumentsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsGenericDsl
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import javax.inject.Inject
 
 abstract class KotlinGenericJsIr
@@ -32,5 +33,11 @@ internal constructor(
     @ExperimentalMainFunctionArgumentsDsl
     override fun passCliArgumentsToMainFunction() {
         target.passAsArgumentToMainFunction("process.argv.slice(2)")
+    }
+
+    override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {
+    }
+
+    override fun configureDefaultTestFramework(test: KotlinJsTest) {
     }
 }
