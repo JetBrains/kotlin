@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.test.blackbox.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
@@ -53,8 +54,7 @@ import java.io.File
 @Execution(ExecutionMode.SAME_THREAD) // Run all test functions sequentially in the same thread.
 class KlibResolverTest : AbstractNativeSimpleTest() {
     @Test
-    @DisplayName("Test resolving all dependencies recorded in `depends` / `dependency_version` properties (KT-63931)")
-    fun testResolvingDependenciesRecordedInManifest() {
+    fun `Compiler consumes unpacked KLIBs passed via CLI arguments`() {
         val modules = newSourceModules {
             addRegularModule("a")
             addRegularModule("b") { dependsOn("a") }
@@ -63,45 +63,46 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         }
 
         modules.compileToKlibsViaCli()
+    }
+
+    @Test
+    fun `Compiler consumes packed KLIBs passed via CLI arguments`() {
+        val modules = newSourceModules {
+            addRegularModule("a")
+            addRegularModule("b") { dependsOn("a") }
+            addRegularModule("c") { dependsOn("a") }
+            addRegularModule("d") { dependsOn("b", "c", "a") }
+        }
+
         modules.compileToKlibsViaCli(produceUnpackedKlibs = false)
     }
 
     @Test
-    @DisplayName("Test resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
-    fun testResolvingTransitiveDependenciesRecordedInManifest() {
-        var aKlib: KLIB? = null
+    fun `Compiler warns on non-existent transitive dependency in depends= property of regular KLIB, v1`() =
+        doTestWarnOnNonexistentTransitiveDependencyInManifestV1(lastModuleIsCInterop = false)
 
-        newSourceModules {
-            addRegularModule("a")
-            addRegularModule("b") { dependsOn("a") }
-            addRegularModule("c") { dependsOn("b") }
-        }.compileToKlibsViaCli { module, successKlib ->
-            when (module.name) {
-                "a" -> aKlib = successKlib.resultingArtifact
-                "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so the following compilation of `c` would miss it.
-                "c" -> {
-                    val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
-                    assertEquals(ExitCode.OK, compilationToolCall.exitCode)
-                    val warnings = compilationToolCall.toolOutput.lineSequence().filter { "warning: KLIB resolver:" in it }.toList()
-                    assertTrue(warnings.isEmpty())
-                }
-            }
-        }
-    }
-
-    /**
-     * Exactly the same as [testResolvingTransitiveDependenciesRecordedInManifest],
-     * but `c` is a cinterop klib.
-     */
     @Test
-    @DisplayName("Test cinterop resolving nonexistent transitive Kotlin dependency recorded in `depends` property (KT-80593)")
-    fun testCinteropResolvingTransitiveKotlinDependenciesRecordedInManifest() {
+    fun `Compiler warns on non-existent transitive dependency in depends= property of regular KLIB, v2`() =
+        doTestWarnOnNonexistentTransitiveDependencyInManifestV2(lastModuleIsCInterop = false)
+
+    @Test
+    fun `Compiler warns on non-existent transitive dependency in depends= property of C-interop KLIB, v1`() =
+        doTestWarnOnNonexistentTransitiveDependencyInManifestV1(lastModuleIsCInterop = true)
+
+    @Test
+    fun `Compiler warns on non-existent transitive dependency in depends= property of C-interop KLIB, v2`() =
+        doTestWarnOnNonexistentTransitiveDependencyInManifestV2(lastModuleIsCInterop = true)
+
+    private fun doTestWarnOnNonexistentTransitiveDependencyInManifestV1(lastModuleIsCInterop: Boolean) {
         var aKlib: KLIB? = null
 
         newSourceModules {
             addRegularModule("a")
             addRegularModule("b") { dependsOn("a") }
-            addCInteropModule("c") { dependsOn("b") }
+            if (lastModuleIsCInterop)
+                addCInteropModule("c") { dependsOn("b") }
+            else
+                addRegularModule("c") { dependsOn("b") }
         }.compileToKlibsViaCli { module, successKlib ->
             when (module.name) {
                 "a" -> aKlib = successKlib.resultingArtifact
@@ -109,23 +110,20 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 "c" -> {
                     val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
                     assertEquals(ExitCode.OK, compilationToolCall.exitCode)
-                    val warnings = compilationToolCall.toolOutput.lineSequence().filter { "w: KLIB resolver:" in it }.toList()
+                    val warnings = compilationToolCall.toolOutput.lineSequence().filter { "KLIB resolver:" in it }.toList()
                     assertTrue(warnings.isEmpty())
                 }
             }
         }
     }
 
-    /**
-     * Similar to [testCinteropResolvingTransitiveKotlinDependenciesRecordedInManifest],
-     * but all klibs are cinterop klibs.
-     */
-    @Test
-    @DisplayName("Test cinterop resolving nonexistent cinterop transitive dependency recorded in `depends` property")
-    fun testCinteropResolvingTransitiveCinteropDependenciesRecordedInManifest() {
+    private fun doTestWarnOnNonexistentTransitiveDependencyInManifestV2(lastModuleIsCInterop: Boolean) {
         newSourceModules {
-            addCInteropModule("b")
-            addCInteropModule("c") { dependsOn("b") }
+            addRegularModule("b")
+            if (lastModuleIsCInterop)
+                addCInteropModule("c") { dependsOn("b") }
+            else
+                addRegularModule("c") { dependsOn("b") }
         }.compileToKlibsViaCli { module, successKlib ->
             when (module.name) {
                 "b" -> {
@@ -141,7 +139,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 "c" -> {
                     val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
                     assertEquals(ExitCode.OK, compilationToolCall.exitCode)
-                    val warnings = compilationToolCall.toolOutput.lineSequence().filter { "w: KLIB resolver:" in it }.toList()
+                    val warnings = compilationToolCall.toolOutput.lineSequence().filter { "KLIB resolver:" in it }.toList()
                     assertTrue(warnings.isEmpty())
                 }
             }
@@ -149,7 +147,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun testWarningAboutRejectedLibraryIsNotSuppressed() {
+    fun `Compiler rejects KLIB with unsupported ABI version`() {
         val modules = newSourceModules {
             addRegularModule("lib1")
             addRegularModule("lib2") { dependsOn("lib1") }
@@ -177,34 +175,38 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         }
     }
 
-
-
-
-
     @Test
-    fun testIrProvidersMatch() {
-        testIrProvidersMismatchImpl(irProvidersMismatchSrcDir, TestCompilerArgs.EMPTY)
+    fun `Compiler consumes KLIB with known IR provider`() {
+        doTestIrProviders(knownIrProvider = true)
     }
 
     @Test
-    fun testIrProvidersMismatch() {
-        val freeCompilerArgs = TestCompilerArgs(
-            listOf(
-                "-manifest",
-                irProvidersMismatchSrcDir.resolve("manifest.properties").absolutePath
-            )
-        )
+    fun `Compiler rejects KLIB with unknown IR provider`() {
         try {
-            testIrProvidersMismatchImpl(irProvidersMismatchSrcDir, freeCompilerArgs)
+            doTestIrProviders(knownIrProvider = false)
             fail { "Normally unreachable code" }
         } catch (cte: CompilationToolException) {
-            if (!cte.reason.contains("The library requires unknown IR provider: UNSUPPORTED"))
+            if (!cte.reason.contains("The library requires unknown IR provider"))
                 throw cte
         }
     }
 
+    private fun doTestIrProviders(knownIrProvider: Boolean) {
+        newSourceModules {
+            addRegularModule("a")
+            addRegularModule("b") { dependsOn("a") }
+        }.compileToKlibsViaCli { module, successKlib ->
+            if (module.name == "a") {
+                patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
+                    properties[KLIB_PROPERTY_IR_PROVIDER] = if (knownIrProvider) KLIB_INTEROP_IR_PROVIDER_IDENTIFIER else "QWERTY"
+                }
+            }
+        }
+    }
+
+    // TODO (KT-61096): Remove this obsolete test together with the KLIB resolver.
     @Test
-    fun testDependencyVersionsAreNotEnforced() {
+    fun `Compiler ignores dependency versions in manifest`() {
         val modules = newSourceModules {
             addRegularModule("liba")
             addRegularModule("libb") { dependsOn("liba") }
@@ -244,8 +246,9 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         }
     }
 
+    // TODO (KT-61096): Remove this obsolete test together with the KLIB resolver.
     @Test
-    fun testDependencyVersionsAreNotAdded() {
+    fun `Compiler does not add dependency versions to manifest`() {
         val modules = newSourceModules {
             addRegularModule("liba")
             addRegularModule("libb") { dependsOn("liba") }
@@ -591,33 +594,6 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             get() = manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).toSet()
     }
 
-    private fun testIrProvidersMismatchImpl(srcDir: File, freeCompilerArgs: TestCompilerArgs) {
-        val testCaseKlib = generateTestCaseWithSingleModule(srcDir.resolve("empty.kt"), freeCompilerArgs)
-        val klibResult = LibraryCompilation(
-            settings = testRunSettings,
-            freeCompilerArgs = testCaseKlib.freeCompilerArgs,
-            sourceModules = testCaseKlib.modules,
-            dependencies = listOf(),
-            expectedArtifact = getLibraryArtifact(testCaseKlib, buildDir)
-        ).result.assertSuccess()
-
-        val testCase = generateTestCaseWithSingleFile(
-            sourceFile = srcDir.resolve("irProvidersMismatch.kt"),
-            testKind = TestKind.STANDALONE_NO_TR,
-            extras = TestCase.NoTestRunnerExtras("main"),
-        )
-        // Compile test, NOT respecting possible `mode=TWO_STAGE_MULTI_MODULE`: don't add intermediate LibraryCompilation(kt->klib).
-        // KT-66014: Extract this test from usual Native test run, and run it in scope of new test module
-        val executableResult =
-            compileToExecutableInOneStage(testCase, klibResult.resultingArtifact.asLibraryDependency()).assertSuccess()
-        val testExecutable = TestExecutable(
-            executableResult.resultingArtifact,
-            executableResult.loggedData,
-            listOf(TestName("testIrProvidersMismatch"))
-        )
-        runExecutableAndVerify(testCase, testExecutable)
-    }
-
     /**
      * Helps to avoid generating modules with same names and paths when [compileModules] is called repetitively
      * within a single test method execution.
@@ -635,8 +611,6 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     }
 
     companion object {
-        private val irProvidersMismatchSrcDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/irProvidersMismatch")
-
         private const val USER_DIR = "user.dir"
 
         private inline fun runWithCustomWorkingDir(customWorkingDir: File, block: () -> Unit) {
