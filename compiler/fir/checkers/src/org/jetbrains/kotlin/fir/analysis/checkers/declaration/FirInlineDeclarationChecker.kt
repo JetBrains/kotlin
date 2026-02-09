@@ -423,11 +423,13 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
         return true
     }
 
-    private fun isInlinableDefaultValue(expression: FirExpression): Boolean =
-        expression is FirCallableReferenceAccess ||
-                expression is FirFunctionCall ||
-                expression is FirAnonymousFunctionExpression ||
-                (expression is FirLiteralExpression && expression.value == null) //this will be reported separately
+    context(context: CheckerContext)
+    private fun isInlinableDefaultValue(expression: FirExpression): Boolean = when (expression) {
+        is FirCallableReferenceAccess, is FirAnonymousFunctionExpression -> true
+        is FirLiteralExpression if expression.value == null -> true // this will be reported separately
+        is FirFunctionCall if LanguageFeature.ProhibitFunctionCallsInDefaultParametersOfInline.isDisabled() -> true
+        else -> false
+    }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     fun checkCallableDeclaration(declaration: FirCallableDeclaration) {

@@ -1,6 +1,6 @@
+// FIR_IDENTICAL
 // ISSUE: KT-83829
-// RUN_PIPELINE_TILL: FIR2IR
-// DISABLE_NEXT_PHASE_SUGGESTION
+// RUN_PIPELINE_TILL: FRONTEND
 
 fun justCall(): () -> Unit = {}
 <!NOTHING_TO_INLINE!>inline<!> fun inlineCall(): () -> Unit = {}
