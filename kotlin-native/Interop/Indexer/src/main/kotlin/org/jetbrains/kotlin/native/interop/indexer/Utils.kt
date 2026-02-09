@@ -1092,8 +1092,6 @@ fun isStructDeclForward(cursor: CValue<CXCursor>): Boolean = isDeclForward(curso
 
 fun getUsr(cursor: CValue<CXCursor>): String = clang_getCursorUSR(cursor).convertAndDispose()
 
-fun isAnonymous(cursor: CValue<CXCursor>): Boolean = clang_Cursor_isAnonymous(cursor) != 0
-
 private fun createVfsOverlayFileContents(virtualPathToReal: Map<Path, Path>): ByteArray {
     val overlay = clang_VirtualFileOverlay_create(0)
 
