@@ -1,17 +1,9 @@
-group = 'com.example'
-version = '1.0'
-
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
-apply plugin: 'kotlin-multiplatform'
+group = 'com.example'
+version = '1.0'
 
 repositories {
     mavenLocal()

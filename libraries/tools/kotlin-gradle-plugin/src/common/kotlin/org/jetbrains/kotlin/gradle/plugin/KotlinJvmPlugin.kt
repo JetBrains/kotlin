@@ -10,6 +10,7 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.moduleName
 
 const val KOTLIN_DSL_NAME = "kotlin"
 
@@ -26,7 +27,7 @@ internal open class KotlinJvmPlugin : AbstractKotlinPlugin(KotlinTasksProvider()
             extensionCompilerOptions: KotlinJvmCompilerOptions,
             targetCompilerOptions: KotlinJvmCompilerOptions
         ) {
-            extensionCompilerOptions.moduleName.convention(baseModuleName())
+            extensionCompilerOptions.moduleName.convention(moduleName(baseModuleName()))
             DefaultKotlinJavaToolchain.wireJvmTargetToToolchain(
                 extensionCompilerOptions,
                 project

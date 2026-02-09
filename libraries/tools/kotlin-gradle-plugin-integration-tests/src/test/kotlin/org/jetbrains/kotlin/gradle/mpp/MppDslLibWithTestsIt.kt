@@ -55,11 +55,11 @@ class MppDslLibWithTestsIt : KGPBaseTest() {
             val expectedKotlinOutputFiles = listOf(
                 mainClassesDir.resolve("com/example/lib/CommonKt.class"),
                 mainClassesDir.resolve("com/example/lib/MainKt.class"),
-                mainClassesDir.resolve("META-INF/new-mpp-lib-with-tests.kotlin_module"),
+                mainClassesDir.resolve("META-INF/com.example_new-mpp-lib-with-tests.kotlin_module"),
 
                 testClassesDir.resolve("com/example/lib/TestCommonCode.class"),
                 testClassesDir.resolve("com/example/lib/TestWithoutJava.class"),
-                testClassesDir.resolve("META-INF/new-mpp-lib-with-tests_test.kotlin_module"),
+                testClassesDir.resolve("META-INF/com.example_new-mpp-lib-with-tests_test.kotlin_module"),
             )
 
             expectedKotlinOutputFiles.forEach { assertFileExists(it) }

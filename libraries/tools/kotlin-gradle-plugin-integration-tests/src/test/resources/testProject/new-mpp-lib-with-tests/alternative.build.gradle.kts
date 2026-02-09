@@ -2,6 +2,9 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform")
 }
 
+group = "com.example"
+version = "1.0"
+
 repositories {
     mavenLocal()
     mavenCentral()

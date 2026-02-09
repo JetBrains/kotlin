@@ -73,7 +73,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
         dataStream.writeBoolean(haveContract);
 
         if (haveContract) {
-            StubUtils.writeContract$psi_impl(dataStream, stub.getContract());
+            StubUtils.writeContract(dataStream, stub.getContract());
         }
 
         KotlinStubOrigin.serialize(stub.getOrigin(), dataStream);
@@ -96,7 +96,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
         return new KotlinFunctionStubImpl(
                 (StubElement<?>) parentStub, name, isTopLevel, fqName, isExtension, hasNoExpressionBody, hasBody,
                 hasTypeParameterListBeforeFunctionName, mayHaveContract,
-                mayHaveContract ? StubUtils.readContract$psi_impl(dataStream) : null,
+                mayHaveContract ? StubUtils.readContract(dataStream) : null,
                 KotlinStubOrigin.deserialize(dataStream)
         );
     }

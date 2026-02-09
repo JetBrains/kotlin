@@ -812,7 +812,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
         }
 
     @get:Input
-    val moduleName: String = project.klibModuleName(baseKlibName)
+    val moduleName: String = project.moduleName(baseKlibName)
 
     @Deprecated(
         "Eager outputFile was replaced with lazy outputFileProvider",

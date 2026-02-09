@@ -115,7 +115,7 @@ abstract class KotlinNativeTarget @Inject constructor(
         .newInstance<KotlinNativeCompilerOptionsDefault>()
         .apply {
             moduleName.convention(
-                project.klibModuleName(
+                project.moduleName(
                     project.baseModuleName()
                 )
             )

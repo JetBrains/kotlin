@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.slf4j.Logger
 import java.io.File
 
-internal fun Project.klibModuleName(
+internal fun Project.moduleName(
     baseName: Provider<String> = baseModuleName(),
 ): Provider<String> = baseName.map {
-    klibModuleName(it)
+    moduleName(it)
 }
 
-internal fun Project.klibModuleName(baseName: String = project.name): String =
+internal fun Project.moduleName(baseName: String = project.name): String =
     if (group.toString().isNotEmpty()) "$group:$baseName" else baseName
 
 /**

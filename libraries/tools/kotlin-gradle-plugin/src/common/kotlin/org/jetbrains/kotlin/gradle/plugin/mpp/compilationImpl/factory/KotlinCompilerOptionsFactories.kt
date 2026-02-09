@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.gradle.utils.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.KotlinMultiplatformCommonCompilerOptionsDefault
-import org.jetbrains.kotlin.gradle.utils.klibModuleName
+import org.jetbrains.kotlin.gradle.utils.moduleName
 
 internal object KotlinMultiplatformCommonCompilerOptionsFactory : KotlinCompilationImplFactory.KotlinCompilerOptionsFactory {
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options {
@@ -27,7 +27,7 @@ internal object KotlinMultiplatformCommonCompilerOptionsFactory : KotlinCompilat
         val kotlinOptions = object : KotlinCommonOptions {
             @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
             @Deprecated(
-                message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+                message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
                 level = DeprecationLevel.ERROR,
             )
             override val options: KotlinCommonCompilerOptions
@@ -43,7 +43,7 @@ internal object KotlinNativeCompilerOptionsFactory : KotlinCompilationImplFactor
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options {
         val compilerOptions = NativeCompilerOptions(target.project)
         compilerOptions.options.moduleName.convention(
-            target.project.klibModuleName(
+            target.project.moduleName(
                 moduleNameForCompilation(
                     compilationName,
                     target.project.baseModuleName()
@@ -55,7 +55,7 @@ internal object KotlinNativeCompilerOptionsFactory : KotlinCompilationImplFactor
         val kotlinOptions = object : KotlinCommonOptions {
             @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
             @Deprecated(
-                message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
+                message = KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
                 level = DeprecationLevel.ERROR,
             )
             override val options get() = compilerOptions.options

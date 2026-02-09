@@ -313,13 +313,18 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             buildJdk = jdkVersion.location
         ) {
             build(":app:compileDebugAndroidTestKotlin") {
+                val expectedPrefix = if (TestVersions.AgpCompatibilityMatrix.fromVersion(agpVersion) < TestVersions.AgpCompatibilityMatrix.AGP_812) {
+                        "android_dagger_app_"
+                    } else {
+                        "android_dagger__app_"
+                    }
                 val stubsFile = subProject("app")
                     .projectPath
                     .resolve("build/tmp/kapt3/stubs/debugAndroidTest/com/example/dagger/kotlin/TestClass.java")
                 assertFileExists(stubsFile)
                 assertFileContains(
                     stubsFile,
-                    "public final void bar${'$'}app_debugAndroidTest() {"
+                    "public final void bar${'$'}${expectedPrefix}debugAndroidTest() {"
                 )
 
                 val compiledClassFile = subProject("app")
@@ -328,7 +333,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
                 assertFileExists(compiledClassFile)
                 checkBytecodeContains(
                     compiledClassFile.toFile(),
-                    "public final bar${'$'}app_debugAndroidTest()V"
+                    "public final bar${'$'}${expectedPrefix}debugAndroidTest()V"
                 )
             }
         }

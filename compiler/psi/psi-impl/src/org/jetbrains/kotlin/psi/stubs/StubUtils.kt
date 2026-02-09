@@ -56,7 +56,7 @@ object StubUtils {
     }
 
     @JvmStatic
-    internal tailrec fun isDeclaredInsideValueArgument(node: ASTNode?): Boolean {
+    tailrec fun isDeclaredInsideValueArgument(node: ASTNode?): Boolean {
         val parent = node?.treeParent
         return when (parent?.elementType) {
             // Constants are allowed only in the argument position
@@ -67,7 +67,7 @@ object StubUtils {
     }
 
     @JvmStatic
-    internal fun StubOutputStream.writeNullableBoolean(value: Boolean?) {
+    fun StubOutputStream.writeNullableBoolean(value: Boolean?) {
         val byte = when (value) {
             true -> 0
             false -> 1
@@ -78,7 +78,7 @@ object StubUtils {
     }
 
     @JvmStatic
-    internal fun StubInputStream.readNullableBoolean(): Boolean? = when (readByte().toInt()) {
+    fun StubInputStream.readNullableBoolean(): Boolean? = when (readByte().toInt()) {
         0 -> true
         1 -> false
         else -> null
@@ -149,14 +149,14 @@ object StubUtils {
     }
 
     @JvmStatic
-    internal fun StubOutputStream.writeContract(contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?) {
+    fun StubOutputStream.writeContract(contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?) {
         writeNullableCollection(contract) { effect ->
             effect.accept(KotlinContractSerializationVisitor(this), null)
         }
     }
 
     @JvmStatic
-    internal fun StubInputStream.readContract(): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? = readNullableCollection {
+    fun StubInputStream.readContract(): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? = readNullableCollection {
         val effectType: KotlinContractEffectType = KotlinContractEffectType.entries[readVarInt()]
         effectType.deserialize(this@readContract)
     }
