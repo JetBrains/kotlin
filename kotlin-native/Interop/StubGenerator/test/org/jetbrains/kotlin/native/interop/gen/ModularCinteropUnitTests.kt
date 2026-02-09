@@ -428,9 +428,9 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         ).index
 
         val override = index.typedefs.single { it.name == "override" }
-        val two = index.typedefs.single { it.name == "two" }
+        val one = index.typedefs.single { it.name == "one" }
 
-        assertEquals(two.name, assertIs<Typedef>(override.aliased).def.name)
+        assertEquals(one.name, assertIs<Typedef>(override.aliased).def.name)
     }
 
     @Test

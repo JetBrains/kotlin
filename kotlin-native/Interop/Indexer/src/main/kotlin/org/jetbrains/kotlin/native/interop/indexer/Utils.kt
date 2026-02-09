@@ -711,21 +711,21 @@ fun indexTranslationUnitsForTypesDefinitions(
                     CXIdxEntity_Typedef -> {
                         val type = clang_getCursorType(cursor)
                         val declCursor = clang_getTypeDeclaration(type)
-                        typedefDefinitionByName[getCursorSpelling(declCursor)] = declCursor
+                        typedefDefinitionByName.getOrPut(getCursorSpelling(declCursor)) { declCursor }
                     }
                     CXIdxEntity_Union, CXIdxEntity_Struct -> {
                         if (!isStructDeclForward(cursor)) {
-                            structDefinitionByName[getCursorSpelling(cursor)] = cursor
+                            structDefinitionByName.getOrPut(getCursorSpelling(cursor)) { cursor }
                         }
                     }
                     CXIdxEntity_ObjCClass -> {
                         if (cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl && !isObjCInterfaceDeclForward(cursor)) {
-                            classDefinitionByName[getCursorSpelling(cursor)] = cursor
+                            classDefinitionByName.getOrPut(getCursorSpelling(cursor)) { cursor }
                         }
                     }
                     CXIdxEntity_ObjCProtocol -> {
                         if (cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl && !isObjCProtocolDeclForward(cursor)) {
-                            protocolDefinitionByName[getCursorSpelling(cursor)] = cursor
+                            protocolDefinitionByName.getOrPut(getCursorSpelling(cursor)) { cursor }
                         }
                     }
                     else -> {}
