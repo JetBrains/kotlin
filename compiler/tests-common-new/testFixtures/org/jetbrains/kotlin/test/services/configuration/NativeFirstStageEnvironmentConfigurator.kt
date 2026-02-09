@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.CompilationStage
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.targetPlatform
+import org.jetbrains.kotlin.test.services.*
 
 class NativeFirstStageEnvironmentConfigurator(testServices: TestServices) : NativeEnvironmentConfigurator(testServices) {
     override val compilationStage: CompilationStage
@@ -28,5 +26,6 @@ class NativeFirstStageEnvironmentConfigurator(testServices: TestServices) : Nati
             NativeConfigurationKeys.KONAN_OUTPUT_PATH,
             testServices.klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name).absolutePath
         )
+        configuration.put(NativeConfigurationKeys.KONAN_DONT_COMPRESS_KLIB, true)
     }
 }
