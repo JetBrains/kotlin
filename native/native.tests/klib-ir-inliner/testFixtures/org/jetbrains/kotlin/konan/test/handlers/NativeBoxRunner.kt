@@ -15,15 +15,18 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestRunnerType
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.parseTestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunParameter
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRoots
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.computePackageName
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.test.backend.handlers.NativeBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -32,7 +35,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
-import kotlin.time.Duration
+import kotlin.test.assertIs
 import kotlin.time.Duration.Companion.seconds
 
 class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(testServices) {
@@ -66,20 +69,21 @@ class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(
             outputMatcher = null,
             fileCheckMatcher = null,
         )
-        val testRun = TestRun(
-            displayName = executable.name,
-            executable = TestExecutable(
-                TestCompilationArtifact.Executable(
-                    executableFile = executable,
-                    fileCheckStage = null,
-                    hasSyntheticAccessorsDump = false,
-                ),
-                loggedCompilationToolCall = LoggedData.dummyCompilerCall,
-                testNames = listOf(TestName(executable.name)),
+        val success = TestCompilationResult.Success(
+            TestCompilationArtifact.Executable(
+                executableFile = executable,
+                fileCheckStage = null,
+                hasSyntheticAccessorsDump = false,
             ),
-            runParameters = emptyList(),
+            LoggedData.dummyCompilerCall, // TODO: populate at least real compiler invocation arguments
+        )
+        val testName = null // TODO: see `TestRunProvider.getTestRuns()`, how to generate test names
+        val testRun = TestRun(
+            displayName = /* Unimportant. Used only in dynamic tests. */ "",
+            executable = TestExecutable.fromCompilationResult(testKind, success),
+            runParameters = getTestRunParameters(testKind, testName, checks),
             testCase = TestCase(
-                id = TestCaseId.Named(executable.name),
+                id = TestCaseId.TestDataFile(testServices.moduleStructure.originalTestDataFiles.first()),
                 kind = TestKind.STANDALONE,
                 modules = emptySet(),
                 freeCompilerArgs = TestCompilerArgs(),
@@ -93,5 +97,40 @@ class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(
             expectedFailure = false,
         )
         return testRun
+    }
+
+    private fun getTestRunParameters(testKind: TestKind, testName: TestName?, checks: TestRunChecks): List<TestRunParameter> = buildList {
+        when (testKind) {
+            TestKind.STANDALONE -> {
+                // WithTCLogger relies on TCTestOutputFilter to be present in the checkers.
+                assertIs<TCTestOutputFilter>(checks.testFiltering.testOutputFilter)
+                add(TestRunParameter.WithTCTestLogger)
+                if (testName != null)
+                    add(TestRunParameter.WithTestFilter(testName))
+                else {
+//                    val ignoredTests = (testCase.extras as TestCase.WithTestRunnerExtras).ignoredTests
+//                    if (ignoredTests.isNotEmpty()) {
+//                        add(TestRunParameter.WithGTestPatterns(negativePatterns = ignoredTests))
+//                    }
+                }
+            }
+            TestKind.REGULAR -> {
+                // WithTCLogger relies on TCTestOutputFilter to be present in the checkers.
+                assertIs<TCTestOutputFilter>(checks.testFiltering.testOutputFilter)
+                add(TestRunParameter.WithTCTestLogger)
+
+                if (testName != null)
+                    add(TestRunParameter.WithTestFilter(testName))
+                else {
+                    val testRoots = testServices.testRunSettings.get<TestRoots>()
+                    val nominalPackageName = computePackageName(
+                        testDataBaseDir = testRoots.baseDir,
+                        testDataFile = testServices.moduleStructure.originalTestDataFiles.first(),
+                    )
+                    TestRunParameter.WithPackageFilter(nominalPackageName)
+                }
+            }
+            else -> error("Not yet supported test kind: $testKind")
+        }
     }
 }

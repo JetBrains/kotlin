@@ -86,6 +86,7 @@ class NativeCompilerSecondStageFacade(
                     K2NativeCompilerArguments::produce.cliArgument, "program",
                     K2NativeCompilerArguments::outputName.cliArgument, executableFile.path,
                     K2NativeCompilerArguments::generateTestRunner.cliArgument,
+                    K2NativeCompilerArguments::testDumpOutputPath.cliArgument(executableFile.resolveSibling("${executableFile.name}.dump").path),
                     K2NativeCompilerArguments::includes.cliArgument(mainLibrary),
                     K2NativeCompilerArguments::autoCacheableFrom.cliArgument(nativeHome.resolve("klib").absolutePath)
                         .takeIf { cacheMode.useStaticCacheForDistributionLibraries },

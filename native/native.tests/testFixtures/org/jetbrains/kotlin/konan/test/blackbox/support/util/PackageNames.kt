@@ -12,7 +12,7 @@ import java.io.File
 import kotlin.io.path.name
 import kotlin.math.min
 
-internal fun computePackageName(testDataBaseDir: File, testDataFile: File): PackageName {
+fun computePackageName(testDataBaseDir: File, testDataFile: File): PackageName {
     assertTrue(testDataFile.startsWith(testDataBaseDir)) {
         """
             The file is outside of the directory.
