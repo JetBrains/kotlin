@@ -837,6 +837,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Test
+    @TestMetadata("typeArgsInTypeRefsInPackagesInternalError.kt")
+    public void testTypeArgsInTypeRefsInPackagesInternalError() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/typeArgsInTypeRefsInPackagesInternalError.kt");
+    }
+
+    @Test
     @TestMetadata("typeFromGetter.kt")
     public void testTypeFromGetter() {
       runTest("compiler/fir/analysis-tests/testData/resolve/typeFromGetter.kt");
