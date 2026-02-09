@@ -1,12 +1,9 @@
 import gradle.GradlePluginVariant
+import gradle.kotlin.dsl.accessors._5b414b80c33e971da78124b484e96576.dokka
 import gradle.publishGradlePluginsJavadoc
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.kotlin.dsl.named
-import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
-import org.gradle.kotlin.dsl.withType
-import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
-import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import org.jetbrains.dokka.gradle.DokkaExtension
 import javax.inject.Inject
 
 /*
@@ -15,7 +12,7 @@ import javax.inject.Inject
  */
 
 abstract class PluginApiReferenceExtension @Inject constructor(
-    private val project: Project
+    private val project: Project,
 ) {
     fun enableForAllGradlePluginVariants() {
         val variants = GradlePluginVariant.values()
@@ -26,21 +23,17 @@ abstract class PluginApiReferenceExtension @Inject constructor(
         }
     }
 
-    fun additionalDokkaConfiguration(configuration: GradleDokkaSourceSetBuilder.() -> Unit) {
-        project.tasks.withType<AbstractDokkaLeafTask>().configureEach {
-            dokkaSourceSets.configureEach(configuration)
-        }
+    fun additionalDokkaConfiguration(configuration: DokkaExtension.() -> Unit) {
+        if (!project.kotlinBuildProperties.publishGradlePluginsJavadoc) return
+        project.dokka(configuration)
     }
 
-    fun enableKotlinlangDocumentation() {
-        project.configureTaskForKotlinlang()
-    }
 
     fun moduleName(name: String) {
         if (!project.kotlinBuildProperties.publishGradlePluginsJavadoc) return
 
-        project.tasks.named<DokkaTaskPartial>("dokkaHtmlPartial").configure {
-            moduleName.set(name)
+        project.dokka {
+            moduleName(name)
         }
     }
 
@@ -54,9 +47,12 @@ abstract class PluginApiReferenceExtension @Inject constructor(
     var failOnWarning: Boolean
         get() = _failOnWarning
         set(value) {
-            project.tasks.withType<AbstractDokkaLeafTask>().configureEach {
-                failOnWarning.set(value)
+            if (project.kotlinBuildProperties.publishGradlePluginsJavadoc) {
+                project.dokka {
+                    this.dokkaPublications.configureEach {
+                        this.failOnWarning.set(value)
+                    }
+                }
             }
-            _failOnWarning = value
         }
 }
