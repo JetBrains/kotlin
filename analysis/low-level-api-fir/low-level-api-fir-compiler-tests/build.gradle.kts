@@ -22,11 +22,8 @@ dependencies {
 }
 
 sourceSets {
-    "main" {}
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "main" { none() }
+    "test" { generatedTestDir() }
     "testFixtures" { projectDefault() }
 }
 
