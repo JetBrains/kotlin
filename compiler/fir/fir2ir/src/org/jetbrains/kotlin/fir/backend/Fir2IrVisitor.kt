@@ -999,9 +999,17 @@ class Fir2IrVisitor(
                 }
                 expression.convertToIrExpressionOrBlock(
                     origin,
-                    // We only pass the expected type if it's Unit to trigger coercion to Unit.
+                    // We only pass the expected type in 2 cases:
+                    // 1. If it's Unit to trigger coercion to Unit.
+                    // 2. If it's Nothing to propagate Nothing type from outer expression and avoid putting non-conforming Unit type to subblocks.
+                    //
                     // In all other cases, the block should have the type of the last statement, not the expected type.
-                    expectedType = if (origin == IrStatementOrigin.FOR_LOOP || expectedType?.isUnit == true) unitType else null
+                    expectedType =
+                        if (origin == IrStatementOrigin.FOR_LOOP || expectedType?.isUnit == true)
+                            unitType
+                        else if (expectedType?.isNothing == true)
+                            expectedType
+                        else null
                 )
             }
             is FirUnitExpression -> expression.convertWithOffsets { _, endOffset ->

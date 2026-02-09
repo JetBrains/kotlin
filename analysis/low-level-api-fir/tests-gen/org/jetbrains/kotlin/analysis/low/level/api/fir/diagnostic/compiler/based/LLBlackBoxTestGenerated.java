@@ -14092,6 +14092,18 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("kt82803.kt")
+    public void testKt82803() {
+      runTest("compiler/testData/codegen/box/coroutines/kt82803.kt");
+    }
+
+    @Test
+    @TestMetadata("kt83728.kt")
+    public void testKt83728() {
+      runTest("compiler/testData/codegen/box/coroutines/kt83728.kt");
+    }
+
+    @Test
     @TestMetadata("lastExpressionIsLoop.kt")
     public void testLastExpressionIsLoop() {
       runTest("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt");

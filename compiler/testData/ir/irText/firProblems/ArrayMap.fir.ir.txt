@@ -705,7 +705,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                     BRANCH
                       if: CALL 'private final fun <get-notVisited> (): kotlin.Boolean declared in <root>.OneElementArrayMap.iterator.<no name provided>' type=kotlin.Boolean origin=GET_PROPERTY
                         ARG <this>: GET_VAR '<this>: <root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.iterator.<no name provided>.next' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=IMPLICIT_ARGUMENT
-                      then: BLOCK type=kotlin.Unit origin=null
+                      then: BLOCK type=kotlin.Nothing origin=null
                         CALL 'private final fun <set-notVisited> (<set-?>: kotlin.Boolean): kotlin.Unit declared in <root>.OneElementArrayMap.iterator.<no name provided>' type=kotlin.Unit origin=EQ
                           ARG <this>: GET_VAR '<this>: <root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.iterator.<no name provided>.next' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=IMPLICIT_ARGUMENT
                           ARG <set-?>: CONST Boolean type=kotlin.Boolean value=false
@@ -714,7 +714,7 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                             ARG <this>: GET_VAR '<this>: <root>.OneElementArrayMap<T of <root>.OneElementArrayMap> declared in <root>.OneElementArrayMap.iterator' type=<root>.OneElementArrayMap<T of <root>.OneElementArrayMap> origin=IMPLICIT_ARGUMENT
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
-                      then: BLOCK type=kotlin.Unit origin=null
+                      then: BLOCK type=kotlin.Nothing origin=null
                         THROW type=kotlin.Nothing
                           CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.NoSuchElementException' type=java.util.NoSuchElementException origin=null
             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.OneElementArrayMap.iterator.<no name provided>' type=<root>.OneElementArrayMap.iterator.<no name provided><T of <root>.OneElementArrayMap> origin=OBJECT_LITERAL
