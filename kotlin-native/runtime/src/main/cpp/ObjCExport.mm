@@ -828,14 +828,6 @@ static void throwIfCantBeOverridden(Class clazz, const KotlinToObjCMethodAdapter
 }
 
 static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, const TypeInfo* fieldsInfo) {
-  std::fprintf(stderr, "Creating type info for %s\n", class_getName(clazz));
-    if (superType != nullptr) {
-          std::fprintf(stderr, "superType=%s\n", superType->fqName().c_str());
-    }
-    if (fieldsInfo != nullptr) {
-          std::fprintf(stderr, "fieldsInfo=%s\n", fieldsInfo->fqName().c_str());
-    }
-
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
   if (compiler::swiftExport() && compiler::runtimeAssertsEnabled()) {
