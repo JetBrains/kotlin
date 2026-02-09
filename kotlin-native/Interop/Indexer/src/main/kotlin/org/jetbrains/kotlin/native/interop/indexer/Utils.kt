@@ -677,11 +677,18 @@ internal class ModulesMap(
 }
 
 data class TypesDefinitions(
-        val protocolDefinitionByName: Map<String, CValue<CXCursor>>,
-        val classDefinitionByName: Map<String, CValue<CXCursor>>,
-        val structDefinitionByName: Map<String, CValue<CXCursor>>,
-        val typedefDefinitionByName: Map<String, CValue<CXCursor>>,
-)
+        private val protocolDefinitionBySpelling: Map<String, CValue<CXCursor>>,
+        private val classDefinitionBySpelling: Map<String, CValue<CXCursor>>,
+        private val structDefinitionBySpelling: Map<String, CValue<CXCursor>>,
+        private val typedefDefinitionBySpelling: Map<String, CValue<CXCursor>>,
+) {
+    fun protocolDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, protocolDefinitionBySpelling)
+    fun classDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, classDefinitionBySpelling)
+    fun structDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, structDefinitionBySpelling)
+    fun typedefDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, typedefDefinitionBySpelling)
+    private fun getIfNonEmpty(value: String, map: Map<String, CValue<CXCursor>>): CValue<CXCursor>? =
+            if (value.isNotEmpty()) map[value] else null
+}
 
 fun indexTranslationUnitsForTypesDefinitions(
         index: CXIndex,
@@ -728,10 +735,10 @@ fun indexTranslationUnitsForTypesDefinitions(
     }
 
     return TypesDefinitions(
-            protocolDefinitionByName = protocolDefinitionByName,
-            classDefinitionByName = classDefinitionByName,
-            structDefinitionByName = structDefinitionByName,
-            typedefDefinitionByName = typedefDefinitionByName,
+            protocolDefinitionBySpelling = protocolDefinitionByName,
+            classDefinitionBySpelling = classDefinitionByName,
+            structDefinitionBySpelling = structDefinitionByName,
+            typedefDefinitionBySpelling = typedefDefinitionByName,
     )
 }
 

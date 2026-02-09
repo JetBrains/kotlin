@@ -255,7 +255,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     protected fun getStructDeclAt(
             cursor: CValue<CXCursor>
     ): StructDecl = structRegistry.getOrPut(cursor, { createStructDecl(cursor) }) { decl ->
-        val definitionCursor = typesDefinitions.structDefinitionByName[getCursorSpelling(cursor)]
+        val definitionCursor = typesDefinitions.structDefinition(getCursorSpelling(cursor))
                 ?: clang_getCursorDefinition(cursor)
         if (clang_Cursor_isNull(definitionCursor) == 0) {
             decl.def = createStructDef(definitionCursor, definitionCursor.type)
@@ -405,7 +405,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
     private fun getObjCClassAt(originalCursor: CValue<CXCursor>): ObjCClassImpl {
         assert(originalCursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { originalCursor.kind }
-        val cursor = typesDefinitions.classDefinitionByName[getCursorSpelling(originalCursor)] ?: originalCursor
+        val cursor = typesDefinitions.classDefinition(getCursorSpelling(originalCursor)) ?: originalCursor
 
         val name = clang_getCursorDisplayName(cursor).convertAndDispose()
         val parameters = mutableListOf<String>()
@@ -569,7 +569,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     fun getTypedef(type: CValue<CXType>): Type {
         val originalDeclCursor = clang_getTypeDeclaration(type)
         val name = getCursorSpelling(originalDeclCursor)
-        val declCursor = typesDefinitions.typedefDefinitionByName[name] ?: originalDeclCursor
+        val declCursor = typesDefinitions.typedefDefinition(name) ?: originalDeclCursor
 
         val underlying = convertType(clang_getTypedefDeclUnderlyingType(declCursor))
 
