@@ -81,8 +81,6 @@ dokka {
 tasks.withType<DokkaBaseTask>().configureEach {
     val publishGradlePluginsJavadoc = kotlinBuildProperties.publishGradlePluginsJavadoc
     onlyIf("Dokka tasks only enabled on TeamCity (-Pteamcity=true)") {
-        // Dokka v1 Gradle plugin is not compatible with newer Gradle versions
-        // remove this once Dokka v2 Gradle plugin will be used
         publishGradlePluginsJavadoc
     }
     dependsOn(unzipTemplates)
