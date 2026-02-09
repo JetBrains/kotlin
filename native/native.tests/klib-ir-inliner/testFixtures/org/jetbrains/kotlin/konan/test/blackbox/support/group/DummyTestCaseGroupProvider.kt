@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseGroup
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseGroupId
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestConfiguration
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRoots
 
 internal class DummyTestCaseGroupProvider: TestCaseGroupProvider {
     override fun getTestCaseGroup(
@@ -22,6 +23,6 @@ internal class DummyTestCaseGroupProvider: TestCaseGroupProvider {
 @Target(AnnotationTarget.CLASS)
 @TestConfiguration(
     providerClass = DummyTestCaseGroupProvider::class,
-    requiredSettings = []
+    requiredSettings = [TestRoots::class]
 )
 annotation class UseDummyTestCaseGroupProvider
