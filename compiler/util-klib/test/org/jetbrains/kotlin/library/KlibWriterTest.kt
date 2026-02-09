@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.library.NewKlibWriterTest.NewKlibWriterParameters
+import org.jetbrains.kotlin.library.KlibWriterTest.NewKlibWriterParameters
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeIr
@@ -17,7 +17,7 @@ import java.io.File
 /**
  * This is the test for the redesigned (new) KLIB writer API (as the opposite of the test for the legacy one: [LegacyKlibWriterTest]).
  */
-class NewKlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlibWriterParameters) {
+class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlibWriterParameters) {
     class NewKlibWriterParameters : Parameters() {
         var targetNames: List<String> = emptyList()
     }
