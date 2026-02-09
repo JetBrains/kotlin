@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroup
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
@@ -70,22 +71,34 @@ class MppDiagnosticsIt : KGPBaseTest() {
         project("errorDiagnosticBuildFails", gradleVersion) {
             // 'assemble' (triggers compileKotlin-tasks indirectly): fail
             buildAndFail("assemble") {
-                assertEqualsToFile(expectedOutputFile("assemble"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("assemble"),
+                    filteredErrorDiagnosticBuildFailsOutput()
+                )
             }
 
             // 'clean', not directly relevant to Kotlin tasks: build is OK
             build("clean") {
-                assertEqualsToFile(expectedOutputFile("clean"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("clean"),
+                    filteredErrorDiagnosticBuildFailsOutput()
+                )
             }
 
             // Custom task, irrelevant to Kotlin tasks: build is OK
             build("myTask", "--rerun-tasks") {
-                assertEqualsToFile(expectedOutputFile("customTask"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("customTask"),
+                    filteredErrorDiagnosticBuildFailsOutput()
+                )
             }
 
             // commonizer task: build is OK (otherwise IDE will be bricked)
             build("commonize") {
-                assertEqualsToFile(expectedOutputFile("commonize"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("commonize"),
+                    filteredErrorDiagnosticBuildFailsOutput()
+                )
             }
         }
     }
@@ -96,13 +109,19 @@ class MppDiagnosticsIt : KGPBaseTest() {
         project("errorDiagnosticBuildFails", gradleVersion) {
             buildAndFail("assemble") {
                 assertConfigurationCacheStored()
-                assertEqualsToFile(expectedOutputFile("assemble"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("assemble"),
+                    filteredErrorDiagnosticBuildFailsOutput()
+                )
             }
 
             // fails again
             buildAndFail("assemble") {
                 assertConfigurationCacheReused()
-                assertEqualsToFile(expectedOutputFile("assemble-cache-reused"), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(
+                    expectedOutputFile("assemble-cache-reused"),
+                    filteredErrorDiagnosticBuildFailsOutput()
+                )
             }
         }
     }
@@ -310,6 +329,17 @@ class MppDiagnosticsIt : KGPBaseTest() {
     private fun TestProject.expectedOutputFile(suffix: String? = null): File {
         val suffixIfAny = if (suffix != null) "-$suffix" else ""
         return projectPath.resolve("expectedOutput$suffixIfAny.txt").toFile()
+    }
+
+    /**
+     * Filters out DisabledNativeTargetTaskWarning from diagnostics output.
+     * This warning is host-dependent and is already tested in GeneralNativeIT.
+     */
+    private fun BuildResult.filteredErrorDiagnosticBuildFailsOutput(): String {
+        val filteredBlocks = extractProjectsAndTheirDiagnosticsInBlocks().filterNot {
+            KotlinToolingDiagnostics.DisabledNativeTargetTaskWarning.id in it
+        }
+        return filteredBlocks.joinToString(separator = "\n").trim()
     }
 
     private fun TestProject.checkDeprecatedProperties(isDeprecationExpected: Boolean) {
