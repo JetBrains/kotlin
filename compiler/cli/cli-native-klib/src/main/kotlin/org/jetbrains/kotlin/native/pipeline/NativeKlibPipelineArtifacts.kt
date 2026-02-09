@@ -29,7 +29,6 @@ data class NativeConfigurationArtifact(
 data class NativeFrontendArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
-    val environment: KotlinCoreEnvironment,
     val phaseContext: NativeFirstStagePhaseContext,
 ) : FrontendPipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
@@ -45,7 +44,6 @@ data class NativeFrontendArtifact(
 data class NativeFir2IrArtifact(
     val fir2IrOutput: Fir2IrOutput,
     override val configuration: CompilerConfiguration,
-    val environment: KotlinCoreEnvironment,
     val phaseContext: NativeFirstStagePhaseContext,
 ) : Fir2IrPipelineArtifact() {
     override val result: Fir2IrActualizedResult
