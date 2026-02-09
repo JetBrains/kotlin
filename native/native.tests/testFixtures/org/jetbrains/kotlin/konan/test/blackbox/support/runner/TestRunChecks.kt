@@ -131,7 +131,8 @@ sealed interface TestRunCheck {
 
                 checkNotNull(testReport) { "TestRun has TestFiltering enabled, but test report is null" }
 
-                if (testReport.isEmpty()) Result.Failed("No tests have been found. Test report is empty")
+                if (testReport.isEmpty())
+                    return Result.Failed("No tests have been found. Test report is empty")
 
                 testRun.runParameters.get<TestRunParameter.WithFilter> {
                     testReport.checkDisabled()
