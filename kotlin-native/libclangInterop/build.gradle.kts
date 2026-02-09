@@ -44,6 +44,9 @@ nativeInteropPlugin {
                     "__ZN4llvm3omp35getOpenMPContextTraitSetForPropertyENS0_13TraitPropertyE",
                     "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS_9StringRefE",
                     "__ZN4llvm3omp10OMPContextC2EbNS_6TripleE",
+                    "__ZN4llvm3omp10OMPContextC2EbNS_6TripleES2_i",
+                    "__ZN4llvm3omp19getOpenMPClauseNameENS0_6ClauseEj",
+                    "__ZN4llvm3omp22getOpenMPDirectiveNameENS0_9DirectiveEj",
                     "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS0_13TraitSelectorENS_9StringRefE",
                     "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyENS_9StringRefE",
                     "__ZN4llvm3omp20getDirectiveCategoryENS0_9DirectiveE",
@@ -51,7 +54,8 @@ nativeInteropPlugin {
                     "__ZN4llvm3omp23getLeafConstructsOrSelfENS0_9DirectiveE",
                     "__ZN4llvm7remarks14RemarkStreamerC1ENSt3__110unique_ptrINS0_16RemarkSerializerENS2_14default_deleteIS4_EEEENS2_8optionalINS_9StringRefEEE",
                     "__ZN4llvm3omp17getLeafConstructsENS0_9DirectiveE",
-                    "__ZN4llvm15OpenMPIRBuilder25getOpenMPDefaultSimdAlignERKNS_6TripleERKNS_9StringMapIbNS_15MallocAllocatorEEE"
+                    "__ZN4llvm15OpenMPIRBuilder25getOpenMPDefaultSimdAlignERKNS_6TripleERKNS_9StringMapIbNS_15MallocAllocatorEEE",
+                    "__ZN4llvm4hlsl7rootsig16dumpRootElementsERNS_11raw_ostreamENS_8ArrayRefINSt3__17variantIJNS_4dxbc9RootFlagsENS1_13RootConstantsENS1_14RootDescriptorENS1_15DescriptorTableENS1_21DescriptorTableClauseENS1_13StaticSamplerEEEEEE"
             ).mapTo(this) { "-Wl,-U,$it" }
             addAll(listOf("-lpthread", "-lz", "-lm", "-lcurses"))
         }
