@@ -63,9 +63,6 @@ projectTests {
     testData(project.isolated, "api/psi-api.undocumented")
 
     testData(project.isolated, "src")
-    testData(project(":compiler:psi:psi-impl").isolated, "src")
-    testData(project(":compiler:psi:psi-utils").isolated, "src")
-    testData(project(":compiler:psi:psi-frontend-utils").isolated, "src")
 }
 
 val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {

@@ -20,6 +20,9 @@ tasks.register("analysisAllTests") {
         ":analysis:test-data-manager:test",
         ":compiler:psi:psi-api:checkKotlinAbi",
         ":compiler:psi:psi-api:test",
+        ":compiler:psi:psi-impl:test",
+        ":compiler:psi:psi-utils:test",
+        ":compiler:psi:psi-frontend-utils:test",
     )
 
     if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
