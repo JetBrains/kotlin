@@ -54,6 +54,8 @@ ENV JDK_11_0=$JDK11 \
 
 ENV JAVA_HOME=$JDK_17_0
 ENV PATH="$PATH:$JAVA_HOME/bin"
+# this affects Maven builds in scripts/build-kotlin-maven.sh
+ENV MAVEN_JAVA_HOME=$JDK_11_0
 
 RUN curl "https://archive.apache.org/dist/maven/maven-3/3.8.1/binaries/apache-maven-3.8.1-bin.tar.gz" | tar -xz -C /usr/lib
 
