@@ -70,6 +70,13 @@ internal external fun jsCompare(a: JsString, b: JsString): Int
 internal external fun jsEquals(a: JsString, b: JsString): Int
 
 
+@JsBuiltin(
+    jsStringModuleName,
+    "fromCharCode",
+    "export const fromCharCode = (c) => String.fromCharCode(c >>> 0)"
+)
+internal external fun fromCharCode(c: Int): JsStringRef
+
 /*
  * Loads the following wasm helpers:
  * ```wat

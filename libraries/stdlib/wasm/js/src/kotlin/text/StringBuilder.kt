@@ -72,7 +72,6 @@ public actual class StringBuilder private constructor(
      * Note that the reverse operation may produce new surrogate pairs that were unpaired low-surrogates and high-surrogates before the operation.
      * For example, reversing `"\uDC00\uD800"` produces `"\uD800\uDC00"` which is a valid surrogate pair.
      */
-    // Based on Apache Harmony implementation.
     @IgnorableReturnValue
     @Suppress("RETURN_VALUE_NOT_USED")
     public actual fun reverse(): StringBuilder {
@@ -80,68 +79,28 @@ public actual class StringBuilder private constructor(
             return this
         }
 
-        val array = WasmCharArray(this.length)
-        jsIntoCharCodeArray(jsString, array, 0)
-        var end = length - 1
-        var front = 0
-        var frontLeadingChar = array.get(0)
-        var endTrailingChar = array.get(end)
-        var allowFrontSurrogate = true
-        var allowEndSurrogate = true
-        while (front < length / 2) {
-
-            val frontTrailingChar = array.get(front + 1)
-            val endLeadingChar = array.get(end - 1)
-            val surrogateAtFront = allowFrontSurrogate && frontTrailingChar.isLowSurrogate() && frontLeadingChar.isHighSurrogate()
-            if (surrogateAtFront && length < 3) {
-                return this
+        var reversed = jsEmptyString
+        var index = jsLength(jsString) - 1
+        while (index >= 0) {
+            val low = jsCharCodeAt(jsString, index--)
+            reversed = if (low.toChar().isLowSurrogate() && index >= 0) {
+                val high = jsCharCodeAt(jsString, index--)
+                if (high.toChar().isHighSurrogate()) {
+                    jsConcat(
+                        jsConcat(reversed, fromCharCode(high).unsafeCast<JsString>()).unsafeCast<JsString>(),
+                        fromCharCode(low).unsafeCast<JsString>()
+                    ).unsafeCast<JsString>()
+                } else {
+                    jsConcat(
+                        jsConcat(reversed, fromCharCode(low).unsafeCast<JsString>()).unsafeCast<JsString>(),
+                        fromCharCode(high).unsafeCast<JsString>()
+                    ).unsafeCast<JsString>()
+                }
+            } else {
+                jsConcat(reversed, fromCharCode(low).unsafeCast<JsString>()).unsafeCast<JsString>()
             }
-            val surrogateAtEnd = allowEndSurrogate && endTrailingChar.isLowSurrogate() && endLeadingChar.isHighSurrogate()
-            allowFrontSurrogate = true
-            allowEndSurrogate = true
-            when {
-                surrogateAtFront && surrogateAtEnd -> {
-                    // Both surrogates - just exchange them.
-                    array.set(end, frontTrailingChar)
-                    array.set(end - 1, frontLeadingChar)
-                    array.set(front, endLeadingChar)
-                    array.set(front + 1, endTrailingChar)
-                    frontLeadingChar = array.get(front + 2)
-                    endTrailingChar = array.get(end - 2)
-                    front++
-                    end--
-                }
-                !surrogateAtFront && !surrogateAtEnd -> {
-                    // Neither surrogates - exchange only front/end.
-                    array.set(end, frontLeadingChar)
-                    array.set(front, endTrailingChar)
-                    frontLeadingChar = frontTrailingChar
-                    endTrailingChar = endLeadingChar
-                }
-                surrogateAtFront && !surrogateAtEnd -> {
-                    // Surrogate only at the front -
-                    // move the low part, the high part will be moved as a usual character on the next iteration.
-                    array.set(end, frontTrailingChar)
-                    array.set(front, endTrailingChar)
-                    endTrailingChar = endLeadingChar
-                    allowFrontSurrogate = false
-                }
-                !surrogateAtFront && surrogateAtEnd -> {
-                    // Surrogate only at the end -
-                    // move the high part, the low part will be moved as a usual character on the next iteration.
-                    array.set(end, frontLeadingChar)
-                    array.set(front, endLeadingChar)
-                    frontLeadingChar = frontTrailingChar
-                    allowEndSurrogate = false
-                }
-            }
-            front++
-            end--
         }
-        if (length % 2 == 1 && (!allowEndSurrogate || !allowFrontSurrogate)) {
-            array.set(end, if (allowFrontSurrogate) endTrailingChar else frontLeadingChar)
-        }
-        jsString = jsFromCharCodeArray(array, 0, length).unsafeCast<JsString>()
+        jsString = reversed
         return this
     }
 
