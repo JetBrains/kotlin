@@ -370,6 +370,7 @@ public final class kotlin/metadata/KmClass : kotlin/metadata/KmDeclarationContai
 	public fun <init> ()V
 	public final fun getAnnotations ()Ljava/util/List;
 	public final fun getCompanionObject ()Ljava/lang/String;
+	public final fun getCompilerPluginMetadata ()Ljava/util/Map;
 	public final fun getConstructors ()Ljava/util/List;
 	public final fun getContextReceiverTypes ()Ljava/util/List;
 	public final fun getEnumEntries ()Ljava/util/List;
@@ -441,6 +442,7 @@ public final class kotlin/metadata/KmConstantValue {
 public final class kotlin/metadata/KmConstructor {
 	public fun <init> ()V
 	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getCompilerPluginMetadata ()Ljava/util/Map;
 	public final fun getValueParameters ()Ljava/util/List;
 	public final fun getVersionRequirements ()Ljava/util/List;
 }
@@ -528,6 +530,7 @@ public final class kotlin/metadata/KmFunction {
 	public field returnType Lkotlin/metadata/KmType;
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getCompilerPluginMetadata ()Ljava/util/Map;
 	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getContextReceiverTypes ()Ljava/util/List;
 	public final fun getContract ()Lkotlin/metadata/KmContract;
@@ -563,6 +566,7 @@ public final class kotlin/metadata/KmProperty {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getAnnotations ()Ljava/util/List;
 	public final fun getBackingFieldAnnotations ()Ljava/util/List;
+	public final fun getCompilerPluginMetadata ()Ljava/util/Map;
 	public final fun getContextParameters ()Ljava/util/List;
 	public final fun getContextReceiverTypes ()Ljava/util/List;
 	public final fun getDelegateFieldAnnotations ()Ljava/util/List;
@@ -608,6 +612,7 @@ public final class kotlin/metadata/KmTypeAlias {
 	public field underlyingType Lkotlin/metadata/KmType;
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getAnnotations ()Ljava/util/List;
+	public final fun getCompilerPluginMetadata ()Ljava/util/Map;
 	public final fun getExpandedType ()Lkotlin/metadata/KmType;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getTypeParameters ()Ljava/util/List;
