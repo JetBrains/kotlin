@@ -683,17 +683,36 @@ data class TypesDefinitions(
     fun protocolDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, protocolDefinitionBySpelling)
     fun classDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, classDefinitionBySpelling)
     fun structDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, structDefinitionBySpelling)
+
     private fun getIfNonEmpty(value: String, map: Map<String, CValue<CXCursor>>): CValue<CXCursor>? =
+            /**
+             * The spelling should not normally be empty, but it can be such as in the case of CXCursor_NoDeclFound. Return null instead to
+             * avoid conflating cursors if we are passed an empty string.
+             */
             if (value.isNotEmpty()) map[value] else null
 }
 
+/**
+ * The [TypesDefinitions] index exists to dereference forward declarations with -fmodules. Without -fmodules we rely on a couple of
+ * different libclang APIs such as [clang_getCursorReferenced] and [clang_getCursorDefinition] to find the definition for a forward
+ * declaration and these work since everything happens within 1 TU. With -fmodules, when the TU where the forward declaration happens
+ * doesn't see the TU with the definition, we must do the lookup manually, or otherwise we generate only the forward declaration type if it
+ * is encountered first.
+ *
+ * Here we pre-index all TUs, build up a map of the type spelling to the definition cursor, and then look up definition in this index
+ * before defining a type during the main indexing pass in [org.jetbrains.kotlin.native.interop.indexer.indexDeclarations].
+ *
+ * We don't use USRs for this mapping on purpose as these get messed up by external_source_symbol
+ *
+ * See: KT-82402
+ */
 fun indexTranslationUnitsForTypesDefinitions(
         index: CXIndex,
         translationUnits: Collection<CXTranslationUnit>,
 ): TypesDefinitions {
-    val protocolDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
-    val classDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
-    val structDefinitionByName = mutableMapOf<String, CValue<CXCursor>>()
+    val protocolDefinitionBySpelling = mutableMapOf<String, CValue<CXCursor>>()
+    val classDefinitionBySpelling = mutableMapOf<String, CValue<CXCursor>>()
+    val structDefinitionBySpelling = mutableMapOf<String, CValue<CXCursor>>()
 
     translationUnits.forEach {
         indexTranslationUnit(index, it, CXIndexOpt_IndexGeneratedDeclarations, object : Indexer {
@@ -706,17 +725,17 @@ fun indexTranslationUnitsForTypesDefinitions(
                 when (kind) {
                     CXIdxEntity_Union, CXIdxEntity_Struct -> {
                         if (!isStructDeclForward(cursor)) {
-                            structDefinitionByName.getOrPut(getCursorSpelling(cursor)) { cursor }
+                            structDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
                         }
                     }
                     CXIdxEntity_ObjCClass -> {
                         if (cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl && !isObjCInterfaceDeclForward(cursor)) {
-                            classDefinitionByName.getOrPut(getCursorSpelling(cursor)) { cursor }
+                            classDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
                         }
                     }
                     CXIdxEntity_ObjCProtocol -> {
                         if (cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl && !isObjCProtocolDeclForward(cursor)) {
-                            protocolDefinitionByName.getOrPut(getCursorSpelling(cursor)) { cursor }
+                            protocolDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
                         }
                     }
                     else -> {}
@@ -726,9 +745,9 @@ fun indexTranslationUnitsForTypesDefinitions(
     }
 
     return TypesDefinitions(
-            protocolDefinitionBySpelling = protocolDefinitionByName,
-            classDefinitionBySpelling = classDefinitionByName,
-            structDefinitionBySpelling = structDefinitionByName,
+            protocolDefinitionBySpelling = protocolDefinitionBySpelling,
+            classDefinitionBySpelling = classDefinitionBySpelling,
+            structDefinitionBySpelling = structDefinitionBySpelling,
     )
 }
 
