@@ -3276,6 +3276,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("NamedAndArrayLiteralOptInArgument.kt")
+      public void testNamedAndArrayLiteralOptInArgument() {
+        runTest("compiler/testData/diagnostics/tests/annotations/NamedAndArrayLiteralOptInArgument.kt");
+      }
+
+      @Test
       @TestMetadata("nestedAliasWithNestedAnnotation.kt")
       public void testNestedAliasWithNestedAnnotation() {
         runTest("compiler/testData/diagnostics/tests/annotations/nestedAliasWithNestedAnnotation.kt");
