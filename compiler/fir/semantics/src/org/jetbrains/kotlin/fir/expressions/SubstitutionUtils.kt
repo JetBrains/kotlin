@@ -29,7 +29,7 @@ fun FirQualifiedAccessExpression.createConeSubstitutorFromTypeArguments(
     callableSymbol: FirCallableSymbol<*>,
     session: FirSession,
     discardErrorTypes: Boolean = false,
-    // TODO: Get rid of this parameter once LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible is removed
+    // TODO: Get rid of this parameter once LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible cannot be disabled
     unwrapExplicitTypeArgumentForMadeFlexibleSynthetically: Boolean = false,
 ): ConeSubstitutor {
     val typeArgumentMap = buildMap {

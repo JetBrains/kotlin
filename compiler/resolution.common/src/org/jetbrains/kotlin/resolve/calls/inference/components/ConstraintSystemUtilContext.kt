@@ -21,9 +21,6 @@ interface ConstraintSystemUtilContext {
     /**
      * DNN-related hack that softens slightly restrictions in
      * [org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector.TypeCheckerStateForConstraintInjector.runIsSubtypeOf]
-     *
-     * TODO: get rid of this function once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
-     * Use-sites should be treated as always returning false
      */
     fun TypeVariableMarker.shouldBeFlexible(): Boolean
     fun TypeVariableMarker.hasOnlyInputTypesAttribute(): Boolean

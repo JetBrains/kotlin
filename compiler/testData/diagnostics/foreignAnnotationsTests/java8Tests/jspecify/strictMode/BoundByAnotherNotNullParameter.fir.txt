@@ -1,0 +1,5 @@
+FILE: test.kt
+    public final fun <B, A : R|B & Any|> test(instance: R|ClassWithTwoTypeParameters|, a: R|A|, b: R|B|, s: R|kotlin/String|): R|kotlin/Unit| {
+        lval x: R|kotlin/String!| = R|<local>/instance|.R|/ClassWithTwoTypeParameters.foo|<R|kotlin/String!|, R|kotlin/CharSequence!|>(R|<local>/s|, String())
+        lval y: R|A!| = R|<local>/instance|.R|/ClassWithTwoTypeParameters.foo|<R|A!|, R|B|>(R|<local>/a|, R|<local>/b|)
+    }

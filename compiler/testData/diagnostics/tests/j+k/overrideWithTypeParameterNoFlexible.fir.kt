@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +AllowDnnTypeOverridingFlexibleType +DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: +AllowDnnTypeOverridingFlexibleType
 // FILE: Super.java
 public interface Super {
     <A> A foo(Class<A> klass);

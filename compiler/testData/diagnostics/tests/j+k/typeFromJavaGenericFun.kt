@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible
 
 // FILE: JavaWithGenericFun.java
 public class JavaWithGenericFun {

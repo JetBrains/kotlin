@@ -1,5 +1,6 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
+// LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible
 // ISSUE: KT-67999
 
 // FILE: J.java

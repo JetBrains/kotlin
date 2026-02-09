@@ -214,17 +214,9 @@ private fun reportUpperBoundViolationWarningIfNecessary(
 ): Boolean {
     val additionalUpperBound = additionalUpperBoundsProvider.getAdditionalUpperBound(upperBound) ?: return false
 
-    /**
-     * While [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible]
-     * is here, to obtain original explicit type arguments, we need to look into special attribute.
-     * TODO: Get rid of this unwrapping once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
-     */
-    val properArgumentType =
-        argumentType.attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.coneType ?: argumentType
-
     if (!AbstractTypeChecker.isSubtypeOf(
             typeSystemContext,
-            properArgumentType,
+            argumentType,
             additionalUpperBound,
             stubTypesEqualToAnything = true
         )
@@ -233,6 +225,14 @@ private fun reportUpperBoundViolationWarningIfNecessary(
             isReportExpansionError && argumentTypeRef == null -> additionalUpperBoundsProvider.diagnosticForTypeAlias
             else -> additionalUpperBoundsProvider.diagnostic
         }
+
+        /**
+         * While [LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible]
+         * is here, to obtain original explicit type arguments, we need to look into special attribute.
+         * TODO: Get rid of this unwrapping once [LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible] is removed
+         */
+        val properArgumentType =
+            argumentType.attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.coneType ?: argumentType
         reporter.reportOn(argumentSource, factory, upperBound, properArgumentType)
         return true
     }

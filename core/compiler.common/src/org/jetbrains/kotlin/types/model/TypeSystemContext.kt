@@ -336,8 +336,10 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
      * and it can lead to information loss. E.g. with initial constraints T = Bar, Bar? <: U, U? <: (T..T?)
      * we infer a lower constraint U <: T and get Bar? <: Bar contradiction.
      *
-     * In K1 and early versions of K2 (2.0-2.2) this problem is mitigated with so-called TypePreservingVisibilityWrtHack,
-     * that allows us to use flexible types for explicit type arguments of Java type parameters
+     * Currently (both in K1 and K2), this problem is mitigated with so-called TypePreservingVisibilityWrtHack,
+     * that allows us to use flexible types for not-null explicit type arguments of Java type parameters
+     *
+     * TODO: consider dropping in 2.5 timeframe together with the corresponding feature (KT-84664)
      */
     fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean
 

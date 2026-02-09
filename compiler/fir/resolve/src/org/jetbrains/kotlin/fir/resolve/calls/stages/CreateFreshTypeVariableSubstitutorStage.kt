@@ -139,7 +139,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
      * }
      * ```
      *
-     * TODO: Get rid of this function once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+     * See also KDoc for [shouldExplicitArgumentBeFlexibleForGivenParameter] below.
      *
      * @return type which is chosen for EQUALS constraint
      */
@@ -167,7 +167,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                     isTrivial = false,
                 )
             }.run {
-                if (LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible.isEnabled()) {
+                if (LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible.isEnabled()) {
                     return@run this
                 }
                 if (!type.isMarkedNullable) {
@@ -176,7 +176,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 withAttributes(
                     attributes.add(
                         ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
-                            type, LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible
+                            type, relevantFeature = LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible
                         )
                     )
                 )
@@ -196,25 +196,26 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
      * During K2 stabilization and cleanup after its release, we made several attempts to switch it off at all,
      * as it seems that such a flexibility allows too much. As it causes too much breaking changes, beginning from language version 2.4
      * we apply the feature [LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible].
-     * According to its name, beginning from 2.4 this function returns true only for NULLABLE explicit type arguments.
+     * According to its name, beginning from 2.4 this function returns true only for NOT_NULL explicit type arguments.
      * Of course, the requirement about at least one flexible upper bound for the [typeParameter] is still intact.
      */
     context(context: ResolutionContext)
     private fun ConeKotlinType.shouldExplicitArgumentBeFlexibleForGivenParameter(typeParameter: FirTypeParameterRef): Boolean {
-        val languageVersionSettings = context.session.languageVersionSettings
-        if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)) {
-            return false
-        }
-        if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible) &&
+        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible) &&
             with(context.typeContext) { isNullableType() }
         ) {
             return false
         }
+        return mayExplicitArgumentBeFlexibleForGivenParameter(typeParameter)
+    }
+
+    context(context: ResolutionContext)
+    private fun mayExplicitArgumentBeFlexibleForGivenParameter(typeParameter: FirTypeParameterRef): Boolean {
         return typeParameter.symbol.resolvedBounds.any {
             val type = it.coneType
             type is ConeFlexibleType || with(context.typeContext) {
                 val boundingTypeParameter = (type.typeConstructor() as? ConeTypeParameterLookupTag)?.symbol?.fir ?: return@any false
-                shouldExplicitArgumentBeFlexibleForGivenParameter(boundingTypeParameter)
+                mayExplicitArgumentBeFlexibleForGivenParameter(boundingTypeParameter)
             }
         }
     }
