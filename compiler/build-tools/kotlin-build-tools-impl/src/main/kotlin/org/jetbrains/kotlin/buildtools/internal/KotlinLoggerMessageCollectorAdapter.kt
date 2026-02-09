@@ -5,20 +5,33 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 
-internal class KotlinLoggerMessageCollectorAdapter(internal val kotlinLogger: KotlinLogger) : MessageCollector {
+internal class KotlinLoggerMessageCollectorAdapter(
+    internal val kotlinLogger: KotlinLogger,
+    compilerMessageRenderer: CompilerMessageRenderer,
+) : MessageCollector {
+
+    private val messageRenderer = compilerMessageRenderer.asMessageRenderer()
+
     override fun clear() {}
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-        val renderedMessage = KotlinMessageRenderer.render(severity, message, location)
+        val renderedMessage = messageRenderer.render(severity, message, location)
+
         when (severity) {
-            CompilerMessageSeverity.EXCEPTION -> kotlinLogger.error(renderedMessage, RuntimeException(message)) // TODO: get the original exception properly and avoid duplication of stacktrace in message
+            CompilerMessageSeverity.EXCEPTION -> kotlinLogger.error(
+                renderedMessage,
+                RuntimeException(message)
+            ) // TODO: get the original exception properly and avoid duplication of stacktrace in message
             CompilerMessageSeverity.ERROR -> kotlinLogger.error(renderedMessage)
-            CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.WARNING, CompilerMessageSeverity.FIXED_WARNING -> kotlinLogger.warn(renderedMessage)
+            CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.WARNING, CompilerMessageSeverity.FIXED_WARNING -> kotlinLogger.warn(
+                renderedMessage
+            )
             CompilerMessageSeverity.INFO -> kotlinLogger.info(renderedMessage)
             CompilerMessageSeverity.OUTPUT, CompilerMessageSeverity.LOGGING -> kotlinLogger.debug(renderedMessage)
         }

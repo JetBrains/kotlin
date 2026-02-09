@@ -102,7 +102,7 @@ internal object CompilationServiceImpl : CompilationService {
         check(compilationConfig is JvmCompilationConfigurationImpl) {
             "Initial JVM compilation configuration object must be acquired from the `makeJvmCompilationConfiguration` method."
         }
-        val loggerAdapter = KotlinLoggerMessageCollectorAdapter(compilationConfig.logger)
+        val loggerAdapter = KotlinLoggerMessageCollectorAdapter(compilationConfig.logger, DefaultCompilerMessageRenderer)
         val kotlinFilenameExtensions =
             (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfig.kotlinScriptFilenameExtensions)
         val (filteredSources, unknownSources) = sources.partition { it.isJavaFile() || it.isKotlinFile(kotlinFilenameExtensions) }
