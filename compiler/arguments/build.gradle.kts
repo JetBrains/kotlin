@@ -1,3 +1,4 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -5,6 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("project-tests-convention")
+    `jvm-test-suite`
 }
 
 description = "Contains a unified representation of Kotlin compiler arguments for current and old Kotlin releases."
@@ -86,4 +88,78 @@ tasks.named("processResources") {
 }
 tasks.named("sourcesJar") {
     dependsOn(generateJson)
+}
+
+val stableReleaseSsotDecl = configurations.dependencyScope("stableReleaseCompilerArguments")
+val stableReleaseSsotResolv = configurations.resolvable("stableReleaseArgumentsClasspath") {
+    extendsFrom(stableReleaseSsotDecl.get())
+}
+
+dependencies.add(stableReleaseSsotDecl.name, libs.kotlin.compiler.arguments.release) {
+    isTransitive = false
+}
+
+val relocatedStableReleaseSsotTask = tasks.register<ShadowJar>("relocateStableReleaseSsotJar") {
+    relocate("org.jetbrains.kotlin.arguments.description", "org.jetbrains.kotlin.arguments.stable.description")
+    relocate("org.jetbrains.kotlin.arguments.dsl.types", "org.jetbrains.kotlin.arguments.stable.dsl.types")
+    relocate("org.jetbrains.kotlin.arguments.dsl.base", "org.jetbrains.kotlin.arguments.stable.dsl.base")
+    relocate("org.jetbrains.kotlin.arguments.dsl", "org.jetbrains.kotlin.arguments.stable.dsl")
+    relocate("org.jetbrains.kotlin.config", "org.jetbrains.kotlin.stable.config")
+    configurations.add(stableReleaseSsotResolv)
+    archiveFileName.value("stable-arguments-relocated.jar")
+    enableKotlinModuleRemapping.set(true)
+}
+
+val stableReleaseCompilerDecl = configurations.dependencyScope("stableReleaseCompiler")
+val stableReleaseCompilerResolv = configurations.resolvable("stableReleaseCompilerClasspath") {
+    extendsFrom(stableReleaseCompilerDecl.get())
+}
+
+dependencies.add(stableReleaseCompilerDecl.name, libs.kotlin.compiler.release) {
+    isTransitive = false
+}
+
+// Required to have the stable view of LanguageFeatures class used in DSL
+val relocatedStableReleaseCompilerTask = tasks.register<ShadowJar>("relocateStableReleaseCompilerJar") {
+    relocate("org.jetbrains.kotlin.config", "org.jetbrains.kotlin.stable.config")
+    include("**/kotlin/config/**")
+    configurations.add(stableReleaseCompilerResolv)
+    archiveFileName.value("stable-compiler-relocated.jar")
+    enableKotlinModuleRemapping.set(true)
+}
+
+val relocatedStableRelease = objects.fileCollection().from(relocatedStableReleaseSsotTask, relocatedStableReleaseCompilerTask)
+
+testing {
+    suites {
+        register<JvmTestSuite>("stableReleaseTests") {
+            dependencies {
+                implementation(project())
+                implementation("org.jetbrains.kotlin:kotlin-test")
+                runtimeOnly(project(":compiler:arguments.common"))
+                implementation(relocatedStableRelease)
+                implementation(platform(libs.junit.bom))
+                implementation(libs.junit.jupiter.params)
+            }
+
+            targets {
+                all {
+                    tasks.named("check") {
+                        dependsOn(testTask)
+                    }
+                }
+            }
+        }
+    }
+}
+
+kotlin.target.compilations.getByName("stableReleaseTests").associateWith(
+    kotlin.target.compilations.getByName("main")
+)
+
+sourceSets.configureEach {
+    if (name == "stableReleaseTests") {
+        java.srcDirs("stableReleaseTests")
+        resources.srcDir("stableReleaseResources")
+    }
 }

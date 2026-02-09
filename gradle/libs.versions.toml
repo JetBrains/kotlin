@@ -1,4 +1,5 @@
 [versions]
+kotlin-release = "2.3.20-RC"
 dexMemberList = "4.1.1"
 dokka = "2.1.0"
 gradle-custom-user-data = "2.4.0"
@@ -77,6 +78,8 @@ org-tukaani-xz = "1.10"
 slf4j = "2.0.17"
 
 [libraries]
+kotlin-compiler-arguments-release = { module = "org.jetbrains.kotlin:kotlin-compiler-arguments-description", version.ref = "kotlin-release" }
+kotlin-compiler-release = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-release" }
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 # Usages are in gradle-plugins-documentation.gradle.kts
