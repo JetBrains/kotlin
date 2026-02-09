@@ -22,26 +22,35 @@ public const val E: Double = 2.718281828459045
 
 // region ================ Double Math ========================================
 
-/** Computes the sine of the angle [x] given in radians.
+/**
+ * Computes the sine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.sin
  */
 @SinceKotlin("1.2")
 public expect fun sin(x: Double): Double
 
-/** Computes the cosine of the angle [x] given in radians.
+/**
+ * Computes the cosine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.cos
  */
 @SinceKotlin("1.2")
 public expect fun cos(x: Double): Double
 
-/** Computes the tangent of the angle [x] given in radians.
+/**
+ * Computes the tangent of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.tan
  */
 @SinceKotlin("1.2")
 public expect fun tan(x: Double): Double
@@ -52,6 +61,8 @@ public expect fun tan(x: Double): Double
  *
  * Special cases:
  *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.asin
  */
 @SinceKotlin("1.2")
 public expect fun asin(x: Double): Double
@@ -62,6 +73,8 @@ public expect fun asin(x: Double): Double
  *
  * Special cases:
  *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.acos
  */
 @SinceKotlin("1.2")
 public expect fun acos(x: Double): Double
@@ -72,6 +85,8 @@ public expect fun acos(x: Double): Double
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.atan
  */
 @SinceKotlin("1.2")
 public expect fun atan(x: Double): Double
@@ -542,26 +557,35 @@ public expect fun Double.roundToLong(): Long
 
 // region ================ Float Math ========================================
 
-/** Computes the sine of the angle [x] given in radians.
+/**
+ * Computes the sine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.sin
  */
 @SinceKotlin("1.2")
 public expect fun sin(x: Float): Float
 
-/** Computes the cosine of the angle [x] given in radians.
+/**
+ * Computes the cosine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.cos
  */
 @SinceKotlin("1.2")
 public expect fun cos(x: Float): Float
 
-/** Computes the tangent of the angle [x] given in radians.
+/**
+ * Computes the tangent of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.tan
  */
 @SinceKotlin("1.2")
 public expect fun tan(x: Float): Float
@@ -572,6 +596,8 @@ public expect fun tan(x: Float): Float
  *
  * Special cases:
  *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.asin
  */
 @SinceKotlin("1.2")
 public expect fun asin(x: Float): Float
@@ -582,6 +608,8 @@ public expect fun asin(x: Float): Float
  *
  * Special cases:
  *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.acos
  */
 @SinceKotlin("1.2")
 public expect fun acos(x: Float): Float
@@ -592,6 +620,8 @@ public expect fun acos(x: Float): Float
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.atan
  */
 @SinceKotlin("1.2")
 public expect fun atan(x: Float): Float

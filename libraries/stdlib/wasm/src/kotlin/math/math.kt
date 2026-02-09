@@ -7,26 +7,35 @@ package kotlin.math
 
 // region ================ Double Math ========================================
 
-/** Computes the sine of the angle [x] given in radians.
+/**
+ * Computes the sine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.sin
  */
 @SinceKotlin("1.2")
 public actual fun sin(x: Double): Double = kotlin.math.fdlibm.sin(x)
 
-/** Computes the cosine of the angle [x] given in radians.
+/**
+ * Computes the cosine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.cos
  */
 @SinceKotlin("1.2")
 public actual fun cos(x: Double): Double = kotlin.math.fdlibm.cos(x)
 
-/** Computes the tangent of the angle [x] given in radians.
+/**
+ * Computes the tangent of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.tan
  */
 @SinceKotlin("1.2")
 public actual fun tan(x: Double): Double = kotlin.math.fdlibm.tan(x)
@@ -37,6 +46,8 @@ public actual fun tan(x: Double): Double = kotlin.math.fdlibm.tan(x)
  *
  * Special cases:
  *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.asin
  */
 @SinceKotlin("1.2")
 public actual fun asin(x: Double): Double = kotlin.math.fdlibm.__ieee754_asin(x)
@@ -47,6 +58,8 @@ public actual fun asin(x: Double): Double = kotlin.math.fdlibm.__ieee754_asin(x)
  *
  * Special cases:
  *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.acos
  */
 @SinceKotlin("1.2")
 public actual fun acos(x: Double): Double = kotlin.math.fdlibm.__ieee754_acos(x)
@@ -57,6 +70,8 @@ public actual fun acos(x: Double): Double = kotlin.math.fdlibm.__ieee754_acos(x)
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.atan
  */
 @SinceKotlin("1.2")
 public actual fun atan(x: Double): Double = kotlin.math.fdlibm.atan(x)
@@ -557,26 +572,35 @@ public actual fun Double.roundToLong(): Long = when {
 
 // region ================ Float Math ========================================
 
-/** Computes the sine of the angle [x] given in radians.
+/**
+ * Computes the sine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.sin
  */
 @SinceKotlin("1.2")
 public actual fun sin(x: Float): Float = kotlin.math.fdlibm.sin(x.toDouble()).toFloat()
 
-/** Computes the cosine of the angle [x] given in radians.
+/**
+ * Computes the cosine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.cos
  */
 @SinceKotlin("1.2")
 public actual fun cos(x: Float): Float = kotlin.math.fdlibm.cos(x.toDouble()).toFloat()
 
-/** Computes the tangent of the angle [x] given in radians.
+/**
+ * Computes the tangent of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.tan
  */
 @SinceKotlin("1.2")
 public actual fun tan(x: Float): Float = kotlin.math.fdlibm.tan(x.toDouble()).toFloat()
@@ -587,6 +611,8 @@ public actual fun tan(x: Float): Float = kotlin.math.fdlibm.tan(x.toDouble()).to
  *
  * Special cases:
  *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.asin
  */
 @SinceKotlin("1.2")
 public actual fun asin(x: Float): Float = kotlin.math.fdlibm.__ieee754_asin(x.toDouble()).toFloat()
@@ -597,6 +623,8 @@ public actual fun asin(x: Float): Float = kotlin.math.fdlibm.__ieee754_asin(x.to
  *
  * Special cases:
  *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.acos
  */
 @SinceKotlin("1.2")
 public actual fun acos(x: Float): Float = kotlin.math.fdlibm.__ieee754_acos(x.toDouble()).toFloat()
@@ -607,6 +635,8 @@ public actual fun acos(x: Float): Float = kotlin.math.fdlibm.__ieee754_acos(x.to
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.atan
  */
 @SinceKotlin("1.2")
 public actual fun atan(x: Float): Float = kotlin.math.fdlibm.atan(x.toDouble()).toFloat()

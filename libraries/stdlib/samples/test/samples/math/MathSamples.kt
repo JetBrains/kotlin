@@ -272,6 +272,111 @@ class MathSamples {
             assertPrints(hypot(Double.POSITIVE_INFINITY, 2.0), "Infinity")
             assertPrints(hypot(1.0, Double.NEGATIVE_INFINITY), "Infinity")
         }
+
+        @Sample
+        fun sin() {
+            val epsilon = 1e-10
+
+            assertPrints(sin(0.0), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // sin(π/2) = 1.0
+            assertTrue((sin(PI / 2) - 1.0).absoluteValue < epsilon)
+            // sin(-π/2) = -1.0
+            assertTrue((sin(-PI / 2) - -1.0).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(sin(Double.NaN), "NaN")
+            assertPrints(sin(Double.POSITIVE_INFINITY), "NaN")
+            assertPrints(sin(Double.NEGATIVE_INFINITY), "NaN")
+        }
+
+        @Sample
+        fun cos() {
+            val epsilon = 1e-10
+
+            assertPrints(cos(0.0), "1.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // cos(π/2) = 0
+            assertTrue(cos(PI / 2).absoluteValue < epsilon)
+            assertPrints(cos(PI), "-1.0")
+
+            // special cases
+            assertPrints(cos(Double.NaN), "NaN")
+            assertPrints(cos(Double.POSITIVE_INFINITY), "NaN")
+            assertPrints(cos(Double.NEGATIVE_INFINITY), "NaN")
+        }
+
+        @Sample
+        fun tan() {
+            val epsilon = 1e-10
+
+            assertPrints(tan(0.0), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // tan(π/4) = 1.0
+            assertTrue((tan(PI / 4) - 1.0).absoluteValue < epsilon)
+            // tan(-π/4) = -1.0
+            assertTrue((tan(-PI / 4) - -1.0).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(tan(Double.NaN), "NaN")
+            assertPrints(tan(Double.POSITIVE_INFINITY), "NaN")
+            assertPrints(tan(Double.NEGATIVE_INFINITY), "NaN")
+        }
+
+        @Sample
+        fun asin() {
+            val epsilon = 1e-10
+
+            assertPrints(asin(0.0), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // asin(1.0) = π/2
+            assertTrue((asin(1.0) - PI / 2).absoluteValue < epsilon)
+            // asin(-1.0) = -π/2
+            assertTrue((asin(-1.0) - (-PI / 2)).absoluteValue < epsilon)
+            // asin(sin(x)) = x
+            assertTrue((asin(sin(0.123)) - 0.123).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(asin(Double.NaN), "NaN")
+            assertPrints(asin(1.1), "NaN")
+            assertPrints(asin(-2.0), "NaN")
+        }
+
+        @Sample
+        fun acos() {
+            val epsilon = 1e-10
+
+            assertPrints(acos(1.0), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // acos(0.0) = π/2
+            assertTrue((acos(0.0) - PI / 2).absoluteValue < epsilon)
+            // acos(-1.0) = π
+            assertTrue((acos(-1.0) - PI).absoluteValue < epsilon)
+            // acos(cos(x)) = x
+            assertTrue((acos(cos(0.123)) - 0.123).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(acos(Double.NaN), "NaN")
+            assertPrints(acos(1.1), "NaN")
+            assertPrints(acos(-2.0), "NaN")
+        }
+
+        @Sample
+        fun atan() {
+            val epsilon = 1e-10
+
+            assertPrints(atan(0.0), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // atan(1.0) = π/4
+            assertTrue((atan(1.0) - PI / 4).absoluteValue < epsilon)
+            // atan(-1.0) = -π/4
+            assertTrue((atan(-1.0) - (-PI / 4)).absoluteValue < epsilon)
+            // atan(tan(x)) = x
+            assertTrue((atan(tan(0.123)) - 0.123).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(atan(Double.NaN), "NaN")
+        }
     }
 
     class Floats {
@@ -535,6 +640,111 @@ class MathSamples {
             assertPrints(hypot(1.0f, Float.NaN), "NaN")
             assertPrints(hypot(Float.POSITIVE_INFINITY, 2.0f), "Infinity")
             assertPrints(hypot(1.0f, Float.NEGATIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun sin() {
+            val epsilon = 1e-6f
+
+            assertPrints(sin(0.0f), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // sin(π/2) = 1.0
+            assertTrue((sin(PI.toFloat() / 2) - 1.0f).absoluteValue < epsilon)
+            // sin(-π/2) = -1.0
+            assertTrue((sin(-PI.toFloat() / 2) - -1.0f).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(sin(Float.NaN), "NaN")
+            assertPrints(sin(Float.POSITIVE_INFINITY), "NaN")
+            assertPrints(sin(Float.NEGATIVE_INFINITY), "NaN")
+        }
+
+        @Sample
+        fun cos() {
+            val epsilon = 1e-6f
+
+            assertPrints(cos(0.0f), "1.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // cos(π/2) = 0
+            assertTrue(cos(PI.toFloat() / 2).absoluteValue < epsilon)
+            assertPrints(cos(PI.toFloat()), "-1.0")
+
+            // special cases
+            assertPrints(cos(Float.NaN), "NaN")
+            assertPrints(cos(Float.POSITIVE_INFINITY), "NaN")
+            assertPrints(cos(Float.NEGATIVE_INFINITY), "NaN")
+        }
+
+        @Sample
+        fun tan() {
+            val epsilon = 1e-6f
+
+            assertPrints(tan(0.0f), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // tan(π/4) = 1.0
+            assertTrue((tan(PI.toFloat() / 4) - 1.0f).absoluteValue < epsilon)
+            // tan(-π/4) = -1.0
+            assertTrue((tan(-PI.toFloat() / 4) - -1.0f).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(tan(Float.NaN), "NaN")
+            assertPrints(tan(Float.POSITIVE_INFINITY), "NaN")
+            assertPrints(tan(Float.NEGATIVE_INFINITY), "NaN")
+        }
+
+        @Sample
+        fun asin() {
+            val epsilon = 1e-6f
+
+            assertPrints(asin(0.0f), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // asin(1.0) = π/2
+            assertTrue((asin(1.0f) - PI.toFloat() / 2).absoluteValue < epsilon)
+            // asin(-1.0) = -π/2
+            assertTrue((asin(-1.0f) - (-PI.toFloat() / 2)).absoluteValue < epsilon)
+            // asin(sin(x)) = x
+            assertTrue((asin(sin(0.25f)) - 0.25f).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(asin(Float.NaN), "NaN")
+            assertPrints(asin(1.1f), "NaN")
+            assertPrints(asin(-2.0f), "NaN")
+        }
+
+        @Sample
+        fun acos() {
+            val epsilon = 1e-6f
+
+            assertPrints(acos(1.0f), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // acos(0.0) = π/2
+            assertTrue((acos(0.0f) - PI.toFloat() / 2).absoluteValue < epsilon)
+            // acos(-1.0) = π
+            assertTrue((acos(-1.0f) - PI.toFloat()).absoluteValue < epsilon)
+            // acos(cos(x)) = x
+            assertTrue((acos(cos(0.25f)) - 0.25f).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(acos(Float.NaN), "NaN")
+            assertPrints(acos(1.1f), "NaN")
+            assertPrints(acos(-2.0f), "NaN")
+        }
+
+        @Sample
+        fun atan() {
+            val epsilon = 1e-6f
+
+            assertPrints(atan(0.0f), "0.0")
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            // atan(1.0) = π/4
+            assertTrue((atan(1.0f) - PI.toFloat() / 4).absoluteValue < epsilon)
+            // atan(-1.0) = -π/4
+            assertTrue((atan(-1.0f) - (-PI.toFloat() / 4)).absoluteValue < epsilon)
+            // atan(tan(x)) = x
+            assertTrue((atan(tan(0.25f)) - 0.25f).absoluteValue < epsilon)
+
+            // special cases
+            assertPrints(atan(Float.NaN), "NaN")
         }
     }
 
