@@ -1335,6 +1335,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     }
 
     @Test
+    @TestMetadata("kt83829.kt")
+    public void testKt83829() {
+      runTest("compiler/testData/diagnostics/tests/kt83829.kt");
+    }
+
+    @Test
     @TestMetadata("LValueAssignment.kt")
     public void testLValueAssignment() {
       runTest("compiler/testData/diagnostics/tests/LValueAssignment.kt");
