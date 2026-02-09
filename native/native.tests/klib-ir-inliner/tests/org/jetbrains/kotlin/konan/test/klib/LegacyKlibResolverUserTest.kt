@@ -38,12 +38,9 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
 class LegacyKlibResolverUserTest : AbstractNativeSimpleTest() {
     @Test
     fun `Minimal required set of dependencies written to manifest of Native libraries`() {
-        createModules(
-            TestKlibModule("usesOnlyStdlib")
-        ).compileModules(
-            produceUnpackedKlibs = true,
-            useLibraryNamesInCliArguments = false,
-        ) { module, successKlib ->
+        newSourceModules {
+            addRegularModule("usesOnlyStdlib")
+        }.compileToKlibsViaCli { module, successKlib ->
             assertEquals("usesOnlyStdlib", module.name)
 
             patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
@@ -51,21 +48,18 @@ class LegacyKlibResolverUserTest : AbstractNativeSimpleTest() {
             }
         }
 
-        createModules(
-            TestKlibModule("usesStdlibAndPosix")
-        ).also { modules ->
-            modules[0].sourceFile.appendText(
-                """
+        newSourceModules {
+            addRegularModule("usesStdlibAndPosix") {
+                sourceFileAddend(
+                    """
                         @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
                         fun makePosixCall() {
                             platform.posix.fopen("test.txt", "r")
                         }
                     """.trimIndent()
-            )
-        }.compileModules(
-            produceUnpackedKlibs = true,
-            useLibraryNamesInCliArguments = false,
-        ) { module, successKlib ->
+                )
+            }
+        }.compileToKlibsViaCli { module, successKlib ->
             assertEquals("usesStdlibAndPosix", module.name)
 
             patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
@@ -84,7 +78,7 @@ class LegacyKlibResolverUserTest : AbstractNativeSimpleTest() {
     fun `Resolve Native libraries in kotlinx-benchmarks Gradle plugins`() = doTest(isForKotlinNative = true)
 
     private fun doTest(isForKotlinNative: Boolean) {
-        val moduleToKlibMapping: MutableMap<TestKlibModule, File> = hashMapOf()
+        val moduleToKlibMapping: MutableMap<KlibTestSourceModule, File> = hashMapOf()
 
         /*
          * "e" -> "d" -> "c" -> "b" -> "a"
@@ -92,16 +86,13 @@ class LegacyKlibResolverUserTest : AbstractNativeSimpleTest() {
          *  |      +-------------+      |
          *  +---------------------------+
          */
-        createModules(
-            TestKlibModule("a"),
-            TestKlibModule("b", "a"),
-            TestKlibModule("c", "b"),
-            TestKlibModule("d", "c", "b"),
-            TestKlibModule("e", "d", "a"),
-        ).compileModules(
-            produceUnpackedKlibs = true,
-            useLibraryNamesInCliArguments = false
-        ) { module, successKlib ->
+        newSourceModules {
+            addRegularModule("a")
+            addRegularModule("b") { dependsOn("a") }
+            addRegularModule("c") { dependsOn("b") }
+            addRegularModule("d") { dependsOn("c", "b") }
+            addRegularModule("e") { dependsOn("d", "a") }
+        }.compileToKlibsViaCli { module, successKlib ->
             // Remember the location of a KLIB dir.
             val libraryLocation = File(successKlib.resultingArtifact.path)
             moduleToKlibMapping[module] = libraryLocation
@@ -117,10 +108,10 @@ class LegacyKlibResolverUserTest : AbstractNativeSimpleTest() {
         // There should be 5 generated KLIBs in total.
         assertEquals(5, moduleToKlibMapping.size)
 
-        val targetModule: TestKlibModule = moduleToKlibMapping.keys.single { it.name == "e" }
+        val targetModule: KlibTestSourceModule = moduleToKlibMapping.keys.single { it.name == "e" }
         val targetModuleLocation: File = moduleToKlibMapping.getValue(targetModule)
 
-        val dependencyModules: Set<TestKlibModule> = moduleToKlibMapping.keys - targetModule
+        val dependencyModules: Set<KlibTestSourceModule> = moduleToKlibMapping.keys - targetModule
         val dependencyModuleLocations: Set<File> = dependencyModules.map { moduleToKlibMapping.getValue(it) }.toSet()
 
         val allDependencyLocations: Set<File> = dependencyModuleLocations + stdlibLocation // also add stdlib

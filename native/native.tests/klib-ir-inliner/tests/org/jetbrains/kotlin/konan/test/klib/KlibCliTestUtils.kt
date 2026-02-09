@@ -16,23 +16,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import java.io.File
 
-internal data class TestKlibModule(
-    val name: String,
-    val dependencyNames: List<String>,
-    val kind: Kind,
-) {
-    constructor(name: String, vararg dependencyNames: String, kind: Kind = Kind.REGULAR) : this(
-        name,
-        dependencyNames.asList(),
-        kind
-    )
-
-    lateinit var dependencies: List<TestKlibModule>
-    lateinit var sourceFile: File
-
-    fun initDependencies(resolveDependency: (String) -> TestKlibModule) {
-        dependencies = dependencyNames.map(resolveDependency)
-    }
+interface KlibTestSourceModule {
+    val name: String
+    val kind: Kind
+    val dependencies: List<KlibTestSourceModule>
+    val sourceFile: File
 
     enum class Kind {
         REGULAR,
@@ -40,20 +28,87 @@ internal data class TestKlibModule(
     }
 }
 
+class KlibTestSourceModules(
+    val modules: List<KlibTestSourceModule>
+)
+
+internal interface KlibTestSourceModuleBuilder {
+    fun dependsOn(dependencyName: String, vararg otherDependencyNames: String)
+    fun sourceFileAddend(sourceFileAddend: String)
+}
+
+internal interface KlibTestSourceModulesBuilder {
+    fun addRegularModule(name: String, init: KlibTestSourceModuleBuilder.() -> Unit = {})
+    fun addCInteropModule(name: String, init: KlibTestSourceModuleBuilder.() -> Unit = {})
+}
+
 context(testRunner: AbstractNativeSimpleTest)
-internal fun createModules(vararg modules: TestKlibModule): List<TestKlibModule> {
-    val mapping: Map<String, TestKlibModule> = modules.groupBy(TestKlibModule::name).mapValues {
+internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): KlibTestSourceModules {
+    // Private module implementation.
+    class ModuleImpl(
+        override val name: String,
+        override val kind: KlibTestSourceModule.Kind,
+        val sourceFileAddend: String,
+        val dependencyNames: List<String>,
+    ) : KlibTestSourceModule {
+        override lateinit var dependencies: List<KlibTestSourceModule>
+        override lateinit var sourceFile: File
+
+        override fun toString(): String = "Module \"$name\""
+        override fun hashCode() = name.hashCode()
+        override fun equals(other: Any?) = (other as? ModuleImpl)?.name == name
+    }
+
+    // The list of source modules being built.
+    val modules = mutableListOf<ModuleImpl>()
+
+    // The builder for a single source module.
+    class ModuleBuilderImpl : KlibTestSourceModuleBuilder {
+        var dependencyNames = emptyList<String>()
+        var sourceFileAddend = ""
+
+        override fun dependsOn(dependencyName: String, vararg otherDependencyNames: String) {
+            dependencyNames = listOf(dependencyName) + otherDependencyNames.toList()
+        }
+
+        override fun sourceFileAddend(sourceFileAddend: String) {
+            this.sourceFileAddend = sourceFileAddend
+        }
+    }
+
+    // The builder for all source modules.
+    class ModulesBuilderImpl : KlibTestSourceModulesBuilder {
+        override fun addRegularModule(name: String, init: KlibTestSourceModuleBuilder.() -> Unit) =
+            addModule(name, KlibTestSourceModule.Kind.REGULAR, init)
+
+        override fun addCInteropModule(name: String, init: KlibTestSourceModuleBuilder.() -> Unit): Unit =
+            addModule(name, KlibTestSourceModule.Kind.CINTEROP, init)
+
+        fun addModule(name: String, kind: KlibTestSourceModule.Kind, init: KlibTestSourceModuleBuilder.() -> Unit) {
+            val builder = ModuleBuilderImpl()
+            builder.init()
+            modules += ModuleImpl(name, kind, builder.sourceFileAddend, builder.dependencyNames)
+        }
+    }
+
+    // Build all source modules.
+    val builder = ModulesBuilderImpl()
+    builder.init()
+
+    val nameToModuleMapping: Map<String, ModuleImpl> = modules.groupBy(KlibTestSourceModule::name).mapValues {
         it.value.singleOrNull() ?: error("Duplicated modules: ${it.value}")
     }
 
-    modules.forEach { it.initDependencies(mapping::getValue) }
+    // Initialize dependencies.
+    modules.forEach { it.dependencies = it.dependencyNames.map(nameToModuleMapping::getValue) }
 
     val generatedSourcesDir = testRunner.buildDir.resolve("generated-sources")
     generatedSourcesDir.mkdirs()
 
+    // Generate sources.
     modules.forEach { module ->
         when (module.kind) {
-            TestKlibModule.Kind.REGULAR -> {
+            KlibTestSourceModule.Kind.REGULAR -> {
                 module.sourceFile = generatedSourcesDir.resolve(module.name + ".kt")
                 module.sourceFile.writeText(buildString {
                     appendLine("package ${module.name}")
@@ -65,9 +120,15 @@ internal fun createModules(vararg modules: TestKlibModule): List<TestKlibModule>
                         appendLine("    $dependencyName.$dependencyName(indent + 1)")
                     }
                     appendLine("}")
+
+                    if (module.sourceFileAddend.isNotBlank()) {
+                        appendLine()
+                        appendLine(module.sourceFileAddend)
+                    }
                 })
             }
-            TestKlibModule.Kind.CINTEROP -> {
+
+            KlibTestSourceModule.Kind.CINTEROP -> {
                 module.sourceFile = generatedSourcesDir.resolve(module.name + ".def")
                 module.sourceFile.writeText(buildString {
                     appendLine("---")
@@ -76,20 +137,25 @@ internal fun createModules(vararg modules: TestKlibModule): List<TestKlibModule>
                     appendLine("    for (int i = 0; i < indent; i++) printf(\" \");")
                     appendLine("    printf(\"%s\\n\", \"${module.name}\");")
                     appendLine("}")
+
+                    if (module.sourceFileAddend.isNotBlank()) {
+                        appendLine()
+                        appendLine(module.sourceFileAddend)
+                    }
                 })
             }
         }
     }
 
-    return modules.asList()
+    return KlibTestSourceModules(modules)
 }
 
 context(testRunner: AbstractNativeSimpleTest)
-internal fun List<TestKlibModule>.compileModules(
-    produceUnpackedKlibs: Boolean,
-    useLibraryNamesInCliArguments: Boolean,
-    extraCmdLineParams: List<String> = emptyList(),
-    transform: ((module: TestKlibModule, successKlib: TestCompilationResult.Success<out KLIB>) -> Unit)? = null
+internal fun KlibTestSourceModules.compileToKlibsViaCli(
+    produceUnpackedKlibs: Boolean = true,
+    useLibraryNamesInCliArguments: Boolean = false,
+    extraCliArgs: List<String> = emptyList(),
+    transform: ((module: KlibTestSourceModule, successKlib: TestCompilationResult.Success<out KLIB>) -> Unit)? = null
 ) {
     val klibFilesDir = testRunner.buildDir.resolve(
         listOf(
@@ -101,13 +167,13 @@ internal fun List<TestKlibModule>.compileModules(
     )
     klibFilesDir.mkdirs()
 
-    fun TestKlibModule.computeArtifactPath(): String {
+    fun KlibTestSourceModule.computeArtifactPath(): String {
         val basePath: String = if (useLibraryNamesInCliArguments) name else klibFilesDir.resolve(name).path
         return if (produceUnpackedKlibs) basePath else "$basePath.klib"
     }
 
     fun doCompileModules() {
-        forEach { module ->
+        modules.forEach { module ->
             val commonCompilerAndCInteropArgs = buildList {
                 if (produceUnpackedKlibs) add("-nopack")
                 module.dependencies.forEach { dependency ->
@@ -119,14 +185,14 @@ internal fun List<TestKlibModule>.compileModules(
                 sourceFile = module.sourceFile,
                 moduleName = module.name,
                 TestCompilerArgs(
-                    commonCompilerAndCInteropArgs + extraCmdLineParams,
+                    commonCompilerAndCInteropArgs + extraCliArgs,
                     cinteropArgs = commonCompilerAndCInteropArgs,
                 )
             )
 
             val expectedArtifact = KLIB(klibFilesDir.resolve(module.computeArtifactPath()))
             val compilation = when (module.kind) {
-                TestKlibModule.Kind.REGULAR -> {
+                KlibTestSourceModule.Kind.REGULAR -> {
                     LibraryCompilation(
                         settings = testRunner.testRunSettings,
                         freeCompilerArgs = testCase.freeCompilerArgs,
@@ -135,8 +201,9 @@ internal fun List<TestKlibModule>.compileModules(
                         expectedArtifact = expectedArtifact
                     )
                 }
-                TestKlibModule.Kind.CINTEROP -> {
-                    check(extraCmdLineParams.isEmpty()) { "extraCmdLineParams are not allowed for cinterop modules" }
+
+                KlibTestSourceModule.Kind.CINTEROP -> {
+                    check(extraCliArgs.isEmpty()) { "extraCmdLineParams are not allowed for cinterop modules" }
                     CInteropCompilation(
                         settings = testRunner.testRunSettings,
                         freeCompilerArgs = testCase.freeCompilerArgs,

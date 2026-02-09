@@ -20,9 +20,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
-import org.jetbrains.kotlin.konan.test.klib.TestKlibModule
-import org.jetbrains.kotlin.konan.test.klib.compileModules
-import org.jetbrains.kotlin.konan.test.klib.createModules
+import org.jetbrains.kotlin.konan.test.klib.compileToKlibsViaCli
+import org.jetbrains.kotlin.konan.test.klib.newSourceModules
 import org.jetbrains.kotlin.konan.test.klib.runWithCustomWorkingDir
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -60,36 +59,32 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     @Test
     @DisplayName("Test resolving all dependencies recorded in `depends` / `dependency_version` properties (KT-63931)")
     fun testResolvingDependenciesRecordedInManifest() {
-        val modules = createModules(
-            TestKlibModule("a"),
-            TestKlibModule("b", "a"),
-            TestKlibModule("c", "a"),
-            TestKlibModule("d", "b", "c", "a"),
-        )
-
-        listOf(
-            false to false,
-            true to false,
-            true to true,
-            false to true,
-        ).forEach { (produceUnpackedKlibs, useLibraryNamesInCliArguments) ->
-            modules.compileModules(produceUnpackedKlibs, useLibraryNamesInCliArguments)
+        val modules = newSourceModules {
+            addRegularModule("a")
+            addRegularModule("b") { dependsOn("a") }
+            addRegularModule("c") { dependsOn("a") }
+            addRegularModule("d") { dependsOn("b", "c", "a") }
         }
+
+        modules.compileToKlibsViaCli()
+        modules.compileToKlibsViaCli(useLibraryNamesInCliArguments = true)
+        modules.compileToKlibsViaCli(produceUnpackedKlibs = false)
+        modules.compileToKlibsViaCli(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true)
     }
 
     @Test
     @DisplayName("Test resolving nonexistent transitive dependency recorded in `depends` property (KT-70146)")
     fun testResolvingTransitiveDependenciesRecordedInManifest() {
-        val moduleA = TestKlibModule("a")
-        val moduleB = TestKlibModule("b", "a")
-        val moduleC = TestKlibModule("c", "b")
-        val modules = createModules(moduleA, moduleB, moduleC)
-
         var aKlib: KLIB? = null
-        modules.compileModules(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true) { module, successKlib ->
+
+        newSourceModules {
+            addRegularModule("a")
+            addRegularModule("b") { dependsOn("a") }
+            addRegularModule("c") { dependsOn("b") }
+        }.compileToKlibsViaCli { module, successKlib ->
             when (module.name) {
                 "a" -> aKlib = successKlib.resultingArtifact
-                "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
+                "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so the following compilation of `c` would miss it.
                 "c" -> {
                     val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
                     assertEquals(ExitCode.OK, compilationToolCall.exitCode)
@@ -107,13 +102,13 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     @Test
     @DisplayName("Test cinterop resolving nonexistent transitive Kotlin dependency recorded in `depends` property (KT-80593)")
     fun testCinteropResolvingTransitiveKotlinDependenciesRecordedInManifest() {
-        val moduleA = TestKlibModule("a")
-        val moduleB = TestKlibModule("b", "a")
-        val moduleC = TestKlibModule("c", "b", kind = TestKlibModule.Kind.CINTEROP)
-        val modules = createModules(moduleA, moduleB, moduleC)
-
         var aKlib: KLIB? = null
-        modules.compileModules(produceUnpackedKlibs = false, useLibraryNamesInCliArguments = true) { module, successKlib ->
+
+        newSourceModules {
+            addRegularModule("a")
+            addRegularModule("b") { dependsOn("a") }
+            addCInteropModule("c") { dependsOn("b") }
+        }.compileToKlibsViaCli { module, successKlib ->
             when (module.name) {
                 "a" -> aKlib = successKlib.resultingArtifact
                 "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
@@ -134,11 +129,10 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     @Test
     @DisplayName("Test cinterop resolving nonexistent cinterop transitive dependency recorded in `depends` property")
     fun testCinteropResolvingTransitiveCinteropDependenciesRecordedInManifest() {
-        val moduleB = TestKlibModule("b", kind = TestKlibModule.Kind.CINTEROP)
-        val moduleC = TestKlibModule("c", "b", kind = TestKlibModule.Kind.CINTEROP)
-        val modules = createModules(moduleB, moduleC)
-
-        modules.compileModules(produceUnpackedKlibs = true, useLibraryNamesInCliArguments = true) { module, successKlib ->
+        newSourceModules {
+            addCInteropModule("b")
+            addCInteropModule("c") { dependsOn("b") }
+        }.compileToKlibsViaCli { module, successKlib ->
             when (module.name) {
                 "b" -> {
                     // Making cinterop add something to its `depends =` is tricky in these tests:
@@ -162,23 +156,17 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testWarningAboutRejectedLibraryIsNotSuppressed() {
-        val modules = createModules(
-            TestKlibModule("lib1"),
-            TestKlibModule("lib2", "lib1"),
-        )
+        val modules = newSourceModules {
+            addRegularModule("lib1")
+            addRegularModule("lib2") { dependsOn("lib1") }
+        }
 
         // Control compilation -- should finish successfully.
-        modules.compileModules(
-            produceUnpackedKlibs = true,
-            useLibraryNamesInCliArguments = false
-        )
+        modules.compileToKlibsViaCli()
 
         // Compilation with patched manifest -- should fail.
         try {
-            modules.compileModules(
-                produceUnpackedKlibs = true,
-                useLibraryNamesInCliArguments = false
-            ) { module, successKlib ->
+            modules.compileToKlibsViaCli { module, successKlib ->
                 if (module.name == "lib1") {
                     patchManifestToBumpAbiVersion(JUnit5Assertions, successKlib.resultingArtifact.klibFile)
                 }
@@ -233,21 +221,19 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         expectedMessagePrefix: String,
         freeCompilerArgs: List<String>? = null,
     ) {
-        val modules = createModules(
-            TestKlibModule("a"),
-            TestKlibModule("b"),
-            TestKlibModule("c", "a", "b"),
-        )
+        val extraCliArgs = buildList {
+            freeCompilerArgs?.let(::addAll)
+            strategy?.asCliArgument()?.let(::add)
+        }
+
+        val modules = newSourceModules {
+            addRegularModule("a")
+            addRegularModule("b")
+            addRegularModule("c") { dependsOn("a","b") }
+        }
 
         try {
-            modules.compileModules(
-                produceUnpackedKlibs = true,
-                useLibraryNamesInCliArguments = false,
-                extraCmdLineParams = buildList {
-                    freeCompilerArgs?.let(::addAll)
-                    strategy?.asCliArgument()?.let(::add)
-                }
-            ) { module, successKlib ->
+            modules.compileToKlibsViaCli(extraCliArgs = extraCliArgs) { module, successKlib ->
                 if (module.name == "a" || module.name == "b") {
                     // set the same `unique_name`
                     patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
@@ -288,18 +274,14 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         testAllKlibsUsed(listOf("-Xmetadata-klib"))
     }
 
-    private fun testAllKlibsUsed(extraCmdLineParams: List<String>) {
-        val modules = createModules(
-            TestKlibModule("a"),
-            TestKlibModule("b"),
-            TestKlibModule("c", "a", "b"),
-        )
+    private fun testAllKlibsUsed(extraCliArgs: List<String>) {
+        val modules = newSourceModules {
+            addRegularModule("a")
+            addRegularModule("b")
+            addRegularModule("c") { dependsOn("a","b") }
+        }
 
-        modules.compileModules(
-            produceUnpackedKlibs = true,
-            useLibraryNamesInCliArguments = false,
-            extraCmdLineParams = extraCmdLineParams
-        ) { module, successKlib ->
+        modules.compileToKlibsViaCli(extraCliArgs = extraCliArgs) { module, successKlib ->
             when (module.name) {
                 "a", "b" -> patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
                     properties[KLIB_PROPERTY_UNIQUE_NAME] = DUPLICATED_UNIQUE_NAME
@@ -335,23 +317,17 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testDependencyVersionsAreNotEnforced() {
-        val modules = createModules(
-            TestKlibModule("liba"),
-            TestKlibModule("libb", "liba"),
-            TestKlibModule("libc", "liba", "libb"),
-        )
+        val modules = newSourceModules {
+            addRegularModule("liba")
+            addRegularModule("libb") { dependsOn("liba") }
+            addRegularModule("libc") { dependsOn("liba", "libb") }
+        }
 
         // Control compilation -- should finish successfully.
-        modules.compileModules(
-            produceUnpackedKlibs = true,
-            useLibraryNamesInCliArguments = false
-        )
+        modules.compileToKlibsViaCli()
 
         // Compilation with patched manifest -- should finish successfully too.
-        modules.compileModules(
-            produceUnpackedKlibs = true,
-            useLibraryNamesInCliArguments = false,
-        ) { module, successKlib ->
+        modules.compileToKlibsViaCli { module, successKlib ->
             when (module.name) {
                 "liba" -> {
                     // set the library version = 1.0
@@ -382,22 +358,16 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
     @Test
     fun testDependencyVersionsAreNotAdded() {
-        val modules = createModules(
-            TestKlibModule("liba"),
-            TestKlibModule("libb", "liba"),
-        )
+        val modules = newSourceModules {
+            addRegularModule("liba")
+            addRegularModule("libb") { dependsOn("liba") }
+        }
 
         // Control compilation -- should finish successfully.
-        modules.compileModules(
-            produceUnpackedKlibs = true,
-            useLibraryNamesInCliArguments = false
-        )
+        modules.compileToKlibsViaCli()
 
         // Compilation with patched manifest -- should finish successfully too.
-        modules.compileModules(
-            produceUnpackedKlibs = true,
-            useLibraryNamesInCliArguments = false,
-        ) { module, successKlib ->
+        modules.compileToKlibsViaCli { module, successKlib ->
             when (module.name) {
                 "liba" -> {
                     // set the library version = 1.0
@@ -682,7 +652,8 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
             cliArgs: List<String>,
         ): File {
             val moduleNames = generateModuleNames(moduleBaseName)
-            val module = createModules(TestKlibModule(moduleNames.uniqueName)).single()
+
+            val module = newSourceModules { addRegularModule(moduleNames.uniqueName) }.modules.single()
 
             val klibsDir = buildDir.resolve("klibs").apply(File::mkdirs)
             val libraryFile = klibsDir.resolve(moduleNames.fileName + if (produceUnpackedKlib) "" else ".klib")
