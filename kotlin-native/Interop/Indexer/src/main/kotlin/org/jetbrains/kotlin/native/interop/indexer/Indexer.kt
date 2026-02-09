@@ -265,12 +265,13 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     protected fun getStructDeclAt(
-            cursor: CValue<CXCursor>
-    ): StructDecl = structRegistry.getOrPut(cursor, { createStructDecl(cursor) }) { decl ->
-        val definitionCursor = typesDefinitions.structDefinition(getCursorSpelling(cursor))
-                ?: clang_getCursorDefinition(cursor)
-        if (clang_Cursor_isNull(definitionCursor) == 0) {
-            decl.def = createStructDef(definitionCursor, definitionCursor.type)
+            originalCursor: CValue<CXCursor>
+    ): StructDecl {
+        val cursor = typesDefinitions.structDefinition(getCursorSpelling(originalCursor)) ?: originalCursor
+        return structRegistry.getOrPut(cursor, { createStructDecl(cursor) }) { decl ->
+            if (!isStructDeclForward(cursor)) {
+                decl.def = createStructDef(cursor, cursor.type)
+            }
         }
     }
 

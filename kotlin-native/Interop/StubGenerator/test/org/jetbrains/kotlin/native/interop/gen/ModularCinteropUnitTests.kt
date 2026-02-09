@@ -276,7 +276,7 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
             module forward { header "forward.h" }
             module original { header "original.h" }
         """.trimIndent())
-        val forwardH = files.file("forward.h", """
+        files.file("forward.h", """
             struct S;
             void consumeS(struct S *);
             
@@ -340,7 +340,7 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
                     }
                 }
         )
-        assertEquals(structS.location.headerId.value, headerContentsHash(forwardH.path))
+        assertEquals(structS.location.headerId.value, headerContentsHash(originalH.path))
 
         assertEquals(
                 listOf(unionU),
