@@ -1,4 +1,4 @@
-CHOSEN for fixation: TypeVariable(S) --- Readiness(
+CHOSEN for fixation: TypeVariable(S1) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -14,7 +14,7 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
      = Foo<kotlin/Any>
     FIXED TO: Foo<kotlin/Any>
 ********************************
-CHOSEN for fixation: TypeVariable(S) --- Readiness(
+CHOSEN for fixation: TypeVariable(S2) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -60,7 +60,7 @@ TypeVariable(U) --- Readiness(
     )
      <: TypeVariable(R)
 ********************************
-CHOSEN for fixation: TypeVariable(T) --- Readiness(
+CHOSEN for fixation: TypeVariable(W) --- Readiness(
     	false ALLOWED
     	false HAS_PROPER_CONSTRAINTS
     	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -102,7 +102,7 @@ TypeVariable(U) --- Readiness(
     	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      <: TypeVariable(R)
-     <: Foo<TypeVariable(T)>
+     <: Foo<TypeVariable(W)>
 ********************************
 CHOSEN for fixation: TypeVariable(R) --- Readiness(
     	 true ALLOWED
@@ -135,8 +135,8 @@ TypeVariable(T) --- Readiness(
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: Foo<kotlin/Any>
-     >: Bar<TypeVariable(T)>
-TypeVariable(T) --- Readiness(
+     >: Bar<TypeVariable(W)>
+TypeVariable(W) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -163,7 +163,7 @@ TypeVariable(U) --- Readiness(
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      <: TypeVariable(R)
-     <: Foo<TypeVariable(T)>
+     <: Foo<TypeVariable(W)>
      <: I (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
@@ -180,11 +180,11 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
      >: Foo<kotlin/Any>
-     >: Bar<TypeVariable(T)>
+     >: Bar<TypeVariable(W)>
      = Foo<kotlin/Any> (inferred during fixation)
      >: Bar<kotlin/Any> (inferred during fixation)
     FIXED TO: Foo<kotlin/Any>
-TypeVariable(T) --- Readiness(
+TypeVariable(W) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -212,12 +212,12 @@ TypeVariable(U) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
-     <: Foo<TypeVariable(T)>
+     <: Foo<TypeVariable(W)>
      <: I
      <: Foo<out kotlin/Any> (inferred during fixation)
      <: Foo<kotlin/Any> (inferred during fixation)
 ********************************
-CHOSEN for fixation: TypeVariable(T) --- Readiness(
+CHOSEN for fixation: TypeVariable(W) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -245,7 +245,7 @@ TypeVariable(U) --- Readiness(
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
     	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
     )
-     <: Foo<TypeVariable(T)>
+     <: Foo<TypeVariable(W)>
      <: I
      <: Foo<out kotlin/Any>
      <: Foo<kotlin/Any>
@@ -269,7 +269,7 @@ CHOSEN for fixation: TypeVariable(U) --- Readiness(
      = Foo<kotlin/Any> (inferred during fixation)
     FIXED TO: Foo<kotlin/Any>
 ********************************
-CHOSEN for fixation: TypeVariable(S) --- Readiness(
+CHOSEN for fixation: TypeVariable(S1) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -285,7 +285,7 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
      = Foo2<kotlin/Any>
     FIXED TO: Foo2<kotlin/Any>
 ********************************
-CHOSEN for fixation: TypeVariable(S) --- Readiness(
+CHOSEN for fixation: TypeVariable(S2) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
