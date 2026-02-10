@@ -12,16 +12,16 @@
 
 namespace kotlin::hot {
 struct Stats {
-    long start;
-    long end;
-    std::string loadedLibrary;
-    int reboundSymbols;
-    bool wasSuccessful;
+    long start_;
+    long end_;
+    std::string loadedLibrary_;
+    int reboundSymbols_;
+    bool wasSuccessful_;
 
     Stats() = default;
 
     Stats(const long start, const long end, const std::string& loaded_library, const int rebound_symbols, const bool was_successful) :
-        start(start), end(end), loadedLibrary(loaded_library), reboundSymbols(rebound_symbols), wasSuccessful(was_successful) {}
+        start_(start), end_(end), loadedLibrary_(loaded_library), reboundSymbols_(rebound_symbols), wasSuccessful_(was_successful) {}
 
     void build(KRef builder) const noexcept;
 };
@@ -34,10 +34,10 @@ public:
     void RegisterReboundSymbols(int reboundSymbols) noexcept;
     void RegisterSuccessful(bool wasSuccessful) noexcept;
 
-    const Stats& GetCurrent() const noexcept { return kCurrent; }
+    const Stats& GetCurrent() const noexcept { return currentStats_; }
 
 private:
-    Stats kCurrent = {};
+    Stats currentStats_ = {};
 };
 }
 

@@ -143,12 +143,12 @@ private:
 
     int serverFd{0};
     int32_t port{0};
-    bool running{false};
+    std::atomic_bool running{false};
     std::unique_ptr<std::thread> runningThread{nullptr};
 
     static bool readExact(const int socket, void* buffer, const size_t bytes) {
         size_t totalRead = 0;
-        char* buf = static_cast<char*>(buffer);
+        const auto buf = static_cast<char*>(buffer);
 
         while (totalRead < bytes) {
             const ssize_t readBytes = recv(socket, buf + totalRead, bytes - totalRead, 0);

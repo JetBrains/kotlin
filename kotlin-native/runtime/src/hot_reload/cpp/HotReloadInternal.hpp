@@ -13,25 +13,16 @@
 #ifdef KONAN_HOT_RELOAD
 
 #include <memory>
-#include <optional>
 #include <string>
-#include <unordered_map>
-#include <deque>
 #include <vector>
 
 #include "HotReloadServer.hpp"
 #include "HotReloadStats.hpp"
 
-#include "llvm/Support/InitLLVM.h"
-#include "llvm/Support/TargetSelect.h"
 #include "llvm/Support/Error.h"
 #include "llvm/ExecutionEngine/Orc/LLJIT.h"
-#include "llvm/ExecutionEngine/Orc/LinkGraphLinkingLayer.h"
 #include "llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h"
-#include "llvm/ExecutionEngine/Orc/Debugging/DebuggerSupportPlugin.h"
-#include "llvm/ExecutionEngine/Orc/MachOPlatform.h"
-#include "llvm/ExecutionEngine/SectionMemoryManager.h"
-#include "llvm/ExecutionEngine/Orc/EPCDynamicLibrarySearchGenerator.h"
+#include "llvm/ExecutionEngine/Orc/JITLinkRedirectableSymbolManager.h"
 
 typedef int (*KonanStartFunc)(const ObjHeader*);
 
@@ -46,38 +37,9 @@ extern "C" {
 
 namespace kotlin::hot {
 
-/// Result of parsing an object file for hot reload.
-struct ParsedObjectFile {
-    std::unique_ptr<llvm::MemoryBuffer> buffer;
-};
-
 struct KotlinObjectFile {
-    std::unordered_map<std::string, llvm::orc::ExecutorAddr> functions{};
-    std::unordered_map<std::string, llvm::orc::ExecutorAddr> classes{};
-};
-
-/// This acts as a collector for newly loaded objects from the JIT engine (through the custom plugin).
-class ObjectManager {
-public:
-    void RegisterKotlinObjectFile(KotlinObjectFile object) noexcept {
-        _objects.push_back(std::move(object));
-    }
-
-    KotlinObjectFile& GetLatestLoadedObject() noexcept {
-        assert(_objects.size() > 0);
-        return _objects.back();
-    }
-
-    TypeInfo* GetPreviousTypeInfo(const std::string& name) const {
-        assert(_objects.size() > 1);
-        auto& [_, classes] = _objects.at(_objects.size() - 2);
-        if (const auto found = classes.find(name); found != classes.end())
-            return found->second.toPtr<TypeInfo*>();
-        return nullptr;
-    }
-
-private:
-    std::deque<KotlinObjectFile> _objects{};
+    std::vector<std::string> functions{};
+    std::vector<std::string> classes{};
 };
 
 /// Full implementation of HotReload with LLVM dependencies.
@@ -90,7 +52,7 @@ public:
     void Reload(const std::string& objectPath) noexcept;
 
     /// Load bootstrap file and return the Konan_start symbol.
-    KonanStartFunc LoadBoostrapFile(const char* boostrapFilePath) const;
+    KonanStartFunc LoadBootstrapFile(const char* bootstrapFilePath);
 
     StatsCollector& GetStatsCollector() noexcept;
 
@@ -98,31 +60,38 @@ private:
     void StartServer();
     void SetupORC();
 
-    // Object loading helpers
-    static std::optional<ParsedObjectFile> ParseObjectFile(std::string_view objectPath);
-    bool LoadObjectFromPath(std::string_view objectPath) const;
+    KotlinObjectFile ParseKotlinObjectFile(const llvm::MemoryBufferRef& Buf) const;
+    llvm::Error CreateRedirectableStubs(const std::vector<std::string>& functionSymbols);
+    llvm::Error RedirectStubsToImpl(llvm::orc::JITDylib& JD, const std::vector<std::string>& symbolNames) const;
 
-    void AddDebugInfoRegistrationPlugin(llvm::orc::JITDylib& JD) const;
+    static std::unique_ptr<llvm::MemoryBuffer> ReadObjectFileFromPath(std::string_view objectPath);
+    bool LoadObjectAndUpdateFunctionPointers(std::string_view objectPath);
 
 #if KONAN_OBJC_INTEROP
-    // ObjC interop initialization
-    void InitializeObjCUniquePrefixFromJIT() const;
-    void InitializeObjCAdaptersFromJIT() const;
+    void InitializeObjCUniquePrefixFromJIT(llvm::orc::JITDylib& BootstrapJD) const;
+    void InitializeObjCAdaptersFromJIT(llvm::orc::JITDylib& BootstrapJD) const;
 #endif
 
     // Class/instance reloading
-    void ReloadClassesAndInstances(mm::ThreadData& currentThreadData, const std::unordered_map<std::string, llvm::orc::ExecutorAddr>& newClasses) const;
-    void Perform(mm::ThreadData& currentThreadData) noexcept;
-    static ObjHeader* PerformStateTransfer(mm::ThreadData& currentThreadData, ObjHeader* existingObject, const TypeInfo* newTypeInfo);
+    void ReloadClassesAndInstances(mm::ThreadData& currentThreadData) const;
+    void Perform(mm::ThreadData& currentThreadData) const;
     std::vector<ObjHeader*> FindObjectsToReload(const TypeInfo* oldTypeInfo) const;
+
+    static ObjHeader* PerformStateTransfer(mm::ThreadData& currentThreadData, ObjHeader* existingObject, const TypeInfo* newTypeInfo);
     static int UpdateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject);
     static void UpdateShadowStackReferences(const ObjHeader* oldObject, ObjHeader* newObject);
 
-    HotReloadServer _server{};
-    StatsCollector _statsCollector{};
-    ObjectManager _objectManager{};
-    std::unique_ptr<llvm::orc::LLJIT> _JIT{};
-    std::unique_ptr<llvm::orc::IndirectStubsManager> _ISM;
+    llvm::orc::JITDylib* getStubsJD() const;
+
+    HotReloadServer server_{};
+    StatsCollector statsCollector_{};
+
+    std::unique_ptr<llvm::orc::LLJIT> jit_{};
+    std::unique_ptr<llvm::orc::RedirectableSymbolManager> rsm_{};
+    llvm::DenseSet<llvm::orc::SymbolStringPtr> redirectableSymbols_;
+    std::vector<llvm::orc::JITDylib*> jds_;
+
+    std::unique_ptr<KotlinObjectFile> latestLoadedObject_{};
 };
 
 } // namespace kotlin::hot

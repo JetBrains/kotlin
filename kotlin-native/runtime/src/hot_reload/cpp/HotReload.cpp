@@ -1,12 +1,12 @@
 #ifdef KONAN_HOT_RELOAD
 
+#include <unordered_map>
 #include <unordered_set>
 #include <queue>
 #include <iomanip>
 #include <chrono>
 #include <fstream>
 #include <utility>
-#include <dlfcn.h>
 #include <unistd.h>
 
 #include "Memory.h"
@@ -22,11 +22,17 @@
 #include "HotReload.hpp"
 #include "HotReloadInternal.hpp"
 
-#include "llvm/Object/ObjectFile.h"
-
 #include "KString.h"
 #include "HotReloadUtility.hpp"
-#include "HotReloadPlugins.hpp"
+#include "plugins/PluginsCommon.hpp"
+#include "plugins/HotReloadPlugins.hpp"
+
+#include "llvm/Support/InitLLVM.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/ExecutionEngine/Orc/LinkGraphLinkingLayer.h"
+#include "llvm/ExecutionEngine/Orc/Debugging/DebuggerSupportPlugin.h"
+#include "llvm/ExecutionEngine/Orc/MachOPlatform.h"
+#include "llvm/ExecutionEngine/Orc/EPCDynamicLibrarySearchGenerator.h"
 
 #if KONAN_OBJC_INTEROP
 #include "ObjCExportInit.h"
@@ -38,26 +44,20 @@ extern "C" __attribute__((weak)) const char* Kotlin_ObjCInterop_uniquePrefix;
 
 using namespace kotlin;
 
-using hot::MANGLED_KOTLIN_FUN_NAME_PREFIX;
-using hot::MANGLED_KOTLIN_CLASS_NAME_PREFIX;
-
 using hot::HotReloadImpl;
 using hot::KotlinObjectFile;
-using hot::ObjectManager;
 
-using hot::orc::plugins::KotlinObjectOverrider;
-using hot::orc::plugins::KotlinObjectListener;
-using hot::orc::plugins::WeakSymbolFallbackGenerator;
-#if defined(__APPLE__)
-using hot::orc::plugins::ObjCSelectorFixupPlugin;
-#endif
+// region Constants
+static constexpr auto kStubsJdName = "KNHR_Stubs";
+static constexpr auto kBootstrapJdName = "KNHR_Bootstrap";
+static constexpr auto kReloadJdName = "KNHR_Reload$";
 
-static int RELOAD_COUNTER = 0;
-
-static const auto ORC_RUNTIME_PATH = "/opt/homebrew/Cellar/llvm/21.1.0/lib/clang/21/lib/darwin/liborc_rt_osx.a";
+static constexpr auto kKonanStartSymbol = "_Konan_start";
+static constexpr auto kOrcRuntimePathEnv = "KONAN_ORC_RUNTIME_PATH";
+static constexpr auto kDefaultBrewOrcRuntimePath = "/opt/homebrew/opt/llvm/lib/clang/21/lib/darwin/liborc_rt_osx.a";
+// endregion
 
 static ManuallyScoped<HotReloadImpl> globalDataInstance{};
-
 static llvm::ExitOnError ExitOnErr;
 
 /// Forward declarations for GC functions.
@@ -95,7 +95,7 @@ void visitObjectGraph(ObjHeader* startObject, F processingFunction) {
         // const char* originString = originToString(origin);
         if (obj == nullptr || isNullOrMarker(obj)) return;
 
-        // j HRLogDebug("processing object of type %s from %s", obj->type_info()->fqName().c_str(), originString);
+        // HRLogDebug("processing object of type %s from %s", obj->type_info()->fqName().c_str(), originString);
         if (const auto visited = visitedObjects.find(obj); visited != visitedObjects.end()) return;
 
         visitedObjects.insert(obj);
@@ -127,7 +127,7 @@ void visitObjectGraph(ObjHeader* startObject, F processingFunction) {
     }
 }
 
-// region "C" functions
+// region Extern "C" functions
 
 extern "C" {
 void Kotlin_native_internal_HotReload_perform(ObjHeader* obj, const ObjHeader* dylibPathStr) {
@@ -156,73 +156,12 @@ HotReloadImpl& HotReloadImpl::Instance() noexcept {
 }
 
 StatsCollector& HotReloadImpl::GetStatsCollector() noexcept {
-    return _statsCollector;
-}
-
-// MachOPlatform is now set up during LLJIT construction via setPlatformSetUp callback
-
-void HotReloadImpl::SetupORC() {
-    HRLogDebug("Setting up ORC JIT...");
-
-    // Initialize LLVM
-    llvm::InitializeNativeTarget();
-    // Required for debug symbols in JITted code
-    llvm::InitializeNativeTargetAsmPrinter();
-    llvm::InitializeNativeTargetAsmParser();
-    llvm::InitializeNativeTargetDisassembler();
-
-    auto JTMB = ExitOnErr(llvm::orc::JITTargetMachineBuilder::detectHost());
-
-    _JIT = ExitOnErr(
-            llvm::orc::LLJITBuilder()
-                    .setJITTargetMachineBuilder(std::move(JTMB))
-                    .setPlatformSetUp(llvm::orc::ExecutorNativePlatform(ORC_RUNTIME_PATH))
-                    .setObjectLinkingLayerCreator([this](llvm::orc::ExecutionSession& ES) {
-                        auto OLL = std::make_unique<llvm::orc::ObjectLinkingLayer>(
-                                ES, ExitOnErr(llvm::jitlink::InProcessMemoryManager::Create()));
-                        OLL->addPlugin(std::make_unique<KotlinObjectOverrider>());
-                        OLL->addPlugin(std::make_unique<KotlinObjectListener>(_objectManager));
-#if defined(__APPLE__)
-                        // Add ObjC selector fixup plugin. MachOPlatform may not reliably fix up
-                        // selectors in all JIT'd object files, so we do it explicitly during
-                        // the JITLink PostFixup pass before any code runs.
-                        OLL->addPlugin(std::make_unique<ObjCSelectorFixupPlugin>());
-#endif
-                        return OLL;
-                    })
-                    .setNotifyCreatedCallback([](llvm::orc::LLJIT& J) {
-                        auto& OLL = J.getObjLinkingLayer();
-                        auto& MainJD = J.getMainJITDylib();
-
-                        auto ProcessSymbolsGenerator = ExitOnErr(
-                                llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(J.getDataLayout().getGlobalPrefix()));
-
-                        MainJD.addGenerator(std::move(ProcessSymbolsGenerator));
-                        // Add fallback generator for missing symbols (e.g., C++ RTTI, ObjC constants).
-                        // This is added LAST so it only handles symbols that no other generator could resolve.
-                        // These symbols will have null addresses - if called at runtime, they will crash.
-                        MainJD.addGenerator(std::make_unique<WeakSymbolFallbackGenerator>());
-
-                        // Setup GDB/LLDB Debugger Plugin to resolve loaded symbols
-                        if (const auto JOL = llvm::dyn_cast<llvm::orc::ObjectLinkingLayer>(&OLL)) {
-                            auto& ES = J.getExecutionSession();
-                            auto& TT = J.getTargetTriple();
-#if defined(__APPLE__)
-                            JOL->addPlugin(ExitOnErr(llvm::orc::GDBJITDebugInfoRegistrationPlugin::Create(ES, MainJD, TT)));
-#else
-                            HRLogWarning("Debug info registration not yet supported on platforms different than macOS.");
-#endif
-                        }
-                        return llvm::Error::success();
-                    })
-                    .create());
-
-    HRLogDebug("JIT Engine setup completed successfully.");
+    return statsCollector_;
 }
 
 void HotReloadImpl::StartServer() {
-    if (_server.start()) {
-        _server.run([this](const std::vector<std::string>& objectPaths) {
+    if (server_.start()) {
+        server_.run([this](const std::vector<std::string>& objectPaths) {
             HRLogWarning("Note that only a object at time is supported right now");
             HRLogDebug("A new reload request has arrived, containing: ");
             for (auto& obj : objectPaths) HRLogDebug("\t* %s", obj.c_str());
@@ -234,14 +173,115 @@ void HotReloadImpl::StartServer() {
     HRLogError("Failed to start HotReload server, maybe the TCP port `%d` is already busy?", HotReloadServer::GetDefaultPort());
 }
 
-/// Parse an object file. Returns nullopt on failure.
-std::optional<ParsedObjectFile> HotReloadImpl::ParseObjectFile(const std::string_view objectPath) {
+llvm::orc::JITDylib* HotReloadImpl::getStubsJD() const {
+    return jit_->getJITDylibByName(kStubsJdName);
+}
+
+void HotReloadImpl::SetupORC() {
+    HRLogDebug("Setting up ORC JIT...");
+
+    const char* envPath = std::getenv(kOrcRuntimePathEnv);
+    const auto orcRuntimePath = envPath ? std::string{envPath} : std::string{kDefaultBrewOrcRuntimePath};
+
+    // Initialize LLVM
+    llvm::InitializeNativeTarget();
+    // Required for debug symbols in JITted code
+    llvm::InitializeNativeTargetAsmPrinter();
+    llvm::InitializeNativeTargetAsmParser();
+    llvm::InitializeNativeTargetDisassembler();
+
+    auto JTMB = ExitOnErr(llvm::orc::JITTargetMachineBuilder::detectHost());
+
+    jit_ = ExitOnErr(
+            llvm::orc::LLJITBuilder()
+                    .setJITTargetMachineBuilder(std::move(JTMB))
+                    .setPlatformSetUp(llvm::orc::ExecutorNativePlatform(orcRuntimePath))
+                    .setObjectLinkingLayerCreator([](llvm::orc::ExecutionSession& ES) {
+                        auto oll = std::make_unique<llvm::orc::ObjectLinkingLayer>(
+                                ES, ExitOnErr(llvm::jitlink::InProcessMemoryManager::Create()));
+#if defined(__APPLE__)
+                        // Add ObjC selector fixup plugin. MachOPlatform may not reliably fix up
+                        // selectors in all JIT'd object files, so we do it explicitly during
+                        // the JITLink PostFixup pass before any code runs.
+                        oll->addPlugin(std::make_unique<ObjCSelectorFixupPlugin>());
+#endif
+                        // Strip compact unwind sections to avoid 32-bit delta overflow
+                        // when JIT-allocated code is far from the host process image.
+                        oll->addPlugin(std::make_unique<CompactUnwindStripperPlugin>());
+                        return oll;
+                    })
+                    .setNotifyCreatedCallback([this](llvm::orc::LLJIT& J) {
+                        auto& mainJD = J.getMainJITDylib();
+                        auto& es = J.getExecutionSession();
+                        auto& oll = J.getObjLinkingLayer();
+
+                        auto psg = ExitOnErr(
+                                llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(J.getDataLayout().getGlobalPrefix()));
+
+                        mainJD.addGenerator(std::move(psg));
+                        mainJD.addGenerator(std::make_unique<WeakSymbolFallbackGenerator>());
+
+                        auto& stubsJD = ExitOnErr(J.createJITDylib(kStubsJdName));
+
+                        if (const auto jol = llvm::dyn_cast<llvm::orc::ObjectLinkingLayer>(&oll)) {
+                            rsm_ = ExitOnErr(llvm::orc::JITLinkRedirectableSymbolManager::Create(*jol));
+
+                            jol->addPlugin(std::make_unique<KotlinSymbolExternalizerPlugin>(stubsJD));
+
+            // Setup GDB/LLDB Debugger Plugin to resolve loaded symbols
+#if defined(__APPLE__)
+                            auto& targetTriple = J.getTargetTriple();
+                            jol->addPlugin(ExitOnErr(llvm::orc::GDBJITDebugInfoRegistrationPlugin::Create(es, mainJD, targetTriple)));
+#else
+                            HRLogWarning("Debug info registration not yet supported on platforms different than macOS.");
+#endif
+                        }
+                        return llvm::Error::success();
+                    })
+                    .create());
+
+    HRLogDebug("JIT Engine setup completed successfully.");
+}
+
+KotlinObjectFile HotReloadImpl::ParseKotlinObjectFile(const llvm::MemoryBufferRef& Buf) const {
+
+    KotlinObjectFile kotlinObjectFile{};
+    auto graphOrErr = llvm::jitlink::createLinkGraphFromObject(Buf, jit_->getExecutionSession().getSymbolStringPool());
+
+    if (!graphOrErr) {
+        HRLogError("Failed to create link graph from object file: %s", llvm::toString(graphOrErr.takeError()).c_str());
+        return kotlinObjectFile;
+    }
+
+    const auto& linkGraph = *graphOrErr;
+    for (auto& section : linkGraph->sections()) {
+        for (const auto* symbol : section.symbols()) {
+            if (!symbol->hasName()) continue;
+            if (symbol->getScope() == llvm::jitlink::Scope::Local) continue;
+
+            const auto symbolName = *symbol->getName();
+
+            // TODO: those symbols should not be present in object file at all
+            if (symbolName.starts_with("_kfun:platform.")) continue;
+
+            if (symbolName.starts_with(kKotlinFunPrefix)) {
+                kotlinObjectFile.functions.push_back(symbolName.str());
+            } else if (symbolName.starts_with(kKotlinClassPrefix)) {
+                kotlinObjectFile.classes.push_back(symbolName.str());
+            }
+        }
+    }
+
+    return kotlinObjectFile;
+}
+
+std::unique_ptr<llvm::MemoryBuffer> HotReloadImpl::ReadObjectFileFromPath(const std::string_view objectPath) {
     auto objBufferOrError = llvm::MemoryBuffer::getFile(objectPath);
     if (!objBufferOrError) {
         HRLogError("Failed to read object file %s: %s", std::string(objectPath).c_str(), objBufferOrError.getError().message().c_str());
-        return std::nullopt;
+        return nullptr;
     }
-    return ParsedObjectFile{std::move(*objBufferOrError)};
+    return std::move(*objBufferOrError);
 }
 
 #if KONAN_OBJC_INTEROP
@@ -250,16 +290,17 @@ std::optional<ParsedObjectFile> HotReloadImpl::ParseObjectFile(const std::string
 /// This must happen before any ObjC class creation (CreateKotlinObjCClass).
 /// The compiler generates Kotlin_ObjCInterop_uniquePrefix in bootstrap.o,
 /// but the runtime has a weak symbol initialized to nullptr.
-void HotReloadImpl::InitializeObjCUniquePrefixFromJIT() const {
-    auto& MainJD = _JIT->getMainJITDylib();
-    auto& ES = _JIT->getExecutionSession();
+void HotReloadImpl::InitializeObjCUniquePrefixFromJIT(llvm::orc::JITDylib& BootstrapJD) const {
+    auto& ES = jit_->getExecutionSession();
 
-    HRLogDebug("Looking up ObjC unique prefix symbol from JIT...");
+    HRLogDebug("Looking up ObjC unique prefix symbol from JIT (BootstrapJD)...");
 
     // Symbol name with underscore prefix for macOS
     const auto prefixName = ES.intern("_Kotlin_ObjCInterop_uniquePrefix");
 
-    auto prefixResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&MainJD), prefixName);
+    // Look up from BootstrapJD where bootstrap.o defines the real value.
+    // MainJD's DynamicLibrarySearchGenerator would find the host's weak null symbol instead.
+    auto prefixResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&BootstrapJD), prefixName);
 
     if (!prefixResult) {
         llvm::consumeError(prefixResult.takeError());
@@ -290,11 +331,10 @@ void HotReloadImpl::InitializeObjCUniquePrefixFromJIT() const {
 /// - The actual adapter arrays are in bootstrap.o (JIT-loaded code)
 /// - DynamicLibrarySearchGenerator finds the host's weak default first
 /// So we directly look for the adapter arrays themselves.
-void HotReloadImpl::InitializeObjCAdaptersFromJIT() const {
-    auto& MainJD = _JIT->getMainJITDylib();
-    auto& ES = _JIT->getExecutionSession();
+void HotReloadImpl::InitializeObjCAdaptersFromJIT(llvm::orc::JITDylib& BootstrapJD) const {
+    auto& ES = jit_->getExecutionSession();
 
-    HRLogDebug("Looking up ObjC type adapter symbols from JIT...");
+    HRLogDebug("Looking up ObjC type adapter symbols from JIT (BootstrapJD)...");
 
     // Symbol names for ObjC type adapters (with underscore prefix for macOS)
     const auto classAdaptersName = ES.intern("_Kotlin_ObjCExport_sortedClassAdapters");
@@ -302,11 +342,14 @@ void HotReloadImpl::InitializeObjCAdaptersFromJIT() const {
     const auto protocolAdaptersName = ES.intern("_Kotlin_ObjCExport_sortedProtocolAdapters");
     const auto protocolAdaptersNumName = ES.intern("_Kotlin_ObjCExport_sortedProtocolAdaptersNum");
 
+    // Look up from BootstrapJD where bootstrap.o defines the real adapter arrays.
+    // MainJD's DynamicLibrarySearchGenerator would find the host's weak null symbols instead.
+
     // Look up class adapters
     const ObjCTypeAdapter** classAdapters = nullptr;
     int classAdaptersNum = 0;
 
-    auto classAdaptersResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&MainJD), classAdaptersName);
+    auto classAdaptersResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&BootstrapJD), classAdaptersName);
     if (!classAdaptersResult) {
         llvm::consumeError(classAdaptersResult.takeError());
         HRLogDebug("_Kotlin_ObjCExport_sortedClassAdapters not found");
@@ -318,7 +361,7 @@ void HotReloadImpl::InitializeObjCAdaptersFromJIT() const {
                 (unsigned long long)classAdapters);
     }
 
-    auto classAdaptersNumResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&MainJD), classAdaptersNumName);
+    auto classAdaptersNumResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&BootstrapJD), classAdaptersNumName);
     if (!classAdaptersNumResult) {
         llvm::consumeError(classAdaptersNumResult.takeError());
         HRLogDebug("_Kotlin_ObjCExport_sortedClassAdaptersNum not found");
@@ -331,7 +374,7 @@ void HotReloadImpl::InitializeObjCAdaptersFromJIT() const {
     const ObjCTypeAdapter** protocolAdapters = nullptr;
     int protocolAdaptersNum = 0;
 
-    auto protocolAdaptersResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&MainJD), protocolAdaptersName);
+    auto protocolAdaptersResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&BootstrapJD), protocolAdaptersName);
     if (!protocolAdaptersResult) {
         llvm::consumeError(protocolAdaptersResult.takeError());
         HRLogDebug("_Kotlin_ObjCExport_sortedProtocolAdapters not found");
@@ -342,7 +385,7 @@ void HotReloadImpl::InitializeObjCAdaptersFromJIT() const {
                 (unsigned long long)protocolAdapters);
     }
 
-    auto protocolAdaptersNumResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&MainJD), protocolAdaptersNumName);
+    auto protocolAdaptersNumResult = ES.lookup(llvm::orc::makeJITDylibSearchOrder(&BootstrapJD), protocolAdaptersNumName);
     if (!protocolAdaptersNumResult) {
         llvm::consumeError(protocolAdaptersNumResult.takeError());
         HRLogDebug("_Kotlin_ObjCExport_sortedProtocolAdaptersNum not found");
@@ -363,101 +406,164 @@ void HotReloadImpl::InitializeObjCAdaptersFromJIT() const {
 }
 #endif
 
-KonanStartFunc HotReloadImpl::LoadBoostrapFile(const char* boostrapFilePath) const {
-    HRLogDebug("Loading bootstrap file: %s", boostrapFilePath);
+llvm::Error HotReloadImpl::CreateRedirectableStubs(const std::vector<std::string>& functionSymbols) {
+    auto& es = jit_->getExecutionSession();
+    const auto stubsJD = getStubsJD();
 
-    const auto parsed = ParseObjectFile(boostrapFilePath);
-    if (!parsed) {
-        HRLogError("Bootstrap file failed to load!");
+    llvm::orc::SymbolMap initialDests{};
+
+    for (auto& symbolName : functionSymbols) {
+        auto Interned = es.intern(symbolName);
+        if (redirectableSymbols_.contains(Interned)) continue;
+
+        // Let's create a new stub symbol with the same name as the original one
+        initialDests[Interned] =
+                llvm::orc::ExecutorSymbolDef(llvm::orc::ExecutorAddr(), llvm::JITSymbolFlags::Callable | llvm::JITSymbolFlags::Exported);
+        redirectableSymbols_.insert(Interned);
+    }
+
+    if (initialDests.empty()) return llvm::Error::success();
+
+    return rsm_->createRedirectableSymbols(stubsJD->getDefaultResourceTracker(), std::move(initialDests));
+}
+
+llvm::Error HotReloadImpl::RedirectStubsToImpl(llvm::orc::JITDylib& JD, const std::vector<std::string>& symbolNames) const {
+    const auto stubsJD = getStubsJD();
+    auto& es = jit_->getExecutionSession();
+
+    // Force materialization of the impl MU by looking up original names.
+    // This triggers the KotlinSymbolExternalizer plugin, which creates $knhr impl
+    // symbols via MR.defineMaterializing() and replaces originals with reexports
+    // from StubsJD (also materializing the stubs, creating $__stub_ptr symbols).
+    {
+        llvm::orc::SymbolLookupSet triggerSymbols;
+        for (auto& SymName : symbolNames) {
+            triggerSymbols.add(es.intern(SymName));
+        }
+        auto TriggerResult = es.lookup(llvm::orc::makeJITDylibSearchOrder({&JD}), std::move(triggerSymbols));
+        if (!TriggerResult) {
+            return TriggerResult.takeError();
+        }
+    }
+
+    // Now look up $knhr impl addresses (created by the plugin during previous materialization)
+    llvm::orc::SymbolMap dests{};
+    for (auto& symName : symbolNames) {
+        auto implName = symName + kImplSymbolSuffix;
+        auto symOrErr = es.lookup(llvm::orc::makeJITDylibSearchOrder({&JD}), es.intern(implName));
+        if (!symOrErr) {
+            HRLogWarning("Failed to lookup impl symbol %s", implName.c_str());
+            llvm::consumeError(symOrErr.takeError());
+            continue;
+        }
+        dests[es.intern(symName)] = symOrErr.get();
+    }
+
+    if (dests.empty()) return llvm::Error::success();
+
+    return rsm_->redirect(*stubsJD, dests);
+}
+
+KonanStartFunc HotReloadImpl::LoadBootstrapFile(const char* bootstrapFilePath) {
+    HRLogDebug("Loading bootstrap file: %s", bootstrapFilePath);
+
+    const auto objMemoryBuff = ReadObjectFileFromPath(bootstrapFilePath);
+    if (!objMemoryBuff) {
+        HRLogError("Failed to parse bootstrap object file, the application cannot be started.");
         return nullptr;
     }
 
-    // Add object file to main JITDylib
-    ExitOnErr(
-            _JIT->addObjectFile(llvm::MemoryBuffer::getMemBufferCopy(parsed->buffer->getBuffer(), parsed->buffer->getBufferIdentifier())));
+    latestLoadedObject_ = std::make_unique<KotlinObjectFile>(ParseKotlinObjectFile(*objMemoryBuff));
+    HRLogDebug("Scanned %zu Kotlin function symbols from bootstrap object", latestLoadedObject_->functions.size());
+    HRLogDebug("Scanned %zu Kotlin class symbols from bootstrap object", latestLoadedObject_->classes.size());
 
-    HRLogDebug("Bootstrap file added to JIT.");
+    // Create redirectable stubs in StubsJD (addr=0, will be redirected after materialization)
+    ExitOnErr(CreateRedirectableStubs(latestLoadedObject_->functions));
+
+    auto& es = jit_->getExecutionSession();
+    auto& mainJD = jit_->getMainJITDylib();
+
+    auto& bootstrapJD = ExitOnErr(jit_->createJITDylib(kBootstrapJdName));
+    jds_.push_back(&bootstrapJD);
+
+    bootstrapJD.addToLinkOrder(*getStubsJD());
+    bootstrapJD.addToLinkOrder(mainJD);
+
+    ExitOnErr(jit_->addObjectFile(bootstrapJD, llvm::MemoryBuffer::getMemBufferCopy(objMemoryBuff->getBuffer(), objMemoryBuff->getBufferIdentifier())));
+
+    ExitOnErr(RedirectStubsToImpl(bootstrapJD, latestLoadedObject_->functions));
+
+    // Trigger materialization via Konan_start lookup
+    const auto KonanStartSymbol = ExitOnErr(es.lookup(llvm::orc::makeJITDylibSearchOrder(&bootstrapJD), es.intern(kKonanStartSymbol)));
+
+    // Redirect stubs to point to bootstrap implementations
+    HRLogDebug("Redirected %zu stubs to bootstrap implementations", latestLoadedObject_->functions.size());
 
 #if KONAN_OBJC_INTEROP
     // Initialize ObjC unique prefix from JIT'd code.
     // This must happen before any ObjC class creation (CreateKotlinObjCClass).
-    InitializeObjCUniquePrefixFromJIT();
+    // Must look up from BootstrapJD — MainJD's DLG would find host's weak null symbols.
+    InitializeObjCUniquePrefixFromJIT(bootstrapJD);
 
     // Initialize ObjC type adapters from JIT'd symbols.
     // This must happen after the bootstrap is loaded but before user code runs,
     // because ObjC interop calls need the type adapters to be set up.
-    InitializeObjCAdaptersFromJIT();
+    InitializeObjCAdaptersFromJIT(bootstrapJD);
 #endif
 
-    // Look up Konan_start entry point
-    HRLogDebug("Looking up `Konan_start` symbol...");
-
-    const auto konanStartSymbol = ExitOnErr(_JIT->lookup("Konan_start"));
-    return konanStartSymbol.toPtr<KonanStartFunc>();
+    return KonanStartSymbol.toPtr<KonanStartFunc>();
 }
 
-bool HotReloadImpl::LoadObjectFromPath(std::string_view objectPath) const {
+bool HotReloadImpl::LoadObjectAndUpdateFunctionPointers(const std::string_view objectPath) {
     HRLogDebug("Loading object file for reload: %s", std::string(objectPath).c_str());
 
-    const auto parsed = ParseObjectFile(objectPath);
-    if (!parsed) return false;
+    const auto objMemoryBuff = ReadObjectFileFromPath(objectPath);
+    if (!objMemoryBuff) return false;
 
-    auto& ES = _JIT->getExecutionSession();
+    latestLoadedObject_ = std::make_unique<KotlinObjectFile>(ParseKotlinObjectFile(*objMemoryBuff));
+    HRLogDebug("Scanned %zu Kotlin function symbols from reload object", latestLoadedObject_->functions.size());
 
-    const auto reloadDylibName = "JDknhr_" + std::to_string(++RELOAD_COUNTER);
-    auto& ReloadJD = ES.createBareJITDylib(reloadDylibName);
-    HRLogDebug("Created new JITDylib: %s", reloadDylibName.c_str());
-
-    // Link reload dylib to main dylib for runtime symbol access
-    ReloadJD.addToLinkOrder(_JIT->getMainJITDylib());
-
-    // Add DynamicLibrarySearchGenerator directly to ReloadJD for resolving system symbols.
-    // While ReloadJD links to MainJD (which has its own DLG), the link order doesn't always
-    // propagate generator lookups correctly during __mod_init_func processing.
-    // Adding a DLG directly ensures ReloadJD can resolve symbols like _atexit.
-    auto ReloadDLG = llvm::orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(
-            _JIT->getDataLayout().getGlobalPrefix(), [](const llvm::orc::SymbolStringPtr& Name) {
-                const auto& nameStr = *Name;
-                if (nameStr.starts_with("_Kotlin_") || nameStr.starts_with("_kfun:") || nameStr.starts_with("_kclass:") ||
-                    nameStr.starts_with("_ktypew:") || nameStr.starts_with("_kniBridge") || nameStr == "___dso_handle") {
-                    return false;
-                }
-                return true;
-            });
-
-    if (ReloadDLG) {
-        ReloadJD.addGenerator(std::move(*ReloadDLG));
-        HRLogDebug("Added DynamicLibrarySearchGenerator to %s", reloadDylibName.c_str());
-    } else {
-        HRLogWarning(
-                "Failed to create DynamicLibrarySearchGenerator for %s: %s", reloadDylibName.c_str(),
-                llvm::toString(ReloadDLG.takeError()).c_str());
-    }
-
-    // Set up reload dylib with MachOPlatform so it can resolve _atexit and other
-    // platform symbols needed for __mod_init_func processing
-    if (auto* Platform = ES.getPlatform()) {
-        if (auto Err = Platform->setupJITDylib(ReloadJD)) {
-            HRLogWarning("setupJITDylib(ReloadJD) failed: %s", llvm::toString(std::move(Err)).c_str());
-        }
-    }
-
-    // Add object file to the reload JITDylib
-    if (auto err = _JIT->addObjectFile(
-                ReloadJD, llvm::MemoryBuffer::getMemBufferCopy(parsed->buffer->getBuffer(), parsed->buffer->getBufferIdentifier()))) {
-        HRLogError("Failed to add object file to JIT engine: %s", llvm::toString(std::move(err)).c_str());
+    // Create stubs for any NEW functions not seen before
+    if (auto err = CreateRedirectableStubs(latestLoadedObject_->functions)) {
+        HRLogError("Failed to create redirectable stubs: %s", llvm::toString(std::move(err)).c_str());
         return false;
     }
+
+    const auto reloadIter = jds_.size() - 1;
+    const auto reloadDylibName = kReloadJdName + std::to_string(reloadIter);
+    auto reloadJDOrErr = jit_->createJITDylib(reloadDylibName);
+    if (!reloadJDOrErr) {
+        HRLogError("Failed to create JITDylib for reload object: %s", objectPath.data());
+        return false;
+    }
+
+    auto& reloadedJD = *reloadJDOrErr;
+    for (auto it = jds_.rbegin(); it != jds_.rend(); ++it) {
+        reloadedJD.addToLinkOrder(**it);
+    }
+
+    jds_.push_back(&reloadedJD);
+
+    // ReloadJD links to StubsJD so _kfun: refs resolve via stubs
+    reloadedJD.addToLinkOrder(*getStubsJD());
+    // Link reload dylib to main dylib for runtime symbol access
+    reloadedJD.addToLinkOrder(jit_->getMainJITDylib());
+
+    // Add object file — _kfun:foo will be renamed to _kfun:foo$impl by KotlinSymbolExternalizer
+    if (auto err = jit_->addObjectFile(reloadedJD, llvm::MemoryBuffer::getMemBufferCopy(objMemoryBuff->getBuffer(), objMemoryBuff->getBufferIdentifier()))) {
+        HRLogError("Failed to add object file: %s", llvm::toString(std::move(err)).c_str());
+        return false;
+    }
+
     HRLogDebug("Object file added to JIT (dylib: %s).", reloadDylibName.c_str());
 
-    // Trigger materialization by looking up the sentinel symbol.
-    // This blocks until the object is fully linked and all plugins have run.
-    auto readySymbol = ES.lookup({&ReloadJD}, ES.intern("_knhr_ready"));
-    if (!readySymbol) {
-        HRLogError("Failed to materialize reload object: %s", llvm::toString(readySymbol.takeError()).c_str());
+    // Redirect stubs to point to new implementations
+    if (auto err = RedirectStubsToImpl(reloadedJD, latestLoadedObject_->functions)) {
+        HRLogError("Failed to redirect stubs: %s", llvm::toString(std::move(err)).c_str());
         return false;
     }
-    HRLogDebug("Object file materialized successfully (dylib: %s).", reloadDylibName.c_str());
+
+    HRLogDebug("Redirected %zu stubs to reload implementations", latestLoadedObject_->functions.size());
 
     return true;
 }
@@ -476,13 +582,13 @@ void HotReloadImpl::Reload(const std::string& objectPath) noexcept {
 
     CallsCheckerIgnoreGuard allowWait;
 
-    _statsCollector.RegisterStart(static_cast<int64_t>(utility::getCurrentEpoch()));
-    _statsCollector.RegisterLoadedObject(objectPath);
+    statsCollector_.RegisterStart(static_cast<int64_t>(utility::getCurrentEpoch()));
+    statsCollector_.RegisterLoadedObject(objectPath);
 
     /// 1. Load new object in JIT engine
-    if (const auto objFile = LoadObjectFromPath(objectPath); !objFile) {
-        _statsCollector.RegisterEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
-        _statsCollector.RegisterSuccessful(false);
+    if (const auto objFile = LoadObjectAndUpdateFunctionPointers(objectPath); !objFile) {
+        statsCollector_.RegisterEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
+        statsCollector_.RegisterSuccessful(false);
         mm::ResumeThreads();
         return;
     }
@@ -491,44 +597,67 @@ void HotReloadImpl::Reload(const std::string& objectPath) noexcept {
         mm::WaitForThreadsSuspension();
         Perform(*currentThreadData);
         HRLogInfo("End: Hot-Reload");
-        _statsCollector.RegisterEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
-        _statsCollector.RegisterSuccessful(true);
+        statsCollector_.RegisterEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
+        statsCollector_.RegisterSuccessful(true);
         HRLogDebug("Resuming threads...");
         mm::ResumeThreads();
         HRLogDebug("Threads resumed successfully. Invoking success handlers (if any)...");
         Kotlin_native_internal_HotReload_invokeSuccessCallback();
     } catch (const std::exception& e) {
         HRLogError("Hot-reload failed with exception: %s", e.what());
-        _statsCollector.RegisterEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
-        _statsCollector.RegisterSuccessful(false);
+        statsCollector_.RegisterEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
+        statsCollector_.RegisterSuccessful(false);
         mm::ResumeThreads();
     }
 }
 
-void HotReloadImpl::ReloadClassesAndInstances(
-        mm::ThreadData& currentThreadData, const std::unordered_map<std::string, llvm::orc::ExecutorAddr>& newClasses) const {
-    for (const auto& [typeInfoName, typeInfoAddress] : newClasses) {
-        const TypeInfo* oldTypeInfo = _objectManager.GetPreviousTypeInfo(typeInfoName);
-        if (oldTypeInfo == nullptr) {
-            HRLogWarning("Cannot find the old TypeInfo for class: %s", typeInfoName.c_str());
+void HotReloadImpl::ReloadClassesAndInstances(mm::ThreadData& currentThreadData) const {
+    std::unordered_map<std::string, TypeInfo*> newClasses{};
+
+    auto& es = jit_->getExecutionSession();
+    auto* latestJD = jds_.back();
+
+    const std::vector previousJDs(jds_.rbegin() + 1, jds_.rend());
+    const auto previousSearchOrder = llvm::orc::makeJITDylibSearchOrder(previousJDs);
+
+    // Look up new class TypeInfos from the latest reload JD
+    for (auto& className : latestLoadedObject_->classes) {
+        auto typeInfoOrErr = es.lookup(llvm::orc::makeJITDylibSearchOrder(latestJD), es.intern(className));
+        if (!typeInfoOrErr) {
+            HRLogWarning("Cannot find new TypeInfo for class: %s", className.c_str());
+            llvm::consumeError(typeInfoOrErr.takeError());
+            continue;
+        }
+        newClasses[className] = typeInfoOrErr->getAddress().toPtr<TypeInfo*>();
+    }
+
+    for (const auto& [typeInfoName, newTypeInfo] : newClasses) {
+
+        // Look up old TypeInfo from previous JDs (most recent first)
+        auto oldTypeInfoOrErr = es.lookup(previousSearchOrder, es.intern(typeInfoName));
+        if (!oldTypeInfoOrErr) {
+            HRLogWarning("Cannot find old TypeInfo for class: %s", typeInfoName.c_str());
+            llvm::consumeError(oldTypeInfoOrErr.takeError());
             continue;
         }
 
-        const TypeInfo* newTypeInfo = typeInfoAddress.toPtr<TypeInfo*>();
+        const auto oldTypeInfo = oldTypeInfoOrErr->getAddress().toPtr<const TypeInfo*>();
 
         auto objectsToReload = FindObjectsToReload(oldTypeInfo);
-        /// 2. For each new redefined TypeInfo, reload the instances
+
+        // For each new redefined TypeInfo, reload the instances
         for (const auto& obj : objectsToReload) {
             const auto newInstance = PerformStateTransfer(currentThreadData, obj, newTypeInfo);
-            UpdateShadowStackReferences(obj, newInstance);
-            UpdateHeapReferences(obj, newInstance);
+            if (newInstance != nullptr) {
+                UpdateShadowStackReferences(obj, newInstance);
+                UpdateHeapReferences(obj, newInstance);
+            }
         }
     }
 }
 
-void HotReloadImpl::Perform(mm::ThreadData& currentThreadData) noexcept {
-    auto& [newFunctions, newClasses] = _objectManager.GetLatestLoadedObject();
-    ReloadClassesAndInstances(currentThreadData, newClasses);
+void HotReloadImpl::Perform(mm::ThreadData& currentThreadData) const {
+    ReloadClassesAndInstances(currentThreadData);
 }
 
 ObjHeader* HotReloadImpl::PerformStateTransfer(mm::ThreadData& currentThreadData, ObjHeader* oldObject, const TypeInfo* newTypeInfo) {
@@ -575,7 +704,7 @@ ObjHeader* HotReloadImpl::PerformStateTransfer(mm::ThreadData& currentThreadData
     for (int32_t i = 0; i < newFieldsCount; i++) {
         const char* newFieldName = newFieldNames[i];
         const uint8_t newFieldRuntimeType = newFieldRuntimeTypes[i];
-        const uint8_t newFieldOffset = newFieldOffsets[i];
+        const int32_t    newFieldOffset = newFieldOffsets[i];
 
         if (const auto foundField = oldObjectFields.find(newFieldName); foundField == oldObjectFields.end()) {
             HRLogDebug("Field '%s::%s' is new, it won't be copied", newFieldName, newClassName.c_str());

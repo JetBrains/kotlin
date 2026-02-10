@@ -41,7 +41,7 @@ extern "C" KInt Konan_run_start(const int argc, const char** argv) {
 
     // 1) Find bootstrap file, fail if this wasn't found.
     // 2) From the HotReload module, load the bootstrap file, and return the konan_start symbol
-    const auto KonanStart = HotReloadImpl::Instance().LoadBoostrapFile(EXPECTED_BOOTSTRAP_FILE_PATH);
+    const auto KonanStart = HotReloadImpl::Instance().LoadBootstrapFile(EXPECTED_BOOTSTRAP_FILE_PATH);
 
     // 3) Run the symbol if not null
     if (KonanStart != nullptr) {

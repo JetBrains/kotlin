@@ -54,33 +54,33 @@ namespace kotlin::hot {
 void Stats::build(KRef builder) const noexcept {
     ObjHolder loadedLibraryHolder;
 
-    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStartEpoch(builder, start);
-    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setEndEpoch(builder, end);
-    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setReboundSymbols(builder, reboundSymbols);
-    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setSuccessful(builder, wasSuccessful);
+    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStartEpoch(builder, start_);
+    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setEndEpoch(builder, end_);
+    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setReboundSymbols(builder, reboundSymbols_);
+    Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setSuccessful(builder, wasSuccessful_);
 
-    CreateStringFromCString(loadedLibrary.c_str(), loadedLibraryHolder.slot());
+    CreateStringFromCString(loadedLibrary_.c_str(), loadedLibraryHolder.slot());
     Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setLoadedLibrary(builder, loadedLibraryHolder.obj());
 }
 
 void StatsCollector::RegisterStart(long start) noexcept {
-    kCurrent.start = start;
+    currentStats_.start_ = start;
 }
 
 void StatsCollector::RegisterEnd(long end) noexcept {
-    kCurrent.end = end;
+    currentStats_.end_ = end;
 }
 
 void StatsCollector::RegisterLoadedObject(const std::string& loadedLibrary) noexcept {
-    kCurrent.loadedLibrary = loadedLibrary;
+    currentStats_.loadedLibrary_ = loadedLibrary;
 }
 
 void StatsCollector::RegisterReboundSymbols(int reboundSymbols) noexcept {
-    kCurrent.reboundSymbols = reboundSymbols;
+    currentStats_.reboundSymbols_ = reboundSymbols;
 }
 
 void StatsCollector::RegisterSuccessful(bool wasSuccessful) noexcept {
-    kCurrent.wasSuccessful = wasSuccessful;
+    currentStats_.wasSuccessful_ = wasSuccessful;
 }
 } // namespace kotlin::hot
 
