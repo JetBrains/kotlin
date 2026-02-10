@@ -19,7 +19,7 @@ node {
     version.set(nodejsVersion)
     nodeProjectDir.set(layout.buildDirectory.dir("node"))
 }
-
+// test
 repositories {
     ivy {
         url = URI("https://archive.mozilla.org/pub/firefox/releases/")
