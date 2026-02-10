@@ -199,6 +199,8 @@ public actual fun sqrt(x: Double): Double = kotlin.wasm.internal.wasm_f64_sqrt(x
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Doubles.exp
  */
 @SinceKotlin("1.2")
 public actual fun exp(x: Double): Double = kotlin.math.fdlibm.__ieee754_exp(x)
@@ -214,6 +216,8 @@ public actual fun exp(x: Double): Double = kotlin.math.fdlibm.__ieee754_exp(x)
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ * @see [ln1p] function.
+ * @sample samples.math.MathSamples.Doubles.expm1
  */
 @SinceKotlin("1.2")
 public actual fun expm1(x: Double): Double = kotlin.math.fdlibm.expm1(x)
@@ -423,6 +427,8 @@ public actual fun cbrt(x: Double): Double = kotlin.math.fdlibm.__ieee754_cbrt(x)
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Doubles.powDouble
  */
 @SinceKotlin("1.2")
 public actual fun Double.pow(x: Double): Double = kotlin.math.fdlibm.__ieee754_pow(this, x)
@@ -431,6 +437,8 @@ public actual fun Double.pow(x: Double): Double = kotlin.math.fdlibm.__ieee754_p
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
+ *
+ * @sample samples.math.MathSamples.Doubles.powInt
  */
 @SinceKotlin("1.2")
 public actual fun Double.pow(n: Int): Double = kotlin.math.fdlibm.__ieee754_pow(this, n.toDouble())
@@ -764,6 +772,8 @@ public actual fun sqrt(x: Float): Float = kotlin.wasm.internal.wasm_f32_sqrt(x)
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Floats.exp
  */
 @SinceKotlin("1.2")
 public actual fun exp(x: Float): Float = kotlin.math.fdlibm.__ieee754_exp(x.toDouble()).toFloat()
@@ -779,6 +789,8 @@ public actual fun exp(x: Float): Float = kotlin.math.fdlibm.__ieee754_exp(x.toDo
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ * @see [ln1p] function.
+ * @sample samples.math.MathSamples.Floats.expm1
  */
 @SinceKotlin("1.2")
 public actual fun expm1(x: Float): Float = kotlin.math.fdlibm.expm1(x.toDouble()).toFloat()
@@ -988,6 +1000,8 @@ public actual fun cbrt(x: Float): Float = kotlin.math.fdlibm.__ieee754_cbrt(x.to
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Floats.powFloat
  */
 @SinceKotlin("1.2")
 public actual fun Float.pow(x: Float): Float = kotlin.math.fdlibm.__ieee754_pow(this.toDouble(), x.toDouble()).toFloat()
@@ -996,6 +1010,8 @@ public actual fun Float.pow(x: Float): Float = kotlin.math.fdlibm.__ieee754_pow(
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
+ *
+ * @sample samples.math.MathSamples.Floats.powInt
  */
 @SinceKotlin("1.2")
 public actual fun Float.pow(n: Int): Float = kotlin.math.fdlibm.__ieee754_pow(this.toDouble(), n.toDouble()).toFloat()

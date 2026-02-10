@@ -274,6 +274,69 @@ class MathSamples {
         }
 
         @Sample
+        fun powDouble() {
+            assertPrints(2.0.pow(2.0), "4.0")
+            assertPrints(3.0.pow(1.0), "3.0")
+            assertPrints(4.0.pow(0.0), "1.0")
+            assertPrints(2.0.pow(-2.0), "0.25")
+            assertPrints(4.0.pow(0.5), "2.0")
+            assertPrints((-2.0).pow(2.0), "4.0")
+
+            // special cases
+            assertPrints(Double.NaN.pow(42.0), "NaN")
+            assertPrints(Double.NaN.pow(0.0), "1.0")
+            assertPrints(3.0.pow(Double.NaN), "NaN")
+            assertPrints((-2.0).pow(0.75), "NaN")
+            assertPrints(1.0.pow(Double.POSITIVE_INFINITY), "NaN")
+            assertPrints(1.0.pow(Double.NEGATIVE_INFINITY), "NaN")
+            assertPrints(2.0.pow(Double.POSITIVE_INFINITY), "Infinity")
+            assertPrints(2.0.pow(Double.NEGATIVE_INFINITY), "0.0")
+        }
+
+        @Sample
+        fun powInt() {
+            assertPrints(2.0.pow(2), "4.0")
+            assertPrints(3.0.pow(1), "3.0")
+            assertPrints(4.0.pow(0), "1.0")
+            assertPrints(2.0.pow(-2), "0.25")
+            assertPrints((-2.0).pow(2), "4.0")
+
+            // special cases
+            assertPrints(Double.NaN.pow(42), "NaN")
+            assertPrints(Double.NaN.pow(0), "1.0")
+        }
+
+        @Sample
+        fun exp() {
+            fun Double.firstFiveDigits(): String = toString().substring(0, 7)
+
+            assertPrints(exp(1.0).firstFiveDigits(), "2.71828")
+            assertPrints(exp(2.0).firstFiveDigits(), "7.38905")
+            assertPrints(exp(-1.0).firstFiveDigits(), "0.36787")
+
+            // special cases
+            assertPrints(exp(Double.NaN), "NaN")
+            assertPrints(exp(Double.POSITIVE_INFINITY), "Infinity")
+            assertPrints(exp(Double.NEGATIVE_INFINITY), "0.0")
+        }
+
+        @Sample
+        fun expm1() {
+            fun Double.firstFiveDigits(): String = toString().substring(0, 7)
+
+            assertPrints(expm1(1.0).firstFiveDigits(), "1.71828")
+            // While it does not really matter for relatively large x values (like 1.0),
+            // the difference is getting more pronounced when x is getting closer to 0.0
+            assertPrints(exp(1e-17) - 1.0, "0.0")
+            assertPrints(expm1(1e-17), 1e-17.toString())
+
+            // special cases
+            assertPrints(expm1(Double.NaN), "NaN")
+            assertPrints(expm1(Double.POSITIVE_INFINITY), "Infinity")
+            assertPrints(expm1(Double.NEGATIVE_INFINITY), "-1.0")
+        }
+
+        @Sample
         fun sin() {
             val epsilon = 1e-10
 
@@ -640,6 +703,69 @@ class MathSamples {
             assertPrints(hypot(1.0f, Float.NaN), "NaN")
             assertPrints(hypot(Float.POSITIVE_INFINITY, 2.0f), "Infinity")
             assertPrints(hypot(1.0f, Float.NEGATIVE_INFINITY), "Infinity")
+        }
+
+        @Sample
+        fun powFloat() {
+            assertPrints(2.0f.pow(2.0f), "4.0")
+            assertPrints(3.0f.pow(1.0f), "3.0")
+            assertPrints(4.0f.pow(0.0f), "1.0")
+            assertPrints(2.0f.pow(-2.0f), "0.25")
+            assertPrints(4.0f.pow(0.5f), "2.0")
+            assertPrints((-2.0f).pow(2.0f), "4.0")
+
+            // special cases
+            assertPrints(Float.NaN.pow(42.0f), "NaN")
+            assertPrints(Float.NaN.pow(0.0f), "1.0")
+            assertPrints(3.0f.pow(Float.NaN), "NaN")
+            assertPrints((-2.0f).pow(0.75f), "NaN")
+            assertPrints(1.0f.pow(Float.POSITIVE_INFINITY), "NaN")
+            assertPrints(1.0f.pow(Float.NEGATIVE_INFINITY), "NaN")
+            assertPrints(2.0f.pow(Float.POSITIVE_INFINITY), "Infinity")
+            assertPrints(2.0f.pow(Float.NEGATIVE_INFINITY), "0.0")
+        }
+
+        @Sample
+        fun powInt() {
+            assertPrints(2.0f.pow(2), "4.0")
+            assertPrints(3.0f.pow(1), "3.0")
+            assertPrints(4.0f.pow(0), "1.0")
+            assertPrints(2.0f.pow(-2), "0.25")
+            assertPrints((-2.0f).pow(2), "4.0")
+
+            // special cases
+            assertPrints(Float.NaN.pow(42), "NaN")
+            assertPrints(Float.NaN.pow(0), "1.0")
+        }
+
+        @Sample
+        fun exp() {
+            fun Float.firstFiveDigits(): String = toString().substring(0, 7)
+
+            assertPrints(exp(1.0f).firstFiveDigits(), "2.71828")
+            assertPrints(exp(2.0f).firstFiveDigits(), "7.38905")
+            assertPrints(exp(-1.0f).firstFiveDigits(), "0.36787")
+
+            // special cases
+            assertPrints(exp(Float.NaN), "NaN")
+            assertPrints(exp(Float.POSITIVE_INFINITY), "Infinity")
+            assertPrints(exp(Float.NEGATIVE_INFINITY), "0.0")
+        }
+
+        @Sample
+        fun expm1() {
+            fun Float.firstFiveDigits(): String = toString().substring(0, 7)
+
+            assertPrints(expm1(1.0f).firstFiveDigits(), "1.71828")
+            // While it does not really matter for relatively large x values (like 1.0),
+            // the difference is getting more pronounced when x is getting closer to 0.0
+            assertPrints(exp(1e-17f) - 1.0f, "0.0")
+            assertPrints(expm1(1e-17f), 1e-17f.toString())
+
+            // special cases
+            assertPrints(expm1(Float.NaN), "NaN")
+            assertPrints(expm1(Float.POSITIVE_INFINITY), "Infinity")
+            assertPrints(expm1(Float.NEGATIVE_INFINITY), "-1.0")
         }
 
         @Sample

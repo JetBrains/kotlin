@@ -216,6 +216,8 @@ external public actual fun sqrt(x: Double): Double
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Doubles.exp
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_exp")
@@ -232,6 +234,8 @@ external public actual fun exp(x: Double): Double
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ * @see [ln1p] function.
+ * @sample samples.math.MathSamples.Doubles.expm1
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_expm1")
@@ -460,6 +464,8 @@ public external actual fun cbrt(x: Double): Double
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Doubles.powDouble
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_Double_pow")
@@ -469,6 +475,8 @@ external public actual fun Double.pow(x: Double): Double
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
+ *
+ * @sample samples.math.MathSamples.Doubles.powInt
  */
 @SinceKotlin("1.2")
 public actual fun Double.pow(n: Int): Double = pow(n.toDouble())
@@ -838,6 +846,8 @@ external public actual fun sqrt(x: Float): Float
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Floats.exp
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_expf")
@@ -854,6 +864,8 @@ external public actual fun exp(x: Float): Float
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ * @see [ln1p] function.
+ * @sample samples.math.MathSamples.Floats.expm1
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_expm1f")
@@ -1084,6 +1096,8 @@ public external actual fun cbrt(x: Float): Float
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Floats.powFloat
  */
 @SinceKotlin("1.2")
 @GCUnsafeCall("Kotlin_math_Float_pow")
@@ -1093,6 +1107,8 @@ external public actual fun Float.pow(x: Float): Float
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
+ *
+ * @sample samples.math.MathSamples.Floats.powInt
  */
 @SinceKotlin("1.2")
 public actual fun Float.pow(n: Int): Float = pow(n.toFloat())

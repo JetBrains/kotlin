@@ -302,6 +302,8 @@ public actual inline fun sqrt(x: Double): Double = nativeMath.sqrt(x)
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Doubles.exp
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -318,6 +320,8 @@ public actual inline fun exp(x: Double): Double = nativeMath.exp(x)
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ * @see [ln1p] function.
+ * @sample samples.math.MathSamples.Doubles.expm1
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -540,6 +544,8 @@ public actual inline fun cbrt(x: Double): Double = nativeMath.cbrt(x)
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Doubles.powDouble
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -549,6 +555,8 @@ public actual inline fun Double.pow(x: Double): Double = nativeMath.pow(this, x)
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
+ *
+ * @sample samples.math.MathSamples.Doubles.powInt
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -905,6 +913,8 @@ public actual inline fun sqrt(x: Float): Float = nativeMath.sqrt(x.toDouble()).t
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Floats.exp
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -921,6 +931,8 @@ public actual inline fun exp(x: Float): Float = nativeMath.exp(x.toDouble()).toF
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ * @see [ln1p] function.
+ * @sample samples.math.MathSamples.Floats.expm1
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1142,6 +1154,8 @@ public actual inline fun cbrt(x: Float): Float = nativeMath.cbrt(x.toDouble()).t
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Floats.powFloat
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1151,6 +1165,8 @@ public actual inline fun Float.pow(x: Float): Float = nativeMath.pow(this.toDoub
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
+ *
+ * @sample samples.math.MathSamples.Floats.powInt
  */
 @SinceKotlin("1.2")
 @InlineOnly
