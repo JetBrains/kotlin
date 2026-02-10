@@ -22132,18 +22132,6 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
-    @TestMetadata("jsFloatDoubleToString.kt")
-    public void testJsFloatDoubleToString() {
-      runTest("compiler/testData/codegen/box/evaluate/jsFloatDoubleToString.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmFloatDoubleToString.kt")
-    public void testJvmFloatDoubleToString() {
-      runTest("compiler/testData/codegen/box/evaluate/jvmFloatDoubleToString.kt");
-    }
-
-    @Test
     @TestMetadata("kt53480.kt")
     public void testKt53480() {
       runTest("compiler/testData/codegen/box/evaluate/kt53480.kt");
@@ -22171,12 +22159,6 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     @TestMetadata("kt56215.kt")
     public void testKt56215() {
       runTest("compiler/testData/codegen/box/evaluate/kt56215.kt");
-    }
-
-    @Test
-    @TestMetadata("kt57028.kt")
-    public void testKt57028() {
-      runTest("compiler/testData/codegen/box/evaluate/kt57028.kt");
     }
 
     @Test
