@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
-import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Attribute
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
@@ -18,7 +17,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint.Companion.isJvmAndAndroid
-import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinSourceCoordinates
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
@@ -49,7 +49,9 @@ import org.jetbrains.kotlin.gradle.utils.toMap
  * In order to set up attributes, the algorithm will copy the jvm platform attributes from the corresponding jvm compilations
  * of the current SourceSet.
  */
-internal object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver {
+internal class IdeJvmAndAndroidSourceDependencyResolver(
+    private val buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
+) : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (!isJvmAndAndroid(sourceSet)) return emptySet()
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
@@ -69,9 +71,7 @@ internal object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver
 
                 when (metadataDependencyResolution) {
                     /* Dependency project is multiplatform */
-                    is MetadataDependencyResolution.ChooseVisibleSourceSets -> resolveMultiplatformSourceSets(
-                        metadataDependencyResolution.projectDependency(sourceSet.project) ?: return@flatMap emptyList()
-                    )
+                    is MetadataDependencyResolution.ChooseVisibleSourceSets -> metadataDependencyResolution.resolveMultiplatformSourceSets()
 
                     /* Dependency project is not multiplatform (jvm/android only) */
                     is MetadataDependencyResolution.KeepOriginalDependency -> resolveJvmSourceSets(sourceSet)
@@ -81,11 +81,17 @@ internal object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver
             .toSet()
     }
 
-    private fun resolveMultiplatformSourceSets(dependencyProject: Project): Iterable<IdeaKotlinDependency> {
-        val kotlin = dependencyProject.multiplatformExtensionOrNull ?: return emptyList()
-        return kotlin.sourceSets
-            .filter { sourceSet -> isJvmAndAndroidMain(sourceSet) }
-            .map { sourceSet -> IdeaKotlinSourceDependency(type = Regular, coordinates = IdeaKotlinSourceCoordinates(sourceSet)) }
+    private fun MetadataDependencyResolution.ChooseVisibleSourceSets.resolveMultiplatformSourceSets(): Iterable<IdeaKotlinDependency> {
+        val componentId = dependency.id
+        if (componentId !is ProjectComponentIdentifier) return emptyList()
+
+        return allVisibleSourceSetNames.map { sourceSetName ->
+            val coordinates = org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates(
+                project = IdeaKotlinProjectCoordinates(componentId, buildIdentifierAccessor),
+                sourceSetName = sourceSetName
+            )
+            IdeaKotlinSourceDependency(type = Regular, coordinates = coordinates)
+        }
     }
 
     /**
