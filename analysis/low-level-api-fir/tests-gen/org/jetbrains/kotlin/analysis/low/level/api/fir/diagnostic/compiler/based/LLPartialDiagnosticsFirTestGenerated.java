@@ -1450,6 +1450,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("doNotPreferJavaSams.kt")
+      public void testDoNotPreferJavaSams() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/doNotPreferJavaSams.kt");
+      }
+
+      @Test
       @TestMetadata("errorCandidates.kt")
       public void testErrorCandidates() {
         runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/errorCandidates.kt");
@@ -1591,6 +1597,42 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         }
 
         @Test
+        @TestMetadata("morePreciseSamVsLessPreciseFunctionType.kt")
+        public void testMorePreciseSamVsLessPreciseFunctionType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/morePreciseSamVsLessPreciseFunctionType.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleGenericsCandidatesVsRunnable.kt")
+        public void testMultipleGenericsCandidatesVsRunnable() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/multipleGenericsCandidatesVsRunnable.kt");
+        }
+
+        @Test
+        @TestMetadata("samVsDefault.kt")
+        public void testSamVsDefault() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/samVsDefault.kt");
+        }
+
+        @Test
+        @TestMetadata("samVsFunctionTypeAndLessPreciseExtension.kt")
+        public void testSamVsFunctionTypeAndLessPreciseExtension() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/samVsFunctionTypeAndLessPreciseExtension.kt");
+        }
+
+        @Test
+        @TestMetadata("samVsFunctionTypeAndLessPreciseOtherParameter.kt")
+        public void testSamVsFunctionTypeAndLessPreciseOtherParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/samVsFunctionTypeAndLessPreciseOtherParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("samVsKProperty.kt")
+        public void testSamVsKProperty() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/samVsKProperty.kt");
+        }
+
+        @Test
         @TestMetadata("specifityAfterLambdaAnalysis.kt")
         public void testSpecifityAfterLambdaAnalysis() {
           runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/specifityAfterLambdaAnalysis.kt");
@@ -1600,6 +1642,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         @TestMetadata("specifityAfterLambdaAnalysisComplex.kt")
         public void testSpecifityAfterLambdaAnalysisComplex() {
           runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/specifityAfterLambdaAnalysisComplex.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendFunctionTypeVsRunnable.kt")
+        public void testSuspendFunctionTypeVsRunnable() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/suspendFunctionTypeVsRunnable.kt");
         }
 
         @Test
