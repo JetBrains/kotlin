@@ -574,6 +574,12 @@ public class LLJsDiagnosticsFe10TestGenerated extends AbstractLLJsDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("explicitBackingFieldMustBeInitialized.kt")
+    public void testExplicitBackingFieldMustBeInitialized() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/explicitBackingFieldMustBeInitialized.kt");
+    }
+
+    @Test
     @TestMetadata("exportFileWithNameBasedDestructuringDeclarations.kt")
     public void testExportFileWithNameBasedDestructuringDeclarations() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/exportFileWithNameBasedDestructuringDeclarations.kt");
@@ -586,6 +592,12 @@ public class LLJsDiagnosticsFe10TestGenerated extends AbstractLLJsDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("exportFileWithPropertiesWithExplicitBackingFields.kt")
+    public void testExportFileWithPropertiesWithExplicitBackingFields() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/exportFileWithPropertiesWithExplicitBackingFields.kt");
+    }
+
+    @Test
     @TestMetadata("exportNameBasedDestructuringDeclarations.kt")
     public void testExportNameBasedDestructuringDeclarations() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/exportNameBasedDestructuringDeclarations.kt");
@@ -595,6 +607,12 @@ public class LLJsDiagnosticsFe10TestGenerated extends AbstractLLJsDiagnosticsTes
     @TestMetadata("exportPositionBasedDestructuringDeclarations.kt")
     public void testExportPositionBasedDestructuringDeclarations() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/exportPositionBasedDestructuringDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("exportPropertiesWithExplicitBackingFields.kt")
+    public void testExportPropertiesWithExplicitBackingFields() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/exportPropertiesWithExplicitBackingFields.kt");
     }
 
     @Test
@@ -649,6 +667,12 @@ public class LLJsDiagnosticsFe10TestGenerated extends AbstractLLJsDiagnosticsTes
     @TestMetadata("multipleDefaultExportInOneFile.kt")
     public void testMultipleDefaultExportInOneFile() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/multipleDefaultExportInOneFile.kt");
+    }
+
+    @Test
+    @TestMetadata("mutableExplicitBackingField.kt")
+    public void testMutableExplicitBackingField() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/mutableExplicitBackingField.kt");
     }
 
     @Test
