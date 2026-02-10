@@ -150,7 +150,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::ExpectDeclarationsRemoveLowering,
     ::RangeContainsLowering,
 
-    ::TailrecLowering,
+    ::WasmTailrecLowering,
 
     ::EnumWhenLowering,
     ::EnumClassConstructorLowering,

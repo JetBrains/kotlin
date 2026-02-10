@@ -41426,6 +41426,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     public void testLambda_kt80285() {
       runTest("compiler/testData/codegen/box/lambda/lambda_kt80285.kt");
     }
+
+    @Test
+    @TestMetadata("lambda_kt83995.kt")
+    public void testLambda_kt83995() {
+      runTest("compiler/testData/codegen/box/lambda/lambda_kt83995.kt");
+    }
   }
 
   @Nested
