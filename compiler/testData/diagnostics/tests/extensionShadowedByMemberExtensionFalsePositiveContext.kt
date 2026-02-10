@@ -1,14 +1,17 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ContextParameters
 // ISSUE: KT-37179
 
 fun test() {
-    fun Receiver.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>foo<!>() {}
+    fun Receiver.foo() {}
 }
 
 object Receiver {
-    fun Receiver.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>foo<!>() {}
+    fun Receiver.foo() {}
 
-    val Receiver.foo get() = Property
+    context(_: Receiver)
+    val foo get() = Property
 }
 
 object Property {

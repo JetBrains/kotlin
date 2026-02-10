@@ -699,6 +699,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("extensionShadowedByMemberExtensionFalsePositiveContext.kt")
+    public void testExtensionShadowedByMemberExtensionFalsePositiveContext() {
+      runTest("compiler/testData/diagnostics/tests/extensionShadowedByMemberExtensionFalsePositiveContext.kt");
+    }
+
+    @Test
     @TestMetadata("extensionShadowedByMemberOverride.kt")
     public void testExtensionShadowedByMemberOverride() {
       runTest("compiler/testData/diagnostics/tests/extensionShadowedByMemberOverride.kt");
