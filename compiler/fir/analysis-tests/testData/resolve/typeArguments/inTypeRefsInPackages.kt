@@ -32,5 +32,13 @@ fun testCastAndIsInstance(x: Any, y: part1.part2<!TYPE_ARGUMENTS_NOT_ALLOWED_WAR
     x as part1<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.part2.part3.T
 }
 
+fun testTypeArgs() {
+    class Box<T>
+    val y: Box<part1<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.part2.part3.C> = Box()
+    Box<part1.part2<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.part3.C>()
+
+    val functional: (part1<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.part2.part3.C) -> Unit = { }
+}
+
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, getter, interfaceDeclaration, isExpression,
 localProperty, propertyDeclaration, thisExpression, typeAliasDeclaration */
