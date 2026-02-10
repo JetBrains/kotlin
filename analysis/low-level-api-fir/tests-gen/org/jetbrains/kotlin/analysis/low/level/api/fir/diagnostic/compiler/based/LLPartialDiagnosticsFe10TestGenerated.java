@@ -31013,6 +31013,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("functionTypeContext.kt")
+        public void testFunctionTypeContext() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/functionTypeContext.kt");
+        }
+
+        @Test
         @TestMetadata("gettersAndSetters.kt")
         public void testGettersAndSetters() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/gettersAndSetters.kt");
