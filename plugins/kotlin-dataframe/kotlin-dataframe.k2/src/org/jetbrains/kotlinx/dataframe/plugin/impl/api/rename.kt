@@ -137,7 +137,9 @@ class RenameToCamelCase : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver by dataFrame()
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
-        receiver.asDataFrame(impliedColumnsResolver = null).renameToCamelCase().toPluginDataFrameSchema()
+        receiver.asDataFrame(/*operation has no selector*/)
+            .renameToCamelCase()
+            .toPluginDataFrameSchema()
 }
 
 class RenameToCamelCaseClause : AbstractSchemaModificationInterpreter() {

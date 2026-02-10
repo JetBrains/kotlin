@@ -26,8 +26,14 @@ data class PluginDataFrameSchema(
     /**
      * [impliedColumnsResolver] for operations that need to provide String API support
      */
-    fun columns(impliedColumnsResolver: ColumnsResolver? = null): List<SimpleCol> {
-        return impliedColumnsResolver?.let { insertImpliedColumns(it) }?.columns ?: columns
+    fun columns(impliedColumnsResolver: ColumnsResolver): List<SimpleCol> {
+        return insertImpliedColumns(impliedColumnsResolver).columns
+    }
+
+    // with 2 separate functions, it's easier to find usages.
+    // ideally, argument-less function should have a reason to be used, because proper usage indicated String API support
+    fun columns(): List<SimpleCol> {
+        return columns
     }
 
     override fun toString(): String {

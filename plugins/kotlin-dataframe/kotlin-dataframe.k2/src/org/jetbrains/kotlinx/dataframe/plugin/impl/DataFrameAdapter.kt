@@ -14,8 +14,15 @@ import org.jetbrains.kotlinx.dataframe.columns.FrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
 
-fun PluginDataFrameSchema.asDataFrame(impliedColumnsResolver: ColumnsResolver? = null): DataFrame<ConeTypesAdapter> {
+fun PluginDataFrameSchema.asDataFrame(impliedColumnsResolver: ColumnsResolver): DataFrame<ConeTypesAdapter> {
     val df = columns(impliedColumnsResolver).map()
+    return df
+}
+
+// with 2 separate functions, it's easier to find usages.
+// ideally, argument-less function should have a reason to be used, because proper usage indicated String API support
+fun PluginDataFrameSchema.asDataFrame(): DataFrame<ConeTypesAdapter> {
+    val df = columns().map()
     return df
 }
 
