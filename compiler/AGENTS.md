@@ -1,5 +1,9 @@
 # Compiler Architecture
 
+## Intro
+
+Consider reading [fir-basics.md](../docs/fir/fir-basics.md).
+
 ## Two Frontends
 
 1. **K1/FE 1.0 (Legacy)**: Located in `compiler/frontend/` - uses PSI and BindingContext
@@ -23,3 +27,7 @@ Backend implementations:
 - `compiler/ir/backend.js/` - JavaScript backend
 - `compiler/ir/backend.wasm/` - WebAssembly backend
 - `kotlin-native/backend.native/` - Native backend
+
+## Inference
+
+For inference implementation details, read [guidelines.md](../docs/fir/inference.md).
