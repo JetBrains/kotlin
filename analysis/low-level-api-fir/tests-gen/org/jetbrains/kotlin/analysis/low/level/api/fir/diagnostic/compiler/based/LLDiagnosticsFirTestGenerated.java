@@ -4822,6 +4822,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("destructuringVariableNamedValue.kt")
+      public void testDestructuringVariableNamedValue() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/destructuringVariableNamedValue.kt");
+      }
+
+      @Test
       @TestMetadata("localVariableTargetOnDestructuring.kt")
       public void testLocalVariableTargetOnDestructuring() {
         runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/localVariableTargetOnDestructuring.kt");
