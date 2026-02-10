@@ -40,6 +40,9 @@ abstract class AbstractJavaUsingAstBoxTest : AbstractJvmBlackBoxCodegenTestBase<
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
+            useConfigurators(
+                ::JavaDirectConfigurator
+            )
             configureFirParser(FirParser.LightTree)
 
             configureFirHandlersStep {

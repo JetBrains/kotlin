@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.java.direct
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor.SuppressionChecker
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.BackendCliJvmFacade
@@ -59,6 +58,9 @@ abstract class AbstractJavaUsingAstTest : AbstractKotlinCompilerWithTargetBacken
             frontendToBackendConverter = ::Fir2IrCliJvmFacade,
             backendFacade = ::BackendCliJvmFacade
         )
+        useConfigurators(
+            ::JavaDirectConfigurator
+        )
         configureFirParser(FirParser.LightTree)
         configureCommonDiagnosticTestPaths()
 
@@ -81,6 +83,6 @@ abstract class AbstractJavaUsingAstTest : AbstractKotlinCompilerWithTargetBacken
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
         useAfterAnalysisCheckers(::PhasedPipelineChecker, ::NonSourceErrorMessagesHandler)
         enableMetaInfoHandler()
-        useAdditionalService<BlackBoxCodegenSuppressor.SuppressionChecker>(::SuppressionChecker.bind(null, null))
+        useAdditionalService<BlackBoxCodegenSuppressor.SuppressionChecker>(BlackBoxCodegenSuppressor::SuppressionChecker.bind(null, null))
     }
 }

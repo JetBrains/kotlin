@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
@@ -116,6 +117,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val dependencyList = DependencyListForCliModule.build(Name.identifier(rootModuleName))
         val projectEnvironment = VfsBasedProjectEnvironment(
             project,
+            configuration.extensionsStorage,
             VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
             environment::createPackagePartProvider
         )

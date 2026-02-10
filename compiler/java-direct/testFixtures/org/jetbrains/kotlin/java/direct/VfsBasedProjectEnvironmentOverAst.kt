@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
@@ -22,11 +24,12 @@ import java.nio.file.Path
  */
 class VfsBasedProjectEnvironmentOverAst(
     project: Project,
+    configuration: CompilerConfiguration,
     fileSystem: VirtualFileSystem,
     private val getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider,
     private val librariesScope: AbstractProjectFileSearchScope,
     private val javaSourceRoots: List<Path>,
-) : VfsBasedProjectEnvironment(project, fileSystem, getPackagePartProviderFn) {
+) : VfsBasedProjectEnvironment(project, configuration.extensionsStorage, fileSystem, getPackagePartProviderFn) {
 
     override fun getFirJavaFacade(
         firSession: FirSession,

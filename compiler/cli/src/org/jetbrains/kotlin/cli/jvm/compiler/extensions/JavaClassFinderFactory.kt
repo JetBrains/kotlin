@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler.extensions
 
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 
 interface JavaClassFinderFactory {
 
-    companion object : ProjectExtensionDescriptor<JavaClassFinderFactory>(
+    companion object : ExtensionPointDescriptor<JavaClassFinderFactory>(
         "org.jetbrains.kotlin.javaClassFinderFactory",
         JavaClassFinderFactory::class.java
     )
