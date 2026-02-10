@@ -76,7 +76,7 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
         name = "Xjavac-arguments"
         description = "Java compiler arguments.".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentDescription = "<option[,]>".asReleaseDependent()
+        argumentTypeDescription = "<option[,]>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,

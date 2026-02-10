@@ -20,7 +20,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         argumentType = KotlinVersionType(
             defaultValue = null.asReleaseDependent()
         )
-        argumentDescription = "<version>".asReleaseDependent()
+        argumentTypeDescription = "<version>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_3,
@@ -34,7 +34,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         argumentType = KotlinVersionType(
             defaultValue = null.asReleaseDependent()
         )
-        argumentDescription = "<version>".asReleaseDependent()
+        argumentTypeDescription = "<version>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_5,
@@ -46,7 +46,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         name = "kotlin-home"
         description = "Path to the Kotlin compiler home directory used for the discovery of runtime libraries.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentDescription = "<path>".asReleaseDependent()
+        argumentTypeDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_50,
@@ -101,7 +101,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description =
             "Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentDescription = "<fq.name>".asReleaseDependent()
+        argumentTypeDescription = "<fq.name>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
@@ -175,7 +175,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         compilerName = "pluginClasspaths"
         description = "Load plugins from the given classpath.".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentDescription = "<path>".asReleaseDependent()
+        argumentTypeDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
@@ -187,7 +187,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         compilerName = "pluginOptions"
         description = "Pass an option to a plugin.".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentDescription = "plugin:<pluginId>:<optionName>=<value>".asReleaseDependent()
+        argumentTypeDescription = "plugin:<pluginId>:<optionName>=<value>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
@@ -199,7 +199,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         compilerName = "pluginConfigurations"
         description = "Register a compiler plugin.".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentDescription = "<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]".asReleaseDependent()
+        argumentTypeDescription = "<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
         lifecycle(
@@ -217,7 +217,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             Multiple constraints can be specified by repeating this option. Cycles in constraints will cause an error.
             """.trimIndent().asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentDescription = "<pluginId1>><pluginId2>".asReleaseDependent()
+        argumentTypeDescription = "<pluginId1>><pluginId2>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
         lifecycle(
@@ -251,7 +251,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         name = "Xintellij-plugin-root"
         description =
             "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.".asReleaseDependent()
-        argumentDescription = "<path>".asReleaseDependent()
+        argumentTypeDescription = "<path>".asReleaseDependent()
         argumentType = StringType.defaultNull
 
         lifecycle(
@@ -318,7 +318,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             ("Dump detailed performance statistics to the specified file in plain text, JSON or markdown format (it's detected by the file's extension).\n" +
                     "Also, it supports the placeholder `*` and directory for generating file names based on the module being compiled and the current time stamp.\n" +
                     "Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20-12-22-32.log` in plain text format, `path/to/dir/` creates logs like `path/to/dir/my-log_2025-06-20-12-22-32.json`.").asReleaseDependent()
-        argumentDescription = "<path>".asReleaseDependent()
+        argumentTypeDescription = "<path>".asReleaseDependent()
         argumentType = StringType.defaultNull
 
         lifecycle(
@@ -330,7 +330,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         name = "XXdump-model"
         compilerName = "dumpArgumentsDir"
         description = "Dump compilation model to specified directory for use in modularized tests.".asReleaseDependent()
-        argumentDescription = "<dir>".asReleaseDependent()
+        argumentTypeDescription = "<dir>".asReleaseDependent()
         argumentType = StringType.defaultNull
 
         lifecycle(
@@ -356,7 +356,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
                 Sources of the common module that need to be compiled together with this module in multiplatform mode.
                 They should be a subset of sources passed as free arguments.
                 """.trimIndent().asReleaseDependent()
-        argumentDescription = "<path>".asReleaseDependent()
+        argumentTypeDescription = "<path>".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
 
         lifecycle(
@@ -490,7 +490,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     compilerArgument {
         name = "Xverify-ir"
         description = "IR verification mode (no verification by default).".asReleaseDependent()
-        argumentDescription = "{none|warning|error}".asReleaseDependent()
+        argumentTypeDescription = "{none|warning|error}".asReleaseDependent()
         argumentType = StringType.defaultNull
 
         lifecycle(
@@ -612,7 +612,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         name = "Xexplicit-api"
         description = """Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
 Use the 'warning' level to issue warnings instead of errors.""".asReleaseDependent()
-        argumentDescription = ReleaseDependent(
+        argumentTypeDescription = ReleaseDependent(
             current = ExplicitApiMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}")
         )
         argumentType = KotlinExplicitApiModeType()
@@ -628,7 +628,7 @@ Use the 'warning' level to issue warnings instead of errors.""".asReleaseDepende
         description = """Force the compiler to report errors on all public API declarations without an explicit return type.
 Use the 'warning' level to issue warnings instead of errors.
 This flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether""".asReleaseDependent()
-        argumentDescription = ReleaseDependent(
+        argumentTypeDescription = ReleaseDependent(
             current = ExplicitApiMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}")
         )
         argumentType = KotlinExplicitApiModeType()
@@ -643,7 +643,7 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         name = "Xreturn-value-checker"
         description =
             "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.".asReleaseDependent()
-        argumentDescription = ReleaseDependent(
+        argumentTypeDescription = ReleaseDependent(
             current = ReturnValueCheckerMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}") { it.modeState }
         )
         argumentType = ReturnValueCheckerModeType()
@@ -887,7 +887,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
     compilerArgument {
         name = "Xfragments"
         description = "Declare all known fragments of a multiplatform compilation.".asReleaseDependent()
-        argumentDescription = "<fragment name>".asReleaseDependent()
+        argumentTypeDescription = "<fragment name>".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
 
         lifecycle(
@@ -899,7 +899,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
     compilerArgument {
         name = "Xfragment-sources"
         description = "Add sources to a specific fragment of a multiplatform compilation.".asReleaseDependent()
-        argumentDescription = "<fragment name>:<path>".asReleaseDependent()
+        argumentTypeDescription = "<fragment name>:<path>".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
 
         lifecycle(
@@ -911,7 +911,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
     compilerArgument {
         name = "Xfragment-refines"
         description = "Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.".asReleaseDependent()
-        argumentDescription = "<fromModuleName>:<onModuleName>".asReleaseDependent()
+        argumentTypeDescription = "<fromModuleName>:<onModuleName>".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
 
         lifecycle(
@@ -922,7 +922,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
     compilerArgument {
         name = "Xfragment-dependency"
         compilerName = "fragmentDependencies"
-        argumentDescription = "<fragment name>:<path>".asReleaseDependent()
+        argumentTypeDescription = "<fragment name>:<path>".asReleaseDependent()
         description = """Declare common klib dependencies for the specific fragment.
 This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
@@ -938,7 +938,7 @@ The argument should be used only if the new compilation scheme is enabled with -
     compilerArgument {
         name = "Xfragment-friend-dependency"
         compilerName = "fragmentFriendDependencies"
-        argumentDescription = "<fragment name>:<path>".asReleaseDependent()
+        argumentTypeDescription = "<fragment name>:<path>".asReleaseDependent()
         description = """Declare common klib friend dependencies for the specific fragment.
 This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
@@ -1033,7 +1033,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         compilerName = "suppressedDiagnostics"
         description =
             "Suppress specified warning module-wide. This option is deprecated in favor of \"-Xwarning-level\" flag".asReleaseDependent()
-        argumentDescription = "<WARNING_NAME>".asReleaseDependent()
+        argumentTypeDescription = "<WARNING_NAME>".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
 
         lifecycle(
@@ -1049,7 +1049,7 @@ The argument should be used only if the new compilation scheme is enabled with -
 - `error` level raises the severity of a warning to error level (similar to -Werror but more granular)
 - `disabled` level suppresses reporting of a warning (similar to -nowarn but more granular)
 - `warning` level overrides -nowarn and -Werror for this specific warning (the warning will be reported/won't be considered as an error)""".asReleaseDependent()
-        argumentDescription = "<WARNING_NAME>:(error|warning|disabled)".asReleaseDependent()
+        argumentTypeDescription = "<WARNING_NAME>:(error|warning|disabled)".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
 
         lifecycle(
@@ -1065,7 +1065,7 @@ The argument should be used only if the new compilation scheme is enabled with -
 -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
 -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
 default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.""".asReleaseDependent()
-        argumentDescription = "first-only|first-only-warn|param-property".asReleaseDependent()
+        argumentTypeDescription = "first-only|first-only-warn|param-property".asReleaseDependent()
         argumentType = StringType.defaultNull
         additionalAnnotations(
             Disables(LanguageFeature.AnnotationDefaultTargetMigrationWarning, "first-only"),
@@ -1175,7 +1175,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
 -Xname-based-destructuring=only-syntax:   Enables syntax for positional destructuring with square brackets and the full form of name-based destructuring with parentheses;
 -Xname-based-destructuring=name-mismatch: Reports warnings when short form positional destructuring of data classes uses names that don't match the property names;
 -Xname-based-destructuring=complete:      Enables short-form name-based destructuring with parentheses;""".asReleaseDependent()
-        argumentDescription = "only-syntax|name-mismatch|complete".asReleaseDependent()
+        argumentTypeDescription = "only-syntax|name-mismatch|complete".asReleaseDependent()
         argumentType = StringType.defaultNull
         additionalAnnotations(
             Enables(LanguageFeature.NameBasedDestructuring, "only-syntax"),
@@ -1197,7 +1197,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
 Warning: this flag is not intended for production use. If you want to configure the language behaviour use the
 -language-version or corresponding experimental feature flags.
         """.trimIndent().asReleaseDependent()
-        argumentDescription = "[+-]LanguageFeatureName".asReleaseDependent()
+        argumentTypeDescription = "[+-]LanguageFeatureName".asReleaseDependent()
         compilerName = "manuallyConfiguredFeatures"
         argumentType = StringArrayType.defaultNull
         delimiter = KotlinCompilerArgument.Delimiter.None
@@ -1230,7 +1230,7 @@ Warning: this flag is not intended for production use. If you want to configure 
 -Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.
                 """.trimIndent().asReleaseDependent()
         argumentType = KotlinHeaderModeType()
-        argumentDescription = ReleaseDependent(
+        argumentTypeDescription = ReleaseDependent(
             current = HeaderMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}")
         )
 

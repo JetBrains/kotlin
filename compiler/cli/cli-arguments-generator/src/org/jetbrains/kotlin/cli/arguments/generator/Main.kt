@@ -237,7 +237,7 @@ private fun SmartPrinter.generateArgumentAnnotation(
         println("""value = "-${argument.name}",""")
         argument.shortName?.let { println("""shortName = "-$it",""") }
         argument.deprecatedName?.let { println("""deprecatedName = "-$it",""") }
-        argument.argumentDescription.current?.let { println("""valueDescription = "$it",""") }
+        argument.argumentTypeDescription.current?.let { println("""valueDescription = "$it",""") }
         val rawDescription = argument.description.current.replace("\"", """\"""")
         val description = if ("\n" in rawDescription) {
             "$tripleQuote$rawDescription$tripleQuote"

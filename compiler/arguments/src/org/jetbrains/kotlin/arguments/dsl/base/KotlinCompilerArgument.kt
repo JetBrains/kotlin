@@ -20,9 +20,9 @@ import kotlin.properties.ReadOnlyProperty
  * see [ReleaseDependent] on how to define the description for older versions.
  * @param delimiter if an argument accepts a list of file paths - defines an accepted delimiter between these paths.
  * @param valueType (Deprecated) Use [argumentType] instead; it provides a type-safe representation of the argument's type.
- * @param valueDescription (Deprecated) Use [argumentDescription] instead (renamed for naming consistency).
+ * @param valueDescription (Deprecated) Use [argumentTypeDescription] instead (renamed for naming consistency).
  * @param argumentType the argument value type.
- * @param argumentDescription describes which values are accepted by the argument.
+ * @param argumentTypeDescription describes which values are accepted by the argument.
  * The description text may have a different value for different Kotlin releases,
  * see [ReleaseDependent] on how to define the description for older versions.
  * @param additionalAnnotations additional annotations that should be added for the Kotlin compiler argument representation (e.g. [Deprecated]).
@@ -40,7 +40,7 @@ data class KotlinCompilerArgument(
     val delimiter: Delimiter?,
 
     val argumentType: KotlinArgumentValueType<*>,
-    val argumentDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
+    val argumentTypeDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
 
     @Deprecated(
         message = "Use argumentType instead; it provides a type-safe representation of the argument's type. " +
@@ -49,11 +49,11 @@ data class KotlinCompilerArgument(
     )
     val valueType: KotlinArgumentValueType<*> = argumentType,
     @Deprecated(
-        message = "Renamed for naming consistency; use argumentDescription instead. " +
+        message = "Renamed for naming consistency; use argumentTypeDescription instead. " +
                 "Will be promoted to an error in KT-84084.",
-        replaceWith = ReplaceWith("argumentDescription")
+        replaceWith = ReplaceWith("argumentTypeDescription")
     )
-    val valueDescription: ReleaseDependent<String?> = argumentDescription,
+    val valueDescription: ReleaseDependent<String?> = argumentTypeDescription,
 
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle,
 
@@ -87,7 +87,7 @@ data class KotlinCompilerArgument(
         valueType = valueType,
         valueDescription = valueDescription,
         argumentType = valueType,
-        argumentDescription = valueDescription,
+        argumentTypeDescription = valueDescription,
         releaseVersionsMetadata = releaseVersionsMetadata,
         additionalAnnotations = additionalAnnotations,
         compilerName = compilerName,
@@ -143,9 +143,9 @@ internal class KotlinCompilerArgumentBuilder {
      * @see KotlinCompilerArgument.valueDescription
      */
     @Deprecated(
-        message = "Renamed for naming consistency; use argumentDescription instead. " +
+        message = "Renamed for naming consistency; use argumentTypeDescription instead. " +
                 "Will be promoted to an error in KT-84084.",
-        replaceWith = ReplaceWith("argumentDescription")
+        replaceWith = ReplaceWith("argumentTypeDescription")
     )
     var valueDescription: ReleaseDependent<String?>? = null
 
@@ -155,9 +155,9 @@ internal class KotlinCompilerArgumentBuilder {
     var argumentType: KotlinArgumentValueType<*>? = null
 
     /**
-     * @see KotlinCompilerArgument.argumentDescription
+     * @see KotlinCompilerArgument.argumentTypeDescription
      */
-    var argumentDescription: ReleaseDependent<String?>? = null
+    var argumentTypeDescription: ReleaseDependent<String?>? = null
 
     /**
      * @see KotlinCompilerArgument.compilerName
@@ -213,9 +213,9 @@ internal class KotlinCompilerArgumentBuilder {
         deprecatedName = deprecatedName,
         description = description,
         valueType = requireNotNull(valueType ?: argumentType),
-        valueDescription = valueDescription ?: argumentDescription ?: null.asReleaseDependent(),
+        valueDescription = valueDescription ?: argumentTypeDescription ?: null.asReleaseDependent(),
         argumentType = requireNotNull(argumentType ?: valueType),
-        argumentDescription = argumentDescription ?: valueDescription ?: null.asReleaseDependent(),
+        argumentTypeDescription = argumentTypeDescription ?: valueDescription ?: null.asReleaseDependent(),
         releaseVersionsMetadata = releaseVersionsMetadata,
         additionalAnnotations = additionalAnnotations,
         compilerName = compilerName,

@@ -29,7 +29,7 @@ class ReturnValueCheckerModeConsistency {
 
         assertEquals(
             expected = 10644755,
-            actual = returnValueCheckerArg.argumentDescription.hashCode(),
+            actual = returnValueCheckerArg.argumentTypeDescription.hashCode(),
             message = "Value description in '${returnValueCheckerArg.name}' should be updated by moving current value to 'oldValues'."
         )
     }

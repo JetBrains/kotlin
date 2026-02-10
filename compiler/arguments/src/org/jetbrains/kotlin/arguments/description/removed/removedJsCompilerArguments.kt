@@ -33,7 +33,7 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
         compilerName = "outputFile"
         argumentType = StringType.defaultNull
         description = "".asReleaseDependent()
-        argumentDescription = "<filepath>".asReleaseDependent()
+        argumentTypeDescription = "<filepath>".asReleaseDependent()
 
         additionalAnnotations(
             Deprecated("It is senseless to use with IR compiler. Only for compatibility."),

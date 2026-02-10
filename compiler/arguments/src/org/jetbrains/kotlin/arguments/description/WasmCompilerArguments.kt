@@ -236,7 +236,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
                 "Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, " +
                 "and plain text for all other file types.").asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentDescription = "<path>".asReleaseDependent()
+        argumentTypeDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
@@ -251,7 +251,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
                 "Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, " +
                 "and plain text for all other file types.").asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentDescription = "<path>".asReleaseDependent()
+        argumentTypeDescription = "<path>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,

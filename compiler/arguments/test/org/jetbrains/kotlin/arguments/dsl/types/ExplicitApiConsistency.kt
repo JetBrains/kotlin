@@ -29,7 +29,7 @@ class ExplicitApiConsistency {
 
         assertEquals(
             expected = -312461075,
-            actual = explicitApiArg.argumentDescription.hashCode(),
+            actual = explicitApiArg.argumentTypeDescription.hashCode(),
             message = "Value description in '${explicitApiArg.name}' should be updated by moving current value to 'oldValues'."
         )
     }
@@ -40,7 +40,7 @@ class ExplicitApiConsistency {
 
         assertEquals(
             expected = -312461075,
-            actual = explicitApiReturnTypesArg.argumentDescription.hashCode(),
+            actual = explicitApiReturnTypesArg.argumentTypeDescription.hashCode(),
             message = "Value description in '${explicitApiReturnTypesArg.name}' should be updated by moving current value to 'oldValues'."
         )
     }

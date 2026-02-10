@@ -50,7 +50,7 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         compilerName = "partialLinkageMode"
         description = "Use partial linkage mode.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentDescription = "{enable|disable}".asReleaseDependent()
+        argumentTypeDescription = "{enable|disable}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
@@ -62,7 +62,7 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         compilerName = "partialLinkageLogLevel"
         description = "Define the compile-time log level for partial linkage.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentDescription = "{info|warning|error}".asReleaseDependent()
+        argumentTypeDescription = "{info|warning|error}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
@@ -74,7 +74,7 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         compilerName = "duplicatedUniqueNameStrategy"
         description = "Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value.".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentDescription = "{deny|allow-all-with-warning|allow-first-with-warning}".asReleaseDependent()
+        argumentTypeDescription = "{deny|allow-all-with-warning|allow-first-with-warning}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
@@ -92,7 +92,7 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
 - `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version
         """.asReleaseDependent()
         argumentType = KlibIrInlinerModeType()
-        argumentDescription = ReleaseDependent(
+        argumentTypeDescription = ReleaseDependent(
             current = KlibIrInlinerMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}") { it.modeState }
         )
 
@@ -108,7 +108,7 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
 Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
 The only observable effect is that a custom ABI version is written to KLIB manifest file.""".asReleaseDependent()
         argumentType = StringType.defaultNull
-        argumentDescription = "<version>".asReleaseDependent()
+        argumentTypeDescription = "<version>".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
