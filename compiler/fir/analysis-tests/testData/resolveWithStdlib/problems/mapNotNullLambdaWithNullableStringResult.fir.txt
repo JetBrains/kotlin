@@ -1,0 +1,45 @@
+FILE: mapNotNullLambdaWithNullableStringResult.kt
+    public final fun getMetrics(packageDependenciesData: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+        lval urls: R|kotlin/collections/List<kotlin/String>| = R|<local>/packageDependenciesData|.R|/mapNotNull|<R|kotlin/String|, R|kotlin/String|>(<L> = mapNotNull@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String?| <inline=Inline, kind=UNKNOWN>  {
+            lval url: R|kotlin/String| = R|<local>/it|.R|kotlin/text/removeSuffix|(String(.git))
+            ^ when () {
+                R|<local>/url|.R|kotlin/text/startsWith|(String(https://)) ->  {
+                    R|<local>/url|.R|kotlin/text/removePrefix|(String(https://))
+                }
+                else ->  {
+                    Null(null).R|kotlin/also|<R|kotlin/String?|>(<L> = also@fun <anonymous>(it: R|kotlin/String?|): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                        R|kotlin/io/println|(<strcat>(String(Unknown dependency URL type: ), R|<local>/url|))
+                    }
+                    )
+                }
+            }
+
+        }
+        )
+         {
+            lval <iterator>: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/urls|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval it: R|kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
+                 {
+                    R|/PROJECT_DEPENDENCY|.R|SubstitutionOverride</EventId1.metric: R|kotlin/Unit|>|(R|<local>/it|)
+                }
+
+            }
+
+        }
+
+    }
+    public final inline fun <N, R : R|kotlin/Any|> R|kotlin/collections/Iterable<N>|.mapNotNull(transform: R|(N) -> R?|): R|kotlin/collections/List<R>| {
+        ^mapNotNull this@R|/mapNotNull|.R|kotlin/collections/mapNotNullTo|<R|N|, R|R|, R|{kotlin/collections/ArrayList<R>=} java/util/ArrayList<R>|>(R|java/util/ArrayList.ArrayList|<R|R|>(), R|<local>/transform|)
+    }
+    public final val PROJECT_DEPENDENCY: R|EventId1<kotlin/String?>| = R|/EventId1.EventId1|<R|kotlin/String?|>()
+        public get(): R|EventId1<kotlin/String?>|
+    public final class EventId1<in V> : R|kotlin/Any| {
+        public constructor<in V>(): R|EventId1<V>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun metric(value1: R|V|): R|kotlin/Unit| {
+        }
+
+    }

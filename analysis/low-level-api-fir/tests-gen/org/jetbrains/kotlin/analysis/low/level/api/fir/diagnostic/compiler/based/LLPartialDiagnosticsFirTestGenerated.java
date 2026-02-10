@@ -11908,6 +11908,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("mapNotNullLambdaWithNullableStringResult.kt")
+      public void testMapNotNullLambdaWithNullableStringResult() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/mapNotNullLambdaWithNullableStringResult.kt");
+      }
+
+      @Test
       @TestMetadata("NamedParameterInConcurrentMap.kt")
       public void testNamedParameterInConcurrentMap() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/NamedParameterInConcurrentMap.kt");
