@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.arguments.stable.dsl.base.KotlinReleaseVersion as St
 import java.lang.reflect.ParameterizedType
 import kotlin.reflect.KClass
 
+// Should be removed in the scope of KT-81552 Introduce compiler arguments categories
+// Really experimental compiler arguments should have a special handling in tests
 private val temporaryExceptions = setOf(
     "Xuse-javac",
     "Xcompile-java",
