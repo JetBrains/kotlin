@@ -197,7 +197,7 @@ class SimpleBridgeGeneratorImpl(
             if (returnType == BridgedType.OBJC_POINTER) {
                 // The Kotlin code may lose the ownership on this pointer after returning from the bridge,
                 // so retain the pointer and autorelease it:
-                kotlinExpr = "objc_retainAutoreleaseReturnValue($kotlinExpr)"
+                kotlinExpr = "Kotlin_objc_retainAutoreleaseReturnValue_inNative($kotlinExpr)"
                 // (Objective-C does the same for returned pointers).
             }
             returnResult(kotlinExpr)

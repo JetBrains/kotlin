@@ -6,6 +6,7 @@
 #import "Memory.h"
 #import "ObjCExport.h"
 #import "ObjCExportErrors.h"
+#import "ObjCInterop.h"
 
 #if KONAN_OBJC_INTEROP
 
@@ -42,7 +43,7 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_createContinuationArgument, id completio
   }
   ObjHolder slot;
   KRef completionHolder = AllocInstanceWithAssociatedObject(theForeignObjCObjectTypeInfo,
-      objc_retainBlock(completion), slot.slot());
+      Kotlin_objc_retainBlock_inNative(completion), slot.slot());
 
   RETURN_RESULT_OF(Kotlin_ObjCExport_createContinuationArgumentImpl, completionHolder, exceptionTypes);
 }
