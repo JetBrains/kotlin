@@ -71,7 +71,7 @@ public class JvmCodegenUtil {
 
     @NotNull
     public static String getMappingFileName(@NotNull String moduleName) {
-        return "META-INF/" + moduleName + "." + ModuleMapping.MAPPING_FILE_EXT;
+        return "META-INF/" + moduleName.replace(':', '_') + "." + ModuleMapping.MAPPING_FILE_EXT;
     }
 
     public static boolean isDeclarationOfBigArityFunctionInvoke(@Nullable DeclarationDescriptor descriptor) {
