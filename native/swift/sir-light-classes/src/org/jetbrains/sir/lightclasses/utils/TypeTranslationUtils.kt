@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.contextParameters
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirTypeVariance
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.sir.providers.translateType
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.nodes.SirFunctionFromKtPropertySymbol
 
 @OptIn(KaExperimentalApi::class)
 internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
@@ -59,6 +61,22 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateE
                 parameterName = receiver.name.asStringStripSpecialMarkers(),
                 type = sirType,
                 origin = KotlinParameterOrigin.ReceiverParameter(receiver)
+            )
+        }
+    }
+}
+
+internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateContextParameters(): List<SirParameter> {
+    return withSessions {
+        val symbol = when (this@translateContextParameters) {
+            is SirFunctionFromKtPropertySymbol -> ktPropertySymbol
+            else -> ktSymbol
+        }
+        symbol.contextParameters.map { parameter ->
+            val sirType = createParameterType(ktSymbol, parameter)
+            SirParameter(
+                parameterName = parameter.name.identifierOrNullIfSpecial,
+                type = sirType,
             )
         }
     }

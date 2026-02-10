@@ -52,4 +52,5 @@ private val SirType.render: String
         is SirErrorType -> "<ERROR>"
         is SirUnsupportedType -> "<UNSUPPORTED>"
         is SirFunctionalType -> "(${parameterTypes.joinToString { it.render }}) -> ${returnType.render}"
+        is SirTupleType -> "(${types.joinToString { (name, type) -> "${name?.let { "$it: " } ?: ""}${type.render}" }})"
     }

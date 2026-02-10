@@ -40,6 +40,18 @@ class SirFunctionalType(
     }
 }
 
+class SirTupleType(
+    val types: List<Pair<String?, SirType>>,
+    override val attributes: List<SirAttribute> = emptyList(),
+) : SirWrappedType {
+    init {
+        val supportsNames = types.size > 1 // 0 = Void, 1 = technically not a tuple
+        require(supportsNames || types.all { it.first == null }) {
+            "Named tuple types are not supported for tuples with ${types.size} types"
+        }
+    }
+}
+
 open class SirNominalType(
     val typeDeclaration: SirScopeDefiningDeclaration,
     val typeArguments: List<SirType> = emptyList(),

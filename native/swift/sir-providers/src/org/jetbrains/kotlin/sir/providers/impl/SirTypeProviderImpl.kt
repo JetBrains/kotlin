@@ -186,6 +186,9 @@ public class SirTypeProviderImpl(
                 parameterTypes.forEach { it.handleImports(processTypeImports) }
                 returnType.handleImports(processTypeImports)
             }
+            is SirTupleType -> {
+                types.forEach { (_, type) -> type.handleImports(processTypeImports) }
+            }
             is SirErrorType -> {}
             SirUnsupportedType -> {}
             is SirArrayType, is SirDictionaryType, is SirOptionalType ->
@@ -225,4 +228,3 @@ public class SirTypeProviderImpl(
     private val SirNominalType.isTypealiasOntoFunctionalType: Boolean
         get() = (typeDeclaration as? SirTypealias)?.let { it.expandedType is SirFunctionalType } == true
 }
-
