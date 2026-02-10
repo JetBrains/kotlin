@@ -1,12 +1,6 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
-
-// CHECK_BREAKS_COUNT: function=declaredBefore count=0
-// CHECK_LABELS_COUNT: function=declaredBefore name=$l$block count=0
-fun declaredBefore(): Int {
-    val a = g() + h()
-    return a
-}
 
 inline fun g(): Int {
     val a = h()
@@ -25,6 +19,17 @@ inline fun g1(): Int {
 
 inline fun h1(): Int {
     val a = 1
+    return a
+}
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_BREAKS_COUNT: function=declaredBefore count=0
+// CHECK_LABELS_COUNT: function=declaredBefore name=$l$block count=0
+fun declaredBefore(): Int {
+    val a = g() + h()
     return a
 }
 

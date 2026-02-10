@@ -1,3 +1,5 @@
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 class TestData(var status: String) {
     fun updateStatus(newStatus: String) {
         status = newStatus
@@ -8,6 +10,7 @@ inline fun <T> inlineGenericTestFunction(f: () -> T) = f()
 
 inline fun inlineFunction(f: () -> Unit) = f()
 
+// FILE: main.kt
 fun testCase1(obj: TestData) = inlineFunction {
     class InlineClass
 

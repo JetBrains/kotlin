@@ -1,4 +1,5 @@
 // See KT-7674
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -21,6 +22,16 @@ fun pullLog(): String {
     return string
 }
 
+inline fun <T : Any> id(x: T): T {
+    log(x.toString())
+    return x
+}
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: buzz
 fun <T> fizz(x: T): T {
     log("fizz($x)")
     return x
@@ -35,11 +46,6 @@ class A(val a: Int) {
                 a + it
             }
         }
-}
-
-inline fun <T : Any> id(x: T): T {
-    log(x.toString())
-    return x
 }
 
 fun box(): String {

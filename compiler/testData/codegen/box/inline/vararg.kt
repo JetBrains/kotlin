@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 
 // CHECK_CONTAINS_NO_CALLS: test1
@@ -15,6 +15,14 @@ internal inline fun concat(vararg strings: String): String {
 
     return result
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: test1
+// CHECK_CONTAINS_NO_CALLS: test2
+// CHECK_CONTAINS_NO_CALLS: test3 except=slice
 
 internal fun test1(): String {
     return concat()

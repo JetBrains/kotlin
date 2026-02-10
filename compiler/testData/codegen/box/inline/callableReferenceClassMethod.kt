@@ -1,4 +1,6 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
+
+// FILE: lib.kt
 typealias Callback = () -> Unit
 
 class CallbackComposer {
@@ -11,6 +13,7 @@ inline fun CallbackComposer.addToExtension(noinline block: Callback) {
     asDynamic().push(block)
 }
 
+// FILE: main.kt
 fun createCallbackBuilder(builder: CallbackComposer.() -> Unit): () -> Callback = {
     val callbacks = arrayOf<Callback>()
     builder(callbacks.unsafeCast<CallbackComposer>())

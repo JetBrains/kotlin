@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 class A
 
@@ -10,6 +10,10 @@ inline fun compare1(a: A): Boolean {
 inline fun compare2(a1: A, a2: A): Boolean {
     return a1 === a2
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 // CHECK_BREAKS_COUNT: function=box count=0
 // CHECK_LABELS_COUNT: function=box name=$l$block count=0

@@ -3,6 +3,7 @@
  * Found at: compiler/testData/codegen/boxInline/simple/severalClosures.1.kt
  */
 
+// FILE: lib.kt
 package foo
 
 class Inline() {
@@ -15,6 +16,9 @@ class Inline() {
         return closure1(param1, param3) + closure2(param2, param1, param3)
     }
 }
+
+// FILE: main.kt
+package foo
 
 // CHECK_BREAKS_COUNT: function=test1 count=0
 // CHECK_LABELS_COUNT: function=test1 name=$l$block count=0

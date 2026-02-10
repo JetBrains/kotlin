@@ -3,6 +3,7 @@
  * Found at: compiler/testData/codegen/boxInline/simple/rootConstructor.1.kt
  */
 
+// FILE: lib.kt
 package foo
 
 
@@ -13,6 +14,9 @@ inline fun <R> doWork(crossinline job: ()-> R) : R {
 fun <R> notInline(job: ()-> R) : R {
     return job()
 }
+
+// FILE: main.kt
+package foo
 
 val s = doWork({11})
 

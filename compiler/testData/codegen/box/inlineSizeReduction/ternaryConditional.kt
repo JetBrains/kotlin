@@ -1,8 +1,12 @@
+// FILE: lib.kt
 package foo
 
 inline fun a(x: Int) = b(x)
 
 fun b(x: Int) = x
+
+// FILE: main.kt
+package foo
 
 fun test1(n: Int) = if (n > 0) a(n + 10) else a(n - 10)
 

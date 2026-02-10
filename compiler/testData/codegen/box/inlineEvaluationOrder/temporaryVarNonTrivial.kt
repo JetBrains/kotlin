@@ -1,3 +1,7 @@
+// FILE: lib.kt
+inline fun <T> with(x: T, a: T.() -> Unit) = x.a()
+
+// FILE: main.kt
 var log = ""
 
 fun bar(): A {
@@ -14,8 +18,6 @@ class A {
         log += "g;"
     }
 }
-
-inline fun <T> with(x: T, a: T.() -> Unit) = x.a()
 
 fun box(): String {
     with(bar()) {

@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 class A
 class B
@@ -13,6 +13,10 @@ inline fun <reified R, reified T> test1(x: Any): String =
         is T -> "T"
         else -> "Unknown"
     }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 fun box(): String {
     assertEquals("T", test<A, B>(A()), "test<T, R>(T())")

@@ -1,3 +1,4 @@
+// FILE: lib.kt
 var log = ""
 
 inline fun f(x: Int): Int {
@@ -6,6 +7,7 @@ inline fun f(x: Int): Int {
     return result
 }
 
+// FILE: main.kt
 fun bar() = 10
 
 class Test {

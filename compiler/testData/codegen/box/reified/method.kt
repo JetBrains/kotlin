@@ -1,11 +1,15 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
-
-// CHECK_NOT_CALLED: test
 
 class A(val x: Any? = null) {
     inline fun <reified T> test() = x is T
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: test
 
 class B
 

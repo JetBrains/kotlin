@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -20,6 +21,18 @@ fun pullLog(): String {
     return string
 }
 
+inline
+fun multiplyFunInline(): (Int, Int)->Int {
+    log("multiplyFunInline()")
+    return { x, y -> x * y }
+}
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: buzz
+
 fun <T> fizz(x: T): T {
     log("fizz($x)")
     return x
@@ -29,12 +42,6 @@ fun <T> fizz(x: T): T {
 
 fun multiplyFun(): (Int, Int)->Int {
     log("multiplyFun()")
-    return { x, y -> x * y }
-}
-
-inline
-fun multiplyFunInline(): (Int, Int)->Int {
-    log("multiplyFunInline()")
     return { x, y -> x * y }
 }
 

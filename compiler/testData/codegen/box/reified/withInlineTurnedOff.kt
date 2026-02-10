@@ -1,10 +1,15 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 inline fun <reified T> isInstance(x: Any?): Boolean =
     x is T
 
 class A
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
 class B
 
 fun box(): String {

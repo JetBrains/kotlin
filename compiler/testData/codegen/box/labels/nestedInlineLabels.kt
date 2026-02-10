@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 var state = false
 
@@ -14,6 +14,10 @@ inline fun block(p: () -> Unit) {
 
     blockImpl(p)
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 fun test(x: Int): Int {
     block outer@ {

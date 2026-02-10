@@ -1,6 +1,7 @@
 /*
 Modified test case from issue: https://youtrack.jetbrains.com/issue/KT-24542
  */
+// FILE: lib.kt
 package foo
 
 class Test() {
@@ -70,6 +71,9 @@ class Test() {
         while(foo())
     }
 }
+
+// FILE: main.kt
+package foo
 
 fun test(doBreak: Boolean, doContinue: Boolean): String {
     var x = Test()

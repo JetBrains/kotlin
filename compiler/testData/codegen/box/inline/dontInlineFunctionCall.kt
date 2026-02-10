@@ -1,8 +1,11 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 inline fun block(p: () -> Int) = p()
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
 fun createFunction(x: Int): () -> Int = { x }
 
 // CHECK_BREAKS_COUNT: function=box count=0

@@ -1,9 +1,10 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: maxBySquare except=imul;Unit_getInstance
 
-internal data class Result(var value: Int = 0, var invocationCount: Int = 0)
+data class Result(var value: Int = 0, var invocationCount: Int = 0)
 
 internal inline fun maxBy(a: Array<Int>, keyFun: (Int) -> Int): Int {
     var maxVal = a[0]
@@ -21,6 +22,10 @@ internal inline fun maxBy(a: Array<Int>, keyFun: (Int) -> Int): Int {
     return maxVal
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+// CHECK_CONTAINS_NO_CALLS: maxBySquare except=imul;Unit_getInstance
 // CHECK_BREAKS_COUNT: function=maxBySquare count=0
 // CHECK_LABELS_COUNT: function=maxBySquare name=$l$block count=0
 internal fun maxBySquare(a: Array<Int>, r: Result): Result {

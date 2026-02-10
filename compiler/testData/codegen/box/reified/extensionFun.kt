@@ -1,3 +1,10 @@
+// FILE: lib.kt
+package foo
+import kotlin.test.*
+
+inline fun <reified T> Any.canBeCastedTo(): Boolean = this is T
+
+// FILE: main.kt
 package foo
 import kotlin.test.*
 
@@ -6,8 +13,6 @@ import kotlin.test.*
 open class A
 class B
 class C : A()
-
-inline fun <reified T> Any.canBeCastedTo(): Boolean = this is T
 
 fun box(): String {
     assertEquals(true, A().canBeCastedTo<A>(), "A().canBeCastedTo<A>()")

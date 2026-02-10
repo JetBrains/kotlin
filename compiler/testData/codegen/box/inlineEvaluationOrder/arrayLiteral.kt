@@ -1,10 +1,28 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
+// CHECK_NOT_CALLED: buzz
 inline fun <T> buzz(x: T): T {
     log("buzz($x)")
     return x
 }
+
+private var LOG = ""
+
+fun log(string: String) {
+    LOG += "$string;"
+}
+
+fun pullLog(): String {
+    val string = LOG
+    LOG = ""
+    return string
+}
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 fun <T> assertArrayEquals(expected: Array<out T>, actual: Array<out T>, message: String? = null) {
     if (!arraysEqual(expected, actual)) {
@@ -29,20 +47,6 @@ private fun equal(first: Any?, second: Any?) =
     else {
         first == second
     }
-
-// CHECK_NOT_CALLED: buzz
-
-private var LOG = ""
-
-fun log(string: String) {
-    LOG += "$string;"
-}
-
-fun pullLog(): String {
-    val string = LOG
-    LOG = ""
-    return string
-}
 
 fun <T> fizz(x: T): T {
     log("fizz($x)")

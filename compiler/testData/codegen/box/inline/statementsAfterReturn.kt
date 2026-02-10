@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 data class State(public var value: Int = 10)
 
@@ -8,6 +8,10 @@ inline fun withState(state: State, ext: State.() -> Unit) {
     return
     state.value = 0
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 // CHECK_BREAKS_COUNT: function=box count=0
 // CHECK_LABELS_COUNT: function=box name=$block count=0

@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
+// FILE: lib.kt
 import kotlin.js.Console
 
 external val consoleAccessCounter: Int
@@ -17,6 +18,9 @@ inline fun logHelloWorldInline(c: Console) {
     c.log("world")
     c.log("!")
 }
+
+// FILE: main.kt
+import kotlin.js.Console
 
 fun box(): String {
     js("""

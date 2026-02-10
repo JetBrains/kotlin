@@ -1,4 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
+// FILE: lib.kt
 package foo
 
 inline fun syntaxTestInline() {
@@ -59,6 +60,9 @@ inline fun syntaxTestInline() {
 
     val nullable: String? = null
 }
+
+// FILE: main.kt
+package foo
 
 fun syntaxTest() {
     syntaxTestInline()

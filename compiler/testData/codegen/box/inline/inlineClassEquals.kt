@@ -3,6 +3,7 @@
 
 @file:Suppress("RESERVED_MEMBER_INSIDE_VALUE_CLASS")
 
+// FILE: lib.kt
 inline class ClassInt(val x: Int)
 inline class ClassString(val x: String)
 inline class ClassUnderlayingInline(val x: ClassInt)
@@ -24,6 +25,7 @@ interface InterfaceForInlineClass
 inline class ClassIntWithInterface(val x: Int) : InterfaceForInlineClass
 inline class ClassStringWithInterface(val x: String) : InterfaceForInlineClass
 
+// FILE: main.kt
 // CHECK_NOT_CALLED_IN_SCOPE: scope=testBasicInt function=equals
 // CHECK_NEW_COUNT: function=testBasicInt count=0
 fun testBasicInt() {

@@ -1,5 +1,6 @@
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM_IR, JVM_IR_SERIALIZE
 // ^^^ Local inline functions are not yet supported.
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -14,6 +15,12 @@ internal inline fun repeatAction(times: Int, action: () -> Unit) {
     }
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: capturedInLambda except=Unit_getInstance
+// CHECK_CONTAINS_NO_CALLS: declaredInLambda except=Unit_getInstance
 // CHECK_BREAKS_COUNT: function=capturedInLambda count=0
 // CHECK_LABELS_COUNT: function=capturedInLambda name=$l$block count=0
 internal fun capturedInLambda(state: State, a: Int, b: Int): Int {

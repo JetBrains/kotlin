@@ -3,6 +3,7 @@
  * Found at: compiler/testData/codegen/boxInline/simple/extension.1.kt
  */
 
+// FILE: lib.kt
 package foo
 
 inline fun Inline.calcExt(s: (Int) -> Int, p: Int) : Int {
@@ -35,6 +36,8 @@ class Inline(val res: Int) {
 
 }
 
+// FILE: main.kt
+package foo
 fun test1(): Int {
     val inlineX = Inline(9)
     return inlineX.calcExt({ z: Int -> z}, 25)

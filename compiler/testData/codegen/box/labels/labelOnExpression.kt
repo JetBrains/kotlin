@@ -1,6 +1,19 @@
 // CHECK_LABELS_COUNT: function=test0 count=0
 // CHECK_LABELS_COUNT: function=test2 count=0
 
+// FILE: lib.kt
+package foo
+import kotlin.test.*
+
+class Foo {
+    inline fun iter(body: ()->Boolean) {
+        for (i in 0 .. 10) {
+            if (!body()) break
+        }
+    }
+}
+
+// FILE: main.kt
 package foo
 import kotlin.test.*
 
@@ -34,14 +47,6 @@ public fun test3() {
     val f = Foo()
     f.iter label@ {
         return@label false
-    }
-}
-
-class Foo {
-    inline fun iter(body: ()->Boolean) {
-        for (i in 0 .. 10) {
-            if (!body()) break
-        }
     }
 }
 

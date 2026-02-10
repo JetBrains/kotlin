@@ -1,5 +1,6 @@
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM_IR, JVM_IR_SERIALIZE
 // ^^^ Local inline functions are not yet supported.
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -8,6 +9,10 @@ fun multiplyBy(a: Int): (Int) -> Int {
 
     return ::multiply
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 fun box(): String {
     assertEquals(6, multiplyBy(2)(3))

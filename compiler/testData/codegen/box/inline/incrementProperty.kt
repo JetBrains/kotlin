@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_NOT_CALLED: inc
 // CHECK_NOT_CALLED: run
@@ -12,6 +12,11 @@ inline fun inc(countable: Countable) = countable.count++
 
 inline fun run(func: () -> Unit) = func()
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+// CHECK_NOT_CALLED: inc
+// CHECK_NOT_CALLED: run
 // CHECK_BREAKS_COUNT: function=incNoInline count=0
 // CHECK_LABELS_COUNT: function=incNoInline name=$l$block count=0
 fun incNoInline(countable: Countable) = run { inc(countable) }

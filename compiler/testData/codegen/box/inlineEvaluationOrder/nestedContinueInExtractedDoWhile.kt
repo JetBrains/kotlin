@@ -1,12 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
-
-inline fun <T> buzz(x: T): T {
-    log("buzz($x)")
-    return x
-}
-
-// CHECK_NOT_CALLED: buzz
 
 private var LOG = ""
 
@@ -20,12 +13,7 @@ fun pullLog(): String {
     return string
 }
 
-fun <T> fizz(x: T): T {
-    log("fizz($x)")
-    return x
-}
-
-private inline fun bar(predicate: (Int) -> Boolean) {
+inline fun bar(predicate: (Int) -> Boolean) {
     var i = -1
     outer@do {
         i++
@@ -40,6 +28,15 @@ private inline fun bar(predicate: (Int) -> Boolean) {
         } while (j < 3)
         log("o$i")
     } while (predicate(i))
+}
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+fun <T> fizz(x: T): T {
+    log("fizz($x)")
+    return x
 }
 
 fun box(): String {

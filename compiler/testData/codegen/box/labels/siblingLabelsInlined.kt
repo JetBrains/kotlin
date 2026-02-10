@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_NOT_CALLED: testInline
 // CHECK_LABELS_COUNT: function=testNoinline name=loop count=1
@@ -22,6 +22,13 @@ inline fun testInline(): Int {
     return c
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: testInline
+// CHECK_LABELS_COUNT: function=testNoinline name=loop count=1
+// CHECK_LABELS_COUNT: function=testNoinline name=loop_0 count=1
 fun testNoinline(): Int {
     return testInline()
 }

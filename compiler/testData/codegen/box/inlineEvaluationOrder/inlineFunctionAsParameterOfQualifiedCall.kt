@@ -1,5 +1,7 @@
+// NO_CHECK_LAMBDA_INLINING
 // KJS_WITH_FULL_RUNTIME
 // See KT-11711
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -22,6 +24,35 @@ fun pullLog(): String {
     return string
 }
 
+
+val g: Any?
+    get() {
+        log("g.get")
+        return "c"
+    }
+
+inline fun foo(): Any? {
+    log("foo()")
+    return g;
+}
+
+inline fun bar(): Any? {
+    return g;
+}
+
+inline fun baz(): Any? {
+    return log("baz()");
+}
+
+inline fun boo(a: Any?): Any? {
+    return log("boo()");
+}
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: buzz
 fun <T> fizz(x: T): T {
     log("fizz($x)")
     return x
@@ -50,29 +81,6 @@ val a: A
                 }
         }
     }
-
-val g: Any?
-    get() {
-        log("g.get")
-        return "c"
-    }
-
-inline fun foo(): Any? {
-    log("foo()")
-    return g;
-}
-
-inline fun bar(): Any? {
-    return g;
-}
-
-inline fun baz(): Any? {
-    return log("baz()");
-}
-
-inline fun boo(a: Any?): Any? {
-    return log("boo()");
-}
 
 fun box(): String {
     log("--1--")

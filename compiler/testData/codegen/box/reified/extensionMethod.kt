@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_NOT_CALLED: test
 // CHECK_NOT_CALLED: fn
@@ -11,6 +11,10 @@ class A(val x: Any? = null) {
 }
 
 class B(val y: Any? = null)
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 class X
 class Y

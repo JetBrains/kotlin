@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 
 var global = ""
@@ -19,6 +20,9 @@ fun c(first: Int, second: Int, third: Int) = first + second + third
 inline fun d(first: Int, second: Int, third: Int) {
     returnValue = first + second + third
 }
+
+// FILE: main.kt
+package foo
 
 fun test1(): Int {
     globalNum = 1

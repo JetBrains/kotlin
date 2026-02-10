@@ -4,6 +4,7 @@
 // See KT-65230
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
+// FILE: lib.kt
 fun toStringTemplateAny(x: Any) = " $x "
 fun <T> toStringTemplateGeneric(x: T) = " $x "
 inline fun <T> toStringTemplateInlineGeneric(x: T) = " $x "
@@ -13,6 +14,9 @@ class TestClass<T>(val x: T) {
     fun asString() = " $x "
     inline fun asStringInline() = " $x "
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun testByte() {
     val expectedMax = " 127 "

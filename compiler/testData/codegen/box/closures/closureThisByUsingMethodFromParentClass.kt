@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: JS_IR
+// FILE: main.kt
 package foo
 
 open class A {
@@ -32,6 +33,8 @@ fun box(): String {
 }
 
 
+// FILE: lib.kt
+package foo
 // Helpers
 
 inline fun String.replace(regexp: RegExp, replacement: String): String = asDynamic().replace(regexp, replacement)

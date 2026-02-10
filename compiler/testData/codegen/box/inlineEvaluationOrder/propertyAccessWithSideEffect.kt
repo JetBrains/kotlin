@@ -1,6 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
-package foo
-import kotlin.test.*
+// FILE: lib.kt
 
 inline fun <T> buzz(x: T): T {
     log("buzz($x)")
@@ -44,6 +43,9 @@ public inline fun Iterable<String>.boo(i: Any?) {
     var a = i
     for (element in this);
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun test1(f: () -> Array<String>) {
     f().boo()

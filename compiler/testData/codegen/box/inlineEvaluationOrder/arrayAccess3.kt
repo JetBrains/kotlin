@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 inline fun <T> buzz(x: T): T {
     log("buzz($x)")
@@ -19,6 +19,10 @@ fun pullLog(): String {
     LOG = ""
     return string
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 fun <T> fizz(x: T): T {
     log("fizz($x)")

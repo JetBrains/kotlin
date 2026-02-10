@@ -1,4 +1,4 @@
-package foo
+// FILE: lib.kt
 import kotlin.test.*
 
 inline fun <T> buzz(x: T): T {
@@ -20,12 +20,7 @@ fun pullLog(): String {
     return string
 }
 
-fun <T> fizz(x: T): T {
-    log("fizz($x)")
-    return x
-}
-
-private inline fun bar(predicate: (Char) -> Boolean): Int {
+inline fun bar(predicate: (Char) -> Boolean): Int {
     var i = -1
     val str = "abc "
     do {
@@ -34,6 +29,16 @@ private inline fun bar(predicate: (Char) -> Boolean): Int {
         log(i.toString())
     } while (predicate(str[i]) && i < 3)
     return i
+}
+
+// FILE: main.kt
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: buzz
+
+fun <T> fizz(x: T): T {
+    log("fizz($x)")
+    return x
 }
 
 private fun test(c: Char): Int {

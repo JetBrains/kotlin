@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_NOT_CALLED: test
 
@@ -11,6 +11,11 @@ inline fun <reified T> test(): String {
     return if (a is T) "A" else "Unknown"
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: test
 fun box(): String {
     assertEquals("A", test<A>())
     assertEquals("Unknown", test<String>())

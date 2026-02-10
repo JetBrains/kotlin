@@ -3,8 +3,8 @@
  * Found at: compiler/testData/codegen/boxInline/simple/simpleLambda.1.kt
  */
 
+// FILE: lib.kt
 package foo
-
 public class Data()
 
 public inline fun <T, R> T.use(block: (T)-> R) : R {
@@ -18,6 +18,8 @@ public inline fun use2() : Int {
 
 class Z {}
 
+// FILE: main.kt
+package foo
 // CHECK_BREAKS_COUNT: function=test1 count=0
 // CHECK_LABELS_COUNT: function=test1 name=$l$block count=0
 fun test1() : Int {

@@ -1,10 +1,10 @@
 /*
 Modified test case from KT-24777
  */
-package foo
-
+// FILE: lib.kt
 inline fun condition() = false
 
+// FILE: main.kt
 // CHECK_BREAKS_COUNT: function=run count=0
 // CHECK_LABELS_COUNT: function=run name=$block count=0
 fun run(x: Boolean): String {

@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -6,6 +7,10 @@ data class IntPair(public var fst: Int, public var snd: Int)
 inline fun run(func: () -> Int): Int {
     return func()
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 // CHECK_BREAKS_COUNT: function=bar count=0
 // CHECK_LABELS_COUNT: function=bar name=$l$block count=0

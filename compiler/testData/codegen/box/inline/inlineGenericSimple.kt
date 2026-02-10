@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -8,6 +9,12 @@ internal inline fun <T> doNothing(a: T): T {
     return a
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: doNothingInt
+// CHECK_CONTAINS_NO_CALLS: doNothingStr
 // CHECK_BREAKS_COUNT: function=doNothingInt count=0
 // CHECK_LABELS_COUNT: function=doNothingInt name=$l$block count=0
 internal fun doNothingInt(a: Int): Int {

@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // FUNCTION_CALLED_TIMES: abs count=1
 // ^ This single call is in the standard library, not here
@@ -11,6 +11,10 @@ inline fun abs(a: Int): Int {
         return a
     }
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 val r1 = abs(1)
 val r2 = abs(-2)

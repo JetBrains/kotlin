@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 
 inline fun if1(f: (Int) -> Int, a: Int, b: Int, c: Int): Int {
@@ -9,6 +10,9 @@ inline fun if1(f: (Int) -> Int, a: Int, b: Int, c: Int): Int {
 
     return f(c)
 }
+
+// FILE: main.kt
+package foo
 
 fun test(x: Int): Int {
     val test1 = if1({ it }, x, 2, 3)

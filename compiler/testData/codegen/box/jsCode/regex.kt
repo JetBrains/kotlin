@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
+// FILE: lib.kt
 package foo
 
 inline fun assertRegex(regexFactory: () -> dynamic, expectedPattern: String, expectedFlags: String, testString: String) {
@@ -7,6 +8,9 @@ inline fun assertRegex(regexFactory: () -> dynamic, expectedPattern: String, exp
     assertEquals(expectedFlags, reg.flags)
     assertEquals(true, reg.test(testString))
 }
+
+// FILE: main.kt
+package foo
 
 fun box(): String {
     assertRegex({ js("/ab+c/u") }, "ab+c", "u", "abbbbc")

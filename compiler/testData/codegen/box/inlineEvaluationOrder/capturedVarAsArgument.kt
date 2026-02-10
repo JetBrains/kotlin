@@ -1,7 +1,9 @@
+// FILE: lib.kt
 var log = ""
 
 inline fun foo(x: Int, action: (Int) -> Unit) = action(x)
 
+// FILE: main.kt
 fun box(): String {
     var x = 23
     foo(x) {

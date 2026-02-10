@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -9,6 +10,13 @@ internal inline fun <T> run(noinline func: (T) -> T, arg: T): T {
     return func(arg)
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_FUNCTION_EXISTS: multiplyBy2$lambda
+// HAS_NO_CAPTURED_VARS: function=multiplyBy2 except=multiplyBy2$lambda
+// CHECK_NOT_CALLED_IN_SCOPE: scope=multiplyBy2 function=run
 // CHECK_BREAKS_COUNT: function=multiplyBy2 count=0
 // CHECK_LABELS_COUNT: function=multiplyBy2 name=$l$block count=0
 internal fun multiplyBy2(x: Int): Int {

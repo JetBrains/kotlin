@@ -3,6 +3,7 @@
  * Found at: compiler/testData/codegen/boxInline/simple/severalUsage.1.kt
  */
 
+// FILE: lib.kt
 package foo
 
 public inline fun <R> runTest(f: () -> R): R {
@@ -14,6 +15,10 @@ public inline fun <R> minByTest(f: (Int) -> R): R {
     val v = f(1)
     return v
 }
+
+// FILE: main.kt
+package foo
+
 // CHECK_BREAKS_COUNT: function=box count=0
 // CHECK_LABELS_COUNT: function=box name=$l$block count=0
 fun box(): String {

@@ -1,6 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_NOT_CALLED_IN_SCOPE: function=test scope=box
 
@@ -18,6 +18,10 @@ inline fun <reified T> test(vararg xs: Any): List<T> {
 
     return ts
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 fun box(): String {
     val a1 = A(1)

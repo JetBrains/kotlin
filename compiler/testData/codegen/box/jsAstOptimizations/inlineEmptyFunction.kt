@@ -1,5 +1,7 @@
+// FILE: lib.kt
 inline fun inlineFunction(x: Int) {}
 
+// FILE: main.kt
 var OK : Any? = null
 val flag1 = 1
 val flag2 = 2

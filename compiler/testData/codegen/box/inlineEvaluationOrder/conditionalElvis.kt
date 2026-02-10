@@ -1,4 +1,4 @@
-package foo
+// FILE: lib.kt
 import kotlin.test.*
 
 inline fun <T> buzz(x: T): T {
@@ -19,6 +19,11 @@ fun pullLog(): String {
     LOG = ""
     return string
 }
+
+// FILE: main.kt
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: buzz
 
 fun <T> fizz(x: T): T {
     log("fizz($x)")

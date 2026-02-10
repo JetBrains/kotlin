@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -5,6 +6,10 @@ inline fun dangerCall() {
     assertEquals("A", "A")
     assertNotEquals("A", "A")
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 fun box(): String {
     if ("A" != "A") dangerCall()

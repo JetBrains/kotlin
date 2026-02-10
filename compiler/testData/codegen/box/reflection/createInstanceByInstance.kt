@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
 // KJS_WITH_FULL_RUNTIME
 
+// FILE: lib.kt
 import kotlin.reflect.createInstance
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -61,6 +62,11 @@ inline fun <T : Any> testInstanceFail(x: T) {
         // OK
     }
 }
+
+// FILE: main.kt
+import kotlin.reflect.createInstance
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 fun box(): String {
     testInstance(Simple())

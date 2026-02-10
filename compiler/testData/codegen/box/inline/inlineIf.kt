@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -31,6 +32,13 @@ inline fun if3(f: (Int) -> Int, a: Int, b: Int, c: Int): Int {
     }
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: testIf1
+// CHECK_CONTAINS_NO_CALLS: testIf2
+// CHECK_CONTAINS_NO_CALLS: testIf3
 // CHECK_BREAKS_COUNT: function=testIf1 count=2
 // CHECK_LABELS_COUNT: function=testIf1 name=$l$block count=1
 // CHECK_LABELS_COUNT: function=testIf1 name=$l$block_0 count=1

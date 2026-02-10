@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: multiplyNoInline except=imul
 
@@ -7,6 +7,11 @@ internal inline fun multiply(a: Int, b: Int): Int {
     return a * b
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: multiplyNoInline except=imul
 internal fun multiplyNoInline(a: Int, b: Int): Int {
     var c = a - 1
     var d = b - 1

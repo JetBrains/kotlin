@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: test except=Unit_getInstance
 // CHECK_LABELS_COUNT: function=test name=loop count=1
@@ -30,6 +30,15 @@ internal inline fun test3(state: State) {
         if (i == 2) break@loop
     }
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: test except=Unit_getInstance
+// CHECK_LABELS_COUNT: function=test name=loop count=1
+// CHECK_LABELS_COUNT: function=test name=loop_0 count=1
+// CHECK_LABELS_COUNT: function=test name=loop_1 count=1
 
 internal fun test(state: State) {
     test3(state)

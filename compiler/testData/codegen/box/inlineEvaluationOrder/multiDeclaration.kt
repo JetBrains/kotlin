@@ -1,4 +1,4 @@
-package foo
+// FILE: lib.kt
 import kotlin.test.*
 
 inline fun <T> buzz(x: T): T {
@@ -20,18 +20,22 @@ fun pullLog(): String {
     return string
 }
 
+class A(val x: Int, val y: Int)
+
+inline operator fun A.component2(): Int = buzz(y)
+
+// FILE: main.kt
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: buzz
+// CHECK_NOT_CALLED: component2
+
 fun <T> fizz(x: T): T {
     log("fizz($x)")
     return x
 }
 
-// CHECK_NOT_CALLED: component2
-
-class A(val x: Int, val y: Int)
-
 operator fun A.component1(): Int = fizz(x)
-
-inline operator fun A.component2(): Int = buzz(y)
 
 fun box(): String {
     val (a, b) = A(1, 2)

@@ -1,7 +1,11 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 inline fun block(p: () -> Unit) = p()
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 class A(val x: Int) {
     fun test(): Int {

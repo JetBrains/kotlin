@@ -26,9 +26,8 @@ However in our class hierarchy JsArrayLiteral is subclass of JsLiteral,
 which makes very easy to implement incorrect aliasing logic.
  */
 
+// FILE: lib.kt
 package foo
-
-// CHECK_NOT_CALLED: moveTo
 
 inline fun Array<Int>.push(element: Int): Unit = asDynamic().push(element)
 
@@ -47,8 +46,12 @@ inline fun moveTo(source: Array<Int>, sink: Array<Int>): PairArray<Int, Int> {
     return PairArray(source, sink)
 }
 
+// FILE: main.kt
+// CHECK_NOT_CALLED: moveTo
 // CHECK_BREAKS_COUNT: function=box count=0
 // CHECK_LABELS_COUNT: function=box name=$l$block count=0
+package foo
+
 fun box(): String {
     val expected = PairArray<Int, Int>(arrayOf(), arrayOf(1,2,3,4))
     assertTrue(expected.deepEquals(moveTo(arrayOf(3, 4),  arrayOf(1, 2))))

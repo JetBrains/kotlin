@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_CALLED: doRun
 // CHECK_NOT_CALLED: test
@@ -19,6 +19,12 @@ inline fun <reified A, reified B> test(x: Any, y: Any): Boolean =
             val isB = null
             result
         }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+// CHECK_CALLED: doRun
+// CHECK_NOT_CALLED: test
 
 fun box(): String {
     val x = X()

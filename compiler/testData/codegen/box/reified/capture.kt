@@ -1,3 +1,4 @@
+// FILE: lib.kt
 interface I {
     fun foo(): String?
 }
@@ -18,6 +19,7 @@ inline fun <reified T> c(): () -> String? = { T::class.simpleName }
 
 inline fun <reified T> d(): (Any) -> Boolean = { it is T }
 
+// FILE: main.kt
 fun box(): String {
     val r1 = a<C>().foo()
     if (r1 != "C") return "fail1: $r1"

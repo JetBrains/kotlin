@@ -1,11 +1,10 @@
+// FILE: lib.kt
 package foo
 
-inline fun <T> buzz(x: T): T {
-    log("buzz($x)")
-    return x
-}
+inline fun bar(n: Int, x: Int) = if (n <= 5) x else 10
 
-// CHECK_NOT_CALLED: buzz
+// FILE: main.kt
+package foo
 
 private var LOG = ""
 
@@ -25,8 +24,6 @@ fun <T> fizz(x: T): T {
 }
 
 // CHECK_NOT_CALLED: bar_vux9f0$
-
-inline fun bar(n: Int, x: Int) = if (n <= 5) x else 10
 
 fun test(n: Int): Int = bar(n, fizz(n))
 

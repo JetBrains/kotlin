@@ -1,3 +1,12 @@
+// FILE: lib.kt
+package foo
+import kotlin.test.*
+
+inline fun run(noinline f: () -> Int): Int {
+    return f()
+}
+
+// FILE: main.kt
 package foo
 import kotlin.test.*
 
@@ -6,10 +15,6 @@ fun toggle(): Boolean {
     flag = !flag
 
     return flag
-}
-
-inline fun run(noinline f: () -> Int): Int {
-    return f()
 }
 
 // CHECK_BREAKS_COUNT: function=box count=0

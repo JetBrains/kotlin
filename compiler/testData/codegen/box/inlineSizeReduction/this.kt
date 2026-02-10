@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: test
 
@@ -9,6 +9,11 @@ internal class A(val x: Int) {
     inline fun ff(): Int = f()
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: test
 internal fun test(a: A): Int = a.ff()
 
 fun box(): String {

@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
+// FILE: lib.kt
 package foo
 
 inline fun String.charCodeAt(i: Int): Int = asDynamic().charCodeAt(i)
@@ -22,6 +23,9 @@ class Foo(val name: String) {
     override fun hashCode(): Int = name.myHashCode()
     override fun toString(): String = "Foo($name)"
 }
+
+// FILE: main.kt
+package foo
 
 fun box(): String {
     val james = Foo("James")

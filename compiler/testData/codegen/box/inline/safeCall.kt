@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -5,6 +6,11 @@ import kotlin.test.*
 
 inline fun <T : Any, R> T.doLet(f: (T) -> R): R = f(this)
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: sum
 // CHECK_BREAKS_COUNT: function=sum count=0
 // CHECK_LABELS_COUNT: function=sum name=$l$block count=0
 private fun sum(x: Int?, y: Int): Int =

@@ -1,8 +1,8 @@
 // See KT-8005
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
-private inline fun bar(predicate: (Char) -> Boolean): Int {
+inline fun bar(predicate: (Char) -> Boolean): Int {
     var i = 0
     val str = "abc "
     while (predicate(str[i]) && i < 3) {
@@ -10,6 +10,10 @@ private inline fun bar(predicate: (Char) -> Boolean): Int {
     }
     return i
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 private fun test(c: Char): Int {
     return bar { it != c }

@@ -1,8 +1,12 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 inline fun <reified T> isInstance(x: Any?): Boolean =
     x is T
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 // CHECK_NOT_CALLED: isInstance
 

@@ -1,6 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
-
 // CHECK_NOT_CALLED: inline1
 // CHECK_NOT_CALLED: inline2
 // CHECK_NOT_CALLED: inline3
@@ -21,6 +20,14 @@ inline fun inline3(a: Int): Int {
     if (i == i1) return 0
     return i1
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: inline1
+// CHECK_NOT_CALLED: inline2
+// CHECK_NOT_CALLED: inline3
 
 val r1 = inline3(1)
 val r3 = inline3(3)

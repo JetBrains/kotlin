@@ -1,9 +1,17 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
-private fun `+`(a: Int, b: Int) = a + b
+// FILE: lib.kt
+fun `+`(a: Int, b: Int) = a + b
 
 @JsName("minus")
 fun `-`(a: Int, b: Int) = a - b
 
+inline fun <reified `-`> test5(): String = `-`::class.simpleName!!
+
+inline fun <reified `-`> test6(x: Any): Boolean = x is `-`
+
+class OK
+
+// FILE: main.kt
 fun test1(): Int {
     val ` x ` = 23
     val `*` = 3
@@ -27,12 +35,6 @@ fun test4(): String {
     fun `[£]`() = `1(¢)`
     return `[£]`()
 }
-
-inline fun <reified `-`> test5(): String = `-`::class.simpleName!!
-
-inline fun <reified `-`> test6(x: Any): Boolean = x is `-`
-
-class OK
 
 fun box(): String {
     if (test1() != 20) return "fail1"

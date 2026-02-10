@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -15,6 +16,10 @@ internal inline fun inline3(a: Int): Int {
     return inline1(a) * inline2(a)
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+// CHECK_NOT_CALLED: sumEvenInRange
 // CHECK_BREAKS_COUNT: function=squareMultipliedByTwo count=0
 // CHECK_LABELS_COUNT: function=squareMultipliedByTwo name=$l$block count=0
 internal fun squareMultipliedByTwo(a: Int): Int {

@@ -1,7 +1,9 @@
+// FILE: lib.kt
 inline fun foo(vararg x: String) = x.size
 
 inline fun bar(vararg x: String) = x.size + x.size
 
+// FILE: main.kt
 fun test1() = foo("Q", "W", "E")
 
 fun test2() = foo("*", "@")

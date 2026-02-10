@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -43,11 +44,6 @@ fun pullLog(): String {
     return string
 }
 
-fun <T> fizz(x: T): T {
-    log("fizz($x)")
-    return x
-}
-
 // CHECK_NOT_CALLED: max_0
 // CHECK_NOT_CALLED: box$f_0
 // CHECK_NOT_CALLED: box$f_1
@@ -60,6 +56,20 @@ inline fun max(getA: ()->Int, b: Int): Int {
 
     return b
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: buzz
+fun <T> fizz(x: T): T {
+    log("fizz($x)")
+    return x
+}
+
+// CHECK_NOT_CALLED: max_0
+// CHECK_NOT_CALLED: box$f_0
+// CHECK_NOT_CALLED: box$f_1
 
 fun box(): String {
     val one = 1

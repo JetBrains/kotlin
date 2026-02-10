@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -20,6 +21,10 @@ internal inline fun inline3(a: Int): Int {
     return i1
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+// CHECK_CONTAINS_NO_CALLS: squareMultipliedByTwo except=imul
 // CHECK_BREAKS_COUNT: function=squareMultipliedByTwo count=2
 // CHECK_LABELS_COUNT: function=squareMultipliedByTwo name=$l$block count=1
 // CHECK_LABELS_COUNT: function=squareMultipliedByTwo name=$l$block_0 count=1

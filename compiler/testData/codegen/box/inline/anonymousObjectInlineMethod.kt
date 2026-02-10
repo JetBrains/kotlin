@@ -1,5 +1,6 @@
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_BREAKS_COUNT: function=add count=0
 // CHECK_LABELS_COUNT: function=add name=$l$block count=0
@@ -10,6 +11,10 @@ fun add(a: Int, b: Int): Int {
 
     return o.add(a, b)
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 fun box(): String {
     assertEquals(3, add(1, 2))

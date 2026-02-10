@@ -1,4 +1,5 @@
-package foo
+// ISSUE: KT-7502
+// FILE: lib.kt
 import kotlin.test.*
 
 inline fun <T> buzz(x: T): T {
@@ -20,16 +21,19 @@ fun pullLog(): String {
     return string
 }
 
+class A(val value: Int) {
+    inline fun plus(num: Int): Int = this.value + num
+}
+
+// FILE: main.kt
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: buzz
+// CHECK_NOT_CALLED: plus
+
 fun <T> fizz(x: T): T {
     log("fizz($x)")
     return x
-}
-
-// Test for KT-7502
-// CHECK_NOT_CALLED: plus
-
-class A(val value: Int) {
-    inline fun plus(num: Int): Int = this.value + num
 }
 
 fun box(): String {

@@ -1,5 +1,5 @@
 // See KT-7043, KT-11711
-package foo
+// FILE: lib.kt
 import kotlin.test.*
 
 inline fun foo(b: Any) {
@@ -30,6 +30,9 @@ val aa: Array<String>
         log("aa.get")
         return arrayOf("aa")
     }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun box(): String {
     foo(a[0])

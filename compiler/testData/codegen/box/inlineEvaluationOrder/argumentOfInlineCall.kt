@@ -1,4 +1,4 @@
-package foo
+// FILE: lib.kt
 import kotlin.test.*
 
 inline fun <T> buzz(x: T): T {
@@ -20,19 +20,23 @@ fun pullLog(): String {
     return string
 }
 
-fun <T> fizz(x: T): T {
-    log("fizz($x)")
-    return x
-}
-
-// CHECK_NOT_CALLED_IN_SCOPE: function=max scope=box
-
 inline fun max(a: Int, b: Int): Int {
     log("max($a, $b)")
 
     if (a > b) return a
 
     return b
+}
+
+// FILE: main.kt
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: buzz
+// CHECK_NOT_CALLED_IN_SCOPE: function=max scope=box
+
+fun <T> fizz(x: T): T {
+    log("fizz($x)")
+    return x
 }
 
 fun box(): String {

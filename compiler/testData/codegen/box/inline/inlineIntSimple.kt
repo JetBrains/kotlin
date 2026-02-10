@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -19,6 +20,13 @@ internal class Inline {
     }
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: doNothing1
+// CHECK_CONTAINS_NO_CALLS: doNothing2
+// CHECK_CONTAINS_NO_CALLS: doNothing3
 // CHECK_BREAKS_COUNT: function=doNothing1 count=0
 // CHECK_LABELS_COUNT: function=doNothing1 name=$l$block count=0
 internal fun doNothing1 (inline1: Inline, a: Int): Int {

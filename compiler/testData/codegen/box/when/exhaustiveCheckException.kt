@@ -1,6 +1,22 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // ISSUE: KT-64652
+// FILE: lib.kt
+sealed class C {
+    class X : C()
+
+    class Y : C()
+}
+
+enum class E {
+    X, Y
+}
+
+inline fun createWrongC(): C = js("{ name: 'Z' }").unsafeCast<C>()
+
+inline fun createWrongE(): E = js("{ name: 'Z' }").unsafeCast<E>()
+
+// FILE: main.kt
 fun <T> checkThrown(x: T, block: (T) -> Any?): Unit? {
     return try {
         block(x)
@@ -20,20 +36,6 @@ fun <T> checkNotThrown(x: T, block: (T) -> Any?): Unit? {
         null
     }
 }
-
-sealed class C {
-    class X : C()
-
-    class Y : C()
-}
-
-enum class E {
-    X, Y
-}
-
-private inline fun createWrongC(): C = js("{ name: 'Z' }").unsafeCast<C>()
-
-private inline fun createWrongE(): E = js("{ name: 'Z' }").unsafeCast<E>()
 
 fun box(): String {
     checkThrown(createWrongC()) {

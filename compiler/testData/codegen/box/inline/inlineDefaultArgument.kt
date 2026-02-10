@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -8,6 +9,12 @@ internal inline fun sum(a: Int, b: Int = 0): Int {
     return a + b
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: identity
+// CHECK_CONTAINS_NO_CALLS: sumNoInline
 // CHECK_BREAKS_COUNT: function=identity count=0
 // CHECK_LABELS_COUNT: function=identity name=$l$block count=0
 internal fun identity(a: Int): Int {

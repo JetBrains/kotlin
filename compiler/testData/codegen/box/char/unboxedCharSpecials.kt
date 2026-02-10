@@ -1,8 +1,10 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-private inline fun typeOf(x: dynamic): String = js("typeof x").unsafeCast<String>()
+// FILE: lib.kt
+inline fun typeOf(x: dynamic): String = js("typeof x").unsafeCast<String>()
 
+// FILE: main.kt
 fun box(): String {
     val arr = charArrayOf('A')
 

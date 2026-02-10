@@ -1,3 +1,19 @@
+// FILE: lib.kt
+package foo
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: typePredicate
+
+interface TypePredicate {
+    operator fun invoke(x: Any): Boolean
+}
+
+inline fun <reified T> typePredicate(): TypePredicate =
+        object : TypePredicate {
+            override fun invoke(x: Any): Boolean = x is T
+        }
+
+// FILE: main.kt
 package foo
 import kotlin.test.*
 
@@ -8,15 +24,6 @@ open class A
 class B
 
 class C : A()
-
-interface TypePredicate {
-    operator fun invoke(x: Any): Boolean
-}
-
-inline fun <reified T> typePredicate(): TypePredicate =
-        object : TypePredicate {
-            override fun invoke(x: Any): Boolean = x is T
-        }
 
 fun box(): String {
     val isA = typePredicate<A>()

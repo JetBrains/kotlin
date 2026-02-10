@@ -1,11 +1,15 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
+// CHECK_NOT_CALLED: isInstance
 
 inline fun <reified T> isInstance(x: Any?): Boolean =
     x is T
 
-// CHECK_NOT_CALLED: isInstance
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
+// CHECK_NOT_CALLED: isInstance
 fun box(): String {
     assertEquals(true, isInstance<Boolean>(true))
     assertEquals(true, isInstance<Boolean>(false))

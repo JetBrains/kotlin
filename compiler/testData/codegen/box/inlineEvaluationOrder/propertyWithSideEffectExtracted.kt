@@ -1,6 +1,6 @@
 // Looks similar to KT-7674
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 inline fun <T> buzz(x: T): T {
     log("buzz($x)")
@@ -30,6 +30,10 @@ inline fun bar(): Int {
     log("bar")
     return 10
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 val x: Int
     get() {

@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_NOT_CALLED: testBreak
 // CHECK_NOT_CALLED: testContinue
@@ -18,10 +18,6 @@ inline fun testBreak(): Int {
     return i
 }
 
-fun testBreakNoinline() {
-    assertEquals(4, testBreak(), "break")
-}
-
 inline fun testContinue(): Int {
     var sum = 0
 
@@ -32,6 +28,19 @@ inline fun testContinue(): Int {
     }
 
     return sum
+}
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: testBreak
+// CHECK_NOT_CALLED: testContinue
+// CHECK_LABELS_COUNT: function=testBreakNoinline name=loop count=1
+// CHECK_LABELS_COUNT: function=testContinueNoinline name=loop count=1
+
+fun testBreakNoinline() {
+    assertEquals(4, testBreak(), "break")
 }
 
 fun testContinueNoinline() {

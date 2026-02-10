@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: test
 // CHECK_VARS_COUNT: function=test count=2
@@ -11,6 +11,13 @@ internal inline fun sign(x: Int): Int {
 
     return 1
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: test
+// CHECK_VARS_COUNT: function=test count=2
 
 internal fun test(x: Int, y: Int): Int {
     if (x != 0) {

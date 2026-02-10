@@ -1,5 +1,6 @@
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM_IR, JVM_IR_SERIALIZE
 // ^^^ CIRCULAR REFERENCE: java.lang.AssertionError: D8 dexing warning: Ignoring an implementation of the method `int foo.Counter.getCount()` because it has multiple definitions
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -23,6 +24,10 @@ class Counter() {
         runner.run { count++ }
     }
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 fun add(a: Int, b: Int): Int {
     val counter = Counter()

@@ -1,3 +1,4 @@
+// FILE: lib.kt
 package foo
 import kotlin.test.*
 
@@ -16,6 +17,11 @@ internal inline fun filteredReduce(a: Array<Int>, predicate: (Int) -> Boolean, r
     return result
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: sumEven
 // CHECK_BREAKS_COUNT: function=sumEven count=0
 // CHECK_LABELS_COUNT: function=sumEven name=$l$block count=0
 internal fun sumEven(a: Array<Int>): Int {

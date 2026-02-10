@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: doNothingNoInline
 
@@ -11,6 +11,11 @@ internal inline fun <T> doNothing2(a: T, f: (T) -> T): T {
     return f(a)
 }
 
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: doNothingNoInline
 // CHECK_BREAKS_COUNT: function=doNothingNoInline count=0
 // CHECK_LABELS_COUNT: function=doNothingNoInline name=$l$block count=0
 internal fun doNothingNoInline(a: Int): Int {

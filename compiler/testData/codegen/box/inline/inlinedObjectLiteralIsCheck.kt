@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
+// FILE: lib.kt
 interface I {
     fun ok(): String
 }
@@ -19,6 +20,7 @@ inline fun convolutedOk(): I {
     return ok()
 }
 
+// FILE: main.kt
 // CHECK_BREAKS_COUNT: function=box count=0
 // CHECK_LABELS_COUNT: function=box name=$l$block count=0
 fun box(): String {

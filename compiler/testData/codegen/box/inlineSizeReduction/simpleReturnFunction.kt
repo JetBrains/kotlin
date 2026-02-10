@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_CONTAINS_NO_CALLS: test except=imul
 
@@ -7,6 +7,12 @@ import kotlin.test.*
 // Copied to not to depend on run implementation.
 // It's important, that the body is just `return fn()`.
 internal inline fun <T> evaluate(fn: ()->T): T = fn()
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_CONTAINS_NO_CALLS: test except=imul
 
 internal fun test(x: Int): Int =
         evaluate {

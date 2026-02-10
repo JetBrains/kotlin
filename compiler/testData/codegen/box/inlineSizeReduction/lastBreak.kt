@@ -1,6 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_NOT_CALLED: f1
 // CHECK_NOT_CALLED: f2
@@ -25,6 +25,13 @@ internal inline fun f1(x: Boolean, y: Int, z: Int): Unit {
 
     return f2(z)
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: f1
+// CHECK_NOT_CALLED: f2
 
 internal fun test(x: Boolean, y: Int, z: Int): Unit = f1(x, y, z)
 

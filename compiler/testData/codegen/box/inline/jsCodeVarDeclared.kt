@@ -1,10 +1,14 @@
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
+// FILE: lib.kt
 package foo
 
 // CHECK_CONTAINS_NO_CALLS: test
 // CHECK_NOT_CALLED_IN_SCOPE: function=sum scope=test
 
 internal inline fun sum(x: Int, y: Int): Int = js("var a = x; a + y")
+
+// FILE: main.kt
+package foo
 
 // CHECK_BREAKS_COUNT: function=test count=0
 // CHECK_LABELS_COUNT: function=test name=$l$block count=0

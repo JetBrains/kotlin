@@ -3,6 +3,7 @@
  * Found at: compiler/testData/codegen/boxInline/simple/classObject.1.kt
  */
 
+// FILE: lib.kt
 package foo
 
 inline fun inline(s: () -> String): String {
@@ -22,6 +23,8 @@ class InlineAll {
     }
 }
 
+// FILE: main.kt
+package foo
 // CHECK_BREAKS_COUNT: function=testClassObjectCall count=0
 // CHECK_LABELS_COUNT: function=testClassObjectCall name=$l$block count=0
 fun testClassObjectCall(): String {

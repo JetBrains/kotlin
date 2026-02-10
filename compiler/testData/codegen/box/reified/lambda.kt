@@ -1,6 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 // CHECK_CALLED: doFilter
 // CHECK_NOT_CALLED: filterIsInstance
@@ -30,6 +30,12 @@ fun <T> Array<T>.doFilter(fn: (T)->Boolean): List<T> {
 inline fun <reified T> filterIsInstance(arrayOfAnys: Array<Any>): List<T> {
     return arrayOfAnys.doFilter { it is T }.map { it as T }
 }
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+// CHECK_CALLED: doFilter
+// CHECK_NOT_CALLED: filterIsInstance
 
 fun box(): String {
     val src: Array<Any> = arrayOf(A(1), B(2), A(3), B(4))

@@ -1,7 +1,19 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 var log = ""
+
+fun bar(a: Int, b: Int) {
+    log += "bar($a, $b);"
+}
+
+inline fun test(a: Int, b: Int) {
+    bar(b, a)
+}
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
 
 class A() {
     var x = 23
@@ -10,14 +22,6 @@ class A() {
 fun sideEffect(): Int {
     log += "sideEffect();"
     return 42
-}
-
-fun bar(a: Int, b: Int) {
-    log += "bar($a, $b);"
-}
-
-inline fun test(a: Int, b: Int) {
-    bar(b, a)
 }
 
 fun box(): String {

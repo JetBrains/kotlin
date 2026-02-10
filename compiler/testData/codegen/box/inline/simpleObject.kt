@@ -3,6 +3,7 @@
  * Found at: compiler/testData/codegen/boxInline/simple/simpleObject.1.kt
  */
 
+// FILE: lib.kt
 package foo
 
 class InlineString(val res : String) {
@@ -28,6 +29,9 @@ class InlineString(val res : String) {
         return z
     }
 }
+
+// FILE: main.kt
+package foo
 
 // CHECK_BREAKS_COUNT: function=test0Param count=0
 // CHECK_LABELS_COUNT: function=test0Param name=$l$block count=0

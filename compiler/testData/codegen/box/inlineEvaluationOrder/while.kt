@@ -1,5 +1,5 @@
+// FILE: lib.kt
 package foo
-import kotlin.test.*
 
 inline fun <T> buzz(x: T): T {
     log("buzz($x)")
@@ -20,10 +20,11 @@ fun pullLog(): String {
     return string
 }
 
-fun <T> fizz(x: T): T {
-    log("fizz($x)")
-    return x
-}
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+// CHECK_NOT_CALLED: buzz
 
 fun box(): String {
     var c = 2
