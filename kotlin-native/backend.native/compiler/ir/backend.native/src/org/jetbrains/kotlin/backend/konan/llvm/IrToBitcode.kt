@@ -694,7 +694,6 @@ internal class CodeGeneratorVisitor(
             val llvmFunction: LlvmCallable) : InnerScopeImpl() {
 
         constructor(declaration: IrSimpleFunction, functionGenerationContext: FunctionGenerationContext) :
-                // Use llvmFunctionDefinition to get the actual function definition (with $hr_impl suffix for hot reload)
                 this(functionGenerationContext, declaration, codegen.llvmFunctionDefinition(declaration))
 
         constructor(llvmFunction: LlvmCallable, functionGenerationContext: FunctionGenerationContext) :
@@ -2295,8 +2294,7 @@ internal class CodeGeneratorVisitor(
         if (!context.shouldContainLocationDebugInfo())
             return null
 
-        // Use llvmFunctionDefinitionOrNull to get the actual definition (with $hr_impl suffix for hot reload)
-        // Debug info should be attached to the definition, not the call site declaration
+        // Debug info should be attached to the definition
         val functionLlvmValue = when {
             isReifiedInline -> null
             // TODO: May be tie up inline lambdas to their outer function?
@@ -2989,6 +2987,8 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule() : LLVMModule
     setRuntimeConstGlobal("Kotlin_fixedBlockPageSize", llvm.constInt32(config.fixedBlockPageSize.toInt()))
     setRuntimeConstGlobal("Kotlin_pagedAllocator", llvm.constInt32(if (config.pagedAllocator) 1 else 0))
     setRuntimeConstGlobal("Kotlin_hotReload", llvm.constInt32(if (config.hotReloadEnabled) 1 else 0))
+
+
 
     return llvmModule
 }
