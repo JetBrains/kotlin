@@ -273,66 +273,106 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                         )
                     } else null
 
-                    // Check if hot reload split compilation is enabled
-                    if (config.hotReloadSplitEnabled && config.produce == CompilerOutputKind.PROGRAM) {
-                        // Hot reload split compilation: produce host executable + bootstrap.o
-                        println("HOT_RELOAD_SPLIT: Using split compilation mode")
-                        println("HOT_RELOAD_SPLIT: Stdlib modules for host: ${hotReloadStdlibModules.size}")
+                    // Check hot reload split compilation mode
+                    when {
+                        config.hotReloadHostMode && config.produce == CompilerOutputKind.PROGRAM -> {
+                            // HOST mode: produce host executable + bootstrap.o (full build)
+                            println("HOT_RELOAD_SPLIT: Using HOST mode (full build)")
+                            println("HOT_RELOAD_SPLIT: Stdlib modules for host: ${hotReloadStdlibModules.size}")
 
-                        val hostBitcodeFile = tempFiles.create("host", ".bc").javaFile()
-                        val bootstrapBitcodeFile = tempFiles.create("bootstrap", ".bc").javaFile()
+                            val hostBitcodeFile = tempFiles.create("host", ".bc").javaFile()
+                            val bootstrapBitcodeFile = tempFiles.create("bootstrap", ".bc").javaFile()
 
-                        generationStateEngine.compileModuleForHotReload(
-                                fragment.irModule,
-                                hotReloadStdlibModules,  // Pass stdlib modules for host codegen
-                                backendContext.irBuiltIns,
-                                hostBitcodeFile,
-                                bootstrapBitcodeFile,
-                                cExportFiles
-                        )
+                            generationStateEngine.compileModuleForHotReload(
+                                    fragment.irModule,
+                                    hotReloadStdlibModules,  // Pass stdlib modules for host codegen
+                                    backendContext.irBuiltIns,
+                                    hostBitcodeFile,
+                                    bootstrapBitcodeFile,
+                                    cExportFiles
+                            )
 
-                        // Collect dependencies AFTER compilation for hot reload
-                        val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
-                        val depsFilePath = config.writeSerializedDependencies
-                        if (!depsFilePath.isNullOrEmpty()) {
-                            depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
+                            // Collect dependencies AFTER compilation for hot reload
+                            val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
+                            val depsFilePath = config.writeSerializedDependencies
+                            if (!depsFilePath.isNullOrEmpty()) {
+                                depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
+                            }
+
+                            val hotReloadOutput = HotReloadModuleCompilationOutput(
+                                    hostBitcodeFile,
+                                    bootstrapBitcodeFile,
+                                    dependenciesTrackingResult
+                            )
+
+                            val result = generationStateEngine.compileAndLinkForHotReload(
+                                    hotReloadOutput,
+                                    outputFiles,
+                                    tempFiles,
+                            )
+
+                            println("HOT_RELOAD_SPLIT: HOST mode compilation complete!")
+                            println("HOT_RELOAD_SPLIT:   Host executable: ${result.hostExecutable.canonicalPath}")
+                            println("HOT_RELOAD_SPLIT:   Bootstrap object: ${result.bootstrapObject.canonicalPath}")
                         }
 
-                        val hotReloadOutput = HotReloadModuleCompilationOutput(
-                                hostBitcodeFile,
-                                bootstrapBitcodeFile,
-                                dependenciesTrackingResult
-                        )
+                        config.hotReloadGuestMode && config.produce == CompilerOutputKind.PROGRAM -> {
+                            // GUEST mode: produce only bootstrap.o (fast incremental builds)
+                            // IC handles the "only recompile changed files" logic automatically
+                            println("HOT_RELOAD_GUEST: Using GUEST mode (bootstrap-only, IC-accelerated)")
 
-                        val result = generationStateEngine.compileAndLinkForHotReload(
-                                hotReloadOutput,
-                                outputFiles,
-                                tempFiles,
-                        )
+                            val bootstrapBitcodeFile = tempFiles.create("bootstrap", ".bc").javaFile()
 
-                        println("HOT_RELOAD_SPLIT: Compilation complete!")
-                        println("HOT_RELOAD_SPLIT:   Host executable: ${result.hostExecutable.canonicalPath}")
-                        println("HOT_RELOAD_SPLIT:   Bootstrap object: ${result.bootstrapObject.canonicalPath}")
-                    } else {
-                        // Normal compilation: produce single executable
-                        val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
+                            generationStateEngine.compileModuleForHotReloadGuest(
+                                    fragment.irModule,
+                                    backendContext.irBuiltIns,
+                                    bootstrapBitcodeFile,
+                                    cExportFiles
+                            )
 
-                        generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportFiles)
+                            // Collect dependencies AFTER compilation
+                            val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
+                            val depsFilePath = config.writeSerializedDependencies
+                            if (!depsFilePath.isNullOrEmpty()) {
+                                depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
+                            }
 
-                        // Collect dependencies AFTER compilation (original location)
-                        val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
-                        val depsFilePath = config.writeSerializedDependencies
-                        if (!depsFilePath.isNullOrEmpty()) {
-                            depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
+                            val guestOutput = HotReloadGuestCompilationOutput(
+                                    bootstrapBitcodeFile,
+                                    dependenciesTrackingResult
+                            )
+
+                            val result = generationStateEngine.compileAndLinkForHotReloadGuest(
+                                    guestOutput,
+                                    outputFiles,
+                                    tempFiles,
+                            )
+
+                            println("HOT_RELOAD_SPLIT: GUEST mode compilation complete!")
+                            println("HOT_RELOAD_SPLIT:   Bootstrap object: ${result.bootstrapObject.canonicalPath}")
                         }
 
-                        val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
-                        generationStateEngine.compileAndLink(
-                                moduleCompilationOutput,
-                                outputFiles.mainFileName,
-                                outputFiles,
-                                tempFiles,
-                        )
+                        else -> {
+                            // Normal compilation: produce single executable
+                            val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
+
+                            generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportFiles)
+
+                            // Collect dependencies AFTER compilation (original location)
+                            val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
+                            val depsFilePath = config.writeSerializedDependencies
+                            if (!depsFilePath.isNullOrEmpty()) {
+                                depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
+                            }
+
+                            val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
+                            generationStateEngine.compileAndLink(
+                                    moduleCompilationOutput,
+                                    outputFiles.mainFileName,
+                                    outputFiles,
+                                    tempFiles,
+                            )
+                        }
                     }
                 }
             } finally {
@@ -594,6 +634,24 @@ internal data class HotReloadModuleCompilationOutput(
         val hostBitcodeFile: java.io.File,
         val bootstrapBitcodeFile: java.io.File,
         val dependenciesTrackingResult: DependenciesTrackingResult,
+)
+
+/**
+ * Output from guest-only hot reload compilation (bootstrap-only).
+ */
+internal data class HotReloadGuestCompilationOutput(
+        val bootstrapBitcodeFile: java.io.File,
+        val dependenciesTrackingResult: DependenciesTrackingResult,
+)
+
+/**
+ * Result of guest-only hot reload compilation.
+ */
+internal data class HotReloadGuestResult(
+        /**
+         * Path to the bootstrap object file containing user code.
+         */
+        val bootstrapObject: java.io.File,
 )
 
 /**
@@ -906,6 +964,80 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
 
     return HotReloadCompilationOutput(
             hostExecutable = hostObjectFile,  // Note: this is actually an object file, not executable yet
+            bootstrapObject = bootstrapObjectFile,
+    )
+}
+
+/**
+ * Compiles a module for hot reload GUEST mode (bootstrap-only).
+ *
+ * This is used for fast incremental builds where only user code has changed.
+ * The host executable is assumed to already exist from a previous HOST mode build.
+ *
+ * This skips:
+ * - Host module creation
+ * - ObjC export class patching
+ * - Runtime module collection
+ *
+ * Only produces bootstrap.o with user code.
+ */
+internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReloadGuest(
+        userModule: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        bootstrapBitcodeFile: java.io.File,
+        cExportFiles: CExportFiles?,
+) {
+    println("HOT_RELOAD_GUEST: Starting guest-only codegen (bootstrap-only)")
+
+    // Generate user code into bootstrap module
+    // Current context has HotReloadBootstrapLlvmModuleSpecification
+    // This makes stdlib types appear as "external" - they won't be generated,
+    // instead they'll be imported from host at runtime via JITLink
+    runBackendCodegenForHotReload(userModule, irBuiltIns, cExportFiles)
+
+    val checkExternalCalls = context.config.checkStateAtExternalCalls
+    if (checkExternalCalls) {
+        runAndMeasurePhase(CheckExternalCallsPhase)
+    }
+
+    // Run bitcode post-processing
+    newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
+
+    if (checkExternalCalls) {
+        runAndMeasurePhase(RewriteExternalCallsCheckerGlobals)
+    }
+
+    // Write the bootstrap bitcode (user code only)
+    LLVMWriteBitcodeToFile(context.llvm.module, bootstrapBitcodeFile.canonicalPath)
+    println("HOT_RELOAD_GUEST: Wrote bootstrap bitcode to ${bootstrapBitcodeFile.canonicalPath}")
+    println("HOT_RELOAD_GUEST: Guest codegen complete!")
+}
+
+/**
+ * Compiles and links for hot reload GUEST mode (bootstrap-only).
+ *
+ * This only produces the bootstrap.o file. The host executable from a previous
+ * HOST mode build should be used to load this bootstrap.
+ */
+internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHotReloadGuest(
+        guestOutput: HotReloadGuestCompilationOutput,
+        outputFiles: OutputFiles,
+        temporaryFiles: TempFiles,
+): HotReloadGuestResult {
+    // Compile bootstrap bitcode to object file
+    val bootstrapObjectFile = java.io.File(outputFiles.outputName + ".bootstrap.o")
+    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(guestOutput.bootstrapBitcodeFile, bootstrapObjectFile))
+
+    println("")
+    println("=== HOT RELOAD GUEST COMPILATION COMPLETE ===")
+    println("Bootstrap object: ${bootstrapObjectFile.canonicalPath}")
+    println("")
+    println("This bootstrap.o can be loaded by the running host executable.")
+    println("The host should have been built previously with --hot-reload-split=host")
+    println("==============================================")
+    println("")
+
+    return HotReloadGuestResult(
             bootstrapObject = bootstrapObjectFile,
     )
 }

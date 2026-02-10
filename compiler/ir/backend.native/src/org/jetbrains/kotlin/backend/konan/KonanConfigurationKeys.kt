@@ -152,6 +152,6 @@ class KonanConfigKeys {
         val MANIFEST_NATIVE_TARGETS: CompilerConfigurationKey<Collection<KonanTarget>?> = CompilerConfigurationKey.create("value of native_targets property to write in manifest")
         val LLVM_MODULE_PASSES: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("llvm passes to run instead of module optimization pipeline")
         val LLVM_LTO_PASSES: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("llvm passes to run instead of LTO optimization pipeline")
-        val HOT_RELOAD_SPLIT: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("enable split compilation for hot-code reloading")
+        val HOT_RELOAD_SPLIT: CompilerConfigurationKey<HotReloadSplitMode?> = CompilerConfigurationKey.create("split compilation mode for hot-code reloading")
     }
 }

@@ -114,14 +114,35 @@ class KonanConfig(
         explicit ?: target.needSmallBinary()
     }
 
-    val hotReloadEnabled: Boolean = configuration.getBoolean(KonanConfigKeys.HOT_RELOAD_SPLIT)
+    /**
+     * The hot reload split compilation mode.
+     * - NONE: Normal compilation (no hot reload split)
+     * - HOST: Produce both host executable and bootstrap object (full build)
+     * - GUEST: Produce only bootstrap object (fast incremental builds)
+     */
+    val hotReloadSplitMode: HotReloadSplitMode = configuration.get(KonanConfigKeys.HOT_RELOAD_SPLIT) ?: HotReloadSplitMode.NONE
+
+    /**
+     * Whether any hot reload split mode is enabled (HOST or GUEST).
+     */
+    val hotReloadEnabled: Boolean get() = hotReloadSplitMode != HotReloadSplitMode.NONE
 
     /**
      * Whether split compilation for hot reload is enabled.
      * This produces two artifacts: host.o (runtime + launcher) and bootstrap.o (user code).
      * The bootstrap.o can be hot-reloaded using JITLink without restarting the host.
      */
-    val hotReloadSplitEnabled: Boolean = configuration.getBoolean(KonanConfigKeys.HOT_RELOAD_SPLIT)
+    val hotReloadSplitEnabled: Boolean get() = hotReloadSplitMode != HotReloadSplitMode.NONE
+
+    /**
+     * Whether we're compiling in HOST mode (full build with both host and bootstrap).
+     */
+    val hotReloadHostMode: Boolean get() = hotReloadSplitMode == HotReloadSplitMode.HOST
+
+    /**
+     * Whether we're compiling in GUEST mode (bootstrap-only, fast incremental).
+     */
+    val hotReloadGuestMode: Boolean get() = hotReloadSplitMode == HotReloadSplitMode.GUEST
 
     val inlineForPerformance get() = !debug && !smallBinary
 

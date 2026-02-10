@@ -330,14 +330,18 @@ but they do not affect compilation at all.""",
 
     @Argument(
         value = "-Xhot-reload-split",
+        valueDescription = "host|guest",
         description = """Enable split compilation for hot-code reloading.
-Produces two artifacts: a host executable (runtime + launcher) and a bootstrap object (user code).
-The bootstrap object can be hot-reloaded using JITLink without restarting the host.""",
+Values:
+  host  - Produce both host executable and bootstrap object (full build)
+  guest - Produce only bootstrap object (fast incremental builds using IC)
+Use 'host' for the initial build, then 'guest' for rapid iterations.
+The bootstrap object is hot-reloaded via JITLink without restarting the host.""",
     )
-    var hotReloadSplit: Boolean = false
+    var hotReloadSplit: String? = null
         set(value) {
             checkFrozen()
-            field = value
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(

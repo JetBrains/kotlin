@@ -1061,9 +1061,13 @@ The default value is 1.""".asReleaseDependent()
         name = "Xhot-reload-split"
         compilerName = "hotReloadSplit"
         description = """Enable split compilation for hot-code reloading.
-Produces two artifacts: a host executable (runtime + launcher) and a bootstrap object (user code).
-The bootstrap object can be hot-reloaded using JITLink without restarting the host.""".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+Values:
+  host  - Produce both host executable and bootstrap object (full build)
+  guest - Produce only bootstrap object (fast incremental builds using IC)
+Use 'host' for the initial build, then 'guest' for rapid iterations.
+The bootstrap object is hot-reloaded via JITLink without restarting the host.""".asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "host|guest".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,

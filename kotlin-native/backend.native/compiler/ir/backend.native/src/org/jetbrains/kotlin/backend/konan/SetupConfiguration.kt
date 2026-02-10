@@ -144,14 +144,35 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         putIfNotNull(BinaryOptions.memoryModel, memoryModelFromArgument)
     }
 
-    // Handle the new --hot-reload-split argument
-    arguments.hotReloadSplit.also { enabled ->
-        if (enabled) {
-            put(KonanConfigKeys.HOT_RELOAD_SPLIT, true)
+    // Handle the --hot-reload-split argument (now accepts "host" or "guest")
+    arguments.hotReloadSplit?.let { modeString ->
+        val mode = HotReloadSplitMode.fromString(modeString)
+        if (mode == null) {
+            report(ERROR, "Invalid --hot-reload-split value: '$modeString'. Expected 'host' or 'guest'.")
+        } else if (mode != HotReloadSplitMode.NONE) {
+            put(KonanConfigKeys.HOT_RELOAD_SPLIT, mode)
             report(STRONG_WARNING, "hot-code reload split compilation is an experimental feature, some code may not work as expected!")
+
             val debug = getBoolean(KonanConfigKeys.DEBUG)
             if (!debug) {
                 report(ERROR, "hot-code reloading cannot work without debug info. Please compile with debug info enabled (i.e., `-g`.)")
+            }
+
+            // Check IC flags directly from arguments (config keys are set later in this function)
+            val hasIncrementalCompilation = arguments.incrementalCompilation == true && arguments.incrementalCacheDir != null
+
+            // Host mode: recommend enabling IC so guest mode can use the cache later
+            if (mode == HotReloadSplitMode.HOST && !hasIncrementalCompilation) {
+                report(STRONG_WARNING, """Host mode works best with incremental compilation enabled.
+Consider adding: -Xenable-incremental-compilation -Xic-cache-dir=<cache-directory>
+This will allow subsequent --hot-reload-split=guest builds to be much faster.""")
+            }
+
+            // Guest mode works best with incremental compilation for fast builds
+            if (mode == HotReloadSplitMode.GUEST && !hasIncrementalCompilation) {
+                report(STRONG_WARNING, """Guest mode works best with incremental compilation enabled.
+Consider adding: -Xenable-incremental-compilation -Xic-cache-dir=<cache-directory>
+This allows guest mode to reuse cached compilation results for faster builds.""")
             }
         }
     }

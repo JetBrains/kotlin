@@ -9626,23 +9626,23 @@
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Enable split compilation for hot-code reloading.\nProduces two artifacts: a host executable (runtime + launcher) and a bootstrap object (user code).\nThe bootstrap object can be hot-reloaded using JITLink without restarting the host.",
+                                            "current": "Enable split compilation for hot-code reloading.\nValues:\n  host  - Produce both host executable and bootstrap object (full build)\n  guest - Produce only bootstrap object (fast incremental builds using IC)\nUse 'host' for the initial build, then 'guest' for rapid iterations.\nThe bootstrap object is hot-reloaded via JITLink without restarting the host.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
                                         "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
-                                                "current": false,
+                                                "current": true,
                                                 "valueInVersions": []
                                             },
                                             "defaultValue": {
-                                                "current": false,
+                                                "current": null,
                                                 "valueInVersions": []
                                             }
                                         },
                                         "valueDescription": {
-                                            "current": null,
+                                            "current": "host|guest",
                                             "valueInVersions": []
                                         },
                                         "releaseVersionsMetadata": {
