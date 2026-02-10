@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportedModule
 import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
-import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
-import org.jetbrains.kotlin.ir.backend.js.tsexport.joinTypeScriptFragments
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitions
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionsFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptMerger
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -36,6 +37,8 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.js.config.TsCompilationStrategy
+import org.jetbrains.kotlin.js.config.dtsCompilationStrategy
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
@@ -142,7 +145,8 @@ class JsCodeGenerator(
     private val granularity: JsGenerationGranularity,
     private val mainModuleName: String,
     private val moduleKind: ModuleKind,
-    private val sourceMapsInfo: SourceMapsInfo?
+    private val sourceMapsInfo: SourceMapsInfo?,
+    private val dtsCompilationStrategy: TsCompilationStrategy
 ) {
     fun generateJsCode(relativeRequirePath: Boolean, outJsProgram: Boolean): CompilationOutputsBuilt {
         return generateWrappedModuleBody(
@@ -151,6 +155,7 @@ class JsCodeGenerator(
             moduleKind,
             program,
             sourceMapsInfo,
+            dtsCompilationStrategy,
             relativeRequirePath,
             outJsProgram
         )
@@ -165,7 +170,9 @@ class IrModuleToJsTransformer(
 ) {
     private val shouldGeneratePolyfills = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
-    private val shouldGenerateTypeScriptDefinitions = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
+    private val dtsCompilationStrategy =
+        backendContext.configuration.dtsCompilationStrategy ?: error("d.ts compilation strategy was not provided")
+    private val shouldGenerateTypeScriptDefinitions = dtsCompilationStrategy != TsCompilationStrategy.NONE
 
     private val mainModuleName = backendContext.configuration[CommonConfigurationKeys.MODULE_NAME]!!
     private val moduleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
@@ -177,7 +184,7 @@ class IrModuleToJsTransformer(
     private class IrFileExports(
         val file: IrFile,
         val exports: List<ExportedDeclaration>,
-        val tsDeclarations: TypeScriptFragment?,
+        val tsDeclarations: TypeScriptDefinitionsFragment?,
     )
 
     private class IrAndExportedDeclarations(val fragment: IrModuleFragment, val files: List<IrFileExports>)
@@ -292,7 +299,14 @@ class IrModuleToJsTransformer(
 
         val program = JsIrProgram(ArtifactProducer(mode).generateArtifacts(exportData, mode.granularity))
 
-        return JsCodeGenerator(program, mode.granularity, mainModuleName, moduleKind, sourceMapInfo)
+        return JsCodeGenerator(
+            program,
+            mode.granularity,
+            mainModuleName,
+            moduleKind,
+            sourceMapInfo,
+            dtsCompilationStrategy
+        )
     }
 
     private inner class ArtifactProducer(
@@ -574,24 +588,33 @@ private fun generateWrappedModuleBody(
     moduleKind: ModuleKind,
     program: JsIrProgram,
     sourceMapsInfo: SourceMapsInfo?,
+    dtsCompilationStrategy: TsCompilationStrategy,
     relativeRequirePath: Boolean,
     outJsProgram: Boolean
 ): CompilationOutputsBuilt {
     return when (granularity) {
-        JsGenerationGranularity.WHOLE_PROGRAM -> generateSingleWrappedModuleBody(
-            mainModuleName,
-            moduleKind,
-            program.asFragments(),
-            sourceMapsInfo,
-            generateCallToMain = true,
-            outJsProgram = outJsProgram
-        )
+        JsGenerationGranularity.WHOLE_PROGRAM -> {
+            val fragments = program.asFragments()
+            generateSingleWrappedModuleBody(
+                mainModuleName,
+                moduleKind,
+                fragments,
+                sourceMapsInfo,
+                generateCallToMain = true,
+                outJsProgram = outJsProgram,
+                typeScriptDefinitions = runIf(dtsCompilationStrategy != TsCompilationStrategy.NONE) {
+                    val tsFragments = fragments.mapNotNull { it.dts }.ifEmpty { return@runIf null }
+                    TypeScriptMerger(moduleKind).mergeIntoTypeScriptDefinitions(mainModuleName, tsFragments)
+                }
+            )
+        }
         JsGenerationGranularity.PER_FILE,
         JsGenerationGranularity.PER_MODULE -> generateMultiWrappedModuleBody(
             mainModuleName,
             moduleKind,
             program,
             sourceMapsInfo,
+            dtsCompilationStrategy,
             relativeRequirePath,
             outJsProgram
         )
@@ -603,36 +626,41 @@ private fun generateMultiWrappedModuleBody(
     moduleKind: ModuleKind,
     program: JsIrProgram,
     sourceMapsInfo: SourceMapsInfo?,
+    dtsCompilationStrategy: TsCompilationStrategy,
     relativeRequirePath: Boolean,
     outJsProgram: Boolean
 ): CompilationOutputsBuilt {
+    val tsMerger = TypeScriptMerger(moduleKind)
+    val noTypeScript = dtsCompilationStrategy == TsCompilationStrategy.NONE
+    val generateTypeScriptPerArtifact = dtsCompilationStrategy == TsCompilationStrategy.PER_ARTIFACT
     // mutable container allows explicitly remove elements from itself,
     // so we are able to help GC to free heavy JsIrModule objects
     // TODO: It makes sense to invent something better, because this logic can be easily broken
     val moduleToRef = program.asCrossModuleDependencies(moduleKind, relativeRequirePath).toMutableList()
+    val (main, mainRef) = moduleToRef.removeLast()
+    val mainModuleTsFragments = mutableListOf<TypeScriptDefinitionsFragment>()
 
-    val mainModule = moduleToRef.removeLast().let { (main, mainRef) ->
-        generateSingleWrappedModuleBody(
-            mainModuleName,
-            moduleKind,
-            main.fragments,
-            sourceMapsInfo,
-            generateCallToMain = true,
-            mainRef,
-            outJsProgram
-        )
-    }
-
-    mainModule.dependencies = buildList(moduleToRef.size) {
+    val dependencies = buildList(moduleToRef.size) {
         while (moduleToRef.isNotEmpty()) {
             moduleToRef.removeFirst().let { (module, moduleRef) ->
                 val moduleName = module.externalModuleName
+                val tsFragments = runIf(!noTypeScript) { module.fragments.mapNotNull { it.dts }.ifEmpty { null } }
+                val dependencyTsFragment = tsFragments?.let(tsMerger::mergeIntoSingleFragment)
+                val dependencyTsDefinitions = dependencyTsFragment?.let {
+                    if (generateTypeScriptPerArtifact) {
+                        tsMerger.generateSingleWrappedTypeScriptDefinitions(moduleName, it)
+                    } else {
+                        mainModuleTsFragments.add(it)
+                        null
+                    }
+                }
                 val moduleCompilationOutput = generateSingleWrappedModuleBody(
                     moduleName,
                     moduleKind,
                     module.fragments,
                     sourceMapsInfo,
                     generateCallToMain = false,
+                    typeScriptDefinitions = dependencyTsDefinitions,
                     moduleRef,
                     outJsProgram
                 )
@@ -641,7 +669,26 @@ private fun generateMultiWrappedModuleBody(
         }
     }
 
-    return mainModule
+    if (!noTypeScript) {
+        main.fragments.mapNotNullTo(mainModuleTsFragments) { fragment ->
+            fragment.dts
+        }
+    }
+
+    val mainModule = generateSingleWrappedModuleBody(
+        mainModuleName,
+        moduleKind,
+        main.fragments,
+        sourceMapsInfo,
+        generateCallToMain = true,
+        typeScriptDefinitions = runIf(!noTypeScript) { tsMerger.mergeIntoTypeScriptDefinitions(mainModuleName, mainModuleTsFragments) },
+        mainRef,
+        outJsProgram
+    )
+
+    return mainModule.also {
+        it.dependencies = dependencies
+    }
 }
 
 fun generateSingleWrappedModuleBody(
@@ -650,6 +697,7 @@ fun generateSingleWrappedModuleBody(
     fragments: List<JsIrProgramFragment>,
     sourceMapsInfo: SourceMapsInfo?,
     generateCallToMain: Boolean,
+    typeScriptDefinitions: TypeScriptDefinitions?,
     crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty(moduleKind),
     outJsProgram: Boolean = true
 ): CompilationOutputsBuilt {
@@ -695,7 +743,7 @@ fun generateSingleWrappedModuleBody(
     return CompilationOutputsBuilt(
         jsCode.toString(),
         sourceMapBuilder?.build(),
-        fragments.mapNotNull { it.dts }.ifNotEmpty { joinTypeScriptFragments() },
+        typeScriptDefinitions,
         program.takeIf { outJsProgram }
     )
 }

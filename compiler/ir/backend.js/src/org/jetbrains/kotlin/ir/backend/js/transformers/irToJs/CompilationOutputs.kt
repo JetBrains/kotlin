@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
-import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScript
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitions
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
-import org.jetbrains.kotlin.js.config.ModuleKind
-import org.jetbrains.kotlin.js.config.TsCompilationStrategy
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import java.io.File
 import java.nio.file.Files
@@ -20,7 +17,7 @@ abstract class CompilationOutputs {
      */
     var dependencies: Collection<Pair<String, CompilationOutputs>> = emptyList()
 
-    abstract val tsDefinitions: TypeScriptFragment?
+    abstract val tsDefinitions: TypeScriptDefinitions?
 
     abstract val jsProgram: JsProgram?
 
@@ -42,9 +39,9 @@ abstract class CompilationOutputs {
             writtenFiles += jsFile
             writtenFiles += jsMapFile
 
-            out.tsDefinitions.takeIf { artifactConfiguration.tsCompilationStrategy == TsCompilationStrategy.EACH_FILE }?.let {
+            out.tsDefinitions?.let {
                 val tsFile = artifactConfiguration.outputDtsFile(outputName).normalizedAbsoluteFile
-                tsFile.writeText(listOf(it).toTypeScript(jsFile.name, artifactConfiguration.moduleKind))
+                tsFile.writeText(it.body)
                 writtenFiles += tsFile
             }
         }
@@ -55,12 +52,6 @@ abstract class CompilationOutputs {
 
         writeOutputFiles(artifactConfiguration.outputName, this)
 
-        if (artifactConfiguration.tsCompilationStrategy == TsCompilationStrategy.MERGED) {
-            val dtsFile = artifactConfiguration.outputDtsFile().normalizedAbsoluteFile
-            dtsFile.writeText(getFullTsDefinition(artifactConfiguration.moduleName, artifactConfiguration.moduleKind))
-            writtenFiles += dtsFile
-        }
-
         return writtenFiles.also { deleteNonWrittenFiles(artifactConfiguration.outputDirectory, it) }
     }
 
@@ -70,11 +61,6 @@ abstract class CompilationOutputs {
             .map { it.toFile() }
             .filter { it != outputDir && it !in writtenFiles }
             .forEach(File::delete)
-    }
-
-    fun getFullTsDefinition(moduleName: String, moduleKind: ModuleKind): String {
-        val allTsDefinitions = dependencies.mapNotNull { it.second.tsDefinitions } + listOfNotNull(tsDefinitions)
-        return allTsDefinitions.toTypeScript(moduleName, moduleKind)
     }
 
     protected val File.normalizedAbsoluteFile
@@ -104,7 +90,7 @@ internal fun File.writeIfNotNull(data: String?) {
 class CompilationOutputsBuilt(
     private val rawJsCode: String,
     private val sourceMap: String?,
-    override val tsDefinitions: TypeScriptFragment?,
+    override val tsDefinitions: TypeScriptDefinitions?,
     override val jsProgram: JsProgram?,
 ) : CompilationOutputs() {
     override fun writeJsCode(outputJsFile: File, outputJsMapFile: File) {
@@ -122,7 +108,7 @@ class CompilationOutputsBuilt(
     ): CompilationOutputsBuiltForCache {
         outputJsFile.parentFile?.mkdirs()
         outputJsFile.writeText(rawJsCode)
-        outputTsFile?.writeIfNotNull(tsDefinitions?.raw)
+        outputTsFile?.writeIfNotNull(tsDefinitions?.body)
         sourceMap?.let { outputJsMapFile?.writeText(it) }
         return CompilationOutputsBuiltForCache(outputJsFile, outputJsMapFile, this)
     }
@@ -133,8 +119,8 @@ class CompilationOutputsCached(
     private val sourceMapFile: File?,
     private val tsDefinitionsFile: File?
 ) : CompilationOutputs() {
-    override val tsDefinitions: TypeScriptFragment?
-        get() = tsDefinitionsFile?.let { TypeScriptFragment(it.readText()) }
+    override var tsDefinitions: TypeScriptDefinitions? = null
+        get() = field ?: tsDefinitionsFile?.let { TypeScriptDefinitions(it.readText()) }
 
     override val jsProgram: JsProgram?
         get() = null
@@ -171,7 +157,7 @@ class CompilationOutputsBuiltForCache(
         dependencies = outputBuilt.dependencies
     }
 
-    override val tsDefinitions: TypeScriptFragment?
+    override val tsDefinitions: TypeScriptDefinitions?
         get() = outputBuilt.tsDefinitions
 
     override val jsProgram: JsProgram?

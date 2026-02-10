@@ -144,7 +144,7 @@ private fun compileWholeProgramModeToWasmIr(
     idSignatureRetriever: IdSignatureRetriever,
     loweredIr: LoweredIrWithExtraArtifacts,
 ): WasmIrModuleConfiguration {
-    val (allModules, backendContext, typeScriptFragment) = loweredIr
+    val (allModules, backendContext, typeScriptDefinitions) = loweredIr
 
     val wasmModuleMetadataCache = WasmModuleMetadataCache(backendContext)
     val codeGenerator = WasmModuleFragmentGenerator(
@@ -161,7 +161,7 @@ private fun compileWholeProgramModeToWasmIr(
         wasmCompiledFileFragments = wasmCompiledFileFragments,
         moduleName = allModules.last().descriptor.name.asString(),
         configuration = configuration,
-        typeScriptFragment = typeScriptFragment,
+        typeScriptDefinitions = typeScriptDefinitions,
         baseFileName = configuration.outputName!!,
         multimoduleOptions = null,
     )
@@ -258,7 +258,7 @@ private fun compileSingleModuleToWasmIr(
         wasmCompiledFileFragments = wasmCompiledFileFragments,
         moduleName = moduleName,
         configuration = configuration,
-        typeScriptFragment = loweredIr.typeScriptFragment,
+        typeScriptDefinitions = loweredIr.typeScriptDefinitions,
         baseFileName = outputFileNameBase ?: mainModuleFragment.outputFileName,
         multimoduleOptions = multimoduleOptions,
     )

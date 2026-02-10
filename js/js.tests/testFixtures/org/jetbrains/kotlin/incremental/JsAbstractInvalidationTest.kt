@@ -115,8 +115,9 @@ abstract class JsAbstractInvalidationTest(
 
             val mainArguments = runIf(projectInfo.callMain) { emptyList<String>() }
             val dtsStrategy = when (granularity) {
-                JsGenerationGranularity.PER_FILE -> TsCompilationStrategy.EACH_FILE
-                else -> TsCompilationStrategy.MERGED
+                JsGenerationGranularity.PER_FILE -> TsCompilationStrategy.PER_ARTIFACT
+                else if projectInfo.checkTypeScriptDefinitions -> TsCompilationStrategy.MERGED
+                else -> TsCompilationStrategy.NONE
             }
 
             for (projStep in projectInfo.steps) {
@@ -137,6 +138,7 @@ abstract class JsAbstractInvalidationTest(
                 ).apply {
                     put(JSConfigurationKeys.GENERATE_DTS, projectInfo.checkTypeScriptDefinitions)
                     put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.NEVER)
+                    put(JSConfigurationKeys.DTS_COMPILATION_STRATEGY, dtsStrategy)
                 }
 
                 val dirtyData = when (granularity) {
@@ -169,7 +171,8 @@ abstract class JsAbstractInvalidationTest(
                     moduleKind = configuration[JSConfigurationKeys.MODULE_KIND]!!,
                     sourceMapsInfo = SourceMapsInfo.from(configuration),
                     caches = icCaches,
-                    relativeRequirePath = true
+                    relativeRequirePath = true,
+                    dtsCompilationStrategy = dtsStrategy
                 )
 
                 val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(granularity, outJsProgram = true)

@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportModelToTsDeclarations
-import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportModelToTypeScripFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitions
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptMerger
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -38,8 +38,6 @@ import org.jetbrains.kotlin.js.config.sourceMap
 import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
@@ -83,7 +81,7 @@ class DebugInformation(
 data class LoweredIrWithExtraArtifacts(
     val loweredIr: List<IrModuleFragment>,
     val backendContext: WasmBackendContext,
-    val typeScriptFragment: TypeScriptFragment?
+    val typeScriptDefinitions: TypeScriptDefinitions?
 )
 
 fun compileToLoweredIr(
@@ -124,11 +122,12 @@ fun compileToLoweredIr(
         for (file in module.files)
             markExportedDeclarations(context, file, exportedDeclarations)
 
-    val typeScriptFragment = runIf(configuration.generateDts) {
+    val typeScriptDefinitions = runIf(configuration.generateDts) {
+        val moduleKind = ModuleKind.ES
         val exportModel = ExportModelGenerator(context).generateExport(allModules)
-        val exportModelToDtsTranslator = ExportModelToTsDeclarations(ModuleKind.ES)
+        val exportModelToDtsTranslator = ExportModelToTypeScripFragment(moduleKind)
         val fragment = exportModelToDtsTranslator.generateTypeScriptFragment(exportModel.declarations)
-        TypeScriptFragment(exportModelToDtsTranslator.generateTypeScript("", listOf(fragment)))
+        TypeScriptMerger(moduleKind).generateSingleWrappedTypeScriptDefinitions("", fragment)
     }
 
     lowerPreservingTags(
@@ -137,7 +136,7 @@ fun compileToLoweredIr(
         context.irFactory.stageController as WholeWorldStageController,
     )
 
-    return LoweredIrWithExtraArtifacts(allModules, context, typeScriptFragment)
+    return LoweredIrWithExtraArtifacts(allModules, context, typeScriptDefinitions)
 }
 
 fun lowerPreservingTags(
@@ -183,7 +182,7 @@ class WasmIrModuleConfiguration(
     val configuration: CompilerConfiguration,
     val moduleName: String,
     val baseFileName: String,
-    val typeScriptFragment: TypeScriptFragment?,
+    val typeScriptDefinitions: TypeScriptDefinitions?,
     val multimoduleOptions: MultimoduleCompileOptions?,
 )
 
@@ -354,7 +353,7 @@ fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linked
             sourceMapGeneratorForBinary?.generate(),
             sourceMapGeneratorForText?.generate(),
         ),
-        dts = moduleConfiguration.typeScriptFragment?.raw,
+        dts = moduleConfiguration.typeScriptDefinitions?.body,
         useDebuggerCustomFormatters = configuration.useDebuggerCustomFormatters,
         dynamicJsModules = dynamicJsModules.map { it.copy(content = it.content.normalizeEmptyLines()) },
         baseFileName = baseFileName,

@@ -8,5 +8,5 @@ package org.jetbrains.kotlin.js.config
 enum class TsCompilationStrategy {
     NONE,
     MERGED,
-    EACH_FILE
+    PER_ARTIFACT
 }

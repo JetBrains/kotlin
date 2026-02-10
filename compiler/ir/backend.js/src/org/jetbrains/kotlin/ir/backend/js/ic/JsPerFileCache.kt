@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionsFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptMerger
 import org.jetbrains.kotlin.js.artifacts.CachedTestFunctionsWithTheirPackage
 import org.jetbrains.kotlin.js.artifacts.PerFileGenerator
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -17,7 +20,10 @@ import java.io.File
 /**
  * This class maintains incremental cache files used by [JsExecutableProducer] for per-file compilation mode.
  */
-class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMultiArtifactCache<JsPerFileCache.CachedFileInfo>() {
+class JsPerFileCache(
+    private val moduleKind: ModuleKind,
+    private val moduleArtifacts: List<JsModuleArtifact>
+) : JsMultiArtifactCache<JsPerFileCache.CachedFileInfo>() {
     companion object {
         private const val JS_MODULE_HEADER = "js.module.header.bin"
         private const val CACHED_FILE_JS = "file.js"
@@ -403,6 +409,10 @@ class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMu
             is CachedFileInfo.ModuleProxyFileCachedInfo -> jsFileArtifact?.let { CachedFileArtifacts(it, null, dtsFileArtifact) }
         }
 
+    // Since this method is used for merging fragments (what should not be done with per-file granularity) we leave it as always return null
+    override fun loadTypeScriptFragment(cacheInfo: CachedFileInfo): TypeScriptDefinitionsFragment? = null
+    override fun commitTypeScriptFragment(cacheInfo: CachedFileInfo, fragment: TypeScriptDefinitionsFragment?) {}
+
     override fun fetchCompiledJsCode(cacheInfo: CachedFileInfo) =
         cacheInfo.cachedFiles?.let { (jsCodeFile, sourceMapFile, tsDeclarationsFile) ->
             jsCodeFile.ifExists { this }
@@ -411,7 +421,11 @@ class JsPerFileCache(private val moduleArtifacts: List<JsModuleArtifact>) : JsMu
 
     override fun commitOnyTypeScriptFiles(cacheInfo: CachedFileInfo): Boolean {
         if (cacheInfo !is CachedFileInfo.ExportFileCachedInfo || !cacheInfo.onlyDtsWereChanged) return false
-        cacheInfo.dtsFileArtifact?.writeIfNotNull(cacheInfo.jsIrHeader.associatedModule?.fragments?.single()?.dts?.raw)
+        val header = cacheInfo.jsIrHeader
+        val dtsFragments = header.associatedModule?.fragments?.mapNotNull { it.dts }
+        // TODO(KT-48979): as soon as we add cross TypeScript files linking, this logic should be moved from here
+        val typeScriptDefinitions = dtsFragments?.let { TypeScriptMerger(moduleKind).mergeIntoTypeScriptDefinitions(header.externalModuleName, it) }
+        cacheInfo.dtsFileArtifact?.writeIfNotNull(typeScriptDefinitions?.body)
         return true
     }
 

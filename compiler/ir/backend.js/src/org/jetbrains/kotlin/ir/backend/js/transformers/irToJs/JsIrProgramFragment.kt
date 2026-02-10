@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICModule
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
-import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionsFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.serializeTo
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsIdentifier
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -36,7 +36,7 @@ class JsIrProgramFragment(val name: String, val packageFqn: String) : IrICProgra
     val exports = JsCompositeBlock()
     val importedModules = mutableListOf<JsImportedModule>()
     val imports = mutableMapOf<String, JsStatement>()
-    var dts: TypeScriptFragment? = null
+    var dts: TypeScriptDefinitionsFragment? = null
     val classes = mutableMapOf<JsName, JsIrIcClassModel>()
     val initializers = JsCompositeBlock()
     val eagerInitializers = JsCompositeBlock()

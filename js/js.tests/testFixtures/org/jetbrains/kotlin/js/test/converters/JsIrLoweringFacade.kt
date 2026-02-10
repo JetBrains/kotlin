@@ -108,7 +108,8 @@ class JsIrLoweringFacade(
                         moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN),
                         sourceMapsInfo = SourceMapsInfo.from(configuration),
                         caches = testServices.jsIrIncrementalDataProvider.getCaches(),
-                        relativeRequirePath = false
+                        relativeRequirePath = false,
+                        dtsCompilationStrategy = configuration.dtsCompilationStrategy ?: error("dtsCompilationStrategy was not provided")
                     )
                     jsExecutableProducer.buildExecutable(it.granularity, true).compilationOut
                 }
@@ -206,14 +207,16 @@ class JsIrLoweringFacade(
             }
         }
 
+        // Here we're checking only merged variant of TypeScript
+        // After KT-48979 implemented it should be changed
         if (generateDts) {
-            val tsFiles = compilerResult.outputs.entries.associate { it.value.getFullTsDefinition(moduleId, moduleKind) to it.key }
+            val tsFiles = compilerResult.outputs.entries.associate { it.value.tsDefinitions to it.key }
             val tsDefinitions = tsFiles.entries.singleOrNull()?.key
                 ?: error("[${tsFiles.values.joinToString { it.name }}] make different TypeScript")
 
             outputFile
                 .withReplacedExtensionOrNull("_v5${moduleKind.jsExtension}", ".d.ts")!!
-                .write(tsDefinitions)
+                .write(tsDefinitions.body)
         }
 
         return this
