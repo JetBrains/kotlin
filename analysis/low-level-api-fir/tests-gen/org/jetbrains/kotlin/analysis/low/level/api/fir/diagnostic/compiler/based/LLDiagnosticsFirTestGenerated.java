@@ -3018,6 +3018,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("contextualInvokeWithIncorrectNamedArgument.kt")
+      public void testContextualInvokeWithIncorrectNamedArgument() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/contextualInvokeWithIncorrectNamedArgument.kt");
+      }
+
+      @Test
       @TestMetadata("contextualLambdaWithExplicitParameterType.kt")
       public void testContextualLambdaWithExplicitParameterType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/contextualLambdaWithExplicitParameterType.kt");
