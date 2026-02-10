@@ -267,8 +267,14 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     protected fun getStructDeclAt(
             originalCursor: CValue<CXCursor>
     ): StructDecl {
-        val cursor = typesDefinitions.structDefinition(getCursorSpelling(originalCursor)) ?: originalCursor
-        return structRegistry.getOrPut(cursor, { createStructDecl(cursor) }) { decl ->
+        /**
+         * Using the original cursor here leads to a mismatch in location between the declaration and definition of the struct. This duplication
+         * is undesirable, but we keep it for ABI compatibility since some platform libraries duplicate types this way.
+         *
+         * See [org.jetbrains.kotlin.native.interop.gen.ForwardDeclarationsTests.struct redeclaration with forward declaration - introduces type duplicate]
+         */
+        return structRegistry.getOrPut(originalCursor, { createStructDecl(originalCursor) }) { decl ->
+            val cursor = typesDefinitions.structDefinition(getCursorSpelling(originalCursor)) ?: originalCursor
             if (!isStructDeclForward(cursor)) {
                 decl.def = createStructDef(cursor, cursor.type)
             }
