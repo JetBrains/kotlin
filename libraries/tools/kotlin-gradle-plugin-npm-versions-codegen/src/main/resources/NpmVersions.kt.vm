@@ -13,6 +13,13 @@ class $class : Serializable {
     val $dep.camelize() = NpmPackageVersion("$dep.name", "$dep.version")
 #end
 
+    @Deprecated(
+        "Phantom JS is deprecated. Scheduled for removal in Kotlin 2.4.",
+        level = DeprecationLevel.ERROR
+    )
+    @Suppress("unused")
+    val karmaPhantomjsLauncher = NpmPackageVersion("karma-phantomjs-launcher", "1.0.4")
+
     val allDependencies = listOf(
 #foreach( $dep in $dependencies )
         $dep.camelize(),
