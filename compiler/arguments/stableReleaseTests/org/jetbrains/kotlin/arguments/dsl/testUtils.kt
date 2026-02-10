@@ -21,7 +21,11 @@ private val temporaryExceptions = setOf(
 )
 
 internal fun Set<StableKotlinCompilerArgument>.filterNonDeprecated() = filter {
-    it.isObsolete || it.releaseVersionsMetadata.deprecatedVersion != null
+    !it.isObsolete && it.releaseVersionsMetadata.deprecatedVersion == null && it.name !in temporaryExceptions
+}
+
+internal fun Set<StableKotlinCompilerArgument>.filterDeprecated() = filter {
+    !it.isObsolete && it.releaseVersionsMetadata.deprecatedVersion != null && it.name !in temporaryExceptions
 }
 
 internal val StableKotlinReleaseVersion.asCurrent: KotlinReleaseVersion
