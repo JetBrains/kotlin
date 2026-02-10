@@ -78,29 +78,7 @@ public actual class StringBuilder private constructor(
         if (this.length < 2) {
             return this
         }
-
-        var reversed = jsEmptyString
-        var index = jsLength(jsString) - 1
-        while (index >= 0) {
-            val low = jsCharCodeAt(jsString, index--)
-            reversed = if (low.toChar().isLowSurrogate() && index >= 0) {
-                val high = jsCharCodeAt(jsString, index--)
-                if (high.toChar().isHighSurrogate()) {
-                    jsConcat(
-                        jsConcat(reversed, fromCharCode(high).unsafeCast<JsString>()).unsafeCast<JsString>(),
-                        fromCharCode(low).unsafeCast<JsString>()
-                    ).unsafeCast<JsString>()
-                } else {
-                    jsConcat(
-                        jsConcat(reversed, fromCharCode(low).unsafeCast<JsString>()).unsafeCast<JsString>(),
-                        fromCharCode(high).unsafeCast<JsString>()
-                    ).unsafeCast<JsString>()
-                }
-            } else {
-                jsConcat(reversed, fromCharCode(low).unsafeCast<JsString>()).unsafeCast<JsString>()
-            }
-        }
-        jsString = reversed
+        jsString = reverseJsString(jsString)
         return this
     }
 

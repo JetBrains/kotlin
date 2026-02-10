@@ -140,3 +140,7 @@ private external fun nativeReplaceFirst(source: JsString, oldValue: JsString, ne
 })()"""
 )
 private external fun nativeReplaceFirstIgnore(source: JsString, oldValue: JsString, newValue: JsString): String
+
+@OptIn(ExperimentalWasmJsInterop::class)
+@JsFun("(str) => [...str].reverse().join('')")
+internal external fun reverseJsString(source: JsString): JsString
