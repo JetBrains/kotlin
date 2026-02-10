@@ -203,7 +203,7 @@ internal external fun createObjCObjectHolder(ptr: NativePtr): Any?
 
 // Objective-C runtime:
 
-@GCUnsafeCall("objc_retainAutoreleaseReturnValue")
+@GCUnsafeCall("Kotlin_objc_retainAutoreleaseReturnValue_inNative")
 @ExperimentalForeignApi
 public external fun objc_retainAutoreleaseReturnValue(ptr: NativePtr): NativePtr
 
@@ -219,11 +219,11 @@ public external fun objc_autoreleasePoolPop(ptr: NativePtr)
 @FilterExceptions
 private external fun objc_allocWithZone(clazz: NativePtr): NativePtr
 
-@GCUnsafeCall("Kotlin_objc_retain")
+@GCUnsafeCall("Kotlin_objc_retain_inNative")
 @ExperimentalForeignApi
 public external fun objc_retain(ptr: NativePtr): NativePtr
 
-@GCUnsafeCall("Kotlin_objc_release")
+@GCUnsafeCall("Kotlin_objc_release_inNative")
 @ExperimentalForeignApi
 public external fun objc_release(ptr: NativePtr)
 

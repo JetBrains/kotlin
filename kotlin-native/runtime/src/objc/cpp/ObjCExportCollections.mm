@@ -29,6 +29,7 @@
 #import "ObjCExport.h"
 #import "ObjCExportCollections.h"
 #import "ObjCExportPrivate.h"
+#import "ObjCInterop.h"
 
 using namespace kotlin;
 
@@ -88,7 +89,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 @implementation NSArray (NSArrayToKotlin)
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSArrayAsKList_create, objc_retain(self));
+  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSArrayAsKList_create, Kotlin_objc_retain_inNative(self));
 }
 
 -(void)releaseAsAssociatedObject {
@@ -101,7 +102,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 @implementation NSMutableArray (NSArrayToKotlin)
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSMutableArrayAsKMutableList_create, objc_retain(self));
+  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSMutableArrayAsKMutableList_create, Kotlin_objc_retain_inNative(self));
 }
 
 -(void)releaseAsAssociatedObject {
@@ -115,7 +116,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 @implementation NSSet (NSSetToKotlin)
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSSetAsKSet_create, objc_retain(self));
+  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSSetAsKSet_create, Kotlin_objc_retain_inNative(self));
 }
 
 -(void)releaseAsAssociatedObject {
@@ -129,7 +130,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 @implementation NSDictionary (NSDictionaryToKotlin)
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSDictionaryAsKMap_create, objc_retain(self));
+  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSDictionaryAsKMap_create, Kotlin_objc_retain_inNative(self));
 }
 
 -(void)releaseAsAssociatedObject {
