@@ -59103,6 +59103,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("fakeOverrides.kt")
+      public void testFakeOverrides() {
+        runTest("compiler/testData/codegen/box/reflection/typeParameters/fakeOverrides.kt");
+      }
+
+      @Test
       @TestMetadata("functionClasses.kt")
       public void testFunctionClasses() {
         runTest("compiler/testData/codegen/box/reflection/typeParameters/functionClasses.kt");
