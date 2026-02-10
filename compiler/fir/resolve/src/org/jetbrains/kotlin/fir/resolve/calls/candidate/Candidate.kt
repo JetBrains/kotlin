@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckContextArguments
+import org.jetbrains.kotlin.fir.resolve.calls.stages.MapArguments
 import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -187,6 +189,14 @@ class Candidate(
         _argumentMapping = argumentMapping
     }
 
+    /**
+     * The arguments of a contextual implicit `invoke` candidate contain stub expressions for the implicitly passed
+     * context arguments between the [MapArguments] and [CheckContextArguments] stages.
+     *
+     * These expressions are always the first in the [arguments] list.
+     *
+     * This function replaces these stub arguments with the given [newArgumentPrefix] and updates the [argumentMapping] accordingly.
+     */
     @UpdatingCandidateInvariants
     fun replaceArgumentPrefix(newArgumentPrefix: List<ConeResolutionAtom>) {
         val remainingArguments = arguments.subList(newArgumentPrefix.size, arguments.size)
