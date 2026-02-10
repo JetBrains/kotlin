@@ -57,6 +57,44 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerExec
 	public abstract fun useInProcessStrategy ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer {
+	public abstract fun render (Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;)Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity : java/lang/Enum {
+	public static final field ERROR Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static final field EXCEPTION Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static final field FIXED_WARNING Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static final field INFO Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static final field LOGGING Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static final field OUTPUT Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static final field STRONG_WARNING Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static final field WARNING Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation {
+	public fun <init> (Ljava/lang/String;IIIILjava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun component5 ()I
+	public final fun component6 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;IIIILjava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;Ljava/lang/String;IIIILjava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$SourceLocation;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumn ()I
+	public final fun getColumnEnd ()I
+	public final fun getLine ()I
+	public final fun getLineContent ()Ljava/lang/String;
+	public final fun getLineEnd ()I
+	public final fun getPath ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/DelicateBuildToolsApi : java/lang/annotation/Annotation {
 }
 
@@ -783,6 +821,7 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspa
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation : org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation {
 	public static final field COMPILER_ARGUMENTS_LOG_LEVEL Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
+	public static final field COMPILER_MESSAGE_RENDERER Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Companion;
 	public static final field GENERATE_COMPILER_REF_INDEX Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
 	public static final field INCREMENTAL_COMPILATION Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;
