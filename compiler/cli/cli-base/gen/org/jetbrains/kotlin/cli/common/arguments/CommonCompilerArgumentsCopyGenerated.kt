@@ -42,6 +42,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.expectActualClasses = from.expectActualClasses
     to.explicitApi = from.explicitApi
     to.explicitBackingFields = from.explicitBackingFields
+    to.explicitContextArguments = from.explicitContextArguments
     to.explicitReturnTypes = from.explicitReturnTypes
     to.fragmentDependencies = from.fragmentDependencies?.copyOf()
     to.fragmentFriendDependencies = from.fragmentFriendDependencies?.copyOf()

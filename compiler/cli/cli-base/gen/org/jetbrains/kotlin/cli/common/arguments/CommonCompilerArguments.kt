@@ -438,6 +438,17 @@ Use the 'warning' level to issue warnings instead of errors.""",
         }
 
     @Argument(
+        value = "-Xexplicit-context-arguments",
+        description = "Enable explicit passing of context arguments using named argument syntax.",
+    )
+    @Enables(LanguageFeature.ExplicitContextArguments)
+    var explicitContextArguments: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xfragment-dependency",
         valueDescription = "<fragment name>:<path>",
         description = """Declare common klib dependencies for the specific fragment.

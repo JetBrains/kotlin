@@ -745,6 +745,19 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
 
     compilerArgument {
+        name = "Xexplicit-context-arguments"
+        description = "Enable explicit passing of context arguments using named argument syntax.".asReleaseDependent()
+        argumentType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.ExplicitContextArguments))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
+
+
+    compilerArgument {
         name = "Xcontext-sensitive-resolution"
         description = "Enable experimental context-sensitive resolution.".asReleaseDependent()
         argumentType = BooleanType.defaultFalse

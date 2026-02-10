@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/explicitContextArguments.kt
+-d
+$TEMP_DIR$
+-Xcontext-parameters
+-Xexplicit-context-arguments

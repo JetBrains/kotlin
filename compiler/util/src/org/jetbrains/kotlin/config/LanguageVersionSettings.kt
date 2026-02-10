@@ -565,7 +565,7 @@ enum class LanguageFeature(
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ContextParameters(sinceVersion = null, "KT-72222"),
-    ExplicitContextArguments(sinceVersion = null, issue = "KT-81684", testOnly = true),
+    ExplicitContextArguments(sinceVersion = null, issue = "KT-81684"),
     ValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     PropertyParamAnnotationDefaultTargetMode(sinceVersion = null, "KT-73255"),

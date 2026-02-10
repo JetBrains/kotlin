@@ -348,6 +348,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_EXPLICIT_BACKING_FIELDS", KotlinReleaseVersion(2, 3, 0))
 
     /**
+     * Enable explicit passing of context arguments using named argument syntax.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_EXPLICIT_CONTEXT_ARGUMENTS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_EXPLICIT_CONTEXT_ARGUMENTS", KotlinReleaseVersion(2, 4, 0))
+
+    /**
      * Enable header compilation mode.
      * In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
      * compiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation

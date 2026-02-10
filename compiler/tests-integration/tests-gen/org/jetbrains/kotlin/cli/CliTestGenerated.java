@@ -1486,6 +1486,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/explicitBackingFields.args");
     }
 
+    @TestMetadata("explicitContextArguments.args")
+    public void testExplicitContextArguments() {
+      runTest("compiler/testData/cli/jvm/explicitContextArguments.args");
+    }
+
     @TestMetadata("explicitReturnTypesEnabled.args")
     public void testExplicitReturnTypesEnabled() {
       runTest("compiler/testData/cli/jvm/explicitReturnTypesEnabled.args");
