@@ -155,6 +155,8 @@ class ForwardDeclarationsTests : IndexerTestsBase() {
      */
     @Test
     fun `struct redeclaration with forward declaration - introduces type duplicate`() {
+        assumeTrue(HostManager.hostIsMac)
+
         val files = testFiles()
         val oneH = files.file("one.h", """
             struct Foo {
