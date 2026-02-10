@@ -52,16 +52,21 @@ private var IrClass.boxFunction: IrSimpleFunction? by irAttribute(copyByDefault 
 private var IrClass.unboxFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
 private var IrClass.inlineClassFieldSetter: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
-internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::boxFunction.getOrSetIfNull {
-    require(inlinedClass.isUsedAsBoxClass())
-    val classes = mutableListOf(inlinedClass)
-    var parent = inlinedClass.parent
+private fun IrClass.getParentAndFullName(): Pair<IrDeclarationParent, String> {
+    require(this.isUsedAsBoxClass())
+    val classes = mutableListOf(this)
+    var parent = this.parent
     while (parent is IrClass) {
         classes.add(parent)
         parent = parent.parent
     }
     require(parent is IrFile || parent is IrExternalPackageFragment) { "Local inline classes are not supported" }
 
+    return Pair(parent, classes.reversed().joinToString(".") { it.name.asString() })
+}
+
+internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::boxFunction.getOrSetIfNull {
+    val (parent, fullName) = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
@@ -70,7 +75,7 @@ internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = i
         startOffset = inlinedClass.startOffset
         endOffset = inlinedClass.endOffset
         origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
-        name = Name.special("<${classes.reversed().joinToString(".") { it.name.asString() }}-box>")
+        name = Name.special("<$fullName-box>")
         returnType = boxedType
     }.also { function ->
         function.parent = parent
@@ -85,15 +90,7 @@ internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = i
 }
 
 internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::unboxFunction.getOrSetIfNull {
-    require(inlinedClass.isUsedAsBoxClass())
-    val classes = mutableListOf(inlinedClass)
-    var parent = inlinedClass.parent
-    while (parent is IrClass) {
-        classes.add(parent)
-        parent = parent.parent
-    }
-    require(parent is IrFile || parent is IrExternalPackageFragment) { "Local inline classes are not supported" }
-
+    val (parent, fullName) = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
@@ -102,7 +99,7 @@ internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction =
         startOffset = inlinedClass.startOffset
         endOffset = inlinedClass.endOffset
         origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
-        name = Name.special("<${classes.reversed().joinToString(".") { it.name.asString() } }-unbox>")
+        name = Name.special("<$fullName-unbox>")
         returnType = unboxedType
     }.also { function ->
         function.parent = parent
@@ -117,15 +114,7 @@ internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction =
 }
 
 internal fun Context.getInlineClassFieldSetter(inlinedClass: IrClass): IrSimpleFunction = inlinedClass::inlineClassFieldSetter.getOrSetIfNull {
-    require(inlinedClass.isUsedAsBoxClass())
-    val classes = mutableListOf(inlinedClass)
-    var parent = inlinedClass.parent
-    while (parent is IrClass) {
-        classes.add(parent)
-        parent = parent.parent
-    }
-    require(parent is IrFile || parent is IrExternalPackageFragment) { "Local inline classes are not supported" }
-
+    val (parent, fullName) = inlinedClass.getParentAndFullName()
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
     val boxedType = if (isNullable) irBuiltIns.anyNType else irBuiltIns.anyType
@@ -134,7 +123,7 @@ internal fun Context.getInlineClassFieldSetter(inlinedClass: IrClass): IrSimpleF
         startOffset = inlinedClass.startOffset
         endOffset = inlinedClass.endOffset
         origin = DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
-        name = Name.special("<${classes.reversed().joinToString(".") { it.name.asString() }}-setValue>")
+        name = Name.special("<$fullName-setValue>")
         returnType = irBuiltIns.unitType
     }.also { function ->
         function.parent = parent
