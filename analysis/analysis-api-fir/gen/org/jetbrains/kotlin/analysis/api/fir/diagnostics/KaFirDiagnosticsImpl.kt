@@ -6304,6 +6304,11 @@ internal class MultipleJsExportDefaultInOneFileImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.MultipleJsExportDefaultInOneFile
 
+internal class WrongJsExportTargetVisibilityImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.WrongJsExportTargetVisibility
+
 internal class DelegationByDynamicImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

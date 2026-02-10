@@ -7,7 +7,7 @@ package api
 @JsExport
 data class PublicTable(val foo: Int)
 
-@JsExport
+<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
 private data class PrivateTable(val foo: Int)
 
 @JsExport

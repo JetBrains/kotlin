@@ -7488,6 +7488,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirWebCommonErrors.WRONG_JS_EXPORT_TARGET_VISIBILITY) { firDiagnostic ->
+        WrongJsExportTargetVisibilityImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.DELEGATION_BY_DYNAMIC) { firDiagnostic ->
         DelegationByDynamicImpl(
             firDiagnostic as KtPsiDiagnostic,

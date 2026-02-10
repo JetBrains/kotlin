@@ -634,6 +634,18 @@ public class LLJsDiagnosticsFe10TestGenerated extends AbstractLLJsDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("jsExportOnNonPublicDeclarations.kt")
+    public void testJsExportOnNonPublicDeclarations() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/jsExportOnNonPublicDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("jsExportOnNonPublicDeclarationsInExportedFile.kt")
+    public void testJsExportOnNonPublicDeclarationsInExportedFile() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/jsExportOnNonPublicDeclarationsInExportedFile.kt");
+    }
+
+    @Test
     @TestMetadata("multipleDefaultExportInOneFile.kt")
     public void testMultipleDefaultExportInOneFile() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/multipleDefaultExportInOneFile.kt");
