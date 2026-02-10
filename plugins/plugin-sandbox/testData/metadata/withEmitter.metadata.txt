@@ -1,0 +1,26 @@
+// test/Some.class
+// ------------------------------------------
+// has custom metadata for plugin org.jetbrains.kotlin.plugin.sandbox of size 4 bytes
+public final class test/Some : kotlin/Any {
+
+  // signature: <init>()V
+  // has custom metadata for plugin org.jetbrains.kotlin.plugin.sandbox of size 4 bytes
+  public constructor()
+
+  // signature: foo()Ljava/lang/String;
+  // has custom metadata for plugin org.jetbrains.kotlin.plugin.sandbox of size 4 bytes
+  public final fun foo(): kotlin/String
+
+  // field: bar:Ljava/lang/String;
+  // getter: getBar()Ljava/lang/String;
+  // synthetic method for annotations: getBar$annotations()V
+  // has custom metadata for plugin org.jetbrains.kotlin.plugin.sandbox of size 4 bytes
+  public final val bar: kotlin/String /* = ... */
+    public final get
+
+  // module name: main
+}
+// META-INF/main.kotlin_module
+// ------------------------------------------
+module {
+}

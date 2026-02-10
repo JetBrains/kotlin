@@ -36,14 +36,37 @@ class MetadataExtensionEmitter(val context: IrPluginContext) : IrVisitorVoid() {
         }
     }
 
-    override fun visitClass(declaration: IrClass) {
-        declaration.getAnnotation(markerAnnotationFqName)?.let { annotation ->
-            emitMetadata(declaration, annotation)
+    fun IrDeclaration.addMetadataIfMarked() {
+        getAnnotation(markerAnnotationFqName)?.let { annotation ->
+            emitMetadata(this, annotation)
         }
+    }
+
+    override fun visitClass(declaration: IrClass) {
+        declaration.addMetadataIfMarked()
         declaration.acceptChildrenVoid(this)
     }
 
-    private fun emitMetadata(irClass: IrClass, annotation: IrConstructorCall) {
+    override fun visitFunction(declaration: IrFunction) {
+        declaration.addMetadataIfMarked()
+        declaration.acceptChildrenVoid(this)
+    }
+
+    override fun visitConstructor(declaration: IrConstructor) {
+        declaration.addMetadataIfMarked()
+        declaration.acceptChildrenVoid(this)
+    }
+
+    override fun visitProperty(declaration: IrProperty) {
+        declaration.addMetadataIfMarked()
+        declaration.acceptChildrenVoid(this)
+    }
+
+    override fun visitTypeAlias(declaration: IrTypeAlias) {
+        declaration.addMetadataIfMarked()
+    }
+
+    private fun emitMetadata(irClass: IrDeclaration, annotation: IrConstructorCall) {
         val value = (annotation.arguments[0] as IrConst).value as Int
 
         context.metadataDeclarationRegistrar.addCustomMetadataExtension(

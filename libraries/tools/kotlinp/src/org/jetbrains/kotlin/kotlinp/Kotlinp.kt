@@ -76,10 +76,18 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
+    fun Printer.appendPluginCustomData(compilerPluginMetadata: MutableMap<String, ByteArray>) {
+        if (!settings.isVerbose) return
+        compilerPluginMetadata.entries.forEach { (pluginId, metadata) ->
+            appendCommentedLine("has custom metadata for plugin $pluginId of size ${metadata.size} bytes")
+        }
+    }
+
     fun renderClass(clazz: KmClass, printer: Printer): Unit = with(printer) {
         appendOrigin(clazz)
         appendVersionRequirements(clazz.versionRequirements)
         appendSignatures(clazz)
+        appendPluginCustomData(clazz.compilerPluginMetadata)
         appendAnnotations(clazz.annotations)
         @[Suppress("DEPRECATION") OptIn(ExperimentalContextReceivers::class)]
         appendContextReceiverTypes(clazz.contextReceiverTypes)
@@ -148,6 +156,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendVersionRequirements(constructor.versionRequirements)
         appendSignatures(constructor)
         appendReturnValueStatus(constructor.returnValueStatus)
+        appendPluginCustomData(constructor.compilerPluginMetadata)
         appendAnnotations(constructor.annotations)
         renderConstructorModifiers(constructor, printer)
         append("constructor")
@@ -170,6 +179,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendVersionRequirements(function.versionRequirements)
         appendSignatures(function)
         appendReturnValueStatus(function.returnValueStatus)
+        appendPluginCustomData(function.compilerPluginMetadata)
         appendAnnotations(function.annotations)
         appendAnnotations(function.extensionReceiverParameterAnnotations, useSiteTarget = "receiver")
         appendContextParameters(function.contextParameters)
@@ -306,6 +316,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendSignatures(property)
         appendCustomAttributes(property)
         appendReturnValueStatus(property.returnValueStatus)
+        appendPluginCustomData(property.compilerPluginMetadata)
         appendAnnotations(property.annotations)
         appendAnnotations(property.backingFieldAnnotations, useSiteTarget = "field")
         appendAnnotations(property.delegateFieldAnnotations, useSiteTarget = "delegate")
@@ -366,6 +377,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendLine()
         appendVersionRequirements(typeAlias.versionRequirements)
         appendSignatures(typeAlias)
+        appendPluginCustomData(typeAlias.compilerPluginMetadata)
         appendAnnotations(typeAlias.annotations)
         append(VISIBILITY_MAP[typeAlias.visibility], "typealias ", typeAlias.name)
         appendTypeParameters(typeAlias.typeParameters)

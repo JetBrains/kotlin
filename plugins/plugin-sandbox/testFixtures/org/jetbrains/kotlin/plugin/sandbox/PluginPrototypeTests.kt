@@ -129,7 +129,7 @@ open class AbstractFirMetadataPluginSandboxTest : AbstractKotlinCompilerWithTarg
             configureFirParser(FirParser.LightTree)
             commonFirWithPluginFrontendConfiguration(dumpFir = false)
             configureJvmArtifactsHandlersStep {
-                useHandlers({ CompareMetadataHandler(it, extension = ".metadata.txt") })
+                useHandlers({ CompareMetadataHandler(it, extension = ".metadata.txt", verbose = true) })
             }
         }
     }
