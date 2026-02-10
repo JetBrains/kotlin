@@ -3,5 +3,7 @@
 // LANGUAGE: +ContextParameters
 
 fun test(foo: context(Int) (String) -> Unit) {
-    foo(b = "")
+    <!NO_CONTEXT_ARGUMENT!>foo<!>(<!NO_VALUE_FOR_PARAMETER!><!NAMED_ARGUMENTS_NOT_ALLOWED, NAMED_PARAMETER_NOT_FOUND!>b<!> = "")<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, stringLiteral, typeWithContext */

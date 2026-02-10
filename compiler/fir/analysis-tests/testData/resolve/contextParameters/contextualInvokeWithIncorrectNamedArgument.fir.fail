@@ -1,9 +1,0 @@
-java.util.NoSuchElementException: Key org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtomWithSingleChild@79130eee is missing in the map.
-	at kotlin.collections.MapsKt__MapWithDefaultKt.getOrImplicitDefaultNullable(MapWithDefault.kt:25)
-	at kotlin.collections.MapsKt__MapsKt.getValue(Maps.kt:437)
-	at org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate.replaceArgumentPrefix(Candidate.kt:200)
-	at org.jetbrains.kotlin.fir.resolve.calls.stages.CheckContextArguments.replaceArgumentPrefixForInvokeWithImplicitlyMappedContextValues(ResolutionStages.kt:335)
-	at org.jetbrains.kotlin.fir.resolve.calls.stages.CheckContextArguments.check(ResolutionStages.kt:219)
-	at org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner$processCandidate$1.invokeSuspend(ResolutionStageRunner.kt:35)
-	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
-	at org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner.processCandidate(ResolutionStageRunner.kt:49)

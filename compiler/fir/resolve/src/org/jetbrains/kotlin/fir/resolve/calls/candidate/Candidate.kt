@@ -197,7 +197,7 @@ class Candidate(
         }
 
         for (argument in remainingArguments) {
-            newArgumentMapping[argument] = argumentMapping.getValue(argument)
+            argumentMapping[argument]?.let { newArgumentMapping[argument] = it }
         }
 
         val newArguments = newArgumentPrefix + remainingArguments
