@@ -26,16 +26,6 @@ publish {
 }
 standardPublicJars()
 
-// schema-kenerator-* dependency is only compatible with JDK 11+
-tasks.named<KotlinJvmCompile>("compileTestKotlin") {
-    compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
-}
-
-tasks.named<JavaCompile>("compileTestJava") {
-    sourceCompatibility = "11"
-    targetCompatibility = "11"
-}
-
 dependencies {
     api(kotlinStdlib())
 
@@ -56,9 +46,6 @@ dependencies {
     testImplementation(project(":compiler:util"))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(libs.junit.jupiter.params)
-    testImplementation(libs.schema.kenerator.core)
-    testImplementation(libs.schema.kenerator.serialization)
-    testImplementation(libs.schema.kenerator.jsonschema)
 }
 
 projectTests {
@@ -123,6 +110,17 @@ testing {
                 implementation(relocatedStableRelease)
                 implementation(platform(libs.junit.bom))
                 implementation(libs.junit.jupiter.params)
+                implementation(libs.schema.kenerator.core)
+                implementation(libs.schema.kenerator.serialization)
+                implementation(libs.schema.kenerator.jsonschema)
+            }
+
+            targets {
+                all {
+                    testTask.configure {
+                        javaLauncher.value(getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+                    }
+                }
             }
 
             targets {
@@ -134,6 +132,16 @@ testing {
             }
         }
     }
+}
+
+// schema-kenerator-* dependency is only compatible with JDK 11+
+tasks.named<KotlinJvmCompile>("compileStableReleaseTestsKotlin") {
+    compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
+}
+
+tasks.named<JavaCompile>("compileStableReleaseTestsJava") {
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
 }
 
 kotlin.target.compilations.getByName("stableReleaseTests").associateWith(
