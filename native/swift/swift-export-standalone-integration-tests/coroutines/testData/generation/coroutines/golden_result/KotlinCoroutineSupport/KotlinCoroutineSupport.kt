@@ -85,43 +85,31 @@ public fun __root___SwiftJob_cancelExternally(self: kotlin.native.internal.Nativ
  */
 
 @OptIn(kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
-class SwiftFlowIterator<T> private constructor(): FlowCollector<T> {
+class SwiftFlowIterator<T> private constructor(
+    private val state: AtomicReference<SwiftFlowIterator.State>,
+): FlowCollector<T> {
     private object Retry
     private class Throw(val exception: Throwable)
 
     private sealed interface State {
-        data object Ready : State
-        data class AwaitingConsumer<T>(val value: T, val continuation: CancellableContinuation<Unit>) : State
+        // State transitions:
+        //
+        // Ready -> AwaitingProducer [label=next];
+        // Ready -> Completed [label=complete];
+        //
+        // AwaitingConsumer -> AwaitingProducer [label=next];
+        // AwaitingConsumer -> Completed [label=complete];
+        //
+        // AwaitingProducer -> AwaitingConsumer [label=emit];
+        // AwaitingProducer -> Completed [label=complete];
+
+        data class Ready<T>(val flow: Flow<T>) : State
+        data class AwaitingConsumer(val continuation: CancellableContinuation<Unit>) : State
         data class AwaitingProducer(val continuation: CancellableContinuation<Any?>) : State
         data class Completed(val error: Throwable?) : State
     }
 
-    // State transitions:
-    //
-    // Ready -> AwaitingConsumer [label=emit];
-    // Ready -> AwaitingProducer [label=next];
-    // Ready -> Completed [label=complete];
-    //
-    // AwaitingConsumer -> Ready [label=next];
-    // AwaitingConsumer -> Completed [label=complete];
-    //
-    // AwaitingProducer -> Ready [label=emit];
-    // AwaitingProducer -> Completed [label=complete];
-    //
-
-    private val scope = CoroutineScope(EmptyCoroutineContext)
-
-    public constructor(flow: Flow<T>) : this() {
-        CoroutineScope(EmptyCoroutineContext).launch {
-            flow
-                .catch { complete(it) }
-                .collect(this@SwiftFlowIterator)
-        }.invokeOnCompletion {
-            complete(it)
-        }
-    }
-
-    private val state = AtomicReference<State>(State.Ready)
+    public constructor(flow: Flow<T>) : this(state = AtomicReference(State.Ready<T>(flow)))
 
     public fun cancel() = complete(CancellationException("Flow cancelled"))
 
@@ -129,13 +117,13 @@ class SwiftFlowIterator<T> private constructor(): FlowCollector<T> {
     public fun complete(error: Throwable?) {
         loop@ while (true) {
             when (val state = this@SwiftFlowIterator.state.exchange(State.Completed(error))) {
-                State.Ready -> return
+                is State.Ready<*> -> return
                 is State.AwaitingProducer -> if (error != null) {
                     state.continuation.resumeWithException(error)
                 } else {
                     state.continuation.resume(null)
                 }
-                is State.AwaitingConsumer<*> -> if (error != null) {
+                is State.AwaitingConsumer -> if (error != null) {
                     state.continuation.resumeWithException(error)
                 } else {
                     error("prematurely completing flow collection without an error")
@@ -149,21 +137,20 @@ class SwiftFlowIterator<T> private constructor(): FlowCollector<T> {
     public override suspend fun emit(value: T) {
         loop@while (true) {
             when (val state = this@SwiftFlowIterator.state.load()) {
-                State.Ready -> {
+                is State.Ready<*> -> {
+                    error("Internal inconsistency: flow collection was started prematurely")
+                }
+                is State.AwaitingProducer -> {
                     return suspendCancellableCoroutine<Any> { continuation ->
-                        val newState = State.AwaitingConsumer(value, continuation)
-                        if (!this@SwiftFlowIterator.state.compareAndSet(State.Ready, newState)) {
+                        val newState = State.AwaitingConsumer(continuation)
+                        if (!this@SwiftFlowIterator.state.compareAndSet(state, newState)) {
                             continuation.resume(Retry) // state changed; continue the outer loop
+                        } else {
+                            state.continuation.resume(value) // continue the consumer
                         }
                     }.handleActions<Unit> { continue@loop }
                 }
-                is State.AwaitingProducer -> {
-                    if (!this@SwiftFlowIterator.state.compareAndSet(state, State.Ready)) {
-                        continue // retry; something has already produced a value for us
-                    }
-                    return state.continuation.resume(value)
-                }
-                is State.AwaitingConsumer<*> -> {
+                is State.AwaitingConsumer -> {
                     error("KotlinFlowIterator doesn't support concurrent iteration")
                 }
                 is State.Completed -> throw state.error ?: error("Emitting into already comleted stream.")
@@ -175,27 +162,42 @@ class SwiftFlowIterator<T> private constructor(): FlowCollector<T> {
     public suspend fun next(): T? {
         loop@while (true) {
             when (val state = this@SwiftFlowIterator.state.load()) {
-                State.Ready -> {
+                is State.Ready<*> -> {
+                    val state = state as State.Ready<T>
                     return suspendCancellableCoroutine<Any?> { continuation ->
                         val newState = State.AwaitingProducer(continuation)
-                        if (!this@SwiftFlowIterator.state.compareAndSet(State.Ready, newState)) {
-                            continuation.resume(Retry)
+                        if (!this@SwiftFlowIterator.state.compareAndSet(state, newState)) {
+                            continuation.resume(Retry) // state changed; continue the outer loop
+                        } else {
+                            this.launch(state.flow)
                         }
                     }?.handleActions<T> { continue@loop }
-
                 }
-                is State.AwaitingConsumer<*> -> {
-                    val state = state as State.AwaitingConsumer<T>
-                    if (this@SwiftFlowIterator.state.compareAndSet(state, State.Ready)) {
-                        state.continuation.resume(Unit)
-                        return state.value
-                    }
+                is State.AwaitingConsumer -> {
+                    return suspendCancellableCoroutine<Any?> { continuation ->
+                        val newState = State.AwaitingProducer(continuation)
+                        if (!this@SwiftFlowIterator.state.compareAndSet(state, newState)) {
+                            continuation.resume(Retry) // state changed; continue the outer loop
+                        } else {
+                            state.continuation.resume(Unit) // continue the producer
+                        }
+                    }?.handleActions<T> { continue@loop }
                 }
                 is State.AwaitingProducer -> {
                     error("KotlinFlowIterator doesn't support concurrent receivers")
                 }
                 is State.Completed -> return state.error?.let { throw it } ?: null
             }
+        }
+    }
+
+    private fun launch(flow: Flow<T>) {
+        CoroutineScope(EmptyCoroutineContext).launch {
+            flow
+                .catch { complete(it) }
+                .collect(this@SwiftFlowIterator)
+        }.invokeOnCompletion {
+            complete(it)
         }
     }
 
