@@ -1,0 +1,3 @@
+Subclass: A
+Supertype: B<String, String>
+Substitutor: null

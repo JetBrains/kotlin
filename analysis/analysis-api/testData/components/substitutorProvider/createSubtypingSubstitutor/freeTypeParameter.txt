@@ -1,0 +1,3 @@
+Subclass: A
+Supertype: B<Int>
+Substitutor: <map substitutor: {T = kotlin/Int}>

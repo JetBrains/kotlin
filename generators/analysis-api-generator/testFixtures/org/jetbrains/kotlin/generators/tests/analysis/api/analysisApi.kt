@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatu
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolAsSignatureTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolSubstitutionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substitutorProvider.AbstractCreateInheritanceTypeSubstitutorTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substitutorProvider.AbstractCreateSubtypingSubstitutorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substututorFactory.AbstractSubstitutorBuilderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
@@ -621,6 +622,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("substitutorProvider", filter = frontendIs(FrontendKind.Fir)) {
         test<AbstractCreateInheritanceTypeSubstitutorTest> {
             model(it, "createInheritanceTypeSubstitutor")
+        }
+
+        test<AbstractCreateSubtypingSubstitutorTest> {
+            model(it, "createSubtypingSubstitutor")
         }
     }
 

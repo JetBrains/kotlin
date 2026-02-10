@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import kotlin.contracts.ExperimentalContracts
@@ -54,6 +55,47 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor?
+
+    /**
+     * Creates a [KaSubstitutor] that, when applied to the type parameters of [subClass], produces a type that is a subtype of [superType].
+     *
+     * This is useful when you have a concrete supertype and want to determine how to instantiate a subclass to match that supertype.
+     *
+     * Returns `null` if:
+     * - [subClass] does not inherit from the class of [superType]
+     * - There are error types in the inheritance path
+     * - The type argument mapping is ambiguous (e.g., the same type parameter maps to different types)
+     *
+     * **Note:** If [subClass] has type parameters that do not appear in the inheritance path to [superType], those type parameters
+     * will not be included in the resulting substitutor (they remain unsubstituted).
+     *
+     * #### Example
+     *
+     * ```
+     * interface A<T> : B<T>
+     * interface B<T> : C<Int, T>
+     * interface C<X, Y>
+     * ```
+     *
+     * - `createSubtypingSubstitutor(A, C<Int, String>)` returns `KaSubstitutor { T -> String }`
+     * - `createSubtypingSubstitutor(B, C<Int, String>)` returns `KaSubstitutor { T -> String }`
+     *
+     * #### Free type parameters
+     *
+     * ```
+     * interface A<T, U> : B<T>
+     * interface B<X>
+     * ```
+     *
+     * - `createSubtypingSubstitutor(A, B<Int>)` returns `KaSubstitutor { T -> Int }` (U remains unsubstituted)
+     *
+     * @param subClass The subclass whose type parameters should be substituted.
+     * @param superType The target supertype that the substituted subclass type should match.
+     * @return A substitutor mapping [subClass]'s type parameters to concrete types, or `null` if the operation fails.
+     */
+    @KaExperimentalApi
+    @KaK1Unsupported
+    public fun createSubtypingSubstitutor(subClass: KaClassSymbol, superType: KaClassType): KaSubstitutor?
 }
 
 /**
@@ -169,6 +211,57 @@ public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass:
         createInheritanceTypeSubstitutor(
             subClass = subClass,
             superClass = superClass,
+        )
+    }
+}
+
+/**
+ * Creates a [KaSubstitutor] that, when applied to the type parameters of [subClass], produces a type that is a subtype of [superType].
+ *
+ * This is useful when you have a concrete supertype and want to determine how to instantiate a subclass to match that supertype.
+ *
+ * Returns `null` if:
+ * - [subClass] does not inherit from the class of [superType]
+ * - There are error types in the inheritance path
+ * - The type argument mapping is ambiguous (e.g., the same type parameter maps to different types)
+ *
+ * **Note:** If [subClass] has type parameters that do not appear in the inheritance path to [superType], those type parameters
+ * will not be included in the resulting substitutor (they remain unsubstituted).
+ *
+ * #### Example
+ *
+ * ```
+ * interface A<T> : B<T>
+ * interface B<T> : C<Int, T>
+ * interface C<X, Y>
+ * ```
+ *
+ * - `createSubtypingSubstitutor(A, C<Int, String>)` returns `KaSubstitutor { T -> String }`
+ * - `createSubtypingSubstitutor(B, C<Int, String>)` returns `KaSubstitutor { T -> String }`
+ *
+ * #### Free type parameters
+ *
+ * ```
+ * interface A<T, U> : B<T>
+ * interface B<X>
+ * ```
+ *
+ * - `createSubtypingSubstitutor(A, B<Int>)` returns `KaSubstitutor { T -> Int }` (U remains unsubstituted)
+ *
+ * @param subClass The subclass whose type parameters should be substituted.
+ * @param superType The target supertype that the substituted subclass type should match.
+ * @return A substitutor mapping [subClass]'s type parameters to concrete types, or `null` if the operation fails.
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaK1Unsupported
+@KaContextParameterApi
+context(session: KaSession)
+public fun createSubtypingSubstitutor(subClass: KaClassSymbol, superType: KaClassType): KaSubstitutor? {
+    return with(session) {
+        createSubtypingSubstitutor(
+            subClass = subClass,
+            superType = superType,
         )
     }
 }

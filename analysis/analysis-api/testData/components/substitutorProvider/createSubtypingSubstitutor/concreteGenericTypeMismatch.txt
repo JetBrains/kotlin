@@ -1,0 +1,3 @@
+Subclass: A
+Supertype: C<String, Int, List<Double>>
+Substitutor: null
