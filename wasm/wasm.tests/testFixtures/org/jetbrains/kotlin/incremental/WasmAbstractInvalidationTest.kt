@@ -142,7 +142,7 @@ abstract class WasmAbstractInvalidationTest(
                 wasmCompiledFileFragments = fileFragments,
                 moduleName = mainModuleInfo.moduleName,
                 configuration = configuration,
-                typeScriptFragment = null,
+                typeScriptDefinitions = null,
                 baseFileName = mainModuleInfo.moduleName,
                 multimoduleOptions = null,
             )

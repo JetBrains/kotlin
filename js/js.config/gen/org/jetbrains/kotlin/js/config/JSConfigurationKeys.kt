@@ -106,6 +106,10 @@ object JSConfigurationKeys {
     @JvmField
     val GENERATE_DTS = CompilerConfigurationKey.create<Boolean>("GENERATE_DTS")
 
+    // Strategy to generate TypeScript definition file.
+    @JvmField
+    val DTS_COMPILATION_STRATEGY = CompilerConfigurationKey.create<TsCompilationStrategy>("DTS_COMPILATION_STRATEGY")
+
     // Force suspend functions compilation in JS generator functions.
     @JvmField
     val COMPILE_SUSPEND_AS_JS_GENERATOR = CompilerConfigurationKey.create<Boolean>("COMPILE_SUSPEND_AS_JS_GENERATOR")
@@ -306,6 +310,10 @@ var CompilerConfiguration.definePlatformMainFunctionArguments: String?
 var CompilerConfiguration.generateDts: Boolean
     get() = getBoolean(JSConfigurationKeys.GENERATE_DTS)
     set(value) { put(JSConfigurationKeys.GENERATE_DTS, value) }
+
+var CompilerConfiguration.dtsCompilationStrategy: TsCompilationStrategy?
+    get() = get(JSConfigurationKeys.DTS_COMPILATION_STRATEGY)
+    set(value) { put(JSConfigurationKeys.DTS_COMPILATION_STRATEGY, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.compileSuspendAsJsGenerator: Boolean
     get() = getBoolean(JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR)

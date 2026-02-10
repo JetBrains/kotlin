@@ -77,7 +77,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             wasmCompiledFileFragments = wasmArtifacts,
             moduleName = configuration.moduleName!!,
             configuration = configuration,
-            typeScriptFragment = null,
+            typeScriptDefinitions = null,
             baseFileName = configuration.outputName!!,
             multimoduleOptions = null,
         )

@@ -148,6 +148,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
 
         configuration.friendPathsDisabled = arguments.friendModulesDisabled
         configuration.generateDts = arguments.generateDts
+        configuration.dtsCompilationStrategy = arguments.dtsStrategy
         configuration.generateStrictImplicitExport = arguments.strictImplicitExportType
 
         if (arguments.wasm) {

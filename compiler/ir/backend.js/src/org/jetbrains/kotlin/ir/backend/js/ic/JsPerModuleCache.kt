@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionsFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.deserializeTypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.serializeTypeScriptFragment
 import org.jetbrains.kotlin.js.config.ModuleKind
 import java.io.File
 
@@ -67,15 +70,26 @@ class JsPerModuleCache(
     override fun fetchCompiledJsCode(cacheInfo: CachedModuleInfo) = cacheInfo.artifact.artifactsDir?.let { cacheDir ->
         val jsCodeFile = File(cacheDir, CACHED_MODULE_JS).ifExists { this }
         val sourceMapFile = File(cacheDir, CACHED_MODULE_JS_MAP).ifExists { this }
-        val tsDefinitionsFile = File(cacheDir, CACHED_MODULE_D_TS).ifExists { this }
-        jsCodeFile?.let { CompilationOutputsCached(it, sourceMapFile, tsDefinitionsFile) }
+        jsCodeFile?.let { CompilationOutputsCached(it, sourceMapFile, null) }
+    }
+
+    override fun loadTypeScriptFragment(cacheInfo: CachedModuleInfo): TypeScriptDefinitionsFragment? =
+        cacheInfo.artifact.artifactsDir?.let { cacheDir ->
+            val tsFragmentFile = File(cacheDir, CACHED_MODULE_D_TS).ifExists { this }
+            tsFragmentFile?.let(::deserializeTypeScriptFragment)
+        }
+
+    override fun commitTypeScriptFragment(cacheInfo: CachedModuleInfo, fragment: TypeScriptDefinitionsFragment?) {
+        cacheInfo.artifact.artifactsDir?.also { cacheDir ->
+            serializeTypeScriptFragment(File(cacheDir, CACHED_MODULE_D_TS), fragment)
+        }
     }
 
     override fun commitCompiledJsCode(cacheInfo: CachedModuleInfo, compilationOutputs: CompilationOutputsBuilt): CompilationOutputs =
         cacheInfo.artifact.artifactsDir?.let { cacheDir ->
             compilationOutputs.writeJsCodeIntoModuleCache(
                 File(cacheDir, CACHED_MODULE_JS),
-                File(cacheDir, CACHED_MODULE_D_TS),
+                null,
                 File(cacheDir, CACHED_MODULE_JS_MAP)
             )
         } ?: compilationOutputs

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-
 private const val NonNullable = "NonNullable"
 private const val declare = "declare "
 private const val default = "default "
@@ -21,29 +20,22 @@ private const val getInstance = "getInstance"
 private const val Metadata = $$"$metadata$"
 private const val MetadataType = "type"
 private const val MetadataConstructor = "constructor"
-private const val Nullable = "Nullable"
-private const val ObjectInheritanceIntrinsic = "KtSingleton"
+internal const val Nullable = "Nullable"
+internal const val ObjectInheritanceIntrinsic = "KtSingleton"
 
-@JvmInline
-public value class TypeScriptFragment(public val raw: String)
+internal val ModuleKind.initialIndent: String
+    get() = if (this == ModuleKind.PLAIN) "    " else ""
 
-public fun List<ExportedDeclaration>.toTypeScriptFragment(moduleKind: ModuleKind): TypeScriptFragment {
-    return ExportModelToTsDeclarations(moduleKind).generateTypeScriptFragment(this)
+internal val ModuleKind.intrinsicsPrefix: String
+    get() = if (this == ModuleKind.PLAIN) "" else declare
+
+public fun List<ExportedDeclaration>.toTypeScriptFragment(moduleKind: ModuleKind): TypeScriptDefinitionsFragment {
+    return ExportModelToTypeScripFragment(moduleKind).generateTypeScriptFragment(this)
 }
 
-public fun List<TypeScriptFragment>.joinTypeScriptFragments(): TypeScriptFragment {
-    return TypeScriptFragment(joinToString("\n") { it.raw })
-}
-
-public fun List<TypeScriptFragment>.toTypeScript(name: String, moduleKind: ModuleKind): String {
-    return ExportModelToTsDeclarations(moduleKind).generateTypeScript(name, this)
-}
-
-// TODO: Support module kinds other than plain
-public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
+public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) {
     private val isEsModules = moduleKind == ModuleKind.ES
-    private val intrinsicsPrefix = if (moduleKind == ModuleKind.PLAIN) "" else declare
-    private val indent: String = if (moduleKind == ModuleKind.PLAIN) "    " else ""
+    private val indent: String = moduleKind.initialIndent
     private val defaultExportPrefix = if (moduleKind == ModuleKind.PLAIN) "" else "$export$default"
 
     private val ExportedDeclaration.topLevelPrefix: String
@@ -53,25 +45,8 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             else -> "$export$declare"
         }
 
-    public fun generateTypeScript(name: String, declarations: List<TypeScriptFragment>): String {
-        val internalNamespace = """
-            type $Nullable<T> = T | null | undefined
-            ${intrinsicsPrefix}function $ObjectInheritanceIntrinsic<T>(): T & (abstract new() => any);
-        """.trimIndent().prependIndent(indent) + "\n"
-
-        val declarationsDts = internalNamespace + declarations.joinTypeScriptFragments().raw
-
-        val namespaceName = makeValidES5Identifier(name, withHash = false)
-
-        return when (moduleKind) {
-            ModuleKind.PLAIN -> "declare namespace $namespaceName {\n$declarationsDts\n}\n"
-            ModuleKind.AMD, ModuleKind.COMMON_JS, ModuleKind.ES -> declarationsDts
-            ModuleKind.UMD -> "$declarationsDts\nexport as namespace $namespaceName;"
-        }
-    }
-
-    public fun generateTypeScriptFragment(declarations: List<ExportedDeclaration>): TypeScriptFragment {
-        return TypeScriptFragment(declarations.toTypeScript())
+    public fun generateTypeScriptFragment(declarations: List<ExportedDeclaration>): TypeScriptDefinitionsFragment {
+        return TypeScriptDefinitionsFragment(declarations.toTypeScript())
     }
 
     private val ExportedDeclaration.isDefaultExport: Boolean

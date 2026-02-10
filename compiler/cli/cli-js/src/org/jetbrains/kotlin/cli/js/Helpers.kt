@@ -41,7 +41,7 @@ val K2JSCompilerArguments.granularity: JsGenerationGranularity
 val K2JSCompilerArguments.dtsStrategy: TsCompilationStrategy
     get() = when {
         !this.generateDts -> TsCompilationStrategy.NONE
-        this.irPerFile -> TsCompilationStrategy.EACH_FILE
+        this.irPerFile -> TsCompilationStrategy.PER_ARTIFACT
         else -> TsCompilationStrategy.MERGED
     }
 

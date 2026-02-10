@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.klib.reader.KaModules
 import org.jetbrains.kotlin.analysis.api.klib.reader.createKaModulesForStandaloneAnalysis
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedDeclaration
-import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScript
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptMerger
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScriptFragment
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.TsCompilationStrategy
@@ -41,6 +41,7 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
         return emptyList()
     }
 
+    val tsMerger = TypeScriptMerger(config.artifactConfiguration.moduleKind)
     val kaModules = createKaModulesForStandaloneAnalysis(klibs, config.targetPlatform)
     val exportModel = klibs.map {
         generateExportModelForModule(it, kaModules, config)
@@ -50,20 +51,22 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
     return when (config.artifactConfiguration.tsCompilationStrategy) {
         TsCompilationStrategy.NONE -> emptyList()
         TsCompilationStrategy.MERGED -> {
-            writeMergedTsFile(artifacts, config.artifactConfiguration, config.artifactConfiguration.moduleName)
+            writeMergedTsFile(tsMerger, artifacts, config.artifactConfiguration, config.artifactConfiguration.moduleName)
         }
-        TsCompilationStrategy.EACH_FILE -> {
+        TsCompilationStrategy.PER_ARTIFACT -> {
             when (config.artifactConfiguration.granularity) {
                 JsGenerationGranularity.WHOLE_PROGRAM -> {
                     val jsFileName = config.artifactConfiguration.outputJsFile().name
-                    writeMergedTsFile(artifacts, config.artifactConfiguration, jsFileName)
+                    writeMergedTsFile(tsMerger, artifacts, config.artifactConfiguration, jsFileName)
                 }
                 JsGenerationGranularity.PER_FILE, JsGenerationGranularity.PER_MODULE -> artifacts.map { artifact ->
                     val jsFileName = config.artifactConfiguration.outputJsFile(artifact.externalModuleName).name
                     val dtsFile = config.artifactConfiguration.outputDtsFile(artifact.externalModuleName).normalizedAbsoluteFile
-                    val tsDefinitions = listOf(artifact.exportModel.toTypeScriptFragment(config.artifactConfiguration.moduleKind))
-                        .toTypeScript(jsFileName, config.artifactConfiguration.moduleKind)
-                    dtsFile.writeText(tsDefinitions)
+                    val tsDefinitions = tsMerger.generateSingleWrappedTypeScriptDefinitions(
+                        jsFileName,
+                        artifact.exportModel.toTypeScriptFragment(config.artifactConfiguration.moduleKind)
+                    )
+                    dtsFile.writeText(tsDefinitions.body)
                     dtsFile
                 }
             }
@@ -72,15 +75,18 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
 }
 
 private fun writeMergedTsFile(
+    tsMerger: TypeScriptMerger,
     artifacts: List<TypeScriptModuleArtifact>,
     config: WebArtifactConfiguration,
     moduleName: String,
 ): List<File> {
     val dtsFile = config.outputDtsFile().normalizedAbsoluteFile
-    val mergedTsDefinitions = artifacts
-        .map { it.exportModel.toTypeScriptFragment(config.moduleKind) }
-        .toTypeScript(moduleName, config.moduleKind)
-    dtsFile.writeText(mergedTsDefinitions)
+    val mergedTsDefinitions = tsMerger.mergeIntoTypeScriptDefinitions(
+        moduleName,
+        artifacts.map { it.exportModel.toTypeScriptFragment(config.moduleKind) }
+    )
+
+    dtsFile.writeText(mergedTsDefinitions.body)
 
     return listOf(dtsFile)
 }

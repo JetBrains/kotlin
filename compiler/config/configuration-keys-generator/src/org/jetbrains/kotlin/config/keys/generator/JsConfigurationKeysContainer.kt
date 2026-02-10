@@ -64,6 +64,8 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val GENERATE_DTS by key<Boolean>("Generate TypeScript definition file.")
 
+    val DTS_COMPILATION_STRATEGY by key<TsCompilationStrategy>("Strategy to generate TypeScript definition file.")
+
     val COMPILE_SUSPEND_AS_JS_GENERATOR by key<Boolean>("Force suspend functions compilation in JS generator functions.")
 
     val COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS by key<Boolean>("Lower Kotlin lambdas into arrow functions instead of anonymous functions.")

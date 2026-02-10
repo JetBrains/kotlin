@@ -185,6 +185,10 @@ fun createCompilerConfiguration(
 
     if (JsEnvironmentConfigurationDirectives.GENERATE_DTS in module.directives) {
         configuration.generateDts = true
+        // We don't test per-file d.ts files compilation yet
+        configuration.dtsCompilationStrategy = TsCompilationStrategy.MERGED
+    } else {
+        configuration.dtsCompilationStrategy = TsCompilationStrategy.NONE
     }
 
     if (JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives || JsEnvironmentConfigurationDirectives.DELEGATE_JS_TRANSPILATION in module.directives) {

@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionsFragment
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
-import java.io.File
 
 abstract class JsMultiArtifactCache<T : JsMultiArtifactCache.CacheInfo> {
     abstract fun loadProgramHeadersFromCache(): List<T>
@@ -18,6 +18,8 @@ abstract class JsMultiArtifactCache<T : JsMultiArtifactCache.CacheInfo> {
     abstract fun commitCompiledJsCode(cacheInfo: T, compilationOutputs: CompilationOutputsBuilt): CompilationOutputs
 
     open fun commitOnyTypeScriptFiles(cacheInfo: T): Boolean = false
+    abstract fun loadTypeScriptFragment(cacheInfo: T): TypeScriptDefinitionsFragment?
+    abstract fun commitTypeScriptFragment(cacheInfo: T, fragment: TypeScriptDefinitionsFragment?)
 
     protected fun CodedInputStream.fetchJsIrModuleHeaderNames(): JsIrModuleHeaderNames {
         val definitions = mutableSetOf<String>()

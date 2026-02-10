@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.artifactConfiguration
+import org.jetbrains.kotlin.js.config.dtsCompilationStrategy
 import org.jetbrains.kotlin.js.config.outputDir
 import java.io.File
 
@@ -57,7 +58,8 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
             moduleKind = artifactConfiguration.moduleKind,
             sourceMapsInfo = SourceMapsInfo.from(configuration),
             caches = jsArtifacts,
-            relativeRequirePath = true
+            relativeRequirePath = true,
+            dtsCompilationStrategy = configuration.dtsCompilationStrategy ?: error("dtsCompilationStrategy was not provided")
         )
         val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(artifactConfiguration.granularity, outJsProgram = false)
         outputs.writeAll(artifactConfiguration)

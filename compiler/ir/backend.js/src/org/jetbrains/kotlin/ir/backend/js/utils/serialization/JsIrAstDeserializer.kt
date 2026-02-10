@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 
-import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionsFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
@@ -116,7 +116,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
 
             ifTrue { mainFunctionTag = readString() }
             ifTrue { testEnvironment = readTestEnvironment() }
-            ifTrue { dts = TypeScriptFragment(readString()) }
+            ifTrue { dts = TypeScriptDefinitionsFragment(readString()) }
 
             readRepeated { definitions += stringTable[readInt()] }
         }
