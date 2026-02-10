@@ -32,5 +32,41 @@ private fun testNotCaptured() {
     }
 }
 
+private fun testUnstableNotCaptured() {
+    barRegular {
+        var isEmpty = true
+        barRegular {
+            isEmpty = false
+        }
+        if (isEmpty) {
+            println("Empty")
+        }
+    }
+}
+
+private fun testSimpleCapturedCase(){
+    var first = true
+    barRegular {
+        barRegular {
+            if (first) {
+                first = false
+            }
+        }
+    }
+}
+
+fun testReturnAnonymousFunction(): (String) -> Unit {
+    var isScheduled = false
+    return { t ->
+        if (!isScheduled) {
+            isScheduled = true
+            barRegular {
+                baz(t)
+                isScheduled = false
+            }
+        }
+    }
+}
+
 /* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, lambdaLiteral, localProperty,
 propertyDeclaration, stringLiteral */

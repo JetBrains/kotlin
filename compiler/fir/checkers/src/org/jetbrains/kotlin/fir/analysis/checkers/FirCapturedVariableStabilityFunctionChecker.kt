@@ -13,28 +13,16 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
+import org.jetbrains.kotlin.fir.analysis.collectors.components.ControlFlowAnalysisDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
-import org.jetbrains.kotlin.fir.declarations.InlineStatus
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
-import org.jetbrains.kotlin.fir.expressions.calleeReference
-import org.jetbrains.kotlin.fir.expressions.explicitReceiver
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.FirLocalVariableAssignmentAnalyzer
+import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -49,8 +37,6 @@ object FirCapturedVariableStabilityFunctionChecker : FirFunctionChecker(MppCheck
     @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
-        // process functions, inside which can be FirAnonymousFunction
-        // println("my tree : ${declaration.renderControlFlowGraph()}")
         if (context.containingElements.any { it is FirFunction && it != declaration }) return
         val analyzer = FirLocalVariableAssignmentAnalyzer()
         val visitor = FirFunctionDeepVisitorWithData()
@@ -68,9 +54,9 @@ object FirCapturedVariableStabilityFunctionChecker : FirFunctionChecker(MppCheck
 data class CapturedVariableCheckerData(
     val context: CheckerContext,
     val reporter: DiagnosticReporter,
-    val lambdaScopeStack: MutableList<FirAnonymousFunction> = mutableListOf(),
+    val propertiesStack: MutableList<Set<FirPropertySymbol>> = mutableListOf(),
     val analyzer: FirLocalVariableAssignmentAnalyzer,
-    val visitedAnonymousFunctions: MutableSet<FirAnonymousFunction> = mutableSetOf()
+    val visitedAnonymousFunctions: MutableSet<FirAnonymousFunction> = mutableSetOf(),
 )
 
 class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableCheckerData>() {
@@ -96,9 +82,15 @@ class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableC
             val invocationKind = anonymousFunction.invocationKind
             if (invocationKind.isInPlace) return
 
-            data.lambdaScopeStack.add(anonymousFunction)
+            val graph = (anonymousFunction as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return
+
+            val collector = ControlFlowAnalysisDiagnosticComponent.LocalPropertyCollector().apply {
+                anonymousFunction.acceptChildren(this, graph.subGraphs.toSet())
+            }
+
+            data.propertiesStack.add(collector.properties)
             super.visitAnonymousFunction(anonymousFunction, data)
-            data.lambdaScopeStack.removeLast()
+            data.propertiesStack.removeLast()
         } finally {
             data.analyzer.exitFunction()
         }
@@ -225,7 +217,8 @@ class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableC
 
     @OptIn(SymbolInternals::class)
     private fun checkCapturedVariable(variableSymbol: FirVariableSymbol<*>, data: CapturedVariableCheckerData, source: KtSourceElement?) {
-        if (data.lambdaScopeStack.isEmpty()) return
+        if (data.propertiesStack.isEmpty()) return
+        if (variableSymbol in data.propertiesStack.last()) return
         if (variableSymbol.isVal) return
         if (variableSymbol.resolvedReturnType is ConeDynamicType) return
         if (!variableSymbol.isLocal) return

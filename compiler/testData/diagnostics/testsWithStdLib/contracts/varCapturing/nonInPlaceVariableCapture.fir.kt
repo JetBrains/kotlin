@@ -153,7 +153,7 @@ fun foo() {
 
     var count = false
     barRegular {
-            if (!count) {
+        if (!count) {
             print(2)
         }
     }

@@ -5,7 +5,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 fun barRegular(f: (Int) -> Unit) {}
-fun barRegularEmpty(f: (Int) -> Unit) {}
+fun barRegularEmpty(f: () -> Unit) {}
 
 private fun testRepeated() {
     var repeat = true
@@ -46,6 +46,7 @@ fun testNestedAnonymousFunction() {
         }
         l = 2
     }
+    outer = "b"
 }
 
 fun testNestedConstructor() {
