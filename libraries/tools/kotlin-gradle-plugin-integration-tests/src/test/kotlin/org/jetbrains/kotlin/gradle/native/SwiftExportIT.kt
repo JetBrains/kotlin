@@ -31,6 +31,10 @@ import kotlin.test.assertNotNull
 @SwiftExportGradlePluginTests
 class SwiftExportIT : KGPBaseTest() {
 
+    private companion object {
+        private const val DEFAULT_IOS_DEPLOYMENT_TARGET = "14.1"
+    }
+
     @DisplayName("embedSwiftExportForXcode fail")
     @GradleTest
     fun shouldFailWithExecutingEmbedSwiftExportForXcode(
@@ -187,7 +191,7 @@ class SwiftExportIT : KGPBaseTest() {
             assertSwiftModuleSymbols(
                 workingDir = projectPath.toFile(),
                 moduleName = "Shared",
-                target = "arm64-apple-ios14.1",
+                target = "arm64-apple-ios$DEFAULT_IOS_DEPLOYMENT_TARGET",
                 sdk = "iphoneos",
                 searchPaths = listOf(builtProductsDir.toFile()),
                 expectedSymbols = setOf("barbarbar()")
@@ -474,8 +478,9 @@ class SwiftExportIT : KGPBaseTest() {
             include(subprojectOne, "dep-one")
             include(subprojectTwo, "dep-two")
 
+            // dep-two is intentionally not part of the exported API surface.
             build(
-                ":iosArm64DebugSwiftExport",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 assertTasksExecuted(":dep-one:compileKotlinIosArm64")
@@ -503,6 +508,31 @@ class SwiftExportIT : KGPBaseTest() {
                     actualModules
                 )
             }
+
+            val builtProductsDir = projectPath.resolve("build/builtProductsDir").toFile()
+            // Verify Swift module API surface for all exported modules
+            // - Shared: exports foo() which returns One from SharedDepOne
+            // - SharedDepOne: exports the One class
+            // - ExportedKotlinPackages: contains package-namespaced declarations (empty in this test)
+            // - KotlinRuntimeSupport: exposes Swift-side runtime helpers
+            assertAllSwiftModuleSymbols(
+                workingDir = projectPath.toFile(),
+                builtProductsDir = builtProductsDir,
+                target = "arm64-apple-ios$DEFAULT_IOS_DEPLOYMENT_TARGET",
+                sdk = "iphoneos",
+                expectedSymbolsByModule = mapOf(
+                    "Shared" to setOf("foo()"),
+                    "SharedDepOne" to setOf("org.foo.One", "init()"),
+                    "ExportedKotlinPackages" to setOf("org", "org.foo"),
+                    "KotlinRuntimeSupport" to setOf(
+                        "KotlinError",
+                        "init(wrapped:)",
+                        "wrapped",
+                        "description",
+                        "localizedDescription"
+                    )
+                )
+            )
         }
     }
 
