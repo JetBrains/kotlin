@@ -276,7 +276,7 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
             module forward { header "forward.h" }
             module original { header "original.h" }
         """.trimIndent())
-        files.file("forward.h", """
+        val forwardH = files.file("forward.h", """
             struct S;
             void consumeS(struct S *);
             
@@ -287,7 +287,7 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
             union U;
             void consumeU(union U *);
         """.trimIndent())
-        val originalH = files.file("original.h", """
+        files.file("original.h", """
             struct S {
                 int a;
             };
@@ -340,7 +340,8 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
                     }
                 }
         )
-        assertEquals(structS.location.headerId.value, headerContentsHash(originalH.path))
+        // We actually want to see original.h here, but for ABI compatibility of platform libraries we kept the behavior
+        assertEquals(structS.location.headerId.value, headerContentsHash(forwardH.path))
 
         assertEquals(
                 listOf(unionU),

@@ -6,14 +6,19 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.native.interop.indexer.HeaderId
 import org.jetbrains.kotlin.native.interop.indexer.IndexerResult
 import org.jetbrains.kotlin.native.interop.indexer.ObjCClassOrProtocol
+import org.jetbrains.kotlin.native.interop.indexer.PointerType
+import org.jetbrains.kotlin.native.interop.indexer.RecordType
 import org.jetbrains.kotlin.native.interop.indexer.StructDecl
+import org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex
+import org.jetbrains.kotlin.native.interop.indexer.headerContentsHash
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
 import kotlin.test.*
 
-class ForwardDeclarationsTests : InteropTestsBase() {
+class ForwardDeclarationsTests : IndexerTestsBase() {
 
     private fun StructDecl.getName() = spelling.removePrefix("struct ")
 
@@ -142,5 +147,66 @@ class ForwardDeclarationsTests : InteropTestsBase() {
         val protocol = classes.find { it.name == "Protocol" }
         assertNotNull(protocol)
         assertTrue(protocol.isForwardDeclaration)
+    }
+
+    /**
+     * This is actually not the desired behavior, but we keep it for ABI compatibility since some platform libraries duplicate types this way
+     * See [org.jetbrains.kotlin.native.interop.indexer.NativeIndexImpl.getStructDeclAt]
+     */
+    @Test
+    fun `struct redeclaration with forward declaration - introduces type duplicate`() {
+        val files = testFiles()
+        val oneH = files.file("one.h", """
+            struct Foo {
+                int a;
+            };
+            void consumeOne(struct Foo *);
+        """.trimIndent())
+        val twoH = files.file("two.h", """
+            #include "one.h"
+            struct Foo;
+            void consumeTwo(struct Foo *);
+        """.trimIndent())
+        files.file("module.modulemap", """
+            module one {
+                header "one.h"
+            }
+            module two {
+                header "two.h"
+            }
+        """.trimIndent())
+
+        val def = files.file("dup.def", """
+            language = Objective-C
+            modules = two
+        """.trimIndent())
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(
+                        def,
+                        // Here we intentionally don't use -fmodules since this is how the platform libraries are built
+                        arrayOf("-compiler-option", "-I${files.directory}"),
+                        imports = ImportsMock(
+                                mapOf(
+                                        HeaderId(headerContentsHash(oneH.path)) to "one"
+                                )
+                        )
+                ),
+                verbose = false
+        ).index
+
+        assertEquals(
+                listOf(headerContentsHash(twoH.path)),
+                index.includedHeaders.map { it.value },
+        )
+        assertEquals(
+                listOf("struct Foo" to false),
+                index.structs.map { it.spelling to (it.def == null) },
+        )
+        val structDefinition = index.structs.single()
+        assertEquals(
+                listOf("consumeTwo" to listOf(structDefinition)),
+                index.functions.map { it.name to it.parameters.map { assertIs<RecordType>(assertIs<PointerType>(it.type).pointeeType).decl } },
+        )
     }
 }
