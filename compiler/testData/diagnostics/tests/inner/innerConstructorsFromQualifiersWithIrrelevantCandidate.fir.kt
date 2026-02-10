@@ -21,7 +21,7 @@ class Outer {
 }
 
 fun foo() {
-    Outer.Inner<!NO_VALUE_FOR_PARAMETER!>()<!>
+    <!NO_VALUE_FOR_PARAMETER!>Outer.Inner()<!>
     Outer.Inner(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     Outer.Inner("")
 }

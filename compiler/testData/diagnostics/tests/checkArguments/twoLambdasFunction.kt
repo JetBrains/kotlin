@@ -7,11 +7,11 @@ fun test(x: () -> Unit, y: () -> Unit) {
 }
 
 fun main() {
-    <!NO_VALUE_FOR_PARAMETER!>test<!> {
+    <!NO_VALUE_FOR_PARAMETER!>test {
         1
     } <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{
         2
-    }<!>
+    }<!><!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral */

@@ -16,14 +16,14 @@ fun test() {
 
     bar(z = "")
     bar<!NO_VALUE_FOR_PARAMETER!>()<!>
-    bar(<!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>""<!>)<!>
+    bar<!NO_VALUE_FOR_PARAMETER!>(<!ARGUMENT_TYPE_MISMATCH!>""<!>)<!>
     bar(1, 1, "")
     bar(1, 1, "")
     bar(1, z = "")
     bar(1, z = "", y = 2)
     bar(z = "", <!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>1<!>)
-    bar(1, <!NAMED_PARAMETER_NOT_FOUND!>zz<!> = "",
-           <!NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!><!UNRESOLVED_REFERENCE!>zz<!>.foo<!>
+    bar<!NO_VALUE_FOR_PARAMETER!>(1, <!NAMED_PARAMETER_NOT_FOUND!>zz<!> = "",
+           <!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!><!UNRESOLVED_REFERENCE!>zz<!>.foo<!>
            )<!>
 }
 

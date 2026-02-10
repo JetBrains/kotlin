@@ -374,7 +374,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             }
 
             @Composable fun Test() {
-                Foo(<!NO_VALUE_FOR_PARAMETER!>abc=)<!>
+                Foo<!NO_VALUE_FOR_PARAMETER!>(abc=)<!>
 
                 // NOTE(lmr): even though there is NO diagnostic here, there *is* a parse
                 // error. This is intentional and done to mimic how kotlin handles function

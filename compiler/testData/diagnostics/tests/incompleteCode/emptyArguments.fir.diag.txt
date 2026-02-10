@@ -18,9 +18,9 @@
 
 /emptyArguments.fir.kt:(437,437): error: Syntax error: Expecting an argument.
 
-/emptyArguments.fir.kt:(453,453): error: Syntax error: Expecting an argument.
+/emptyArguments.fir.kt:(452,457): error: No value passed for parameter 'z'.
 
-/emptyArguments.fir.kt:(455,457): error: No value passed for parameter 'z'.
+/emptyArguments.fir.kt:(453,453): error: Syntax error: Expecting an argument.
 
 /emptyArguments.fir.kt:(472,472): error: Syntax error: Expecting an argument.
 
@@ -96,9 +96,9 @@
 
 /emptyArguments.fir.kt:(873,873): error: Syntax error: Expecting an argument.
 
-/emptyArguments.fir.kt:(892,892): error: Syntax error: Expecting an argument.
+/emptyArguments.fir.kt:(891,897): error: No value passed for parameter 'c'.
 
-/emptyArguments.fir.kt:(894,897): error: No value passed for parameter 'c'.
+/emptyArguments.fir.kt:(892,892): error: Syntax error: Expecting an argument.
 
 /emptyArguments.fir.kt:(920,920): error: Syntax error: Expecting an argument.
 
@@ -114,9 +114,13 @@
 
 /emptyArguments.fir.kt:(1024,1024): error: Syntax error: Expecting an argument.
 
+/emptyArguments.fir.kt:(1044,1064): error: No value passed for parameter 'a'.
+
 /emptyArguments.fir.kt:(1054,1054): error: Syntax error: Expecting an argument.
 
-/emptyArguments.fir.kt:(1056,1064): error: No value passed for parameter 'a'.
+/emptyArguments.fir.kt:(1080,1095): error: No value passed for parameter 'b'.
+
+/emptyArguments.fir.kt:(1080,1095): error: No value passed for parameter 'c'.
 
 /emptyArguments.fir.kt:(1081,1081): error: Syntax error: Expecting an argument.
 
@@ -124,9 +128,7 @@
 
 /emptyArguments.fir.kt:(1092,1093): error: Mixing named and positional arguments is not allowed unless the order of the arguments matches the order of the parameters.
 
-/emptyArguments.fir.kt:(1092,1095): error: No value passed for parameter 'b'.
-
-/emptyArguments.fir.kt:(1092,1095): error: No value passed for parameter 'c'.
+/emptyArguments.fir.kt:(1111,1128): error: No value passed for parameter 'c'.
 
 /emptyArguments.fir.kt:(1112,1112): error: Syntax error: Expecting an argument.
 
@@ -135,8 +137,6 @@
 /emptyArguments.fir.kt:(1117,1118): error: Argument already passed for this parameter.
 
 /emptyArguments.fir.kt:(1126,1127): error: Mixing named and positional arguments is not allowed unless the order of the arguments matches the order of the parameters.
-
-/emptyArguments.fir.kt:(1126,1128): error: No value passed for parameter 'c'.
 
 /emptyArguments.fir.kt:(1145,1145): error: Syntax error: Expecting an argument.
 
@@ -156,6 +156,10 @@
 
 /emptyArguments.fir.kt:(1306,1307): error: Argument already passed for this parameter.
 
+/emptyArguments.fir.kt:(1348,1365): error: No value passed for parameter 'b'.
+
+/emptyArguments.fir.kt:(1348,1365): error: No value passed for parameter 'c'.
+
 /emptyArguments.fir.kt:(1349,1349): error: Syntax error: Expecting an argument.
 
 /emptyArguments.fir.kt:(1351,1352): error: Argument already passed for this parameter.
@@ -164,17 +168,13 @@
 
 /emptyArguments.fir.kt:(1363,1364): error: Mixing named and positional arguments is not allowed unless the order of the arguments matches the order of the parameters.
 
-/emptyArguments.fir.kt:(1363,1365): error: No value passed for parameter 'b'.
-
-/emptyArguments.fir.kt:(1363,1365): error: No value passed for parameter 'c'.
+/emptyArguments.fir.kt:(1381,1394): error: No value passed for parameter 'c'.
 
 /emptyArguments.fir.kt:(1382,1382): error: Syntax error: Expecting an argument.
 
 /emptyArguments.fir.kt:(1384,1384): error: Syntax error: Expecting an argument.
 
 /emptyArguments.fir.kt:(1386,1387): error: Argument already passed for this parameter.
-
-/emptyArguments.fir.kt:(1386,1394): error: No value passed for parameter 'c'.
 
 /emptyArguments.fir.kt:(1411,1411): error: Syntax error: Expecting an argument.
 

@@ -23,7 +23,7 @@ class KotlinSubSubClass : KotlinSubClass() {
 fun viaRealOverride() = KotlinSubSubClass().foo(kotlinName = 3)
 
 
-fun unresolvedParameter() = JavaSuperClass().foo(<!NO_VALUE_FOR_PARAMETER!><!NAMED_ARGUMENTS_NOT_ALLOWED, NAMED_PARAMETER_NOT_FOUND!>nonexistentName<!> = 4)<!>
+fun unresolvedParameter() = <!NO_VALUE_FOR_PARAMETER!>JavaSuperClass().foo(<!NAMED_ARGUMENTS_NOT_ALLOWED, NAMED_PARAMETER_NOT_FOUND!>nonexistentName<!> = 4)<!>
 
 
 fun multipleParameters() = JavaSuperClass().multipleParameters(<!NAMED_ARGUMENTS_NOT_ALLOWED!>first<!> = 1, <!NAMED_ARGUMENTS_NOT_ALLOWED!>second<!> = 2L, <!NAMED_ARGUMENTS_NOT_ALLOWED!>third<!> = "3")
