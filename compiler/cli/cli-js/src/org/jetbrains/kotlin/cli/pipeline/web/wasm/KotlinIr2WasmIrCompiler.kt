@@ -92,14 +92,12 @@ class WholeWorldMultiModuleCompiler(configuration: CompilerConfiguration, overri
         }
         dumpDeclarationIrSizesIfNeed(configuration.dceDumpDeclarationIrSizesToFile, allModules, dceDumpNameCache)
 
-        val lastModule = allModules.last()
         return allModules.map { currentModule ->
             compileSingleModuleToWasmIr(
                 configuration = configuration,
                 loweredIr = loweredIr,
                 signatureRetriever = irFactory,
                 stdlibIsMainModule = currentModule.kotlinLibrary?.isWasmStdlib == true,
-                outputFileNameBase = configuration.outputName?.takeIf { currentModule == lastModule },
                 mainModuleFragment = currentModule,
                 typeTracking = true,
             )
@@ -131,7 +129,6 @@ class SingleModuleCompiler(configuration: CompilerConfiguration, override val ir
             loweredIr = loweredIr,
             signatureRetriever = irFactory,
             stdlibIsMainModule = isWasmStdlib,
-            outputFileNameBase = configuration.outputName,
             mainModuleFragment = loweredIr.backendContext.irModuleFragment,
             typeTracking = false,
         )
@@ -173,7 +170,6 @@ private fun compileSingleModuleToWasmIr(
     loweredIr: LoweredIrWithExtraArtifacts,
     signatureRetriever: IdSignatureRetriever,
     stdlibIsMainModule: Boolean,
-    outputFileNameBase: String? = null,
     mainModuleFragment: IrModuleFragment,
     typeTracking: Boolean,
 ): WasmIrModuleConfiguration {
@@ -259,7 +255,7 @@ private fun compileSingleModuleToWasmIr(
         moduleName = moduleName,
         configuration = configuration,
         typeScriptFragment = loweredIr.typeScriptFragment,
-        baseFileName = outputFileNameBase ?: mainModuleFragment.outputFileName,
+        baseFileName = mainModuleFragment.outputFileName,
         multimoduleOptions = multimoduleOptions,
     )
 }
