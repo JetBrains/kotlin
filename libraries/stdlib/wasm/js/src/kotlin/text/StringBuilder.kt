@@ -78,7 +78,72 @@ public actual class StringBuilder private constructor(
         if (this.length < 2) {
             return this
         }
-        jsString = reverseJsString(jsString)
+
+        val array = WasmCharArray(this.length)
+        var end = length - 1
+        var front = 0
+        var frontLeadingChar = jsCharCodeAt(jsString, 0).toChar()
+        var endTrailingChar = jsCharCodeAt(jsString, end).toChar()
+        var allowFrontSurrogate = true
+        var allowEndSurrogate = true
+        while (front < length / 2) {
+
+            val frontTrailingChar = jsCharCodeAt(jsString, front + 1).toChar()
+            val endLeadingChar = jsCharCodeAt(jsString, end - 1).toChar()
+            val surrogateAtFront = allowFrontSurrogate && frontTrailingChar.isLowSurrogate() && frontLeadingChar.isHighSurrogate()
+            if (surrogateAtFront && length < 3) {
+                return this
+            }
+            val surrogateAtEnd = allowEndSurrogate && endTrailingChar.isLowSurrogate() && endLeadingChar.isHighSurrogate()
+            allowFrontSurrogate = true
+            allowEndSurrogate = true
+            when {
+                surrogateAtFront && surrogateAtEnd -> {
+                    // Both surrogates - just exchange them.
+                    array.set(end, frontTrailingChar)
+                    array.set(end - 1, frontLeadingChar)
+                    array.set(front, endLeadingChar)
+                    array.set(front + 1, endTrailingChar)
+                    frontLeadingChar = jsCharCodeAt(jsString, front + 2).toChar()
+                    endTrailingChar = jsCharCodeAt(jsString, end - 2).toChar()
+                    front++
+                    end--
+                }
+                !surrogateAtFront && !surrogateAtEnd -> {
+                    // Neither surrogates - exchange only front/end.
+                    array.set(end, frontLeadingChar)
+                    array.set(front, endTrailingChar)
+                    frontLeadingChar = frontTrailingChar
+                    endTrailingChar = endLeadingChar
+                }
+                surrogateAtFront && !surrogateAtEnd -> {
+                    // Surrogate only at the front -
+                    // move the low part, the high part will be moved as a usual character on the next iteration.
+                    array.set(end, frontTrailingChar)
+                    array.set(front, endTrailingChar)
+                    endTrailingChar = endLeadingChar
+                    allowFrontSurrogate = false
+                }
+                !surrogateAtFront && surrogateAtEnd -> {
+                    // Surrogate only at the end -
+                    // move the high part, the low part will be moved as a usual character on the next iteration.
+                    array.set(end, frontLeadingChar)
+                    array.set(front, endLeadingChar)
+                    frontLeadingChar = frontTrailingChar
+                    allowEndSurrogate = false
+                }
+            }
+            front++
+            end--
+        }
+        if (length % 2 == 1) {
+            if (!allowEndSurrogate || !allowFrontSurrogate) {
+                array.set(end, if (allowFrontSurrogate) endTrailingChar else frontLeadingChar)
+            } else {
+                array.set(end, frontLeadingChar)
+            }
+        }
+        jsString = jsFromCharCodeArray(array, 0, length).unsafeCast<JsString>()
         return this
     }
 
