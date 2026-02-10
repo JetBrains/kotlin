@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.library.loader.KlibLoaderResult
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.uniqueName
 import java.nio.file.InvalidPathException
+import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.exists
 
 /**
  * Checks for existence of duplicated [uniqueName]s among [KlibLoaderResult.librariesStdlibFirst].
@@ -98,11 +100,18 @@ fun KlibLoaderResult.loadFriendLibraries(friendLibraryPaths: List<String>): List
     val canonicalFriendLibraryPaths: Set<String> = friendLibraryPaths.mapNotNullTo(linkedSetOf()) { rawPath ->
         if (rawPath.isEmpty()) return@mapNotNullTo null
 
-        try {
-            Paths.get(rawPath).toRealPath().toString()
+        val validPath: Path = try {
+            Paths.get(rawPath)
         } catch (_: InvalidPathException) {
             return@mapNotNullTo null
         }
+
+        // First, check if this path exists on the file system.
+        if (!validPath.exists()) return@mapNotNullTo null
+
+        // And only then attempt to resolve it to a canonical path.
+        // Otherwise, we might end up with a Java IO exception.
+        validPath.toRealPath().toString()
     }
 
     if (canonicalFriendLibraryPaths.isEmpty()) return emptyList()
