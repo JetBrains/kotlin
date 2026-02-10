@@ -51,8 +51,8 @@ apply(plugin = "java")
 allprojects {
     repositories {
         mavenCentral()
-        maven {
-            url = uri(project.property("bootstrapKotlinRepo") as String)
+        bootstrapKotlinRepo?.let {
+           maven(url = it)
         }
     }
 }
@@ -590,75 +590,6 @@ fun calculateChecksum(file: File, algorithm: String): String {
     }
 }
 
-val tcDist by tasks.registering(if (PlatformInfo.isWindows()) Zip::class else Tar::class) {
-    dependsOn("dist")
-    dependsOn("distSources")
-    val simpleOsName = HostManager.platformName()
-    val kotlinVersion = project.property("kotlinVersion") as String
-    archiveBaseName.set("kotlin-native-dist-$simpleOsName")
-    archiveVersion.set(kotlinVersion)
-    from(nativeDistribution) {
-        include("**")
-        exclude("dependencies")
-        into("${archiveBaseName.get()}-${archiveVersion.get()}")
-    }
-
-    destinationDirectory.set(file("."))
-
-    if (PlatformInfo.isWindows()) {
-        (this as Zip).isZip64 = true
-    } else {
-        archiveExtension.set("tar.gz")
-        (this as Tar).compression = Compression.GZIP
-    }
-}
-
-tasks.register("samples") {
-    dependsOn("samplesZip", "samplesTar")
-}
-
-val samplesZip by tasks.registering(Zip::class)
-val samplesTar by tasks.registering(Tar::class) {
-    archiveExtension.set("tar.gz")
-    compression = Compression.GZIP
-}
-
-listOf(samplesZip, samplesTar).forEach {
-    it.configure {
-        val kotlinVersion = project.property("kotlinVersion") as String
-        archiveBaseName.set("kotlin-native-samples-$kotlinVersion")
-        destinationDirectory.set(projectDir)
-        into(archiveBaseName)
-
-        from(file("samples")) {
-            // Process properties files separately.
-            exclude("**/gradle.properties")
-        }
-
-        from(projectDir) {
-            include("licenses/**")
-        }
-
-        from(file("samples")) {
-            include("**/gradle.properties")
-            filter { line ->
-                if (line.startsWith("org.jetbrains.kotlin.native.home=") ||
-                    line.startsWith("# Use custom Kotlin/Native home:")) null else line
-            }
-            filter(org.apache.tools.ant.filters.FixCrLfFilter::class, "eol" to org.apache.tools.ant.filters.FixCrLfFilter.CrLf.newInstance("lf"))
-        }
-
-        // Exclude build artifacts.
-        exclude("**/build")
-        exclude("**/.gradle")
-        exclude("**/.idea")
-        exclude("**/*.kt.bc-build/")
-    }
-}
-
-tasks.register("copy_samples") {
-    dependsOn("copySamples")
-}
 val copySamples by tasks.registering(CopySamples::class) {
     destinationDir = file("build/samples-under-test")
 }
@@ -675,7 +606,7 @@ val compdb by tasks.registering(Copy::class) {
     from(compilationDatabaseExt.hostTarget.task)
     into(layout.projectDirectory)
 
-    group = "build"
+    group = CompilationDatabaseExtension.TASK_GROUP
     description = "Copy host compilation database to kotlin-native/"
 }
 
@@ -719,7 +650,7 @@ fun createConfigurations(bundles: List<File>): Map<KonanTarget, File> {
 
 val bundlesLocationFiles = project.nativeBundlesLocation
     .listFiles()
-    ?.toList() ?: emptyList<File>()
+    .toList()
 
 configureDefaultPublishing(
     signingRequired = project.signLibraryPublication
@@ -730,6 +661,7 @@ tasks.named<Delete>("clean") {
     delete(nativeDistribution.map { it.root })
     delete(layout.buildDirectory)
     delete(bundleRegular.get().outputs.files)
+    delete(bundlePrebuilt.get().outputs.files)
     delete("${projectDir}/compile_commands.json")
     delete(rootProject.file("test.output").absolutePath) // Clean up after legacy test infrastructure
 }
