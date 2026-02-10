@@ -9553,7 +9553,13 @@
                                 "deprecatedName": null,
                                 "description": {
                                     "current": "Relativize all the paths stored in a klib using the given path prefixes.\nThe supplied prefixes should be absolute paths to the directories containing the source code files.\nNote: The prefixes are applied in the same order as they are passed in this CLI argument.",
-                                    "valueInVersions": []
+                                    "valueInVersions": [
+                                        {
+                                            "minReleaseVersion": "2.0.20",
+                                            "maxReleaseVersion": "2.3.20",
+                                            "value": "Provide a base path to compute the source's relative paths in klib (default is empty)."
+                                        }
+                                    ]
                                 },
                                 "delimiter": null,
                                 "argumentType": {
