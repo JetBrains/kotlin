@@ -1609,7 +1609,10 @@ internal fun Project.callingProjectPathProvider(): Provider<String> {
     return envProjectPath.orElse(
         xcodeProjectPathForKmpIJPlugin.map {
             it.asFile.path
-        }
+        }.orElse(
+            // FIXME: KT-84215 This is a stub to unblock integration tests. We need to rework how integration tests that ran without an Xcode project will function
+            project.layout.projectDirectory.asFile.path
+        )
     )
 }
 
