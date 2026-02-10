@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiArrayType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import com.intellij.psi.PsiEnumConstant
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -62,6 +64,22 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(
 
         testServices.assertions.assertEquals(enumLightClass, actualBaseClass) {
             "Expected enum entry's base type to resolve to the enum class, but got $actualBaseClass"
+        }
+    }
+
+    @Test
+    fun enumValuesReturnTypeElementNullability(file: KtFile, testServices: TestServices) {
+        val enumKtClass = file.declarations.filterIsInstance<KtClass>().first { it.isEnum() }
+        val enumLightClass = enumKtClass.toLightClass() ?: error("Light class was not found")
+
+        val valuesMethod = enumLightClass.methods.single { method -> method.name == "values" && method.parameterList.parametersCount == 0 }
+        val returnType = valuesMethod.returnType as? PsiArrayType ?: error("Expected PsiArrayType for enum values()")
+        val componentType = returnType.componentType
+
+        val notNullQualifiedName = JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.asString()
+        val hasNotNullOnComponent = componentType.annotations.any { annotation -> annotation.hasQualifiedName(notNullQualifiedName) }
+        testServices.assertions.assertTrue(hasNotNullOnComponent) {
+            "Expected enum values() component type to have @$notNullQualifiedName, but got ${componentType.annotations.toList()}"
         }
     }
 }

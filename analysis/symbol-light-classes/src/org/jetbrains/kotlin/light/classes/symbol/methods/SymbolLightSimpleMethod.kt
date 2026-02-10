@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
@@ -216,6 +217,35 @@ internal class SymbolLightSimpleMethod private constructor(
         return expandedType.isUnitType && !expandedType.isMarkedNullable
     }
 
+    private fun PsiType.withNotNullAnnotation(): PsiType {
+        val notNullQualifier = NullabilityAnnotation.NON_NULLABLE.asAnnotationQualifier ?: return this
+        val existingAnnotations = annotations
+        return annotate {
+            val hasNotNull = existingAnnotations.any { annotation -> annotation.hasQualifiedName(notNullQualifier) }
+            if (hasNotNull) {
+                existingAnnotations
+            } else {
+                existingAnnotations + SymbolLightSimpleAnnotation(notNullQualifier, this@SymbolLightSimpleMethod)
+            }
+        }
+    }
+
+    private fun KaSession.adjustEnumValuesReturnTypeIfNeeded(
+        functionSymbol: KaNamedFunctionSymbol,
+        psiType: PsiType,
+    ): PsiType {
+        if (!containingClass.isEnum) return psiType
+        if (!functionSymbol.isStatic || functionSymbol.name != StandardNames.ENUM_VALUES) return psiType
+
+        val psiArrayType = psiType as? PsiArrayType ?: return psiType
+        val annotatedComponentType = psiArrayType.componentType.withNotNullAnnotation()
+
+        return annotatedComponentType
+            .createArrayType()
+            .annotate { psiArrayType.annotations }
+            .withNotNullAnnotation()
+    }
+
     private val _returnedType: PsiType by lazyPub {
         withFunctionSymbol { functionSymbol ->
             val ktType = if (functionSymbol.isSuspend) {
@@ -229,14 +259,16 @@ internal class SymbolLightSimpleMethod private constructor(
             else
                 KaTypeMappingMode.RETURN_TYPE
 
-            ktType.asPsiType(
+            val psiType = ktType.asPsiType(
                 this@SymbolLightSimpleMethod,
                 allowErrorTypes = true,
                 typeMappingMode,
                 this@SymbolLightSimpleMethod.containingClass.isAnnotationType,
                 suppressWildcards = suppressWildcards(),
                 allowNonJvmPlatforms = true,
-            )
+            ) ?: return@withFunctionSymbol null
+
+            adjustEnumValuesReturnTypeIfNeeded(functionSymbol, psiType)
         } ?: nonExistentType()
     }
 
