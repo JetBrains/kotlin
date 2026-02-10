@@ -369,7 +369,7 @@
                      "name",
                      "description",
                      "argumentType",
-                     "argumentDescription",
+                     "argumentTypeDescription",
                      "valueType",
                      "valueDescription",
                      "releaseVersionsMetadata"
@@ -1455,7 +1455,7 @@
                         ],
                         "title": "KotlinArgumentValueType"
                      },
-                     "argumentDescription": {
+                     "argumentTypeDescription": {
                         "type": "object",
                         "required": [
                            "valueInVersions"
@@ -2602,7 +2602,7 @@
                               "name",
                               "description",
                               "argumentType",
-                              "argumentDescription",
+                              "argumentTypeDescription",
                               "valueType",
                               "valueDescription",
                               "releaseVersionsMetadata"
@@ -3688,7 +3688,7 @@
                                  ],
                                  "title": "KotlinArgumentValueType"
                               },
-                              "argumentDescription": {
+                              "argumentTypeDescription": {
                                  "type": "object",
                                  "required": [
                                     "valueInVersions"
@@ -4835,7 +4835,7 @@
                                        "name",
                                        "description",
                                        "argumentType",
-                                       "argumentDescription",
+                                       "argumentTypeDescription",
                                        "valueType",
                                        "valueDescription",
                                        "releaseVersionsMetadata"
@@ -5921,7 +5921,7 @@
                                           ],
                                           "title": "KotlinArgumentValueType"
                                        },
-                                       "argumentDescription": {
+                                       "argumentTypeDescription": {
                                           "type": "object",
                                           "required": [
                                              "valueInVersions"
@@ -7068,7 +7068,7 @@
                                                 "name",
                                                 "description",
                                                 "argumentType",
-                                                "argumentDescription",
+                                                "argumentTypeDescription",
                                                 "valueType",
                                                 "valueDescription",
                                                 "releaseVersionsMetadata"
@@ -8154,7 +8154,7 @@
                                                    ],
                                                    "title": "KotlinArgumentValueType"
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                    "type": "object",
                                                    "required": [
                                                       "valueInVersions"
@@ -9301,7 +9301,7 @@
                                                          "name",
                                                          "description",
                                                          "argumentType",
-                                                         "argumentDescription",
+                                                         "argumentTypeDescription",
                                                          "valueType",
                                                          "valueDescription",
                                                          "releaseVersionsMetadata"
@@ -10387,7 +10387,7 @@
                                                             ],
                                                             "title": "KotlinArgumentValueType"
                                                          },
-                                                         "argumentDescription": {
+                                                         "argumentTypeDescription": {
                                                             "type": "object",
                                                             "required": [
                                                                "valueInVersions"
@@ -11534,7 +11534,7 @@
                                                                   "name",
                                                                   "description",
                                                                   "argumentType",
-                                                                  "argumentDescription",
+                                                                  "argumentTypeDescription",
                                                                   "valueType",
                                                                   "valueDescription",
                                                                   "releaseVersionsMetadata"
@@ -12620,7 +12620,7 @@
                                                                      ],
                                                                      "title": "KotlinArgumentValueType"
                                                                   },
-                                                                  "argumentDescription": {
+                                                                  "argumentTypeDescription": {
                                                                      "type": "object",
                                                                      "required": [
                                                                         "valueInVersions"
@@ -13767,7 +13767,7 @@
                                                                            "name",
                                                                            "description",
                                                                            "argumentType",
-                                                                           "argumentDescription",
+                                                                           "argumentTypeDescription",
                                                                            "valueType",
                                                                            "valueDescription",
                                                                            "releaseVersionsMetadata"
@@ -14853,7 +14853,7 @@
                                                                               ],
                                                                               "title": "KotlinArgumentValueType"
                                                                            },
-                                                                           "argumentDescription": {
+                                                                           "argumentTypeDescription": {
                                                                               "type": "object",
                                                                               "required": [
                                                                                  "valueInVersions"
@@ -16000,7 +16000,7 @@
                                                                                     "name",
                                                                                     "description",
                                                                                     "argumentType",
-                                                                                    "argumentDescription",
+                                                                                    "argumentTypeDescription",
                                                                                     "valueType",
                                                                                     "valueDescription",
                                                                                     "releaseVersionsMetadata"
@@ -17086,7 +17086,7 @@
                                                                                        ],
                                                                                        "title": "KotlinArgumentValueType"
                                                                                     },
-                                                                                    "argumentDescription": {
+                                                                                    "argumentTypeDescription": {
                                                                                        "type": "object",
                                                                                        "required": [
                                                                                           "valueInVersions"
@@ -18233,7 +18233,7 @@
                                                                                              "name",
                                                                                              "description",
                                                                                              "argumentType",
-                                                                                             "argumentDescription",
+                                                                                             "argumentTypeDescription",
                                                                                              "valueType",
                                                                                              "valueDescription",
                                                                                              "releaseVersionsMetadata"
@@ -19110,7 +19110,7 @@
                                                                                                 ],
                                                                                                 "title": "KotlinArgumentValueType"
                                                                                              },
-                                                                                             "argumentDescription": {
+                                                                                             "argumentTypeDescription": {
                                                                                                 "type": "object",
                                                                                                 "required": [
                                                                                                    "valueInVersions"
@@ -20048,7 +20048,7 @@
                                                                                                       "name",
                                                                                                       "description",
                                                                                                       "argumentType",
-                                                                                                      "argumentDescription",
+                                                                                                      "argumentTypeDescription",
                                                                                                       "valueType",
                                                                                                       "valueDescription",
                                                                                                       "releaseVersionsMetadata"
@@ -20485,7 +20485,7 @@
                                                                                                          ],
                                                                                                          "title": "KotlinArgumentValueType"
                                                                                                       },
-                                                                                                      "argumentDescription": {
+                                                                                                      "argumentTypeDescription": {
                                                                                                          "type": "object",
                                                                                                          "required": [
                                                                                                             "valueInVersions"
@@ -20983,7 +20983,7 @@
                                                                                                                "name",
                                                                                                                "description",
                                                                                                                "argumentType",
-                                                                                                               "argumentDescription",
+                                                                                                               "argumentTypeDescription",
                                                                                                                "valueType",
                                                                                                                "valueDescription",
                                                                                                                "releaseVersionsMetadata"
@@ -21101,7 +21101,7 @@
                                                                                                                   ],
                                                                                                                   "title": "KotlinArgumentValueType"
                                                                                                                },
-                                                                                                               "argumentDescription": {
+                                                                                                               "argumentTypeDescription": {
                                                                                                                   "type": "object",
                                                                                                                   "required": [
                                                                                                                      "valueInVersions"
@@ -21272,7 +21272,7 @@
                                                                                                                         "description": {},
                                                                                                                         "delimiter": {},
                                                                                                                         "argumentType": {},
-                                                                                                                        "argumentDescription": {},
+                                                                                                                        "argumentTypeDescription": {},
                                                                                                                         "valueType": {},
                                                                                                                         "valueDescription": {},
                                                                                                                         "releaseVersionsMetadata": {}

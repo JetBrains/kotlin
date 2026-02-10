@@ -1,5 +1,5 @@
 {
-    "schemaVersion": 4,
+    "schemaVersion": 5,
     "releases": [
         {
             "name": "1.0.0",
@@ -841,7 +841,7 @@
                         "valueInVersions": []
                     }
                 },
-                "argumentDescription": {
+                "argumentTypeDescription": {
                     "current": null,
                     "valueInVersions": []
                 },
@@ -887,7 +887,7 @@
                         "valueInVersions": []
                     }
                 },
-                "argumentDescription": {
+                "argumentTypeDescription": {
                     "current": null,
                     "valueInVersions": []
                 },
@@ -933,7 +933,7 @@
                         "valueInVersions": []
                     }
                 },
-                "argumentDescription": {
+                "argumentTypeDescription": {
                     "current": null,
                     "valueInVersions": []
                 },
@@ -979,7 +979,7 @@
                         "valueInVersions": []
                     }
                 },
-                "argumentDescription": {
+                "argumentTypeDescription": {
                     "current": null,
                     "valueInVersions": []
                 },
@@ -1025,7 +1025,7 @@
                         "valueInVersions": []
                     }
                 },
-                "argumentDescription": {
+                "argumentTypeDescription": {
                     "current": null,
                     "valueInVersions": []
                 },
@@ -1071,7 +1071,7 @@
                         "valueInVersions": []
                     }
                 },
-                "argumentDescription": {
+                "argumentTypeDescription": {
                     "current": null,
                     "valueInVersions": []
                 },
@@ -1117,7 +1117,7 @@
                         "valueInVersions": []
                     }
                 },
-                "argumentDescription": {
+                "argumentTypeDescription": {
                     "current": null,
                     "valueInVersions": []
                 },
@@ -1168,7 +1168,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "plugin:<pluginId>:<optionName>=<value>",
                             "valueInVersions": []
                         },
@@ -1214,7 +1214,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "[+-]LanguageFeatureName",
                             "valueInVersions": []
                         },
@@ -1260,7 +1260,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -1306,7 +1306,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<dir>",
                             "valueInVersions": []
                         },
@@ -1352,7 +1352,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "{strict|warning|disable}",
                             "valueInVersions": []
                         },
@@ -1398,7 +1398,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -1444,7 +1444,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -1490,7 +1490,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -1536,7 +1536,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -1582,7 +1582,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -1628,7 +1628,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -1674,7 +1674,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -1720,7 +1720,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "first-only|first-only-warn|param-property",
                             "valueInVersions": []
                         },
@@ -1766,7 +1766,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -1812,7 +1812,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -1858,7 +1858,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<path>",
                             "valueInVersions": []
                         },
@@ -1904,7 +1904,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]",
                             "valueInVersions": []
                         },
@@ -1950,7 +1950,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<pluginId1>><pluginId2>",
                             "valueInVersions": []
                         },
@@ -1996,7 +1996,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2042,7 +2042,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2088,7 +2088,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2134,7 +2134,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2180,7 +2180,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2226,7 +2226,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2272,7 +2272,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2318,7 +2318,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2364,7 +2364,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2410,7 +2410,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2456,7 +2456,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2502,7 +2502,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2548,7 +2548,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2594,7 +2594,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<path>",
                             "valueInVersions": []
                         },
@@ -2640,7 +2640,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2686,7 +2686,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2732,7 +2732,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "{strict|warning|disable}",
                             "valueInVersions": []
                         },
@@ -2778,7 +2778,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -2870,7 +2870,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<fragment name>:<path>",
                             "valueInVersions": []
                         },
@@ -2916,7 +2916,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<fragment name>:<path>",
                             "valueInVersions": []
                         },
@@ -2962,7 +2962,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<fromModuleName>:<onModuleName>",
                             "valueInVersions": []
                         },
@@ -3008,7 +3008,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<fragment name>:<path>",
                             "valueInVersions": []
                         },
@@ -3054,7 +3054,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<fragment name>",
                             "valueInVersions": []
                         },
@@ -3100,7 +3100,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3146,7 +3146,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "{any|compilation}",
                             "valueInVersions": []
                         },
@@ -3192,7 +3192,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3238,7 +3238,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3284,7 +3284,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<path>",
                             "valueInVersions": []
                         },
@@ -3330,7 +3330,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3376,7 +3376,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3422,7 +3422,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3468,7 +3468,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3514,7 +3514,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3560,7 +3560,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3606,7 +3606,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "only-syntax|name-mismatch|complete",
                             "valueInVersions": []
                         },
@@ -3652,7 +3652,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3698,7 +3698,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3744,7 +3744,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3790,7 +3790,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3836,7 +3836,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3882,7 +3882,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3928,7 +3928,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -3974,7 +3974,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4020,7 +4020,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4066,7 +4066,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4112,7 +4112,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4158,7 +4158,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<path>",
                             "valueInVersions": []
                         },
@@ -4204,7 +4204,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4250,7 +4250,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4296,7 +4296,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4342,7 +4342,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4388,7 +4388,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4434,7 +4434,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4480,7 +4480,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4526,7 +4526,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "{check|full|disable}",
                             "valueInVersions": []
                         },
@@ -4572,7 +4572,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4618,7 +4618,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4664,7 +4664,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4710,7 +4710,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4756,7 +4756,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4802,7 +4802,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4848,7 +4848,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<WARNING_NAME>",
                             "valueInVersions": []
                         },
@@ -4894,7 +4894,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4940,7 +4940,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -4986,7 +4986,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -5032,7 +5032,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -5078,7 +5078,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -5124,7 +5124,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -5170,7 +5170,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "{none|warning|error}",
                             "valueInVersions": []
                         },
@@ -5216,7 +5216,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -5262,7 +5262,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -5308,7 +5308,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<WARNING_NAME>:(error|warning|disabled)",
                             "valueInVersions": []
                         },
@@ -5354,7 +5354,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -5400,7 +5400,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<version>",
                             "valueInVersions": []
                         },
@@ -5446,7 +5446,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<path>",
                             "valueInVersions": []
                         },
@@ -5492,7 +5492,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<version>",
                             "valueInVersions": []
                         },
@@ -5538,7 +5538,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": "<fq.name>",
                             "valueInVersions": []
                         },
@@ -5584,7 +5584,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -5630,7 +5630,7 @@
                                 "valueInVersions": []
                             }
                         },
-                        "argumentDescription": {
+                        "argumentTypeDescription": {
                             "current": null,
                             "valueInVersions": []
                         },
@@ -5681,7 +5681,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{stable|unstable}",
                                     "valueInVersions": []
                                 },
@@ -5727,7 +5727,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<module[,]>",
                                     "valueInVersions": []
                                 },
@@ -5773,7 +5773,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -5819,7 +5819,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -5865,7 +5865,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -5911,7 +5911,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{always-enable|always-disable|jvm|legacy}",
                                     "valueInVersions": []
                                 },
@@ -5957,7 +5957,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<N>",
                                     "valueInVersions": []
                                 },
@@ -6003,7 +6003,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<path>",
                                     "valueInVersions": []
                                 },
@@ -6049,7 +6049,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -6095,7 +6095,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -6141,7 +6141,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -6187,7 +6187,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<script filename extension>",
                                     "valueInVersions": []
                                 },
@@ -6233,7 +6233,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -6279,7 +6279,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -6325,7 +6325,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -6371,7 +6371,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -6417,7 +6417,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<path>",
                                     "valueInVersions": []
                                 },
@@ -6463,7 +6463,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -6509,7 +6509,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<fq.name>|*",
                                     "valueInVersions": []
                                 },
@@ -6555,7 +6555,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -6601,7 +6601,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -6647,7 +6647,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -6693,7 +6693,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -6739,7 +6739,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<path>",
                                     "valueInVersions": []
                                 },
@@ -6785,7 +6785,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<option[,]>",
                                     "valueInVersions": []
                                 },
@@ -6837,7 +6837,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<version>",
                                     "valueInVersions": []
                                 },
@@ -6889,7 +6889,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "ignore|strict|warn",
                                     "valueInVersions": []
                                 },
@@ -6935,7 +6935,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{ignore/strict/warn}|under-migration:{ignore/strict/warn}|@<fq.name>:{ignore/strict/warn}",
                                     "valueInVersions": []
                                 },
@@ -6981,7 +6981,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{all|all-compatibility|disable}",
                                     "valueInVersions": []
                                 },
@@ -7027,7 +7027,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7073,7 +7073,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7119,7 +7119,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<path>",
                                     "valueInVersions": []
                                 },
@@ -7165,7 +7165,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{class|indy}",
                                     "valueInVersions": []
                                 },
@@ -7211,7 +7211,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7257,7 +7257,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<path>",
                                     "valueInVersions": []
                                 },
@@ -7303,7 +7303,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7349,7 +7349,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7395,7 +7395,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7441,7 +7441,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7487,7 +7487,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7533,7 +7533,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7579,7 +7579,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7625,7 +7625,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7671,7 +7671,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7717,7 +7717,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "@<fq.name>:{ignore/strict/warn}",
                                     "valueInVersions": []
                                 },
@@ -7763,7 +7763,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7809,7 +7809,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<profilerPath:command:outputDir>",
                                     "valueInVersions": []
                                 },
@@ -7855,7 +7855,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{class|indy}",
                                     "valueInVersions": []
                                 },
@@ -7901,7 +7901,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -7947,7 +7947,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<key=value[,]>",
                                     "valueInVersions": []
                                 },
@@ -7993,7 +7993,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{none|inline|all}",
                                     "valueInVersions": []
                                 },
@@ -8039,7 +8039,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{indy-with-constants|indy|inline}",
                                     "valueInVersions": []
                                 },
@@ -8085,7 +8085,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "enable|disable",
                                     "valueInVersions": []
                                 },
@@ -8131,7 +8131,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8177,7 +8177,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8223,7 +8223,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8269,7 +8269,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8315,7 +8315,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8361,7 +8361,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8407,7 +8407,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8453,7 +8453,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8499,7 +8499,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8545,7 +8545,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8591,7 +8591,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8637,7 +8637,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8683,7 +8683,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{indy|inline}",
                                     "valueInVersions": []
                                 },
@@ -8729,7 +8729,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<path>",
                                     "valueInVersions": []
                                 },
@@ -8775,7 +8775,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<directory|jar>",
                                     "valueInVersions": []
                                 },
@@ -8821,7 +8821,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8867,7 +8867,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8913,7 +8913,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -8959,7 +8959,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<path>",
                                     "valueInVersions": []
                                 },
@@ -9005,7 +9005,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{enable|no-compatibility|disable}",
                                     "valueInVersions": []
                                 },
@@ -9057,7 +9057,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<version>",
                                     "valueInVersions": []
                                 },
@@ -9103,7 +9103,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<name>",
                                     "valueInVersions": []
                                 },
@@ -9149,7 +9149,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -9195,7 +9195,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -9241,7 +9241,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -9287,7 +9287,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<fully qualified class name[,]>",
                                     "valueInVersions": []
                                 },
@@ -9339,7 +9339,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<version>",
                                     "valueInVersions": []
                                 },
@@ -9385,7 +9385,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{deny|allow-all-with-warning|allow-first-with-warning}",
                                     "valueInVersions": []
                                 },
@@ -9431,7 +9431,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -9477,7 +9477,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{intra-module|full|disabled|default}",
                                     "valueInVersions": []
                                 },
@@ -9523,7 +9523,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -9569,7 +9569,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -9615,7 +9615,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -9661,7 +9661,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{enable|disable}",
                                     "valueInVersions": []
                                 },
@@ -9707,7 +9707,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "{info|warning|error}",
                                     "valueInVersions": []
                                 },
@@ -9758,7 +9758,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -9804,7 +9804,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -9850,7 +9850,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -9896,7 +9896,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -9942,7 +9942,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -9988,7 +9988,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10034,7 +10034,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10080,7 +10080,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10126,7 +10126,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10172,7 +10172,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10218,7 +10218,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10264,7 +10264,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10310,7 +10310,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10356,7 +10356,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10402,7 +10402,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10448,7 +10448,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10494,7 +10494,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10540,7 +10540,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10586,7 +10586,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10644,7 +10644,7 @@
                                                 ]
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10702,7 +10702,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -10753,7 +10753,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "<path>",
                                                     "valueInVersions": []
                                                 },
@@ -10799,7 +10799,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -10845,7 +10845,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -10891,7 +10891,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -10937,7 +10937,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -10983,7 +10983,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11029,7 +11029,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11075,7 +11075,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11121,7 +11121,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11167,7 +11167,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "<path>",
                                                     "valueInVersions": []
                                                 },
@@ -11213,7 +11213,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11259,7 +11259,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11305,7 +11305,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11351,7 +11351,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "<path>",
                                                     "valueInVersions": []
                                                 },
@@ -11397,7 +11397,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11443,7 +11443,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11489,7 +11489,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11535,7 +11535,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "{log|exception}",
                                                     "valueInVersions": []
                                                 },
@@ -11581,7 +11581,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11627,7 +11627,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11673,7 +11673,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11719,7 +11719,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "<name>",
                                                     "valueInVersions": []
                                                 },
@@ -11765,7 +11765,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11811,7 +11811,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11857,7 +11857,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11903,7 +11903,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11949,7 +11949,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -11995,7 +11995,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -12041,7 +12041,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -12087,7 +12087,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -12133,7 +12133,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "{log|exception}",
                                                     "valueInVersions": []
                                                 },
@@ -12179,7 +12179,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -12225,7 +12225,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -12271,7 +12271,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -12317,7 +12317,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -12363,7 +12363,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "<directory>",
                                                     "valueInVersions": []
                                                 },
@@ -12409,7 +12409,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -12455,7 +12455,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "<path>",
                                                     "valueInVersions": []
                                                 },
@@ -12501,7 +12501,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "{call|noCall}",
                                                     "valueInVersions": []
                                                 },
@@ -12547,7 +12547,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "{plain|amd|commonjs|umd|es}",
                                                     "valueInVersions": []
                                                 },
@@ -12593,7 +12593,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "<filepath>",
                                                     "valueInVersions": []
                                                 },
@@ -12639,7 +12639,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -12685,7 +12685,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "<path>",
                                                     "valueInVersions": []
                                                 },
@@ -12731,7 +12731,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "{always|never|inlining}",
                                                     "valueInVersions": []
                                                 },
@@ -12777,7 +12777,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "{no|simple-names|fully-qualified-names}",
                                                     "valueInVersions": []
                                                 },
@@ -12823,7 +12823,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": null,
                                                     "valueInVersions": []
                                                 },
@@ -12869,7 +12869,7 @@
                                                         "valueInVersions": []
                                                     }
                                                 },
-                                                "argumentDescription": {
+                                                "argumentTypeDescription": {
                                                     "current": "{ es5, es2015 }",
                                                     "valueInVersions": []
                                                 },
@@ -12923,7 +12923,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -12969,7 +12969,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "{disable|enable}",
                                             "valueInVersions": []
                                         },
@@ -13015,7 +13015,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "std | mimalloc | custom",
                                             "valueInVersions": []
                                         },
@@ -13061,7 +13061,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -13107,7 +13107,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -13153,7 +13153,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<N>",
                                             "valueInVersions": []
                                         },
@@ -13199,7 +13199,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<option=value>",
                                             "valueInVersions": []
                                         },
@@ -13245,7 +13245,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<id>",
                                             "valueInVersions": []
                                         },
@@ -13291,7 +13291,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -13337,7 +13337,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<library path>,<cache path>",
                                             "valueInVersions": []
                                         },
@@ -13383,7 +13383,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -13429,7 +13429,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -13475,7 +13475,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -13521,7 +13521,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -13567,7 +13567,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<old1=new1,old2=new2,...>",
                                             "valueInVersions": []
                                         },
@@ -13613,7 +13613,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<mode>",
                                             "valueInVersions": []
                                         },
@@ -13659,7 +13659,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -13705,7 +13705,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -13751,7 +13751,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -13797,7 +13797,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -13843,7 +13843,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -13889,7 +13889,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -13935,7 +13935,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -13981,7 +13981,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<header>",
                                             "valueInVersions": []
                                         },
@@ -14027,7 +14027,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "{disable|enable}",
                                             "valueInVersions": []
                                         },
@@ -14073,7 +14073,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -14119,7 +14119,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<gc>",
                                             "valueInVersions": []
                                         },
@@ -14165,7 +14165,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -14211,7 +14211,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -14257,7 +14257,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -14303,7 +14303,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "{disable|enable}",
                                             "valueInVersions": []
                                         },
@@ -14349,7 +14349,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -14395,7 +14395,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -14441,7 +14441,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -14487,7 +14487,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "{dev|user|absolute path to llvm}",
                                             "valueInVersions": []
                                         },
@@ -14533,7 +14533,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -14579,7 +14579,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -14625,7 +14625,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -14671,7 +14671,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -14717,7 +14717,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<arg1,arg2,...>",
                                             "valueInVersions": []
                                         },
@@ -14763,7 +14763,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "key1=value1;key2=value2;...",
                                             "valueInVersions": []
                                         },
@@ -14809,7 +14809,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "{disable|enable}",
                                             "valueInVersions": []
                                         },
@@ -14855,7 +14855,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -14901,7 +14901,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -14947,7 +14947,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -14993,7 +14993,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -15039,7 +15039,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -15085,7 +15085,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -15131,7 +15131,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -15177,7 +15177,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<tag1=level1,tag2=level2,...>",
                                             "valueInVersions": []
                                         },
@@ -15223,7 +15223,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -15269,7 +15269,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -15315,7 +15315,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<name>",
                                             "valueInVersions": []
                                         },
@@ -15361,7 +15361,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -15407,7 +15407,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -15453,7 +15453,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -15499,7 +15499,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -15545,7 +15545,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<mode>",
                                             "valueInVersions": []
                                         },
@@ -15591,7 +15591,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -15637,7 +15637,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -15683,7 +15683,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -15729,7 +15729,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<name>",
                                             "valueInVersions": []
                                         },
@@ -15775,7 +15775,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -15821,7 +15821,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -15867,7 +15867,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -15913,7 +15913,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -15959,7 +15959,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -16005,7 +16005,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -16051,7 +16051,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -16097,7 +16097,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<version>",
                                             "valueInVersions": []
                                         },
@@ -16143,7 +16143,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<arg>",
                                             "valueInVersions": []
                                         },
@@ -16189,7 +16189,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<arg>",
                                             "valueInVersions": []
                                         },
@@ -16235,7 +16235,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -16281,7 +16281,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -16327,7 +16327,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<model>",
                                             "valueInVersions": []
                                         },
@@ -16373,7 +16373,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<name>",
                                             "valueInVersions": []
                                         },
@@ -16419,7 +16419,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<path>",
                                             "valueInVersions": []
                                         },
@@ -16465,7 +16465,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -16511,7 +16511,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -16557,7 +16557,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -16603,7 +16603,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -16649,7 +16649,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -16695,7 +16695,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": null,
                                             "valueInVersions": []
                                         },
@@ -16741,7 +16741,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<name>",
                                             "valueInVersions": []
                                         },
@@ -16787,7 +16787,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "{program|static|dynamic|framework|library|bitcode}",
                                             "valueInVersions": []
                                         },
@@ -16833,7 +16833,7 @@
                                                 "valueInVersions": []
                                             }
                                         },
-                                        "argumentDescription": {
+                                        "argumentTypeDescription": {
                                             "current": "<target>",
                                             "valueInVersions": []
                                         },
@@ -16887,7 +16887,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<path>",
                                     "valueInVersions": []
                                 },
@@ -16933,7 +16933,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -16979,7 +16979,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -17025,7 +17025,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<path>",
                                     "valueInVersions": []
                                 },
@@ -17071,7 +17071,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": null,
                                     "valueInVersions": []
                                 },
@@ -17117,7 +17117,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<path>",
                                     "valueInVersions": []
                                 },
@@ -17163,7 +17163,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<directory|jar>",
                                     "valueInVersions": []
                                 },
@@ -17209,7 +17209,7 @@
                                         "valueInVersions": []
                                     }
                                 },
-                                "argumentDescription": {
+                                "argumentTypeDescription": {
                                     "current": "<name>",
                                     "valueInVersions": []
                                 },
