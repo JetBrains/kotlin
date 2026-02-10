@@ -679,6 +679,14 @@ class FirExpectActualMatchingContextImpl private constructor(
                         expectParam.returnTypeRef, actualParam.returnTypeRef, checker
                     )
                 }
+                val expectContextParameters = expectDelegatedTypeRef.contextParameterTypeRefs
+                val actualContextParameters = actualDelegatedTypeRef.contextParameterTypeRefs
+                for ((expectParam, actualParam) in expectContextParameters.zipIfSizesAreEqual(actualContextParameters).orEmpty()) {
+                    checkAnnotationsOnTypeRefAndArgumentsImpl(
+                        expectContainingSymbol, actualContainingSymbol,
+                        expectParam, actualParam, checker
+                    )
+                }
             }
         }
     }
