@@ -41,6 +41,31 @@ class SirFunctionalType(
     }
 }
 
+class SirTupleType(
+    val types: List<Pair<String?, SirType>>,
+    override val attributes: List<SirAttribute> = emptyList(),
+) : SirWrappedType {
+    init {
+        require(types.size > 1) { "Tuple requires at least two types" }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || other !is SirTupleType) return false
+
+        if (types != other.types) return false
+        if (attributes != other.attributes) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = types.hashCode()
+        result = 31 * result + attributes.hashCode()
+        return result
+    }
+}
+
 open class SirNominalType(
     val typeDeclaration: SirScopeDefiningDeclaration,
     val typeArguments: List<SirType> = emptyList(),
