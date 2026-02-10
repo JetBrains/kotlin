@@ -82,6 +82,11 @@ public class ForTestCompileRuntime {
         return propertyOrDist(KOTLIN_COMMON_STDLIB_PATH, "dist/common/kotlin-stdlib-common.klib");
     }
 
+    @NotNull
+    public static File stdlibJs() {
+        return propertyOrDist(KOTLIN_JS_STDLIB_KLIB_PATH, "build/js-ir-runtime/full-runtime.klib");
+    }
+
     private static File propertyOrDist(String property, String distPath) {
         String path = getProperty(property, distPath);
         File file = new File(path);

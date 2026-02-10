@@ -234,14 +234,6 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
 
     companion object {
         @JvmStatic
-        private val distKotlincLib: File = File("dist/kotlinc/lib")
-
-        @JvmStatic
-        protected val kotlinStdlibJvm: File = File(distKotlincLib, "kotlin-stdlib.jar").also {
-            KtUsefulTestCase.assertExists(it)
-        }
-
-        @JvmStatic
         protected fun buildHistoryFile(cacheDir: File): File = File(cacheDir, "build-history.bin")
 
         @JvmStatic

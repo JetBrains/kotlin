@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
@@ -18,7 +19,7 @@ abstract class AbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest :
 
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
         K2JSCompilerArguments().apply {
-            libraries = STDLIB_DEPENDENCY
+            libraries = ForTestCompileRuntime.stdlibJs().absolutePath
             outputDir = destinationDir.path
             moduleName = testDir.name
             sourceMap = false
@@ -74,7 +75,7 @@ abstract class AbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest :
             File(repository, it.klib).absolutePath
         }
 
-        val sb = StringBuilder(STDLIB_DEPENDENCY)
+        val sb = StringBuilder(ForTestCompileRuntime.stdlibJs().absolutePath)
         if (additionalDeps.isNotBlank()) {
             sb.append(File.pathSeparator)
             sb.append(additionalDeps)
@@ -87,8 +88,6 @@ abstract class AbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest :
 
     companion object {
         private val String.klib: String get() = "$this.$KLIB_FILE_EXTENSION"
-
-        private const val STDLIB_DEPENDENCY = "build/js-ir-runtime/full-runtime.klib"
     }
 }
 

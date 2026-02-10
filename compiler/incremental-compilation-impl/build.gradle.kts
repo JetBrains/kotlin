@@ -71,7 +71,9 @@ projectTests {
 
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForICTestsKt")
     testData(isolated, "testData")
+    testData(project(":jps:jps-plugin").isolated, "testData")
     withJsRuntime()
+    withJvmStdlibAndReflect()
 }
 
 testsJar()

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.utils.*
@@ -147,7 +148,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
 
     private val compileClasspath =
         listOf(
-            kotlinStdlibJvm,
+            ForTestCompileRuntime.runtimeJarForTests(),
             KtTestUtil.getAnnotationsJar()
         ).joinToString(File.pathSeparator) { it.absolutePath }
 }
