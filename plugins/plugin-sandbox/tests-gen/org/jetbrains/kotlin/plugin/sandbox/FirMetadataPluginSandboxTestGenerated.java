@@ -28,4 +28,10 @@ public class FirMetadataPluginSandboxTestGenerated extends AbstractFirMetadataPl
   public void testAnnotations() {
     runTest("plugins/plugin-sandbox/testData/metadata/annotations.kt");
   }
+
+  @Test
+  @TestMetadata("withEmitter.kt")
+  public void testWithEmitter() {
+    runTest("plugins/plugin-sandbox/testData/metadata/withEmitter.kt");
+  }
 }

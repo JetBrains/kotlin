@@ -22,6 +22,8 @@ public final class test/Some : kotlin/Any {
     public final get
 
   // nested class: Derived
+
+  // module name: main
 }
 // test/Some$Derived.class
 // ------------------------------------------
@@ -31,6 +33,8 @@ public final class test/Some.Derived : kotlin/Any {
   // signature: <init>()V
   @org/jetbrains/kotlin/plugin/sandbox/AnnotationToAdd(booleanValue = true, byteValue = 1.toByte(), charValue = 'c', doubleValue = 4.2, floatValue = 2.4f, intValue = 42, longValue = 24L, shortValue = 7.toShort(), stringValue = "OK", vararg = [org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = []), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 1)]), org/jetbrains/kotlin/plugin/sandbox/ArrayAnnotation(annotations = [org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 2), org/jetbrains/kotlin/plugin/sandbox/SimpleAnnotation(x = 3)])], kClassValue = kotlin/String::class)
   public constructor()
+
+  // module name: main
 }
 // META-INF/main.kotlin_module
 // ------------------------------------------
