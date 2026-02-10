@@ -29,7 +29,7 @@ import kotlin.text.contains
 @Tag("klib")
 class KlibCliSanityTest : AbstractNativeSimpleTest() {
     @Test
-    fun `Compiler consumes unpacked KLIBs passed via CLI arguments`() {
+    fun `Compiler consumes unpacked KLIBs passed by absolute paths via CLI arguments`() {
         val modules = newSourceModules {
             addRegularModule("a")
             addRegularModule("b") { dependsOn("a") }
@@ -41,7 +41,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun `Compiler consumes packed KLIBs passed via CLI arguments`() {
+    fun `Compiler consumes packed KLIBs passed by absolute paths via CLI arguments`() {
         val modules = newSourceModules {
             addRegularModule("a")
             addRegularModule("b") { dependsOn("a") }

@@ -95,28 +95,6 @@ class KlibCliLibraryPathVariationsTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    @DisplayName("Custom library passed to the compiler by the absolute path")
-    fun testCustomLibraryPassedToTheCompilerByTheAbsolutePath() = with(NonRepeatedModuleNameGenerator()) {
-        customLibraryPassedToTheCompilerByTheAbsolutePath(true)
-        customLibraryPassedToTheCompilerByTheAbsolutePath(false)
-    }
-
-    private fun NonRepeatedModuleNameGenerator.customLibraryPassedToTheCompilerByTheAbsolutePath(produceUnpackedKlib: Boolean) {
-        val dependencyFile = compileDependencyModule(produceUnpackedKlib)
-
-        sequenceOf(
-            dependencyFile.absolutePath,
-            runIf(produceUnpackedKlib) { dependencyFile.resolve("../${dependencyFile.name}").absolutePath },
-            runIf(produceUnpackedKlib) { dependencyFile.resolve("default/..").absolutePath },
-        ).filterNotNull().forEach { libraryPath ->
-            val alternativeLibraryPath = if (produceUnpackedKlib) "$libraryPath.klib" else libraryPath.removeSuffix(".klib")
-
-            compileMainModule(libraryPath)
-            expectFailingAsNotFound(alternativeLibraryPath) { compileMainModule(alternativeLibraryPath) }
-        }
-    }
-
-    @Test
     @DisplayName("Custom library passed to the compiler by the relative path")
     fun testCustomLibraryPassedToTheCompilerByTheRelativePath() = with(NonRepeatedModuleNameGenerator()) {
         customLibraryPassedToTheCompilerByTheRelativePath(true, false)
