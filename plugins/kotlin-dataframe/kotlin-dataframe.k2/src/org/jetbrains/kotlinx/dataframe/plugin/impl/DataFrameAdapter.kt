@@ -30,12 +30,6 @@ fun DataFrame<ConeTypesAdapter>.toPluginDataFrameSchema() = PluginDataFrameSchem
 
 interface ConeTypesAdapter
 
-fun PluginDataFrameSchema.convert(columns: ColumnsResolver, converter: (SimpleCol) -> ColumnType): PluginDataFrameSchema {
-    return asDataFrame(impliedColumnsResolver = columns)
-        .convert { columns }.perRowCol { _, col -> converter(col.asSimpleColumn()) }
-        .toPluginDataFrameSchema()
-}
-
 fun PluginDataFrameSchema.convertAsColumn(columns: ColumnsResolver, converter: (SimpleCol) -> SimpleCol): PluginDataFrameSchema {
     return asDataFrame(impliedColumnsResolver = columns)
         .convert { columns }.asColumn { converter(it.asSimpleColumn()).asDataColumn() }

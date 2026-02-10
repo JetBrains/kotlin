@@ -159,8 +159,8 @@ class SplitInplace : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df
-            .convert(receiver.columns) {
-                createListType(typeArg2.coneType).wrap()
+            .convertAsColumn(receiver.columns) {
+                simpleColumnOf("", createListType(typeArg2.coneType))
             }
     }
 }
@@ -171,8 +171,8 @@ class SplitWithTransformInplace : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df
-            .convert(receiver.columns) {
-                createListType(typeArg2.coneType).wrap()
+            .convertAsColumn(receiver.columns) {
+                simpleColumnOf("", createListType(typeArg2.coneType))
             }
     }
 }
@@ -191,9 +191,9 @@ class SplitWithTransformIntoRows : AbstractSchemaModificationInterpreter() {
     val Arguments.dropEmpty: Boolean by arg(defaultValue = Present(true))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.convert(receiver.columns) {
+        return receiver.df.convertAsColumn(receiver.columns) {
             val targetProjection = arrayOf(receiver.targetType.coneType.toTypeProjection(Variance.INVARIANT))
-            StandardClassIds.List.createConeType(session, targetProjection).wrap()
+            simpleColumnOf("", StandardClassIds.List.createConeType(session, targetProjection))
         }.explodeImpl(dropEmpty, receiver.columns)
     }
 }
