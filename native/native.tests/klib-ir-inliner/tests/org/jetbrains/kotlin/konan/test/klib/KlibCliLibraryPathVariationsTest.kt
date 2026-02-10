@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationT
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SearchPathResolver
@@ -40,6 +38,7 @@ import org.junit.jupiter.api.parallel.Isolated
 import java.io.File
 import kotlin.text.contains
 
+// TODO (KT-61096): Remove this obsolete test runner together with the KLIB resolver.
 /**
  * This test class needs to set up a custom working directory in the JVM process. This is necessary to trigger
  * the special behavior inside the [SearchPathResolver] to start looking for KLIBs by relative path (or just
@@ -54,46 +53,6 @@ import kotlin.text.contains
 @Isolated // Run this test class in isolation from other test classes.
 @Execution(ExecutionMode.SAME_THREAD) // Run all test functions sequentially in the same thread.
 class KlibCliLibraryPathVariationsTest : AbstractNativeSimpleTest() {
-    @Test
-    @DisplayName("stdlib and posix passed to the compiler in different ways")
-    fun testStdlibAndPosixPassedToTheCompilerInDifferentWays() = with(NonRepeatedModuleNameGenerator()) {
-        val librariesDir = testRunSettings.get<KotlinNativeHome>().librariesDir
-        val target = testRunSettings.get<KotlinNativeTargets>().testTarget
-
-        val stdlibFile = librariesDir.resolve("common/stdlib")
-        val posixFile = librariesDir.resolve("platform/${target.name}/org.jetbrains.kotlin.native.platform.posix")
-
-        sequenceOf(stdlibFile, posixFile)
-            .flatMap {
-                sequenceOf(
-                    it.absolutePath,
-                    it.resolve("../${it.name}").absolutePath,
-                    it.resolve("default/..").absolutePath,
-
-                    // Note: stdlib & platform libraries (such as posix, for example) have identical
-                    // unique_name and name of the directory where the unpacked library is located.
-                    // So, practically it's not possible to check if the "resolver" resolves the library
-                    // strictly by its unique_name or strictly by the last segment of its path (i.e.,
-                    // by the relative path) by just observing the results of its work.
-                    // Nevertheless, for libraries in the Native distribution it is OK if they are resolved
-                    // by "name" whichever this name would be.
-                    it.name
-                )
-            }
-            .forEach { libraryNameOrPath ->
-                compileMainModule(libraryNameOrPath)
-                compileMainModule(libraryNameOrPath, extraCliArgs = listOf("-nostdlib", "-no-default-libs"))
-            }
-
-        sequenceOf(stdlibFile, posixFile)
-            .map { it.name }
-            .flatMap { sequenceOf("./$it", "../build/$it", "$it/../$it") }
-            .flatMap { sequenceOf(it, "$it.klib") }
-            .forEach { libraryNameOrPath ->
-                expectFailingAsNotFound(libraryNameOrPath) { compileMainModule(libraryNameOrPath) }
-            }
-    }
-
     @Test
     @DisplayName("Custom library with custom unique name passed to the compiler by the absolute or the relative path")
     fun testCustomLibraryWithCustomUniqueNamePassedToTheCompilerByTheAbsoluteOrTheRelativePath() {

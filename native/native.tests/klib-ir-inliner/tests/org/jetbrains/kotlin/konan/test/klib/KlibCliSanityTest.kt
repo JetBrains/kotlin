@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_IR_PROVIDER
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
@@ -235,4 +237,37 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         }
     }
 
+    @Test
+    fun `Compiler loads libraries bundled in Kotlin Native distribution`() {
+        doTestLoadingBundledLibraries(noStdlib = false, noDefaultLibs = false)
+        doTestLoadingBundledLibraries(noStdlib = true, noDefaultLibs = false)
+        doTestLoadingBundledLibraries(noStdlib = false, noDefaultLibs = true)
+        doTestLoadingBundledLibraries(noStdlib = true, noDefaultLibs = true)
+    }
+
+    private fun doTestLoadingBundledLibraries(noStdlib: Boolean, noDefaultLibs: Boolean) {
+        val librariesDir = testRunSettings.get<KotlinNativeHome>().librariesDir
+        val target = testRunSettings.get<KotlinNativeTargets>().testTarget
+
+        val stdlibPath = librariesDir.resolve("common/stdlib").absolutePath
+        val posixPath = librariesDir.resolve("platform/${target.name}/org.jetbrains.kotlin.native.platform.posix").absolutePath
+
+        newSourceModules {
+            addRegularModule("a") {
+                sourceFileAddend(
+                    """
+                        fun callStdlib() = buildList<String> { this += "hello" }
+                        
+                        @kotlinx.cinterop.ExperimentalForeignApi
+                        fun callPosix() = platform.posix.fopen("test.txt", "r")
+                    """.trimIndent()
+                )
+            }
+        }.compileToKlibsViaCli(
+            extraCliArgs = buildList {
+                if (noStdlib) this += listOf("-nostdlib", "-l", stdlibPath)
+                if (noDefaultLibs) this += listOf("-no-default-libs", "-l", posixPath)
+            }
+        )
+    }
 }
