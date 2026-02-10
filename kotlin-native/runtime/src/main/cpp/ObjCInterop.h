@@ -68,6 +68,9 @@ RUNTIME_NOTHROW const TypeInfo* GetObjCKotlinTypeInfo(ObjHeader* obj);
 // It only checks direct super interfaces, not the ones adopted by super classes.
 RUNTIME_NOTHROW bool IsInstanceOfKotlinClassImplementingObjCProtocol(ObjHeader* kotlinObj, id obj, const char* protocolName);
 
+id Kotlin_objc_retain_inNative(id);
+id Kotlin_objc_retainBlock_inNative(id);
+
 } // extern "C"
 
 const char* Kotlin_ObjCInterop_getUniquePrefix();

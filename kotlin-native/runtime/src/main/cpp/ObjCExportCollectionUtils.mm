@@ -27,6 +27,7 @@
 #import "Exceptions.h"
 #import "ObjCExport.h"
 #import "ObjCExportCollections.h"
+#import "ObjCInterop.h"
 
 extern "C" {
 
@@ -137,7 +138,7 @@ extern "C" OBJ_GETTER(Kotlin_NSSetAsKSet_getElement, KRef thiz, KRef element) {
 }
 
 static inline OBJ_GETTER(CreateKIteratorFromNSEnumerator, NSEnumerator* enumerator) {
-  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSEnumeratorAsKIterator_create, objc_retain(enumerator));
+  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSEnumeratorAsKIterator_create, Kotlin_objc_retain_inNative(enumerator));
 }
 
 NO_EXTERNAL_CALLS_CHECK

@@ -206,6 +206,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
     private val copyHelper = generateFunction(
             codegen,
             copyProto,
+            switchToRunnable = true,
     ) {
         val dstBlockPtr = param(0)
         val srcBlockPtr = param(1)
@@ -350,7 +351,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
 
 private val ObjCExportCodeGeneratorBase.retainBlock: LlvmCallable
     get() = llvm.externalNativeRuntimeFunction(
-            "objc_retainBlock",
+            "Kotlin_objc_retainBlock_inNative",
             LlvmRetType(llvm.pointerType, isObjectType = false),
             listOf(LlvmParamType(llvm.pointerType))
     )
