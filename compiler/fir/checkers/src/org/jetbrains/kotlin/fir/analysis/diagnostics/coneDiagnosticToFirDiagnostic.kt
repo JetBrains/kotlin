@@ -578,8 +578,6 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConePlaceholderProjectionInQualifierResolution -> FirErrors.PLACEHOLDER_PROJECTION_IN_QUALIFIER.createOn(source, session)
     is ConeWrongNumberOfTypeArgumentsError ->
         FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.createOn(this.source, this.desiredCount, this.symbol, session)
-    is ConeTypeArgumentsNotAllowedOnPackageError ->
-        FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(this.source, "for packages", session)
     is ConeTypeArgumentsForOuterClassWhenNestedReferencedError ->
         FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED.createOn(this.source, session)
     is ConeNestedClassAccessedViaInstanceReference ->

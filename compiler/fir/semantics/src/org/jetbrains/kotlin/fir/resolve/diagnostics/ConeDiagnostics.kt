@@ -308,10 +308,6 @@ class ConeWrongNumberOfTypeArgumentsError(
     override val reason: String get() = "Wrong number of type arguments"
 }
 
-class ConeTypeArgumentsNotAllowedOnPackageError(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
-    override val reason: String get() = "Type arguments are not allowed for packages"
-}
-
 class ConeTypeArgumentsForOuterClass(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
     override val reason: String get() = "Type arguments for outer class maybe redundant"
 }

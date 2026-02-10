@@ -12,8 +12,8 @@ class C {
 }
 
 fun test() {
-    val c: part1.part2<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.part3.C = C()
-    if (<!USELESS_IS_CHECK!>c is part1<!TYPE_ARGUMENTS_NOT_ALLOWED_WARNING!><Int><!>.part2.part3.C<!>) {
+    val c: part1.part2<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.part3.C = C()
+    if (<!USELESS_IS_CHECK!>c is part1<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>.part2.part3.C<!>) {
         c.M()
     }
 }

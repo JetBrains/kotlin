@@ -2024,6 +2024,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val place: String
     }
 
+    interface TypeArgumentsNotAllowedWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = TypeArgumentsNotAllowedWarning::class
+        val place: String
+    }
+
     interface TypeArgumentsForOuterClassWhenNestedReferenced : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = TypeArgumentsForOuterClassWhenNestedReferenced::class
     }

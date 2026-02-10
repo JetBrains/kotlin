@@ -2857,6 +2857,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_WARNING) { firDiagnostic ->
+        TypeArgumentsNotAllowedWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED) { firDiagnostic ->
         TypeArgumentsForOuterClassWhenNestedReferencedImpl(
             firDiagnostic as KtPsiDiagnostic,

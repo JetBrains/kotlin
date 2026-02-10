@@ -2427,6 +2427,12 @@ internal class TypeArgumentsNotAllowedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypeArgumentsNotAllowed
 
+internal class TypeArgumentsNotAllowedWarningImpl(
+    override val place: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypeArgumentsNotAllowedWarning
+
 internal class TypeArgumentsForOuterClassWhenNestedReferencedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

@@ -284,10 +284,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             val qualifierPartArgsCount = typeArgumentList.typeArguments.size
 
             if (currentDeclaration == null) {
-                // It's a package name
-                if (qualifierPartArgsCount > 0) {
-                    return ConeTypeArgumentsNotAllowedOnPackageError(typeArgumentList.source!!)
-                }
+                // it's a package name; type arguments in packages are reported in checker separately
                 break
             }
 
