@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.configuration.configureCommonHandlersForBoxTest
 import org.jetbrains.kotlin.test.configuration.useInlineHandlers
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_MULTI_MODULE
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SERIALIZE_IR
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -120,6 +121,9 @@ open class AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestBase(val pars
         super.configure(builder)
         builder.configureForSerialization()
         builder.configureFirParser(parser)
+        builder.defaultDirectives {
+            +ConfigurationDirectives.WITH_STDLIB
+        }
     }
 }
 
