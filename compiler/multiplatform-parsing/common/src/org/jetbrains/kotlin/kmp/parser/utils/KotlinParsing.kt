@@ -118,7 +118,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             PROPERTY_NAME_FOLLOW_SET + LBRACE_RBRACE_SET + TOP_LEVEL_DECLARATION_FIRST
         private val IDENTIFIER_EQ_COLON_SEMICOLON_SET =
             syntaxElementTypeSetOf(KtTokens.IDENTIFIER, KtTokens.EQ, KtTokens.COLON, KtTokens.SEMICOLON)
-        private val COMMA_RPAR_COLON_EQ_SET = syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.RPAR, KtTokens.COLON, KtTokens.EQ)
+        private val COMMA_RPAR_RBRACKET_COLON_EQ_SET = syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.RPAR, KtTokens.RBRACKET, KtTokens.COLON, KtTokens.EQ)
         private val ACCESSOR_FIRST_OR_PROPERTY_END =
             KtTokens.MODIFIERS +
                     syntaxElementTypeSetOf(
@@ -1786,7 +1786,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                         }
                     }
                     MultiDeclarationMode.Short -> {
-                        parseModifierList(COMMA_RPAR_COLON_EQ_SET)
+                        parseModifierList(COMMA_RPAR_RBRACKET_COLON_EQ_SET)
                     }
                 }
 

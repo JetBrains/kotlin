@@ -1,14 +1,14 @@
 // ISSUE: KT-83920
 // WITH_STDLIB
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +NameBasedDestructuring
 
 data class Box(val key: String, val value: String)
 
 fun foo1(b: Box, l: List<Box>) {
-    val [key, <!WRONG_MODIFIER_TARGET!>value<!><!SYNTAX!>]<!><!SYNTAX!><!> = b
-    for ([key, <!WRONG_MODIFIER_TARGET!>value<!><!SYNTAX!>]<!><!SYNTAX!><!> in l) {}
-    l.forEach { [key, <!WRONG_MODIFIER_TARGET!>value<!><!SYNTAX!>]<!><!SYNTAX!><!> -> }
+    val [key, value] = b
+    for ([key, value] in l) {}
+    l.forEach { [key, value] -> }
 }
 fun foo2(b: Box, l: List<Box>) {
     [val key, val value] = b
