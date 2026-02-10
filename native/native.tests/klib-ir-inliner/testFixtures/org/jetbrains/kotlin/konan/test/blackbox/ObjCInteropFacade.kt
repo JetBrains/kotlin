@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.objcinterop
 
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINTEROP_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
@@ -123,6 +123,6 @@ class ObjCInteropFacade(val testServices: TestServices) : AbstractTestFacade<Res
         }
         expectedArtifact.logFile.writeText(loggedCall.toString())
 
-        return BinaryArtifacts.KLib(immediateResult.assertSuccess().resultingArtifact.klibFile, SimpleDiagnosticsCollector())
+        return BinaryArtifacts.KLib(immediateResult.assertSuccess().resultingArtifact.klibFile, DiagnosticsCollectorImpl())
     }
 }
