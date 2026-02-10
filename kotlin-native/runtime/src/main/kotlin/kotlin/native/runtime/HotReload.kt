@@ -115,7 +115,6 @@ public object HotReload {
     /**
      * Collect statistics about the latest hot-code reload event.
      */
-    @InternalForKotlinNativeTests
     public fun collectLatestStats(): Stats = HotReloadStatsBuilder().build()
 
     /**
@@ -125,5 +124,9 @@ public object HotReload {
     @GCUnsafeCall("Kotlin_native_internal_HotReload_perform")
     @Escapes.Nothing
     @InternalForKotlinNativeTests
-    public external fun perform(dylibPath: String)
+    public external fun perform(objectPath: String)
 }
+
+@NativeRuntimeApi
+public val HotReload.Stats.duration: Long
+    get() = end - start
