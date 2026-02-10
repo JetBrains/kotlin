@@ -60,7 +60,11 @@ internal abstract class SirAbstractVariableFromKtSymbol(
         ktSymbol.sirDeclarationName()
     }
     override val type: SirType by lazy {
-        translateReturnType()
+        translateReturnType(
+            SirTypeVariance.COVARIANT
+                .takeIf { ktSymbol.isVal }
+                ?: SirTypeVariance.INVARIANT
+        )
     }
     override val getter: SirGetter by lazy {
         ((ktSymbol as? KaPropertySymbol)?.let {

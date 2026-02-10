@@ -1,9 +1,34 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import kotlinx.coroutines.*
+
+@ExportedBridge("__root___Foo_init_allocate")
+public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<Foo>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, Foo())
+}
+
+@ExportedBridge("__root___closure_returning_flow__TypesOfArguments__U28KotlinCoroutineSupport__KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__")
+public fun __root___closure_returning_flow__TypesOfArguments__U28KotlinCoroutineSupport__KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__(i: kotlin.native.internal.NativePtr): Unit {
+    val __i = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Unit>(i);
+        { arg0: kotlinx.coroutines.flow.Flow<Foo> ->
+            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            Unit
+        }
+    }
+    closure_returning_flow(__i)
+}
 
 @ExportedBridge("__root___demo")
 public fun __root___demo(): kotlin.native.internal.NativePtr {
@@ -14,6 +39,12 @@ public fun __root___demo(): kotlin.native.internal.NativePtr {
 @ExportedBridge("__root___demo_ft_produce")
 public fun __root___demo_ft_produce(): kotlin.native.internal.NativePtr {
     val _result = demo_ft_produce()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___flowFoo_get")
+public fun __root___flowFoo_get(): kotlin.native.internal.NativePtr {
+    val _result = flowFoo
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 

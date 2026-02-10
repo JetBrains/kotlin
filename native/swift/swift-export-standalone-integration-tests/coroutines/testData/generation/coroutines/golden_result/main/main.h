@@ -3,9 +3,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * __root___Foo_init_allocate();
+
+void __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void __root___closure_returning_flow__TypesOfArguments__U28KotlinCoroutineSupport__KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__(void (^i)(void *));
+
 void * __root___demo();
 
 void * __root___demo_ft_produce();
+
+void * __root___flowFoo_get();
 
 void __root___produce_function_typealias(int32_t (^continuation)(void *), int32_t (^exception)(void * _Nullable ), void * cancellation);
 

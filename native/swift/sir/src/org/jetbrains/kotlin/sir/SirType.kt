@@ -78,6 +78,17 @@ open class SirOptionalType(type: SirType) : SirNominalType(
     val wrappedType: SirType get() = super.typeArguments.single()
 }
 
+class SirWrappedFlowType(
+    wrapperStruct: SirScopeDefiningDeclaration,
+    flowType: SirType,
+    typeArguments: List<SirType>,
+) : SirNominalType(
+    typeDeclaration = wrapperStruct,
+    typeArguments = typeArguments
+), SirWrappedType {
+    val wrappedType: SirType = flowType
+}
+
 class SirImplicitlyUnwrappedOptionalType(type: SirType) : SirOptionalType(type)
 
 class SirArrayType(type: SirType) : SirNominalType(

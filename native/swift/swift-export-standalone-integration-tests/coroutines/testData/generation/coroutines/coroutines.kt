@@ -9,7 +9,13 @@
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-fun demo(): Flow<Int> = TODO()
+class Foo
+
+fun demo(): Flow<Foo> = TODO()
+
+val flowFoo: Flow<Foo> = TODO()
+
+fun closure_returning_flow(i: (Flow<Foo>)->Unit): Unit = TODO()
 
 fun demo_ft_produce(): suspend (Int) -> Int = TODO()
 

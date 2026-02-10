@@ -6,12 +6,12 @@ import Foundation
 @Test
 @MainActor
 func testRegular() async {
-    let expected: [KotlinBase] = [Element1.shared, Element2.shared, Element3.shared]
+    let expected: [Elem] = [Element1.shared, Element2.shared, Element3.shared]
 
-    let task = Task<[KotlinBase], any Error>.detached {
-        var actual: [KotlinBase] = []
+    let task = Task<[Elem], any Error>.detached {
+        var actual: [Elem] = []
         for try await element in testRegular() {
-            actual.append(element as! KotlinBase)
+            actual.append(element)
         }
         return actual
     }
@@ -42,9 +42,9 @@ func testEmpty() async {
 func testFailing() async {
     let task = Task<Void, any Error>.detached {
         var iterator = testFailing().makeAsyncIterator()
-        let first = try await iterator.next() as! KotlinBase
+        let first = try await iterator.next()
         #expect(first == Element1.shared)
-        let second = try await iterator.next() as! KotlinBase
+        let second = try await iterator.next()
         #expect(second == Element2.shared)
         _ = try await iterator.next()
     }
@@ -69,11 +69,11 @@ func testDiscarding() async {
 
     let discardingAtEnd = Task<Void, any Error>.detached {
         var iterator = testDiscarding().makeAsyncIterator()
-        let first = try await iterator.next() as! KotlinBase
+        let first = try await iterator.next()
         #expect(first == Element1.shared)
-        let second = try await iterator.next() as! KotlinBase
+        let second = try await iterator.next()
         #expect(second == Element2.shared)
-        let third = try await iterator.next() as! KotlinBase
+        let third = try await iterator.next()
         #expect(third == Element3.shared)
     }
     let discardingAtEndResult = await discardingAtEnd.result
@@ -82,7 +82,7 @@ func testDiscarding() async {
 
     let discardingMidway = Task<Void, any Error>.detached {
         var iterator = testDiscarding().makeAsyncIterator()
-        let first = try await iterator.next() as! KotlinBase
+        let first = try await iterator.next()
         #expect(first == Element1.shared)
     }
     let discardingMidwayResult = await discardingMidway.result
@@ -93,15 +93,15 @@ func testDiscarding() async {
 @Test
 @MainActor
 func testStateFlow() async {
-    let expected: [KotlinBase] = [Element1.shared, Element2.shared, Element3.shared]
+    let expected: [Elem] = [Element1.shared, Element2.shared, Element3.shared]
 
     let subject = CurrentSubject.shared
 
-    let collectTask = Task<[KotlinBase], any Error>.detached {
-        var actual: [KotlinBase] = []
+    let collectTask = Task<[Elem], any Error>.detached {
+        var actual: [Elem] = []
         var i = 0;
         for try await element in subject.value {
-            actual.append(element as! KotlinBase)
+            actual.append(element)
             i += 1
             guard i < 3 else { break }
         }

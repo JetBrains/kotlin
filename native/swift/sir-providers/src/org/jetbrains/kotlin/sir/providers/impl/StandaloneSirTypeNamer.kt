@@ -86,6 +86,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
             KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
             KotlinRuntimeSupportModule.kotlinBridgeable -> "kotlin.Any"
             KotlinCoroutineSupportModule.swiftJob -> "SwiftJob"
+            KotlinCoroutineSupportModule.kotlinTypedFlowStruct -> "kotlinx.coroutines.flow.Flow<${type.typeArguments.firstOrNull()?.let { kotlinParametrizedName(it) } ?: "kotlin.Any?"}>"
             SirSwiftModule.anyHashable -> "kotlin.Any"
             SirSwiftModule.string -> "kotlin.String"
 

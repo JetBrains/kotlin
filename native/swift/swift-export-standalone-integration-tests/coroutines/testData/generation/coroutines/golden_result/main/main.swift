@@ -5,8 +5,35 @@ import KotlinRuntimeSupport
 import KotlinxCoroutinesCore
 
 public typealias AliasedFunctionType = (Swift.Float) -> Swift.Int32
-public func demo() -> any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___demo()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow
+public final class Foo: KotlinRuntime.KotlinBase {
+    public init() {
+        if Self.self != main.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo ") }
+        let __kt = __root___Foo_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+}
+public var flowFoo: KotlinCoroutineSupport._KotlinTypedFlow<main.Foo> {
+    get {
+        return KotlinCoroutineSupport._KotlinTypedFlow<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___flowFoo_get()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
+    }
+}
+public func closure_returning_flow(
+    i: @escaping (KotlinCoroutineSupport._KotlinTypedFlow<main.Foo>) -> Swift.Void
+) -> Swift.Void {
+    return __root___closure_returning_flow__TypesOfArguments__U28KotlinCoroutineSupport__KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__({
+        let originalBlock = i
+        return { arg0 in return originalBlock(KotlinCoroutineSupport._KotlinTypedFlow<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)) }
+    }())
+}
+public func demo() -> KotlinCoroutineSupport._KotlinTypedFlow<main.Foo> {
+    return KotlinCoroutineSupport._KotlinTypedFlow<main.Foo>(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___demo()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow)
 }
 public func demo_ft_produce() -> (Swift.Int32) async throws -> Swift.Int32 {
     return {

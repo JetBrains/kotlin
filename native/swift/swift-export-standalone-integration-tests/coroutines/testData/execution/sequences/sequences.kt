@@ -9,31 +9,33 @@
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-object Element1
-object Element2
-object Element3
+abstract class Elem
+
+object Element1: Elem()
+object Element2: Elem()
+object Element3: Elem()
 
 object CurrentSubject {
-    private val flow: MutableStateFlow<Any> = MutableStateFlow(Element1)
+    private val flow: MutableStateFlow<Elem> = MutableStateFlow(Element1)
 
-    public val value: Flow<Any> get() = flow
+    public val value: Flow<Elem> get() = flow
 
-    public fun update(value: Any) {
+    public fun update(value: Elem) {
         flow.value = value
     }
 }
 
-fun testRegular(): Flow<Any> = flowOf(Element1, Element2, Element3)
+fun testRegular(): Flow<Elem> = flowOf(Element1, Element2, Element3)
 
-fun testEmpty(): Flow<Any> = flowOf()
+fun testEmpty(): Flow<Elem> = flowOf()
 
-fun testFailing(): Flow<Any> = flow {
+fun testFailing(): Flow<Elem> = flow {
     emit(Element1)
     emit(Element2)
     error("Flow has Failed")
 }
 
-fun testDiscarding(): Flow<Any> = flow {
+fun testDiscarding(): Flow<Elem> = flow {
     emit(Element1)
     emit(Element2)
     emit(Element3)

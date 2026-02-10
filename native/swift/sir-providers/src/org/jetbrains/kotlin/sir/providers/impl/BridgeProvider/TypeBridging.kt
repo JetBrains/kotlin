@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.*
 import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.toBridge
+import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
@@ -70,6 +71,7 @@ internal fun bridgeAsNSCollectionElement(type: SirType): WithSingleType = when (
     is AsObject,
     is AsExistential,
     is AsAnyBridgeable,
+    is AsTypedFlow,
     is AsOpaqueObject,
     is SirCustomTypeTranslatorImpl.RangeBridge
         -> AsObjCBridged(bridge.swiftType, CType.id)
@@ -92,6 +94,7 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
             is AsObjCBridged,
             is AsExistential,
             is AsAnyBridgeable,
+            is AsTypedFlow,
             is AsContravariantBlock,
             is AsCovariantBlock,
             is SirCustomTypeTranslatorImpl.RangeBridge
@@ -115,6 +118,8 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
 
             else -> error("Found Optional wrapping for $bridge. That is currently unsupported. See KT-66875")
         }
+
+        KotlinCoroutineSupportModule.kotlinTypedFlowStruct -> AsTypedFlow(type)
 
         is SirTypealias -> bridgeType(subtype.type, position)
 
@@ -434,6 +439,42 @@ internal sealed class Bridge(
         }
     }
 
+    /**
+     * A bridge for the typed `_KotlinTypedFlow<Element>` wrapper struct.
+     *
+     * On the Kotlin/C side it's the same opaque pointer as for [AsExistential].
+     * On the Swift side, the return path wraps the pointer in a `_KotlinTypedFlow<Element>` struct,
+     * and the parameter path (theoretical – typed flow only appears in return position)
+     * unwraps via `.untyped.__externalRCRef()`.
+     */
+    class AsTypedFlow(swiftType: SirNominalType) : WithSingleType(swiftType, KotlinType.KotlinObject, CType.Object) {
+        private val flowCastType: SirType = (swiftType as? SirWrappedFlowType)?.wrappedType
+            ?: SirExistentialType(KotlinCoroutineSupportModule.kotlinFlow)
+
+        override val inKotlinSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as ${
+                    typeNamer.kotlinFqName(
+                        swiftType,
+                        SirTypeNamer.KotlinNameType.PARAMETRIZED)}"
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+        }
+
+        override val inSwiftSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "${valueExpression}.untyped.__externalRCRef()"
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
+                val kotlinBaseName = typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))
+                val flowProtocolFqName = typeNamer.swiftFqName(flowCastType)
+                val typedFlowFqName = typeNamer.swiftFqName(swiftType)
+                return "$typedFlowFqName($kotlinBaseName.__createProtocolWrapper(externalRCRef: $valueExpression) as! $flowProtocolFqName)"
+            }
+        }
+    }
+
     class AsOpaqueObject(swiftType: SirType, kotlinType: KotlinType, cType: CType) : WithSingleType(swiftType, kotlinType, cType) {
         override val inKotlinSources = object : ValueConversion {
             // nulls are handled by AsOptionalWrapper, so safe to cast from nullable to non-nullable
@@ -656,7 +697,8 @@ internal sealed class Bridge(
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
                 require(
                     wrappedObject is AsObjCBridged || wrappedObject is AsObject ||
-                            wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsContravariantBlock ||
+                            wrappedObject is AsExistential || wrappedObject is AsAnyBridgeable || wrappedObject is AsTypedFlow ||
+                            wrappedObject is AsContravariantBlock ||
                             wrappedObject is SirCustomTypeTranslatorImpl.RangeBridge
                 )
                 return valueExpression.mapSwift { wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, it) } +
@@ -667,7 +709,7 @@ internal sealed class Bridge(
                 return when (wrappedObject) {
                     is AsObjCBridged, is AsCovariantBlock ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential, is AsAnyBridgeable, is SirCustomTypeTranslatorImpl.RangeBridge ->
+                    is AsObject, is AsExistential, is AsAnyBridgeable, is AsTypedFlow, is SirCustomTypeTranslatorImpl.RangeBridge ->
                         "{ switch $valueExpression { case ${wrappedObject.renderNil()}: .none; case let res: ${
                             wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                         }; } }()"
