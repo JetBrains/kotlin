@@ -3107,6 +3107,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/smoke.kt");
       }
 
+      @Test
+      @TestMetadata("upperBoundViolatedDiagnosticInContextualFunctionType.kt")
+      public void testUpperBoundViolatedDiagnosticInContextualFunctionType() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/upperBoundViolatedDiagnosticInContextualFunctionType.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextParameters/declarationAndUsages")
       @TestDataPath("$PROJECT_ROOT")
