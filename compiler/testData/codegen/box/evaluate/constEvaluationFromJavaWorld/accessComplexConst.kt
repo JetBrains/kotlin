@@ -2,7 +2,7 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K1: JVM_IR
 // WITH_STDLIB
-// FILE: Bar.java
+// FILE: one/two/Bar.java
 package one.two;
 
 public class Bar {
