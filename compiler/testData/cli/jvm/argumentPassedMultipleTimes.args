@@ -14,3 +14,6 @@ $TEMP_DIR$
 aaa
 -module-name
 bbb
+-Xname-based-destructuring=only-syntax
+-Xname-based-destructuring=name-mismatch
+-Xname-based-destructuring=only-syntax
