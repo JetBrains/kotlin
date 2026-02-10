@@ -165,7 +165,7 @@ public open expect class swiftPMImport/emptyxcode/FIRAnalyticsMeta : platform/da
     ) {
         iosDeploymentVersion.set("16.0")
         `package`(
-            url = url("git@github.com:googlemaps/ios-maps-sdk.git"),
+            url = url("https://github.com/googlemaps/ios-maps-sdk.git"),
             version = exact("10.6.0"),
             products = listOf(product("GoogleMaps")),
         )
