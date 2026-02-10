@@ -1,4 +1,5 @@
 warning: argument '-Xuse-fir-lt' is passed multiple times: 'false', 'true'. The last value will be used.
 warning: argument '-kotlin-home' is passed multiple times: '$TESTDATA_DIR$', ''. The last value will be used.
 warning: argument '-Xannotation-default-target' is passed multiple times: 'param-property', 'first-only-warn'. The last value will be used.
+warning: the argument '-Xannotation-default-target=first-only-warn' is redundant for the current language version 2.4.
 OK
