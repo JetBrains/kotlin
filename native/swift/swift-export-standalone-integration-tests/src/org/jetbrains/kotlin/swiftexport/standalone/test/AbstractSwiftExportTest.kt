@@ -49,8 +49,6 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     * */
     var givenModules: Set<TestModule.Given> = emptySet()
 
-    var isCoroutineSupportEnabled: Boolean = false
-
     private val binariesDir get() = testRunSettings.get<Binaries>().testBinariesDir
     protected fun buildDir(testName: String) = binariesDir.resolve(testName)
     protected val targets: KotlinNativeTargets get() = testRunSettings.get()
@@ -88,7 +86,6 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             konanTarget = targets.testTarget,
             errorTypeStrategy = ErrorTypeStrategy.Fail,
             unsupportedTypeStrategy = ErrorTypeStrategy.SpecialType,
-            enableCoroutinesSupport = isCoroutineSupportEnabled,
         )
 
         // run swift export
