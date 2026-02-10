@@ -1,0 +1,16 @@
+public final class cases/internalConstructors/MixedParameters {
+	public final fun getA ()I
+	public final fun getB ()I
+	public final fun getC ()I
+}
+
+public final class cases/internalConstructors/MultipleParameters {
+	public final fun getA ()I
+	public final fun getB ()I
+	public final fun getC ()I
+}
+
+public final class cases/internalConstructors/OneParameter {
+	public final fun getA ()I
+}
+

@@ -14,6 +14,7 @@ internal class ClassVisibility(
     val visibility: Visibility?,
     val classKind: ClassKind?,
     val members: Map<JvmMemberSignature, MemberVisibility>,
+    val allConstructorsAreInternal: Boolean,
     val facadeClassName: String? = null
 ) {
     val isCompanion: Boolean get() = classKind == ClassKind.COMPANION_OBJECT
@@ -87,6 +88,7 @@ internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassV
     var kind: ClassKind? = null
     var _facadeClassName: String? = null
     val members = mutableListOf<MemberVisibility>()
+    var allConstructorsAreInternal = false
 
     fun addMember(
         signature: JvmMemberSignature?,
@@ -108,6 +110,8 @@ internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassV
                 for (constructor in klass.constructors) {
                     addMember(constructor.signature, constructor.visibility, isReified = false)
                 }
+
+                allConstructorsAreInternal = klass.constructors.all { it.visibility == Visibility.INTERNAL }
             }
 
         is KotlinClassMetadata.FileFacade ->
@@ -148,7 +152,7 @@ internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassV
         }
     }
 
-    return ClassVisibility(classNode.name, visibility, kind, members.associateBy { it.member }, _facadeClassName)
+    return ClassVisibility(classNode.name, visibility, kind, members.associateBy { it.member }, allConstructorsAreInternal, _facadeClassName)
 }
 
 internal fun ClassNode.toClassVisibility() = kotlinMetadata?.toClassVisibility(this)
