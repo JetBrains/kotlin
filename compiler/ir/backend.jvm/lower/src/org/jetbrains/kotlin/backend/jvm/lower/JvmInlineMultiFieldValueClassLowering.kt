@@ -43,9 +43,9 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
- * Supports the experimental [multi-field value classes](https://github.com/Kotlin/KEEP/issues/340) feature.
+ * Supports the experimental @JvmInline [Multi-Field Value Classes](https://github.com/Kotlin/KEEP/issues/340) feature.
  */
-internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {
+internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {
     override fun lower(irFile: IrFile) {
         if (context.config.supportJvmInlineMultiFieldValueClasses) {
             super.lower(irFile)
@@ -503,7 +503,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             +irReturn(irGet(thisVar))
         }
             .also { addBindingsFor(constructor, replacement) }
-            .transform(this@JvmMultiFieldValueClassLowering, null)
+            .transform(this@JvmInlineMultiFieldValueClassLowering, null)
             .patchDeclarationParents(replacement)
         allScopes.pop()
         return listOf(replacement)
@@ -701,7 +701,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         }.apply { parent = parameter.parent }
         parameter.defaultValue = with(context.createJvmIrBuilder(fakeFunction.symbol)) {
             withinScope(fakeFunction) {
-                fakeFunction.body = irExprBody(parameter.defaultValue!!.expression).transform(this@JvmMultiFieldValueClassLowering, null)
+                fakeFunction.body = irExprBody(parameter.defaultValue!!.expression).transform(this@JvmInlineMultiFieldValueClassLowering, null)
                 postActionAfterTransformingClassDeclaration(fakeFunction)
                 fakeFunction.body?.patchDeclarationParents(parameter.parent) as IrExpressionBody
             }
@@ -851,7 +851,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             origin = expression.origin,
         ).apply {
             copyTypeArgumentsFrom(expression)
-            arguments.assignFrom(expression.arguments) { it?.transform(this@JvmMultiFieldValueClassLowering, null) }
+            arguments.assignFrom(expression.arguments) { it?.transform(this@JvmInlineMultiFieldValueClassLowering, null) }
             copyAttributes(expression)
         }
         return context.createJvmIrBuilder(getCurrentScopeSymbol(), expression).irBlock(origin = IrStatementOrigin.LAMBDA) {
@@ -985,7 +985,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                     }
                     +irCall(newEquals).apply {
                         arguments.assignFrom(listOf(leftArgument, rightArgument))
-                    }.transform(this@JvmMultiFieldValueClassLowering, null)
+                    }.transform(this@JvmInlineMultiFieldValueClassLowering, null)
                 } else if (rightNode != null) {
                     // left one is boxed, right one is unboxed
                     if (leftArgument.isNullConst()) {
@@ -998,7 +998,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                             }
                             rightExpressions.filterNot { it.isRepeatableGetter() }.forEach { +it }
                         } else {
-                            +rightArgument.transform(this@JvmMultiFieldValueClassLowering, null)
+                            +rightArgument.transform(this@JvmInlineMultiFieldValueClassLowering, null)
                         }
                         +irFalse()
                     } else if (leftArgument.type.erasedUpperBound == rightArgument.type.erasedUpperBound && leftArgument.type.isNullable()) {
@@ -1014,7 +1014,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                                     arguments[1] = rightArgument
                                 }
                             })
-                        }.transform(this@JvmMultiFieldValueClassLowering, null)
+                        }.transform(this@JvmInlineMultiFieldValueClassLowering, null)
                     } else {
                         // right one is unboxed but left one is boxed and no intrinsics can be used
                         return super.visitCall(expression)
@@ -1073,7 +1073,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         val newArguments = (oldArguments zip argumentSizes).flatMapIndexed { index, (oldArgument, parametersCount) ->
             when {
                 oldArgument == null -> List(parametersCount) { null }
-                parametersCount == 1 -> listOf(oldArgument.transform(this@JvmMultiFieldValueClassLowering, null))
+                parametersCount == 1 -> listOf(oldArgument.transform(this@JvmInlineMultiFieldValueClassLowering, null))
                 else -> {
                     val expectedType = (structure[index] as MultiFieldValueClassMapping).boxedType
                     val castedIfNeeded = castExpressionToNotNullTypeIfNeeded(oldArgument, expectedType)
@@ -1182,7 +1182,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         with(valueDeclarationsRemapper) {
             return context.createJvmIrBuilder(getCurrentScopeSymbol(), expression).irBlock {
                 addReplacement(expression, safe = expression.origin != UNSAFE_MFVC_SET_ORIGIN)
-                    ?: return expression.also { it.value = it.value.transform(this@JvmMultiFieldValueClassLowering, null) }
+                    ?: return expression.also { it.value = it.value.transform(this@JvmInlineMultiFieldValueClassLowering, null) }
             }.unwrapBlock()
         }
     }
@@ -1233,7 +1233,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
      */
     fun IrBlockBuilder.flattenExpression(expression: IrExpression): List<IrExpression> {
         if (!expression.type.needsMfvcFlattening()) {
-            return listOf(expression.transform(this@JvmMultiFieldValueClassLowering, null))
+            return listOf(expression.transform(this@JvmInlineMultiFieldValueClassLowering, null))
         }
         val rootMfvcNode = replacements.getRootMfvcNode(expression.type.erasedUpperBound)
         val typeArguments = makeTypeArgumentsFromType(expression.type as IrSimpleType)
@@ -1267,7 +1267,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
         if (type == context.irBuiltIns.nothingType) {
             return flattenExpressionTo(irImplicitCast(expression, instance.type), instance)
         }
-        val lowering = this@JvmMultiFieldValueClassLowering
+        val lowering = this@JvmInlineMultiFieldValueClassLowering
         if (rootNode == null || !type.needsMfvcFlattening() || instance.size == 1) {
             require(instance.size == 1) { "Required 1 variable/field to store regular value but got ${instance.size}" }
             instance.addSetterStatements(this, listOf(expression.transform(lowering, null)))
@@ -1316,7 +1316,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                 return
             }
         }
-        val nullableTransformedExpression = expression.transform(this@JvmMultiFieldValueClassLowering, null)
+        val nullableTransformedExpression = expression.transform(this@JvmInlineMultiFieldValueClassLowering, null)
         val transformedExpression = castExpressionToNotNullTypeIfNeeded(nullableTransformedExpression, instance.type)
         val addedSettersToFlattened = valueDeclarationsRemapper.handleFlattenedGetterExpressions(this, transformedExpression) {
             require(it.size == instance.size) { "Incompatible assignment sizes: ${it.size}, ${instance.size}" }

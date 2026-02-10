@@ -67,7 +67,7 @@ private val jvmFilePhases = createFilePhases(
     ::ForLoopsLowering,
     ::CollectionStubMethodLowering,
     ::JvmSingleAbstractMethodLowering,
-    ::JvmMultiFieldValueClassLowering,
+    ::JvmInlineMultiFieldValueClassLowering,
     ::JvmInlineClassLowering,
     ::JvmTailrecLowering,
 
