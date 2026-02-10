@@ -103,7 +103,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
 
     override val caller: Caller<*> get() = getter.caller
 
-    override val defaultCaller: Caller<*>? get() = getter.defaultCaller
+    override val callerWithDefaults: Caller<*>? get() = getter.callerWithDefaults
 
     override fun computeReturnType(): DescriptorKType =
         DescriptorKType(descriptor.returnType!!, if (isLocalDelegated) null else fun(): Type {
@@ -137,7 +137,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
 
         override val container: KDeclarationContainerImpl get() = property.container
 
-        override val defaultCaller: Caller<*>? get() = null
+        override val callerWithDefaults: Caller<*>? get() = null
 
         override val rawBoundReceiver: Any? get() = property.rawBoundReceiver
 

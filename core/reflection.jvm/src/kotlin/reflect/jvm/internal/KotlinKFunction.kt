@@ -77,7 +77,7 @@ internal abstract class KotlinKFunction(
         }.createValueClassAwareCallerIfNeeded(this, isDefault = false, forbidUnboxingForIndices = emptyList())
     }
 
-    override val defaultCaller: Caller<*>? by lazy(PUBLICATION) {
+    override val callerWithDefaults: Caller<*>? by lazy(PUBLICATION) {
         require(isConstructor || container is KPackageImpl) { "Only constructors and top-level functions are supported for now: $this" }
         val signature = jvmSignature
         val preventUnboxingForIndices = mutableListOf<Int>()

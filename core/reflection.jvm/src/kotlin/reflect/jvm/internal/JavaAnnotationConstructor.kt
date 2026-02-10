@@ -66,7 +66,7 @@ internal class JavaAnnotationConstructor(
         AnnotationConstructorCaller(klass.java, methods.map { it.name }, POSITIONAL_CALL, JAVA, methods)
     }
 
-    override val defaultCaller: Caller<*> by lazy(PUBLICATION) {
+    override val callerWithDefaults: Caller<*> by lazy(PUBLICATION) {
         AnnotationConstructorCaller(klass.java, methods.map { it.name }, CALL_BY_NAME, JAVA, methods)
     }
 

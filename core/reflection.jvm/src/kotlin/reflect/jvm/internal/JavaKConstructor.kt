@@ -58,5 +58,5 @@ internal class JavaKConstructor(
         else CallerImpl.Constructor(jConstructor)
     }
 
-    override val defaultCaller: Caller<*>? get() = null
+    override val callerWithDefaults: Caller<*>? get() = null
 }

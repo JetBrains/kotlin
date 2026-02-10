@@ -83,7 +83,7 @@ internal abstract class KotlinKProperty<out V>(
 
     override val caller: Caller<*> get() = getter.caller
 
-    override val defaultCaller: Caller<*>? get() = getter.defaultCaller
+    override val callerWithDefaults: Caller<*>? get() = getter.callerWithDefaults
 
     override val annotations: List<Annotation>
         get() {
@@ -110,7 +110,7 @@ internal abstract class KotlinKProperty<out V>(
 
         override val container: KDeclarationContainerImpl get() = property.container
 
-        override val defaultCaller: Caller<*>? get() = null
+        override val callerWithDefaults: Caller<*>? get() = null
 
         override val rawBoundReceiver: Any? get() = property.rawBoundReceiver
 
