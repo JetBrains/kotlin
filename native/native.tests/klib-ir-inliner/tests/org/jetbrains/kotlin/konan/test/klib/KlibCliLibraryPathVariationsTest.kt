@@ -55,19 +55,6 @@ import kotlin.text.contains
 @Execution(ExecutionMode.SAME_THREAD) // Run all test functions sequentially in the same thread.
 class KlibCliLibraryPathVariationsTest : AbstractNativeSimpleTest() {
     @Test
-    @DisplayName("Non-existing library passed to the compiler in different ways")
-    fun testNonExistingLibraryPassedToTheCompilerInDifferentWays() = with(NonRepeatedModuleNameGenerator()) {
-        sequenceOf("no-such-library")
-            .flatMap { sequenceOf(it, "no-such-directory/$it") }
-            .flatMap { sequenceOf(it, "./$it", "../build/$it", "$it/../$it") }
-            .flatMap { sequenceOf(it, buildDir.resolve(it).absolutePath) }
-            .flatMap { sequenceOf(it, "$it.klib") }
-            .forEach { libraryNameOrPath ->
-                expectFailingAsNotFound(libraryNameOrPath) { compileMainModule(libraryNameOrPath) }
-            }
-    }
-
-    @Test
     @DisplayName("stdlib and posix passed to the compiler in different ways")
     fun testStdlibAndPosixPassedToTheCompilerInDifferentWays() = with(NonRepeatedModuleNameGenerator()) {
         val librariesDir = testRunSettings.get<KotlinNativeHome>().librariesDir

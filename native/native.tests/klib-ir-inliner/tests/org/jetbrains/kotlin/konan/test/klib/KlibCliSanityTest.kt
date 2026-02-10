@@ -53,6 +53,30 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun `Compiler rejects non-existent KLIB passed via CLI arguments`() {
+        val modules = newSourceModules { addRegularModule("a") }
+
+        listOf(
+            "non-existent-klib",
+            "non-existent-klib.klib",
+            "non-existent-dir/non-existent-klib",
+            "non-existent-dir/non-existent-klib.klib",
+            modules.modules[0].sourceFile.parentFile.resolve("non-existent-klib").absolutePath,
+            modules.modules[0].sourceFile.parentFile.resolve("non-existent-klib.klib").absolutePath,
+        ).forEach { libraryPath ->
+            try {
+                modules.compileToKlibsViaCli(
+                    extraCliArgs = listOf("-library", libraryPath, "-friend-modules", libraryPath)
+                )
+
+                fail { "Normally unreachable code" }
+            } catch (cte: CompilationToolException) {
+                assertTrue(cte.reason.contains("KLIB resolver: Could not find \"$libraryPath\""))
+            }
+        }
+    }
+
+    @Test
     fun `Compiler warns on non-existent transitive dependency in depends= property of regular KLIB, v1`() =
         doTestWarnOnNonexistentTransitiveDependencyInManifestV1(lastModuleIsCInterop = false)
 
