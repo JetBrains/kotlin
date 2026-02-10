@@ -193,16 +193,16 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                         dep.descriptor.konanLibrary?.isFromKotlinNativeDistribution != true
                     }
 
-                    println("HOT_RELOAD_SPLIT: Separated dependencies:")
-                    println("  - Stdlib modules: ${stdlibDeps.size} (→ host via stdlib-cache.a)")
+                    context.log { "HOT_RELOAD_SPLIT: Separated dependencies:" }
+                    context.log { "  - Stdlib modules: ${stdlibDeps.size} (→ host via stdlib-cache.a)" }
                     stdlibDeps.forEach { dep ->
-                        println("      - ${dep.descriptor.name}")
+                        context.log { "      - ${dep.descriptor.name}" }
                     }
-                    println("  - Platform libraries: ${platformLibs.size} (→ bootstrap)")
+                    context.log { "  - Platform libraries: ${platformLibs.size} (→ bootstrap)" }
                     platformLibs.forEach { dep ->
-                        println("      - ${dep.descriptor.name}")
+                        context.log { "      - ${dep.descriptor.name}" }
                     }
-                    println("  - User modules: ${userLibs.size} (→ bootstrap)")
+                    context.log { "  - User modules: ${userLibs.size} (→ bootstrap)" }
                 } else {
                     val dependenciesToCompile = findDependenciesToCompile()
                     mergeDependencies(module, dependenciesToCompile)
@@ -277,8 +277,8 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                     when {
                         config.hotReloadHostMode && config.produce == CompilerOutputKind.PROGRAM -> {
                             // HOST mode: produce host executable + bootstrap.o (full build)
-                            println("HOT_RELOAD_SPLIT: Using HOST mode (full build)")
-                            println("HOT_RELOAD_SPLIT: Stdlib modules for host: ${hotReloadStdlibModules.size}")
+                            generationState.log { "HOT_RELOAD_SPLIT: Using HOST mode (full build)" }
+                            generationState.log { "HOT_RELOAD_SPLIT: Stdlib modules for host: ${hotReloadStdlibModules.size}" }
 
                             val hostBitcodeFile = tempFiles.create("host", ".bc").javaFile()
                             val bootstrapBitcodeFile = tempFiles.create("bootstrap", ".bc").javaFile()
@@ -311,15 +311,15 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                                     tempFiles,
                             )
 
-                            println("HOT_RELOAD_SPLIT: HOST mode compilation complete!")
-                            println("HOT_RELOAD_SPLIT:   Host executable: ${result.hostExecutable.canonicalPath}")
-                            println("HOT_RELOAD_SPLIT:   Bootstrap object: ${result.bootstrapObject.canonicalPath}")
+                            generationState.log { "HOT_RELOAD_SPLIT: HOST mode compilation complete!" }
+                            generationState.log { "HOT_RELOAD_SPLIT:   Host executable: ${result.hostExecutable.canonicalPath}" }
+                            generationState.log { "HOT_RELOAD_SPLIT:   Bootstrap object: ${result.bootstrapObject.canonicalPath}" }
                         }
 
                         config.hotReloadGuestMode && config.produce == CompilerOutputKind.PROGRAM -> {
                             // GUEST mode: produce only bootstrap.o (fast incremental builds)
                             // IC handles the "only recompile changed files" logic automatically
-                            println("HOT_RELOAD_GUEST: Using GUEST mode (bootstrap-only, IC-accelerated)")
+                            generationState.log { "HOT_RELOAD_GUEST: Using GUEST mode (bootstrap-only, IC-accelerated)" }
 
                             val bootstrapBitcodeFile = tempFiles.create("bootstrap", ".bc").javaFile()
 
@@ -348,8 +348,8 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                                     tempFiles,
                             )
 
-                            println("HOT_RELOAD_SPLIT: GUEST mode compilation complete!")
-                            println("HOT_RELOAD_SPLIT:   Bootstrap object: ${result.bootstrapObject.canonicalPath}")
+                            generationState.log { "HOT_RELOAD_SPLIT: GUEST mode compilation complete!" }
+                            generationState.log { "HOT_RELOAD_SPLIT:   Bootstrap object: ${result.bootstrapObject.canonicalPath}" }
                         }
 
                         else -> {
@@ -694,14 +694,14 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReload(
         bootstrapBitcodeFile: java.io.File,
         cExportFiles: CExportFiles?,
 ) {
-    println("HOT_RELOAD_SPLIT: Starting two-pass codegen")
+    context.log { "HOT_RELOAD_SPLIT: Starting two-pass codegen" }
 
     // ===================================================================
     // STEP 1: Generate user code into bootstrap module FIRST
     // ===================================================================
     // We do this first because codegen adds dependencies to the tracker.
     // We can only access bitcodeToLink (which seals the tracker) AFTER codegen.
-    println("HOT_RELOAD_SPLIT: === STEP 1: User code → Bootstrap ===")
+    context.log { "HOT_RELOAD_SPLIT: === STEP 1: User code → Bootstrap ===" }
 
     // Current context has HotReloadBootstrapLlvmModuleSpecification
     // This makes stdlib types appear as "external" - they won't be generated,
@@ -722,8 +722,8 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReload(
 
     // Write the bootstrap bitcode (user code only)
     LLVMWriteBitcodeToFile(context.llvm.module, bootstrapBitcodeFile.canonicalPath)
-    println("HOT_RELOAD_SPLIT: Wrote bootstrap bitcode to ${bootstrapBitcodeFile.canonicalPath}")
-    println("HOT_RELOAD_SPLIT:   Contains: User code + Konan_start (stdlib is external)")
+    context.log { "HOT_RELOAD_SPLIT: Wrote bootstrap bitcode to ${bootstrapBitcodeFile.canonicalPath}" }
+    context.log { "HOT_RELOAD_SPLIT:   Contains: User code + Konan_start (stdlib is external)" }
 
     // ===================================================================
     // STEP 2: Create host module with launcher + ObjC export classes
@@ -732,7 +732,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReload(
     // 1. Hot reload launcher
     // 2. ObjC export classes (OutputBase, OutputBoolean, etc.) - patched from objc.bc
     // C++ runtime and Kotlin stdlib come from libstdlib-cache.a at link time.
-    println("HOT_RELOAD_SPLIT: === STEP 2: Creating Host Module ===")
+    context.log { "HOT_RELOAD_SPLIT: === STEP 2: Creating Host Module ===" }
 
     // First, patch and serialize the ObjC module using the main context (where objCExport is available)
     // The patched module contains OutputBase, OutputBoolean, etc. (renamed from KotlinBase, etc.)
@@ -743,13 +743,13 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReload(
         if (objcModule != null) {
             LLVMWriteBitcodeToFile(objcModule, objcBitcodeFile.canonicalPath)
             hasObjCModule = true
-            println("HOT_RELOAD_SPLIT: Patched ObjC module (OutputBase, OutputBoolean, etc.)")
+            context.log { "HOT_RELOAD_SPLIT: Patched ObjC module (OutputBase, OutputBoolean, etc.)" }
             LLVMDisposeModule(objcModule)
         } else {
-            println("HOT_RELOAD_SPLIT: WARNING - ObjC module not available (no objCExport)")
+            context.log { "HOT_RELOAD_SPLIT: WARNING - ObjC module not available (no objCExport)" }
         }
     } catch (e: Exception) {
-        println("HOT_RELOAD_SPLIT: WARNING - Failed to patch ObjC module: ${e.message}")
+        context.log { "HOT_RELOAD_SPLIT: WARNING - Failed to patch ObjC module: ${e.message}" }
     }
 
     // Create a separate LLVM context for the host module
@@ -783,21 +783,21 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReload(
 
                 val res = LLVMCreateMemoryBufferWithContentsOfFile(objcBitcodeFile.canonicalPath, bufRef.ptr, errorRef.ptr)
                 if (res != 0) {
-                    println("HOT_RELOAD_SPLIT: WARNING - Failed to load ObjC bitcode: ${errorRef.value?.toKString()}")
+                    context.log { "HOT_RELOAD_SPLIT: WARNING - Failed to load ObjC bitcode: ${errorRef.value?.toKString()}" }
                 } else {
                     val memoryBuffer = bufRef.value
                     try {
                         val moduleRef = alloc<LLVMModuleRefVar>()
                         val parseRes = LLVMParseBitcodeInContext2(hostLlvmContext, memoryBuffer, moduleRef.ptr)
                         if (parseRes != 0) {
-                            println("HOT_RELOAD_SPLIT: WARNING - Failed to parse ObjC bitcode")
+                            context.log { "HOT_RELOAD_SPLIT: WARNING - Failed to parse ObjC bitcode" }
                         } else {
                             val objcModuleInHostContext = moduleRef.value!!
                             val linkFailed = LLVMLinkModules2(hostModule, objcModuleInHostContext)
                             if (linkFailed != 0) {
-                                println("HOT_RELOAD_SPLIT: WARNING - Failed to link ObjC module into host")
+                                context.log { "HOT_RELOAD_SPLIT: WARNING - Failed to link ObjC module into host" }
                             } else {
-                                println("HOT_RELOAD_SPLIT: Linked ObjC export classes into host (OutputBase, etc.)")
+                                context.log { "HOT_RELOAD_SPLIT: Linked ObjC export classes into host (OutputBase, etc.)" }
                             }
                         }
                     } finally {
@@ -813,9 +813,9 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReload(
 
         // Write host bitcode
         LLVMWriteBitcodeToFile(hostModule, hostBitcodeFile.canonicalPath)
-        println("HOT_RELOAD_SPLIT: Wrote host bitcode to ${hostBitcodeFile.canonicalPath}")
-        println("HOT_RELOAD_SPLIT:   Contains: Hot reload launcher + ObjC export classes")
-        println("HOT_RELOAD_SPLIT:   C++ runtime + stdlib will come from libstdlib-cache.a at link time")
+        context.log { "HOT_RELOAD_SPLIT: Wrote host bitcode to ${hostBitcodeFile.canonicalPath}" }
+        context.log { "HOT_RELOAD_SPLIT:   Contains: Hot reload launcher + ObjC export classes" }
+        context.log { "HOT_RELOAD_SPLIT:   C++ runtime + stdlib will come from libstdlib-cache.a at link time" }
 
         LLVMDisposeModule(hostModule)
     } finally {
@@ -823,7 +823,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReload(
         objcBitcodeFile.delete()
     }
 
-    println("HOT_RELOAD_SPLIT: Two-pass codegen complete!")
+    context.log { "HOT_RELOAD_SPLIT: Two-pass codegen complete!" }
 }
 
 /**
@@ -884,9 +884,9 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegenForHotReload(
     // Link library bitcode (interop stubs like knifunptr_*) into bootstrap
     // This is needed for platform library interop to work
     // NOTE: We skip runtime modules (MM, GC, alloc) - they're in libstdlib-cache.a
-    println("HOT_RELOAD_SPLIT: Linking library bitcode (interop stubs) into bootstrap...")
+    context.log { "HOT_RELOAD_SPLIT: Linking library bitcode (interop stubs) into bootstrap..." }
     linkLibraryBitcodeForHotReload(context, generatedBitcodeFiles)
-    println("HOT_RELOAD_SPLIT: Codegen and library linking complete")
+    context.log { "HOT_RELOAD_SPLIT: Codegen and library linking complete" }
 }
 
 /**
@@ -908,59 +908,26 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
     // Compile host bitcode to object file
     val hostObjectFile = java.io.File(outputFiles.outputName + ".host.o")
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(hotReloadOutput.hostBitcodeFile, hostObjectFile))
-    println("HOT_RELOAD_SPLIT: Compiled host.o at ${hostObjectFile.canonicalPath}")
+    context.log { "HOT_RELOAD_SPLIT: Compiled host.o at ${hostObjectFile.canonicalPath}" }
 
     // Compile bootstrap bitcode to object file
     // This is the final bootstrap.o that will be loaded by JITLink
     val bootstrapObjectFile = java.io.File(outputFiles.outputName + ".bootstrap.o")
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(hotReloadOutput.bootstrapBitcodeFile, bootstrapObjectFile))
-    println("HOT_RELOAD_SPLIT: Compiled bootstrap.o at ${bootstrapObjectFile.canonicalPath}")
+    context.log { "HOT_RELOAD_SPLIT: Compiled bootstrap.o at ${bootstrapObjectFile.canonicalPath}" }
 
     // Find stdlib cache path
     val stdlibCachePath = "dist/klib/cache/<target>/stdlib-cache/bin/libstdlib-cache.a"
 
-    // Print summary for the user
-    println("")
-    println("=== HOT RELOAD SPLIT COMPILATION COMPLETE ===")
-    println("Host object:      ${hostObjectFile.canonicalPath}")
-    println("Stdlib cache:     $stdlibCachePath")
-    println("Bootstrap object: ${bootstrapObjectFile.canonicalPath}")
-    println("")
-    println("ARCHITECTURE:")
-    println("  - Host.o contains:      Hot reload launcher ONLY")
-    println("  - libstdlib-cache.a:    C++ runtime + Kotlin stdlib (TypeInfos, boxing, etc.)")
-    println("  - Bootstrap.o contains: User code ONLY + Konan_start entry point")
-    println("")
-    println("The bootstrap.o references stdlib symbols (theStringTypeInfo, Kotlin_boxInt, etc.)")
-    println("as EXTERNAL - they are resolved from host + stdlib-cache via JITLink at runtime.")
-    println("")
-    println("NEXT STEPS (to create host executable):")
-    println("1. Link: host.o + libstdlib-cache.a + main.cpp + LLVM libs → host.kexe")
-    println("2. At runtime, the launcher will:")
-    println("   a. Load bootstrap.o via JITLink")
-    println("   b. Resolve bootstrap's external symbols from host + stdlib")
-    println("   c. Call Konan_start from bootstrap")
-    println("")
-    println("==============================================")
-    println("")
-
-    // NOTE: We do NOT link the host executable here because:
-    // 1. It requires LLVM libraries for JITLink
-    // 2. The user may want to customize the link command
-
-    println("HOT_RELOAD_SPLIT: ========================================")
-    println("HOT_RELOAD_SPLIT: Split compilation complete!")
-    println("HOT_RELOAD_SPLIT: ")
-    println("HOT_RELOAD_SPLIT: Produced artifacts:")
-    println("HOT_RELOAD_SPLIT:   1. Host object:      ${hostObjectFile.canonicalPath}")
-    println("HOT_RELOAD_SPLIT:      Contains: Hot reload launcher ONLY")
-    println("HOT_RELOAD_SPLIT:   2. Stdlib cache:     $stdlibCachePath")
-    println("HOT_RELOAD_SPLIT:      Contains: C++ runtime + Kotlin stdlib")
-    println("HOT_RELOAD_SPLIT:   3. Bootstrap object: ${bootstrapObjectFile.canonicalPath}")
-    println("HOT_RELOAD_SPLIT:      Contains: User code ONLY + Konan_start")
-    println("HOT_RELOAD_SPLIT: ")
-    println("HOT_RELOAD_SPLIT: When user code changes, only bootstrap.o needs recompiling!")
-    println("HOT_RELOAD_SPLIT: ========================================")
+    context.log { "HOT_RELOAD_SPLIT: Split compilation complete!" }
+    context.log { "HOT_RELOAD_SPLIT: Produced artifacts:" }
+    context.log { "HOT_RELOAD_SPLIT:   1. Host object:      ${hostObjectFile.canonicalPath}" }
+    context.log { "HOT_RELOAD_SPLIT:      Contains: Hot reload launcher ONLY" }
+    context.log { "HOT_RELOAD_SPLIT:   2. Stdlib cache:     $stdlibCachePath" }
+    context.log { "HOT_RELOAD_SPLIT:      Contains: C++ runtime + Kotlin stdlib" }
+    context.log { "HOT_RELOAD_SPLIT:   3. Bootstrap object: ${bootstrapObjectFile.canonicalPath}" }
+    context.log { "HOT_RELOAD_SPLIT:      Contains: User code ONLY + Konan_start" }
+    context.log { "HOT_RELOAD_SPLIT: When user code changes, only bootstrap.o needs recompiling!" }
 
     return HotReloadCompilationOutput(
             hostExecutable = hostObjectFile,  // Note: this is actually an object file, not executable yet
@@ -987,7 +954,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReloadGuest(
         bootstrapBitcodeFile: java.io.File,
         cExportFiles: CExportFiles?,
 ) {
-    println("HOT_RELOAD_GUEST: Starting guest-only codegen (bootstrap-only)")
+    context.log { "HOT_RELOAD_GUEST: Starting guest-only codegen (bootstrap-only)" }
 
     // Generate user code into bootstrap module
     // Current context has HotReloadBootstrapLlvmModuleSpecification
@@ -1009,8 +976,8 @@ internal fun PhaseEngine<NativeGenerationState>.compileModuleForHotReloadGuest(
 
     // Write the bootstrap bitcode (user code only)
     LLVMWriteBitcodeToFile(context.llvm.module, bootstrapBitcodeFile.canonicalPath)
-    println("HOT_RELOAD_GUEST: Wrote bootstrap bitcode to ${bootstrapBitcodeFile.canonicalPath}")
-    println("HOT_RELOAD_GUEST: Guest codegen complete!")
+    context.log { "HOT_RELOAD_GUEST: Wrote bootstrap bitcode to ${bootstrapBitcodeFile.canonicalPath}" }
+    context.log { "HOT_RELOAD_GUEST: Guest codegen complete!" }
 }
 
 /**
@@ -1028,14 +995,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLinkForHot
     val bootstrapObjectFile = java.io.File(outputFiles.outputName + ".bootstrap.o")
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(guestOutput.bootstrapBitcodeFile, bootstrapObjectFile))
 
-    println("")
-    println("=== HOT RELOAD GUEST COMPILATION COMPLETE ===")
-    println("Bootstrap object: ${bootstrapObjectFile.canonicalPath}")
-    println("")
-    println("This bootstrap.o can be loaded by the running host executable.")
-    println("The host should have been built previously with --hot-reload-split=host")
-    println("==============================================")
-    println("")
+    context.log { "HOT_RELOAD_GUEST: Compilation complete! Bootstrap object: ${bootstrapObjectFile.canonicalPath}" }
 
     return HotReloadGuestResult(
             bootstrapObject = bootstrapObjectFile,

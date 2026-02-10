@@ -32,6 +32,101 @@ internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLV
     return parsedModule
 }
 
+/**
+ * Creates an LLVM module containing WritableTypeInfo structures with ObjC export converters
+ * for special Kotlin classes (String, collections).
+ *
+ * This is needed for hot reload mode because:
+ * 1. stdlib-cache.a is built without ObjCExportCodeGenerator (isFinalBinary=false)
+ * 2. Therefore WritableTypeInfo for String, List, etc. are zero-initialized (no converters)
+ * 3. The bootstrap module imports TypeInfo from host, which points to these empty WritableTypeInfos
+ * 4. This causes String->NSString conversion to fail, creating wrapper classes instead
+ *
+ * By emitting WritableTypeInfo globals with EXTERNAL linkage in the host module,
+ * the linker will pick these over the COMMON linkage zero-initialized ones from stdlib-cache.a.
+ *
+ * @param generationState The native generation state
+ * @return An LLVM module with WritableTypeInfo globals, or null if not applicable
+ */
+internal fun createObjCExportConvertersModule(generationState: NativeGenerationState): LLVMModuleRef? {
+    val config = generationState.config
+    if (!config.target.family.isAppleFamily) return null
+
+    val llvmContext = generationState.llvmContext
+    val module = LLVMModuleCreateWithNameInContext("objc_export_converters", llvmContext)!!
+
+    // Get the WritableTypeInfo struct type from runtime
+    // WritableTypeInfo contains: { TypeInfoObjCExportAddition }
+    // TypeInfoObjCExportAddition contains: { convertToRetained (i8*), objCClass (i8*), swiftClass (i8*), typeAdapter (i8*) }
+    val int8PtrType = LLVMPointerType(LLVMInt8TypeInContext(llvmContext), 0)!!
+
+    // Create the TypeInfoObjCExportAddition struct type: { i8*, i8*, i8*, i8* }
+    val objCExportAdditionType = memScoped {
+        val elementTypes = allocArrayOf(int8PtrType, int8PtrType, int8PtrType, int8PtrType)
+        LLVMStructTypeInContext(llvmContext, elementTypes, 4, 0)!!
+    }
+
+    // Create the WritableTypeInfo struct type: { TypeInfoObjCExportAddition }
+    val writableTypeInfoType = memScoped {
+        val elementTypes = allocArrayOf(objCExportAdditionType)
+        LLVMStructTypeInContext(llvmContext, elementTypes, 1, 0)!!
+    }
+
+    // Converter function type: id (*)(ObjHeader*) -> i8* (*)(i8*)
+    val converterFuncType = memScoped {
+        val paramTypes = allocArrayOf(int8PtrType)
+        LLVMFunctionType(int8PtrType, paramTypes, 1, 0)!!
+    }
+
+    // Helper to declare an external converter function
+    fun declareConverter(name: String): LLVMValueRef {
+        return LLVMAddFunction(module, name, converterFuncType)!!
+    }
+
+    // Helper to create WritableTypeInfo global with a converter
+    fun createWritableTypeInfo(symbolName: String, converter: LLVMValueRef) {
+        // Create the struct value: { { converter, null, null, null } }
+        val nullPtr = LLVMConstNull(int8PtrType)!!
+        val converterPtr = LLVMConstBitCast(converter, int8PtrType)!!
+
+        val objCExportAddition = memScoped {
+            val values = allocArrayOf(converterPtr, nullPtr, nullPtr, nullPtr)
+            LLVMConstStructInContext(llvmContext, values, 4, 0)!!
+        }
+
+        val writableTypeInfo = memScoped {
+            val values = allocArrayOf(objCExportAddition)
+            LLVMConstStructInContext(llvmContext, values, 1, 0)!!
+        }
+
+        // Create the global with external linkage (overrides common linkage from stdlib-cache.a)
+        val global = LLVMAddGlobal(module, writableTypeInfoType, symbolName)!!
+        LLVMSetInitializer(global, writableTypeInfo)
+        LLVMSetLinkage(global, LLVMLinkage.LLVMExternalLinkage)
+    }
+
+    // Declare converter functions (these are defined in stdlib-cache.a runtime)
+    val stringConverter = declareConverter("Kotlin_ObjCExport_CreateRetainedNSStringFromKString")
+    val listConverter = declareConverter("Kotlin_Interop_CreateRetainedNSArrayFromKList")
+    val mutableListConverter = declareConverter("Kotlin_Interop_CreateRetainedNSMutableArrayFromKList")
+    val setConverter = declareConverter("Kotlin_Interop_CreateRetainedNSSetFromKSet")
+    val mutableSetConverter = declareConverter("Kotlin_Interop_CreateRetainedKotlinMutableSetFromKSet")
+    val mapConverter = declareConverter("Kotlin_Interop_CreateRetainedNSDictionaryFromKMap")
+    val mutableMapConverter = declareConverter("Kotlin_Interop_CreateRetainedKotlinMutableDictionaryFromKMap")
+
+    // Create WritableTypeInfo globals for special classes
+    // Symbol names follow the pattern: ktypew:<FQName>
+    createWritableTypeInfo("ktypew:kotlin.String", stringConverter)
+    createWritableTypeInfo("ktypew:kotlin.collections.List", listConverter)
+    createWritableTypeInfo("ktypew:kotlin.collections.MutableList", mutableListConverter)
+    createWritableTypeInfo("ktypew:kotlin.collections.Set", setConverter)
+    createWritableTypeInfo("ktypew:kotlin.collections.MutableSet", mutableSetConverter)
+    createWritableTypeInfo("ktypew:kotlin.collections.Map", mapConverter)
+    createWritableTypeInfo("ktypew:kotlin.collections.MutableMap", mutableMapConverter)
+
+    return module
+}
+
 private class PatchBuilder(val objCExportNamer: ObjCExportNamer) {
     enum class GlobalKind(val prefix: String) {
         OBJC_CLASS("OBJC_CLASS_\$_"),

@@ -8,6 +8,7 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.objc.createObjCExportConvertersModule
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModulesConfig
@@ -190,9 +191,8 @@ internal fun collectHostModulesForHotReload(
     }
 
     if (launcherOnly) {
-        println("HOT_RELOAD_SPLIT: Host module - Launcher only mode (runtime from stdlib-cache.a)")
+        // Launcher only mode: runtime comes from stdlib-cache.a
     }
-    println("HOT_RELOAD_SPLIT: Host module - Bitcode files: ${bitcodeFiles.size}")
 
     fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.mapNotNull { bitcodeFile ->
         memScoped {
@@ -201,7 +201,7 @@ internal fun collectHostModulesForHotReload(
 
             val res = LLVMCreateMemoryBufferWithContentsOfFile(bitcodeFile, bufRef.ptr, errorRef.ptr)
             if (res != 0) {
-                println("HOT_RELOAD_SPLIT: Warning - Failed to load bitcode file: $bitcodeFile - ${errorRef.value?.toKString()}")
+                // Failed to load bitcode file
                 return@mapNotNull null
             }
 
@@ -210,7 +210,7 @@ internal fun collectHostModulesForHotReload(
                 val moduleRef = alloc<LLVMModuleRefVar>()
                 val parseRes = LLVMParseBitcodeInContext2(llvmContext, memoryBuffer, moduleRef.ptr)
                 if (parseRes != 0) {
-                    println("HOT_RELOAD_SPLIT: Warning - Failed to parse bitcode file: $bitcodeFile")
+                    // Failed to parse bitcode file
                     return@mapNotNull null
                 }
                 moduleRef.value
@@ -222,7 +222,6 @@ internal fun collectHostModulesForHotReload(
 
     val hostModules = parseBitcodeFiles(bitcodeFiles)
 
-    println("HOT_RELOAD_SPLIT: Host module - Total parsed modules: ${hostModules.size}")
 
     // If runtimeLogs is provided, generate a constants module with strong linkage
     // This overrides the weak Kotlin_runtimeLogs from stdlib-cache.a
@@ -579,8 +578,8 @@ internal fun collectModulesForHotReload(generationState: NativeGenerationState, 
 
     val launcherModules = parseBitcodeFiles(launcherBitcodeFiles)
 
-    println("HOT_RELOAD_SPLIT: Host modules: ${launcherModules.size} (launcher only, runtime from libstdlib-cache.a)")
-    println("HOT_RELOAD_SPLIT: Bootstrap will contain user code + Konan_start")
+    generationState.log { "HOT_RELOAD_SPLIT: Host modules: ${launcherModules.size} (launcher only, runtime from libstdlib-cache.a)" }
+    generationState.log { "HOT_RELOAD_SPLIT: Bootstrap will contain user code + Konan_start" }
 
     return HotReloadSplitModules(
             hostModules = launcherModules, // Only launcher - runtime comes from libstdlib-cache.a
@@ -618,12 +617,11 @@ internal fun exportHotReloadEntryPoint(module: LLVMModuleRef) {
     }
 
     if (konanMainFunction == null) {
-        println("HOT_RELOAD_SPLIT: WARNING - Could not find Konan_main function in module")
+        // Could not find Konan_main function in module
         return
     }
 
     val mangledName = LLVMGetValueName(konanMainFunction)?.toKString().orEmpty()
-    println("HOT_RELOAD_SPLIT: Found Konan_main with mangled name: $mangledName")
 
     // Create an alias "Konan_main" that points to the mangled function
     // This allows JITLink to find the function by the unmangled name
@@ -635,7 +633,6 @@ internal fun exportHotReloadEntryPoint(module: LLVMModuleRef) {
     LLVMSetLinkage(alias, LLVMLinkage.LLVMExternalLinkage)
     LLVMSetVisibility(alias, LLVMVisibility.LLVMDefaultVisibility)
 
-    println("HOT_RELOAD_SPLIT: Created alias 'Konan_main' -> '$mangledName' with external linkage")
 }
 
 internal fun linkBitcodeDependencies(generationState: NativeGenerationState,
@@ -720,21 +717,33 @@ internal fun linkBitcodeDependenciesForHotReload(
     // This is critical for hot reload because bootstrap.o references OutputBase as external
     val objCModule = patchObjCRuntimeModule(generationState)
     if (objCModule != null) {
-        println("HOT_RELOAD_SPLIT: Linking ObjC runtime module into host (OutputBase, OutputBoolean, etc.)")
+        generationState.log { "HOT_RELOAD_SPLIT: Linking ObjC runtime module into host (OutputBase, OutputBoolean, etc.)" }
         val failed = llvmLinkModules2(generationState, hostModule, objCModule)
         if (failed != 0) {
             error("Failed to link ObjC runtime module into host")
         }
     } else {
-        println("HOT_RELOAD_SPLIT: WARNING - ObjC runtime module not available (objCExport not initialized?)")
+        generationState.log { "HOT_RELOAD_SPLIT: WARNING - ObjC runtime module not available (objCExport not initialized?)" }
+    }
+
+    // Link the ObjC export converters module (WritableTypeInfo for String, collections)
+    // This provides the convertToRetained function pointers that are missing from stdlib-cache.a
+    // because stdlib-cache is built with isFinalBinary=false (no ObjCExportCodeGenerator.generate())
+    val convertersModule = createObjCExportConvertersModule(generationState)
+    if (convertersModule != null) {
+        generationState.log { "HOT_RELOAD_SPLIT: Linking ObjC export converters module into host" }
+        val failed = llvmLinkModules2(generationState, hostModule, convertersModule)
+        if (failed != 0) {
+            error("Failed to link ObjC export converters module into host")
+        }
     }
 
     // The bootstrap module is the user code module (generationState.llvmModule)
     // It contains user code + Konan_main entry point
     val bootstrapModule = generationState.llvmModule
 
-    println("HOT_RELOAD_SPLIT: Host module contains launcher + ObjC export classes (runtime from libstdlib-cache.a)")
-    println("HOT_RELOAD_SPLIT: Bootstrap module contains user code + Konan_start")
+    generationState.log { "HOT_RELOAD_SPLIT: Host module contains launcher + ObjC export classes (runtime from libstdlib-cache.a)" }
+    generationState.log { "HOT_RELOAD_SPLIT: Bootstrap module contains user code + Konan_start" }
 
     return HotReloadLlvmModules(
             hostModule = hostModule,
@@ -786,14 +795,14 @@ internal fun linkLibraryBitcodeForHotReload(
     }
 
     if (bitcodeFilesToLink.isEmpty()) {
-        println("HOT_RELOAD_SPLIT: No library bitcode to link into bootstrap")
+        generationState.log { "HOT_RELOAD_SPLIT: No library bitcode to link into bootstrap" }
         return
     }
 
-    println("HOT_RELOAD_SPLIT: Linking ${bitcodeFilesToLink.size} library bitcode files into bootstrap")
+    generationState.log { "HOT_RELOAD_SPLIT: Linking ${bitcodeFilesToLink.size} library bitcode files into bootstrap" }
     bitcodeFilesToLink.forEachIndexed { index, path ->
         val fileName = path.substringAfterLast('/')
-        println("HOT_RELOAD_SPLIT:   [$index] $fileName")
+        generationState.log { "HOT_RELOAD_SPLIT:   [$index] $fileName" }
     }
 
     // Parse and link each bitcode file into the bootstrap module
@@ -802,7 +811,7 @@ internal fun linkLibraryBitcodeForHotReload(
         parseAndLinkBitcodeFile(generationState, bootstrapModule, bitcodeFile)
     }
 
-    println("HOT_RELOAD_SPLIT: Library bitcode linking complete")
+    generationState.log { "HOT_RELOAD_SPLIT: Library bitcode linking complete" }
 }
 
 private fun parseAndLinkBitcodeFile(generationState: NativeGenerationState, llvmModule: LLVMModuleRef, path: String) {
