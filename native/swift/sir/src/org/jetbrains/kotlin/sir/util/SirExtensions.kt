@@ -81,6 +81,7 @@ val SirType.swiftName
             val returnType = returnType.swiftName
             "($parameters)$async$throws -> $returnType"
         }
+        is SirTupleType -> "(${types.joinToString { (name, type) -> "${name?.let { "$it: " } ?: ""}${type.swiftName}" }})"
     }
 
 val SirType.annotatedSwiftName

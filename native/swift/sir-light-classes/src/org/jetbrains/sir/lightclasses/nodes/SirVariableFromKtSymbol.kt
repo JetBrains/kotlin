@@ -147,6 +147,7 @@ internal abstract class SirAbstractGetter(
             selfParameter = (variable.parent !is SirModule && variable.isInstance).ifTrue {
                 SirParameter("", "self", selfType ?: error("Only a member can have a self parameter"))
             },
+            contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "_out_error", it)
@@ -214,6 +215,7 @@ internal abstract class SirAbstractSetter(
             selfParameter = (parent !is SirModule && variable.isInstance).ifTrue {
                 SirParameter("", "self", selfType ?: error("Only a member can have a self parameter"))
             },
+            contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "_out_error", it)
