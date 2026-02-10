@@ -218,7 +218,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
     private fun IrBuilderWithScope.getExtraConstructorArgument(
         parameter: IrValueParameter,
         reference: IrRichFunctionReference,
-        receiverTemp: IrVariable?
+        receiverTemp: IrVariable?,
     ): IrExpression {
         val linkerError = reference.getLinkageErrorIfAny(backendContext)
         val reflectionTargetSymbol = reference.reflectionTargetSymbol
@@ -302,7 +302,8 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                 val clazz = createOrGetFunctionReferenceClass(expression)
                 val bridgedFunction = buildBridgedFunction(
                     expression,
-                    irBuilder.scope.getLocalDeclarationParent()
+                    irBuilder.scope.getLocalDeclarationParent(),
+                    irFile,
                 )
 
                 val constructorExpression = buildConstructorExpression(expression, clazz.primaryConstructor!!, irBuilder, bridgedFunction)
@@ -312,7 +313,8 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                 // field, as it makes FieldInitializersLowering and DCE simpler.
                 val isInGlobalFieldInitializer = data is IrField && data.isStatic
                 return if (expression.boundValues.isEmpty() && !isInGlobalFieldInitializer) {
-                    val fieldName = Name.identifier("${clazz.name.asString()}_${expression.reflectionTargetSymbol?.owner?.name?.asString() ?: "lambda"}_singleton")
+                    val fieldName =
+                        Name.identifier("${clazz.name.asString()}_${expression.reflectionTargetSymbol?.owner?.name?.asString() ?: "lambda"}_singleton")
                     val singletonField = context.irFactory.buildField {
                         name = fieldName
                         type = expression.type
@@ -335,14 +337,6 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                 shouldNotBeCalled()
             }
         }, null)
-    }
-
-    private fun IrDeclarationParent.findNearestContainer(): IrDeclarationContainer {
-        var container = this
-        while (container is IrDeclaration && container !is IrClass && container !is IrScript) {
-            container = container.parent
-        }
-        return container as IrDeclarationContainer
     }
 
     private fun callableReferenceKeyToName(key: CallableReferenceKey): Name {
@@ -537,6 +531,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
     private fun buildBridgedFunction(
         functionReference: IrRichFunctionReference,
         parent: IrDeclarationParent,
+        irFile: IrFile,
     ): IrSimpleFunction {
         val superFunction = functionReference.overriddenFunctionSymbol.owner
         val invokeFunction = functionReference.invokeFunction
@@ -547,7 +542,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         val anyNType = backendContext.irBuiltIns.anyNType
         val containerPath = if (parent is IrClass || parent is IrFunction) parent.name.asString() else ""
         val reflectionTargetName = functionReference.reflectionTargetSymbol?.owner?.name?.asString() ?: "lambda"
-        return context.irFactory.addFunction(parent.findNearestContainer()) {
+        return context.irFactory.addFunction(irFile) {
             setSourceRange(if (isLambda) invokeFunction else functionReference)
             origin = IrDeclarationOrigin.DEFINED
             name = Name.identifier("${containerPath}_${reflectionTargetName}\$bridged")
@@ -594,22 +589,13 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                         return super.visitDeclaration(declaration)
                     }
                 }, null)
-                when (transformedBody) {
-                    is IrBlockBody -> {
-                        +transformedBody.statements
-                        if (invokeFunction.returnType.isUnit()) {
-                            +irReturn(irUnit())
-                        }
+                if (transformedBody is IrBlockBody) {
+                    +transformedBody.statements
+                    if (invokeFunction.returnType.isUnit()) {
+                        +irReturn(irUnit())
                     }
-                    is IrExpressionBody -> {
-                        if (invokeFunction.returnType.isUnit()) {
-                            +transformedBody.expression
-                            +irReturn(irUnit())
-                        } else {
-                            +irReturn(transformedBody.expression.implicitCastTo(anyNType))
-                        }
-                    }
-                    else -> error("Unexpected body type: ${transformedBody::class.simpleName}")
+                } else {
+                    error("Unexpected body type: ${transformedBody::class.simpleName}")
                 }
             }
         }

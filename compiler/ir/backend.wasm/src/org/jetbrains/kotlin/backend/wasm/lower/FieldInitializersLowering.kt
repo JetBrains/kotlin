@@ -80,22 +80,23 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
                 if (initializer is IrConst && initializer.kind !is IrConstKind.String) return
 
                 val isStaticFunctionReference = declaration.origin == STATIC_FUNCTION_REFERENCE
+                val forObjectInitializer = declaration.isObjectInstanceField() || isStaticFunctionReference
 
                 val initializeFunction = when {
-                    declaration.isObjectInstanceField() || isStaticFunctionReference-> objectInstanceFieldInitializer
+                    forObjectInitializer -> objectInstanceFieldInitializer
                     else -> nonConstantFieldInitializer
                 }
 
                 val currentFunction = initializeFunction ?: run {
                     context.irFactory.stageController.restrictTo(declaration) {
-                        createInitializerFunction(if (declaration.isObjectInstanceField() || isStaticFunctionReference) {
+                        createInitializerFunction(if (forObjectInitializer) {
                                                       "objectInitializer"
                                                   } else {
                                                       "nonConstantInitializer"
                                                   })
                     }.also {
                         when {
-                            declaration.isObjectInstanceField() || isStaticFunctionReference -> objectInstanceFieldInitializer = it
+                            forObjectInitializer -> objectInstanceFieldInitializer = it
                             else -> nonConstantFieldInitializer = it
                         }
                     }

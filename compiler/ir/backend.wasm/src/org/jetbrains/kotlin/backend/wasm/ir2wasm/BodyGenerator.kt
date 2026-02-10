@@ -775,13 +775,14 @@ class BodyGenerator(
         // erased funcref.
         if (call.symbol == wasmSymbols.callRef) {
             val resultType = call.typeArguments[0]!!
+            val callRefArguments = call.arguments.drop(1)
             val wasmFunctionType = WasmFunctionType(
-                parameterTypes = call.arguments.drop(1).map {
+                parameterTypes = callRefArguments.map {
                     wasmModuleTypeTransformer.transformType(it!!.type)
                 },
                 resultTypes = listOfNotNull(wasmModuleTypeTransformer.transformResultType(resultType)),
             )
-            call.arguments.drop(1).forEach { generateExpression(it!!) }
+            callRefArguments.forEach { generateExpression(it!!) }
             val functionTypeReference = wasmFileCodegenContext.referenceFunctionType(wasmFunctionType)
             generateExpression(call.arguments[0]!!)
             body.buildRefCastStatic(wasmFileCodegenContext.referenceFunctionHeapType(wasmFunctionType), location)

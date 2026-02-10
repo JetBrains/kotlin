@@ -109,17 +109,13 @@ open class WasmFileCodegenContext(
 
     fun referenceFunctionType(wasmFunctionType: WasmFunctionType): FunctionTypeSymbol {
         val signature = getFunctionTypeSignature(wasmFunctionType)
-        if (!wasmFileFragment.definedFunctionTypes.containsKey(signature)) {
-            wasmFileFragment.definedFunctionTypes[signature] = wasmFunctionType
-        }
+        wasmFileFragment.definedFunctionTypes.putIfAbsent(signature, wasmFunctionType)
         return FunctionTypeSymbol(signature)
     }
 
     fun referenceFunctionHeapType(wasmFunctionType: WasmFunctionType): FunctionHeapTypeSymbol {
         val signature = getFunctionTypeSignature(wasmFunctionType)
-        if (!wasmFileFragment.definedFunctionTypes.containsKey(signature)) {
-            wasmFileFragment.definedFunctionTypes[signature] = wasmFunctionType
-        }
+        wasmFileFragment.definedFunctionTypes.putIfAbsent(signature, wasmFunctionType)
         return FunctionHeapTypeSymbol(signature)
     }
 

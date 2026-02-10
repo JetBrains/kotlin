@@ -30,6 +30,8 @@ class WasmBridgesConstruction(val context: JsCommonBackendContext) : BridgesCons
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration.isEffectivelyExternal()) return null
+        // WasmCallableReferenceLowering already handles bridging methods in classes produced from
+        // callable reference lowering.
         if (declaration.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL) return null
         return super.transformFlat(declaration)
     }
