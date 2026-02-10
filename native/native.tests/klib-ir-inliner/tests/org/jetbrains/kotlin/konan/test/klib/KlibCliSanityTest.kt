@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.test.utils.assertCompilerOutputHasKlibResolverIncomp
 import org.jetbrains.kotlin.test.utils.patchManifestAsMap
 import org.jetbrains.kotlin.test.utils.patchManifestToBumpAbiVersion
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import java.io.File
 import kotlin.collections.set
 import kotlin.text.contains
 
@@ -50,6 +52,36 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         }
 
         modules.compileToKlibsViaCli(produceUnpackedKlibs = false)
+    }
+
+    @Test
+    fun `Compiler consumes unpacked KLIBs passed by relative paths via CLI arguments`() {
+        doTestCompilerConsumesKlibPassedByRelativePath(produceUnpackedKlibs = true)
+    }
+
+    @Test
+    fun `Compiler consumes packed KLIBs passed by relative paths via CLI arguments`() {
+        doTestCompilerConsumesKlibPassedByRelativePath(produceUnpackedKlibs = false)
+    }
+
+    private fun doTestCompilerConsumesKlibPassedByRelativePath(produceUnpackedKlibs: Boolean) {
+        var moduleAKlibFile: File? = null
+
+        newSourceModules {
+            addRegularModule("a")
+        }.compileToKlibsViaCli(produceUnpackedKlibs = produceUnpackedKlibs) { _, successKlib ->
+            moduleAKlibFile = successKlib.resultingArtifact.klibFile
+        }
+        checkNotNull(moduleAKlibFile)
+
+        val moduleAKlibRelativePath: String = moduleAKlibFile.relativeTo(File(System.getProperty("user.dir"))).path
+        assertNotEquals(moduleAKlibRelativePath, moduleAKlibFile.path)
+
+        newSourceModules {
+            addRegularModule("b") {
+                sourceFileAddend("fun foo() = a.a(0)") // call a real function from "a"
+            }
+        }.compileToKlibsViaCli(extraCliArgs = listOf("-library", moduleAKlibRelativePath))
     }
 
     @Test

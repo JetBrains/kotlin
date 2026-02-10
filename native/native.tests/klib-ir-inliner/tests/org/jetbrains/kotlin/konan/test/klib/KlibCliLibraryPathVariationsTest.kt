@@ -95,47 +95,6 @@ class KlibCliLibraryPathVariationsTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    @DisplayName("Custom library passed to the compiler by the relative path")
-    fun testCustomLibraryPassedToTheCompilerByTheRelativePath() = with(NonRepeatedModuleNameGenerator()) {
-        customLibraryPassedToTheCompilerByTheRelativePath(true, false)
-        customLibraryPassedToTheCompilerByTheRelativePath(false, false)
-        customLibraryPassedToTheCompilerByTheRelativePath(true, true)
-        customLibraryPassedToTheCompilerByTheRelativePath(false, true)
-    }
-
-    private fun NonRepeatedModuleNameGenerator.customLibraryPassedToTheCompilerByTheRelativePath(
-        produceUnpackedKlib: Boolean,
-        relocateDependencyToAnotherDir: Boolean,
-    ) {
-        val dependencyFileName = run {
-            val originalDependencyFile = compileDependencyModule(produceUnpackedKlib)
-            if (relocateDependencyToAnotherDir) {
-                val customDir = buildDir.resolve("custom-dir-for-${if (produceUnpackedKlib) "unpacked" else "packed"}-library")
-                customDir.mkdirs()
-
-                val movedDependencyFile = customDir.resolve(originalDependencyFile.name)
-                originalDependencyFile.copyRecursively(movedDependencyFile)
-                originalDependencyFile.deleteRecursively()
-
-                movedDependencyFile.name
-            } else {
-                originalDependencyFile.name
-            }
-        }
-
-        sequenceOf(
-            dependencyFileName,
-            runIf(produceUnpackedKlib) { "$dependencyFileName/../$dependencyFileName" },
-            runIf(produceUnpackedKlib) { "$dependencyFileName/default/.." },
-        ).filterNotNull().forEach { libraryPath ->
-            if (relocateDependencyToAnotherDir)
-                expectFailingAsNotFound(libraryPath) { compileMainModule(libraryPath) }
-            else
-                compileMainModule(libraryPath)
-        }
-    }
-
-    @Test
     @DisplayName("Custom library with custom unique name passed to the compiler by the absolute or the relative path")
     fun testCustomLibraryWithCustomUniqueNamePassedToTheCompilerByTheAbsoluteOrTheRelativePath() {
         with(NonRepeatedModuleNameGenerator(customUniqueName = true)) {
