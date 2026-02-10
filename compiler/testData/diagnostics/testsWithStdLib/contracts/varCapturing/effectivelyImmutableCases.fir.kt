@@ -32,5 +32,41 @@ private fun testNotCaptured() {
     }
 }
 
+private fun testUnstableNotCaptured() {
+    barRegular {
+        var isEmpty = true
+        barRegular {
+            <!CV_DIAGNOSTIC!>isEmpty<!> = false
+        }
+        if (isEmpty) {
+            println("Empty")
+        }
+    }
+}
+
+private fun testSimpleCapturedCase(){
+    var first = true
+    barRegular {
+        barRegular {
+            if (<!CV_DIAGNOSTIC!>first<!>) {
+                <!CV_DIAGNOSTIC!>first<!> = false
+            }
+        }
+    }
+}
+
+fun testReturnAnonymousFunction(): (String) -> Unit {
+    var isScheduled = false
+    return { t ->
+        if (!<!CV_DIAGNOSTIC!>isScheduled<!>) {
+            <!CV_DIAGNOSTIC!>isScheduled<!> = true
+            barRegular {
+                baz(t)
+                <!CV_DIAGNOSTIC!>isScheduled<!> = false
+            }
+        }
+    }
+}
+
 /* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, lambdaLiteral, localProperty,
 propertyDeclaration, stringLiteral */
