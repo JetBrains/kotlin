@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T> listOf(vararg e: T): List<T> = null!!

@@ -17,4 +17,4 @@ fun foo(p: Boolean) {
     <expr>bar()</expr>
 }
 
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters

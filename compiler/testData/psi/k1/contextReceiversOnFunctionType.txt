@@ -3,7 +3,7 @@ KtFile: contextReceiversOnFunctionType.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  PsiComment(EOL_COMMENT)('// LANGUAGE: +ContextReceivers')
+  PsiComment(EOL_COMMENT)('// LANGUAGE: +ContextReceivers, -ContextParameters')
   PsiWhiteSpace('\n\n')
   CLASS
     MODIFIER_LIST

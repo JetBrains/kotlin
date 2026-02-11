@@ -1,4 +1,4 @@
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters
 // IGNORE_BACKEND_K2: ANY
 // WITH_STDLIB
 interface Semigroup<T> {

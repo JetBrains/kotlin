@@ -7,4 +7,4 @@ val foo: Unit
     get() {
         val x = 1
 }</expr>
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters

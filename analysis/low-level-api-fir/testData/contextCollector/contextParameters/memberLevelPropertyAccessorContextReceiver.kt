@@ -9,4 +9,4 @@ class B {
     }</expr>
 }
 
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters

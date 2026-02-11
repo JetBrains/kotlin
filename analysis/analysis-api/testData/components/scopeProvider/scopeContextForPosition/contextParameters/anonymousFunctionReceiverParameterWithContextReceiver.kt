@@ -11,4 +11,4 @@ fun <T1> C.foo(param: Int, param2: String) {
     }
 }
 
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters
