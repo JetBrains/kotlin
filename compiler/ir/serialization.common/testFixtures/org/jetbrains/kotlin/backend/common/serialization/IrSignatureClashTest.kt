@@ -260,12 +260,14 @@ abstract class IrSignatureClashTest {
 
     private fun createIrDiagnosticReporter(): IrDiagnosticReporter {
         val diagnosticReporter = object : DiagnosticReporter() {
-            private var _hasErrors = false
-            override val hasErrors: Boolean get() = _hasErrors
+            override var hasErrors: Boolean = false
+                private set
+
+            override val hasWarningsForWError: Boolean get() = false
 
             override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
                 if (diagnostic != null) {
-                    _hasErrors = true
+                    hasErrors = true
                 }
             }
         }

@@ -21,6 +21,8 @@ class DiagnosticsCollectorStub : BaseDiagnosticsCollector() {
         get() = error("Should not reach here")
     override val hasErrors: Boolean
         get() = error("Should not reach here")
+    override val hasWarningsForWError: Boolean
+        get() = error("Should not reach here")
 
     override fun report(
         diagnostic: KtDiagnostic?,

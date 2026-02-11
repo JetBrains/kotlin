@@ -26,5 +26,7 @@ abstract class BaseDiagnosticsCollector : DiagnosticReporter() {
 
         override val hasErrors: Boolean
             get() = false
+        override val hasWarningsForWError: Boolean
+            get() = false
     }
 }

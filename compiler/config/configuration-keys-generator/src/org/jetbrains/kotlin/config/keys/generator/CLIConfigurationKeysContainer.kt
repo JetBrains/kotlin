@@ -35,6 +35,7 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
     val DIAGNOSTICS_COLLECTOR by key<BaseDiagnosticsCollector>(lazyDefaultValue = """error("diagnostic collector is not initialized")""")
 
     val RENDER_DIAGNOSTIC_INTERNAL_NAME by key<Boolean>()
+    val TREAT_WARNINGS_AS_ERRORS by key<Boolean>()
 
     val ALLOW_KOTLIN_PACKAGE by key<Boolean>()
 

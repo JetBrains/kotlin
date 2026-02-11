@@ -29,6 +29,7 @@ fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
     createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
 ) {
+    treatWarningsAsErrors = arguments.allWarningsAsErrors
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
     put(CommonConfigurationKeys.USE_FIR_EXTRA_CHECKERS, arguments.extraWarnings)
     put(CommonConfigurationKeys.METADATA_KLIB, arguments.metadataKlib)

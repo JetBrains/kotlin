@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.diagnostics.impl
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.Severity
 
 /**
  * Standard implementation of [BaseDiagnosticsCollector]
@@ -21,13 +20,15 @@ class DiagnosticsCollectorImpl : BaseDiagnosticsCollector() {
     override var hasErrors = false
         private set
 
+    override var hasWarningsForWError = false
+        private set
+
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic != null && !context.isDiagnosticSuppressed(diagnostic)) {
             diagnosticsByFilePath.getOrPut(context.containingFilePath) { mutableListOf() }.run {
                 add(diagnostic)
-                if (!hasErrors && diagnostic.severity == Severity.ERROR) {
-                    hasErrors = true
-                }
+                hasErrors = hasErrors || diagnostic.severity.isError
+                hasWarningsForWError = hasWarningsForWError || diagnostic.severity.isErrorWhenWError
             }
         }
     }
