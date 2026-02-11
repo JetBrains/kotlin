@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNpmTooling
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
+import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
@@ -286,6 +287,7 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
                         task.args(
                             listOf(project.rootProject.extensions.getByType(WasmYarnRootEnvSpec::class.java).executable.get())
                         )
+                        task.dependsOn(WasmYarnRootExtension.get(project.rootProject).yarnSetupTaskProvider)
                     } else {
                         task.executable(
                             project.rootProject.extensions.getByType(WasmNpmExtension::class.java).requireConfigured().executable
