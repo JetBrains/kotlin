@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.hasDirectOrTransitiveSwiftPMDependencies
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
@@ -76,6 +77,9 @@ internal constructor(
 
     final override val targets: NamedDomainObjectCollection<KotlinTarget>
         get() = targetsContainer.targets
+
+    internal val hasSwiftPMDependencies: Boolean
+        get() = project.hasDirectOrTransitiveSwiftPMDependencies().get()
 
     override fun js(
         name: String,
@@ -275,6 +279,7 @@ internal constructor(
             .also {
                 syncCommonMultiplatformOptions(it)
             }
+
 }
 
 private const val targetsExtensionDeprecationMessage =

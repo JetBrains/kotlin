@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.getExtension
+import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
+import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
+import org.jetbrains.kotlin.gradle.plugin.ide.prepareKotlinIdeaImportTask
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
@@ -388,6 +391,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     }
 }
 
+@OptIn(Idea222Api::class)
 private fun Project.swiftPMDependenciesMetadataTask(
     swiftPMImportExtension: SwiftImportExtension,
 ): TaskProvider<SerializeSwiftPMDependenciesMetadata> {
@@ -403,6 +407,11 @@ private fun Project.swiftPMDependenciesMetadataTask(
     project.multiplatformExtension.publishing.adhocSoftwareComponent.addVariantsFromConfiguration(
         swiftPMDependenciesMetadataApiElements
     ) {}
+
+    /**
+     * This is necessary only for serializing swiftPM dependencies metadata before we will query it in KotlinMPPGradleModelBuilder
+     */
+    project.ideaImportDependsOn(swiftPMDependenciesMetadata)
     return swiftPMDependenciesMetadata
 }
 
