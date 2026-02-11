@@ -246,12 +246,13 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 expression
             }
 
-            symbols.initInstance -> { // Leave the second argument of [initInstance] as is.
+            symbols.initInstance -> {
                 val instance = expression.arguments[0]!!
                 val constructorCall = expression.arguments[1]!!
                 check(constructorCall is IrConstructorCall) { "Expected a constructor call: ${constructorCall.render()}" }
                 expression.arguments[0] = instance.transform(this, data = null).useAs(irBuiltIns.anyType)
-                constructorCall.transformChildrenVoid()
+                // Leave the second argument of [initInstance] as is.
+                super.visitConstructorCall(constructorCall)
 
                 expression
             }
