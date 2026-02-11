@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] contextParameterAsImplicitReturnTypePropagation.kt
 
     }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /foo]] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/String|.bar(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
-        ^bar R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
+        ^bar context(this@R|/bar|) R|/foo|()
     }
     context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] parameter: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|)
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {

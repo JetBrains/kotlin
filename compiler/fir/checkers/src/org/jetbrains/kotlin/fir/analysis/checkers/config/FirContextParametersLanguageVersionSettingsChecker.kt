@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.isEnabled
 object FirContextParametersLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecker() {
     val DIAGNOSTIC_MESSAGE: String = """
         Experimental context receivers are superseded by context parameters.
-        Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
+        Remove the '-Xcontext-receivers' compiler argument and migrate to the new syntax.
 
         See the context parameters proposal for more details: https://kotl.in/context-parameters""".trimIndent()
 
@@ -25,11 +25,6 @@ object FirContextParametersLanguageVersionSettingsChecker : FirLanguageVersionSe
             return
         }
 
-        val message = when {
-            LanguageFeature.ContextParameters.isEnabled() -> "Experimental language features for context receivers and context parameters cannot be enabled at the same time. " +
-                    "Remove the '-Xcontext-receivers' compiler argument."
-            else -> DIAGNOSTIC_MESSAGE
-        }
-        reporter.report(CliFrontendDiagnostics.CONTEXT_PARAMETERS_ARE_DEPRECATED, message)
+        reporter.report(CliFrontendDiagnostics.CONTEXT_PARAMETERS_ARE_DEPRECATED, DIAGNOSTIC_MESSAGE)
     }
 }
