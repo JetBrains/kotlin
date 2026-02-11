@@ -216,7 +216,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
             ),
             errorsFiles = null,
             kotlinPluginVersion = parameters.kotlinPluginVersion.get(),
-            //no need to log warnings in MessageCollector hear it will be logged by compiler
+            // no need to log warnings in MessageCollector here, it will be logged by compiler
             kotlinLanguageVersion = args.languageVersion?.let { v ->
                 KotlinVersion.fromVersion(
                     v
