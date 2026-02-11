@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: -ContextParameters
 // ISSUE: KT-63068
 fun List<Int>.f() {
     this<!UNRESOLVED_LABEL!>@List<!>.size
