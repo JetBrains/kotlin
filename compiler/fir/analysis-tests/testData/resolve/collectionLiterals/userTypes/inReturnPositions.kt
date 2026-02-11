@@ -14,13 +14,13 @@ fun returnBoolean() = true
 fun <V> myNullableList(): MyList<V>? = null
 fun myNullableListInt() = myNullableList<Int>()
 
-fun returnCollectionWithNoExpectedType() = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>
+fun returnCollectionWithNoExpectedType() = <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>
 fun returnMyListInt(): MyList<Int> = [1, 2, 3]
 fun <A> returnMyEmptyList(): MyList<A> = []
 fun <B> returnMyListWithStrings(): MyList<B> = <!RETURN_TYPE_MISMATCH!>["1", "2", "3"]<!>
 fun <C> returnMyListOf(c: C): MyList<C> = [c]
 fun returnUnit() {
-    return <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>
+    return <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>
 }
 fun returnWrappedInRunLike() = runLikeListInt { [1, 2, 3] }
 fun returnWrappedInRunLikeWrongType() = runLikeListInt { <!RETURN_TYPE_MISMATCH!>["1", "2", "3"]<!> }

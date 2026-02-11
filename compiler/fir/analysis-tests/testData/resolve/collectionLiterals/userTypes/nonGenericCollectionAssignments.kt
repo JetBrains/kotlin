@@ -23,7 +23,7 @@ fun test() {
     lst = [<!NULL_FOR_NONNULL_TYPE!>null<!>] // should not pass
     lst = ["0", <!ARGUMENT_TYPE_MISMATCH!>A()<!>] // should not pass
 
-    val withoutSpecifiedType = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>
+    val withoutSpecifiedType = <!UNRESOLVED_REFERENCE!>[]<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, companionObject, functionDeclaration, localProperty,

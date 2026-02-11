@@ -1,5 +1,5 @@
 // LANGUAGE: +CollectionLiterals
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 
 fun <T> assertEq(expected: T, calc: () -> T) { }
 
@@ -18,12 +18,12 @@ fun test() {
     assertEqWithInput(id([]), 42) { setOf(it) }
     assertEqWithInput(id([42]), "") { setOf(it) }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>assertEq<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>) { <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!> }
-    <!CANNOT_INFER_PARAMETER_TYPE!>assertEq<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>) { <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!> }
+    assertEq([]) { [42] }
+    assertEq([42]) { [] }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>assertEqWithInput<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>, "") { <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!> }
-    <!CANNOT_INFER_PARAMETER_TYPE!>assertEqWithInput<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, "") { <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[it]<!> }
-    <!CANNOT_INFER_PARAMETER_TYPE!>assertEqWithInput<!>(<!CANNOT_INFER_PARAMETER_TYPE!>id<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>), "") { <!CANNOT_INFER_PARAMETER_TYPE!>id<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[it]<!>) }
+    assertEqWithInput([42], "") { [] }
+    assertEqWithInput([], "") { [it] }
+    assertEqWithInput(id([]), "") { id([it]) }
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, nullableType, stringLiteral,

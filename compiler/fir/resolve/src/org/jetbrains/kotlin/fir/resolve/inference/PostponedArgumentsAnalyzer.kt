@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.ErrorCollectionLiteralResolutionStrategy
+import org.jetbrains.kotlin.fir.resolve.FallbackCollectionLiteralResolutionStrategy
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
@@ -242,20 +243,24 @@ class PostponedArgumentsAnalyzer(
         }
 
         if (newExpression == null) {
-            newExpression = ErrorCollectionLiteralResolutionStrategy(resolutionContext)
-                .resolveCollectionLiteral(atom, topLevelCandidate, null)!!
-                .apply {
-                    val calleeReference = calleeReference as? FirErrorReferenceWithCandidate
-                        ?: error("${ErrorCollectionLiteralResolutionStrategy::class.simpleName} must return callee reference with error candidate")
+            newExpression = if (precalculatedBounds is CollectionLiteralBounds.Ambiguity) {
+                ErrorCollectionLiteralResolutionStrategy(resolutionContext)
+                    .resolveCollectionLiteral(atom, topLevelCandidate, null)
+                    ?.apply {
+                        val calleeReference = calleeReference as? FirErrorReferenceWithCandidate
+                            ?: error("${ErrorCollectionLiteralResolutionStrategy::class.simpleName} must return callee reference with error candidate")
 
-                    val calleeReferenceWithNewDiagnostic = FirErrorReferenceWithCandidate(
-                        source = calleeReference.source,
-                        name = calleeReference.name,
-                        candidate = calleeReference.candidate,
-                        diagnostic = precalculatedBounds.toConeDiagnostic(),
-                    )
-                    replaceCalleeReference(calleeReferenceWithNewDiagnostic)
-                }
+                        val calleeReferenceWithNewDiagnostic = FirErrorReferenceWithCandidate(
+                            source = calleeReference.source,
+                            name = calleeReference.name,
+                            candidate = calleeReference.candidate,
+                            diagnostic = precalculatedBounds.toConeDiagnostic(),
+                        )
+                        replaceCalleeReference(calleeReferenceWithNewDiagnostic)
+                    }
+            } else {
+                FallbackCollectionLiteralResolutionStrategy(resolutionContext).resolveCollectionLiteral(atom, topLevelCandidate, null)
+            }!!
         }
 
         atom.containingCallCandidate.setUpdatedCollectionLiteral(originalExpression, newExpression)

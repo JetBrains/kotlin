@@ -8,9 +8,13 @@
 
 /incorrectCollections.kt:(350,351): error: Initializer type mismatch: expected 'Sequence<Int>', actual 'Sequence<Long>'.
 
-/incorrectCollections.kt:(399,401): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(399,401): error: Argument type mismatch: actual type is 'List<uninferred T (of fun <T> listOf)>', but 'Int' was expected.
 
-/incorrectCollections.kt:(427,429): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(399,401): error: Cannot infer type for type parameter 'T'. Specify it explicitly.
+
+/incorrectCollections.kt:(427,429): error: Argument type mismatch: actual type is 'List<uninferred T (of fun <T> listOf)>', but 'Int' was expected.
+
+/incorrectCollections.kt:(427,429): error: Cannot infer type for type parameter 'T'. Specify it explicitly.
 
 /incorrectCollections.kt:(455,458): error: Argument type mismatch: actual type is 'Double', but 'Long' was expected.
 

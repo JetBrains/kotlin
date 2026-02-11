@@ -27,8 +27,8 @@ fun test() {
     id<MyList<*>>(["42"])
     id<MyList<*>>([null])
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>id<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>id<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>id<!>(<!UNRESOLVED_REFERENCE!>[]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>id<!>(<!UNRESOLVED_REFERENCE!>["42"]<!>)
 
     id<MyList<MyList<*>>>([])
     id<MyList<MyList<*>>>([<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>])

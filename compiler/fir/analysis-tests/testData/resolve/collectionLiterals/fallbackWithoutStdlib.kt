@@ -4,13 +4,13 @@
 class Unrelated
 
 fun test() {
-    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>
-    val x: Any = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>
-    val y: Unrelated = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>
+    <!UNRESOLVED_REFERENCE!>[]<!>
+    val x: Any = <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>
+    val y: Unrelated = <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>
 
-    for (lst in <!ITERATOR_MISSING, UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>['a', 'b', 'c']<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["a", "b", "c"]<!>]<!>) {
-        <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>.toString()
-        <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>::toString
+    for (lst in <!ITERATOR_MISSING, UNRESOLVED_REFERENCE!>[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>, <!UNRESOLVED_REFERENCE!>['a', 'b', 'c']<!>, <!UNRESOLVED_REFERENCE!>["a", "b", "c"]<!>]<!>) {
+        <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>.toString()
+        <!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>::toString
     }
 }
 

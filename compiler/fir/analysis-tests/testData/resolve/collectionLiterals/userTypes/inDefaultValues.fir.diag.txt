@@ -8,4 +8,6 @@
 
 /inDefaultValues.kt:(738,747): error: Argument type mismatch: actual type is 'MyList<Int>', but 'MyList<String>' was expected.
 
-/inDefaultValues.kt:(803,805): error: No 'of' operator is defined for the expected type.
+/inDefaultValues.kt:(803,805): error: Argument type mismatch: actual type is 'List<uninferred T (of fun <T> listOf)>', but 'String' was expected.
+
+/inDefaultValues.kt:(803,805): error: Cannot infer type for type parameter 'T'. Specify it explicitly.

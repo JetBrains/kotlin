@@ -18,9 +18,9 @@ fun acceptList(l: MyList<String>) = Unit
 fun acceptList(l: OtherList<Int>) = Unit
 
 fun test() {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>acceptList<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>acceptList<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["1", "2", "3"]<!>)
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>acceptList<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>acceptList<!>(<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>acceptList<!>(<!UNRESOLVED_REFERENCE!>["1", "2", "3"]<!>)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>acceptList<!>(<!UNRESOLVED_REFERENCE!>[]<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nullableType,

@@ -36,10 +36,10 @@ fun test(foo: Foo, annoFoo: AnnoFoo) {
     IntArrayAnno(run {
         [1, 2, 3]
     })
-    IntArrayAnno(run {
-        val x = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>
+    IntArrayAnno(<!ARGUMENT_TYPE_MISMATCH!>run {
+        val x = [1, 2, 3]
         x
-    })
+    }<!>)
     IntArrayAnno(run {
         val x: IntArray = [1, 2, 3]
         x
@@ -55,12 +55,12 @@ fun test(foo: Foo, annoFoo: AnnoFoo) {
     StringArrayAnno(run {
         []
     })
-    StringArrayAnno(run {
-        val x = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["1", "2", "3"]<!>
+    StringArrayAnno(<!ARGUMENT_TYPE_MISMATCH!>run {
+        val x = ["1", "2", "3"]
         x
-    })
-    StringArrayAnno::class.primaryConstructor?.call(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    StringArrayAnno::class.primaryConstructor?.call(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["1", "2", "3"]<!>)
+    }<!>)
+    StringArrayAnno::class.primaryConstructor?.call(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    StringArrayAnno::class.primaryConstructor?.call(["1", "2", "3"])
 
     FooArrayAnno([])
     FooArrayAnno([Foo()])

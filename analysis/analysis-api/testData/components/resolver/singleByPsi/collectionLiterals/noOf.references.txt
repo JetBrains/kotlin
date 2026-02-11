@@ -3,7 +3,7 @@ KtCollectionLiteralExpression(73,88): '["1", "2", "3"]'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNSUPPORTED_COLLECTION_LITERAL_TYPE: No 'of' operator is defined for the expected type.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'listOf'.>
     symbols:
       Nothing (Unresolved reference)
 

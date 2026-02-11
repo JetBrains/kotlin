@@ -13,11 +13,11 @@ fun testWithLambdas() {
     val withReturn: List<() -> Int> = <!UNRESOLVED_REFERENCE!>[{ 42 }]<!>
     val withReturnAndParam: List<(Int) -> Int> = <!UNRESOLVED_REFERENCE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> x }]<!>
 
-    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{}]<!>
-    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>it<!> -> }]<!>
-    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ it: Any -> }]<!>
-    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ 42 }]<!>
-    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> x }]<!>
+    <!UNRESOLVED_REFERENCE!>[{}]<!>
+    <!UNRESOLVED_REFERENCE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>it<!> -> }]<!>
+    <!UNRESOLVED_REFERENCE!>[{ it: Any -> }]<!>
+    <!UNRESOLVED_REFERENCE!>[{ 42 }]<!>
+    <!UNRESOLVED_REFERENCE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> x }]<!>
 }
 
 fun testWithAnons() {
@@ -26,10 +26,10 @@ fun testWithAnons() {
     val withReturn: List<() -> Int> = <!UNRESOLVED_REFERENCE!>[fun() = 42]<!>
     val withReturnAndParam: List<(Int) -> Int> = <!UNRESOLVED_REFERENCE!>[fun(x: Int) = x]<!>
 
-    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun() {}]<!>
-    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun(x: Int) {}]<!>
-    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun() = 42]<!>
-    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun(x: Int) = x]<!>
+    <!UNRESOLVED_REFERENCE!>[fun() {}]<!>
+    <!UNRESOLVED_REFERENCE!>[fun(x: Int) {}]<!>
+    <!UNRESOLVED_REFERENCE!>[fun() = 42]<!>
+    <!UNRESOLVED_REFERENCE!>[fun(x: Int) = x]<!>
 }
 
 fun skip() {}
