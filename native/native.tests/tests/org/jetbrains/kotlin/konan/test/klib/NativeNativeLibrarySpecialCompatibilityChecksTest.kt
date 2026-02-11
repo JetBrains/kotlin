@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
-import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.cli.bc.K2Native
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -101,16 +100,6 @@ abstract class NativeLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompa
     }
 
     override val patchedLibraryPostfix: String = "native"
-
-    private inline fun <T> withCustomCompilerVersion(version: TestVersion?, block: () -> T): T {
-        @Suppress("DEPRECATION")
-        return try {
-            LibrarySpecialCompatibilityChecker.setUpCustomCompilerVersionForTest(version?.toString())
-            block()
-        } finally {
-            LibrarySpecialCompatibilityChecker.resetUpCustomCompilerVersionForTest()
-        }
-    }
 }
 
 private fun runNativeCompiler(

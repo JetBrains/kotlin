@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.klib.compatibility
 
+import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_LIBRARY_VERSION
 import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_MANIFEST_FILE
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
@@ -233,6 +234,16 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
         zipDirectory(directory = unzippedLibraryDir, zipFile = patchedLibraryFile)
 
         return patchedLibraryFile
+    }
+
+    protected inline fun <T> withCustomCompilerVersion(version: TestVersion?, block: () -> T): T {
+        @Suppress("DEPRECATION")
+        return try {
+            LibrarySpecialCompatibilityChecker.setUpCustomCompilerVersionForTest(version?.toString())
+            block()
+        } finally {
+            LibrarySpecialCompatibilityChecker.resetUpCustomCompilerVersionForTest()
+        }
     }
 
     companion object {

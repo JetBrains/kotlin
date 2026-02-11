@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.js.testOld.klib
 
-import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
@@ -111,16 +110,6 @@ abstract class WebLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatib
             val properties = manifestFile.inputStream().use { Properties().apply { load(it) } }
             properties[KLIB_PROPERTY_BUILTINS_PLATFORM] = BuiltInsPlatform.WASM.name
             manifestFile.outputStream().use { properties.store(it, null) }
-        }
-    }
-
-    private inline fun <T> withCustomCompilerVersion(version: TestVersion?, block: () -> T): T {
-        @Suppress("DEPRECATION")
-        return try {
-            LibrarySpecialCompatibilityChecker.setUpCustomCompilerVersionForTest(version?.toString())
-            block()
-        } finally {
-            LibrarySpecialCompatibilityChecker.resetUpCustomCompilerVersionForTest()
         }
     }
 }
