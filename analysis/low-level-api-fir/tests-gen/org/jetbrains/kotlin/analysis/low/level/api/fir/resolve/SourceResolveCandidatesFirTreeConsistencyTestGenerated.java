@@ -2128,6 +2128,12 @@ public class SourceResolveCandidatesFirTreeConsistencyTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("ambiguity.kt")
+    public void testAmbiguity() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/ambiguity.kt");
+    }
+
+    @Test
     @TestMetadata("array.kt")
     public void testArray() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/array.kt");
