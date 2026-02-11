@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.getToolchain
 import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeDownloadDependenciesOperation
 import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeLinkingOperation
+import org.jetbrains.kotlin.buildtools.api.konan.operations.NativeResolveKlibsOperation
 import java.nio.file.Path
 
 @ExperimentalBuildToolsApi
@@ -33,6 +34,10 @@ public interface NativePlatformToolchain : KotlinToolchains.Toolchain {
     public fun nativeDownloadDependenciesOperationBuilder(
         dependenciesDirectory: Path
     ): NativeDownloadDependenciesOperation.Builder
+
+    public fun nativeResolveKlibsOperationBuilder(
+        klibs: List<Path>,
+    ): NativeResolveKlibsOperation.Builder
 
     public companion object {
         /**
@@ -66,3 +71,9 @@ public inline fun NativePlatformToolchain.nativeDownloadDependenciesOperation(
     destinationDirectory: Path,
     action: NativeDownloadDependenciesOperation.Builder.() -> Unit,
 ): NativeDownloadDependenciesOperation = nativeDownloadDependenciesOperationBuilder(destinationDirectory).apply(action).build()
+
+@ExperimentalBuildToolsApi
+public inline fun NativePlatformToolchain.nativeResolveKlibsOperationBuilder(
+    klibs: List<Path>,
+    action: NativeResolveKlibsOperation.Builder.() -> Unit,
+): NativeResolveKlibsOperation = nativeResolveKlibsOperationBuilder(klibs).apply(action).build()
