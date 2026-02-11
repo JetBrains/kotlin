@@ -1,10 +1,10 @@
 FILE: expectNestedAnnotationClassWithConstructorParameter.kt
     public final? expect class Outer : R|kotlin/Any| {
         public final? expect annotation class AnnotationNested : R|kotlin/Annotation| {
-            public? expect constructor(p: String = LAZY_EXPRESSION): R|Outer.AnnotationNested|
+            public? expect [ContainingClassKey=AnnotationNested] constructor([CorrespondingProperty=/Outer.AnnotationNested.p] p: String = LAZY_EXPRESSION): R|Outer.AnnotationNested|
 
-            public? final? expect val p: String = R|<local>/p|
-                public? get(): String
+            public? final? expect [IsFromPrimaryConstructor=true] val p: String = R|<local>/p|
+                public? [ContainingClassKey=AnnotationNested] get(): String
 
         }
 

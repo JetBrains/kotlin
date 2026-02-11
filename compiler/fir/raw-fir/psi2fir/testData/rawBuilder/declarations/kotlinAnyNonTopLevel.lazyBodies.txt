@@ -1,11 +1,11 @@
 FILE: kotlinAnyNonTopLevel.kt
     public final? class Owner : R|kotlin/Any| {
-        public? constructor(): R|kotlin/Owner| {
+        public? [ContainingClassKey=Owner] constructor(): R|kotlin/Owner| {
             LAZY_super<R|kotlin/Any|>
         }
 
         public final? class Any : R|kotlin/Any| {
-            public? constructor(): R|kotlin/Owner.Any| {
+            public? [ContainingClassKey=Any] constructor(): R|kotlin/Owner.Any| {
                 LAZY_super<R|kotlin/Any|>
             }
 

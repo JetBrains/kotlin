@@ -1,15 +1,15 @@
 FILE: derivedClass.kt
     public open class Base<T> : R|kotlin/Any| {
-        public? constructor<T>(x: T): R|Base<T>| {
+        public? [ContainingClassKey=Base] constructor<T>([CorrespondingProperty=/Base.x] x: T): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? val x: T = R|<local>/x|
-            public? get(): T
+        public? final? [IsFromPrimaryConstructor=true] val x: T = R|<local>/x|
+            public? [ContainingClassKey=Base] get(): T
 
     }
     public final? class Derived<T : Any> : Base<T> {
-        public? constructor<T : Any>(x: T): R|Derived<T>| {
+        public? [ContainingClassKey=Derived] constructor<T : Any>(x: T): R|Derived<T>| {
             LAZY_super<Base<T>>
         }
 

@@ -1,14 +1,14 @@
 FILE: contextParameterOnErrorPrimaryConstructor.kt
     public final? class Clazz : R|kotlin/Any| {
         context(c: Clazz)
-        @Anno(LAZY_EXPRESSION) public? constructor(): R|Clazz| {
+        @Anno(LAZY_EXPRESSION) public? [ContainingClassKey=Clazz] constructor(): R|Clazz| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     public final? class Another : R|kotlin/Any| {
         context(c: Another)
-        @Anno(LAZY_EXPRESSION) public? constructor(i: Int): R|Another| {
+        @Anno(LAZY_EXPRESSION) public? [ContainingClassKey=Another] constructor(i: Int): R|Another| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -16,7 +16,7 @@ FILE: contextParameterOnErrorPrimaryConstructor.kt
     context(@SharedAnno() <unused var>: @SharedTypeAnno() Clazz)
     public final? class OneMore : R|kotlin/Any| {
         context(c: Another)
-        @Anno(LAZY_EXPRESSION) public? constructor(s: String): R|OneMore| {
+        @Anno(LAZY_EXPRESSION) public? [ContainingClassKey=OneMore] constructor(s: String): R|OneMore| {
             LAZY_super<R|kotlin/Any|>
         }
 

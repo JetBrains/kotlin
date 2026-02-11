@@ -1,17 +1,17 @@
 FILE: destructuring.kt
     public final? data class Some : R|kotlin/Any| {
-        public? constructor(first: Int, second: Double, third: String): R|Some| {
+        public? [ContainingClassKey=Some] constructor([CorrespondingProperty=/Some.first] first: Int, [CorrespondingProperty=/Some.second] second: Double, [CorrespondingProperty=/Some.third] third: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? val first: Int = R|<local>/first|
-            public? get(): Int
+        public? final? [ComponentFunctionSymbolKey=/Some.component1, IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ContainingClassKey=Some] get(): Int
 
-        public? final? val second: Double = R|<local>/second|
-            public? get(): Double
+        public? final? [ComponentFunctionSymbolKey=/Some.component2, IsFromPrimaryConstructor=true] val second: Double = R|<local>/second|
+            public? [ContainingClassKey=Some] get(): Double
 
-        public? final? val third: String = R|<local>/third|
-            public? get(): String
+        public? final? [ComponentFunctionSymbolKey=/Some.component3, IsFromPrimaryConstructor=true] val third: String = R|<local>/third|
+            public? [ContainingClassKey=Some] get(): String
 
         public? final operator fun component1(): Int
 

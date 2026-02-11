@@ -1,6 +1,6 @@
 FILE: these.kt
     public final? class Some : R|kotlin/Any| {
-        public? constructor(): R|Some| {
+        public? [ContainingClassKey=Some] constructor(): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -9,7 +9,7 @@ FILE: these.kt
         public? final? fun bar(): Int { LAZY_BLOCK }
 
         public? final? val instance: Some
-            public? get(): Some { LAZY_BLOCK }
+            public? [ContainingClassKey=Some] get(): Some { LAZY_BLOCK }
 
         public? final? fun String.extension(): Int { LAZY_BLOCK }
 

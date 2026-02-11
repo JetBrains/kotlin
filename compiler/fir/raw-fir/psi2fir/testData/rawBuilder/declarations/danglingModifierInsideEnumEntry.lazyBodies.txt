@@ -1,28 +1,28 @@
 FILE: danglingModifierInsideEnumEntry.kt
     public final? annotation class Anno : R|kotlin/Annotation| {
-        public? constructor(i: Int): R|foo/Anno| {
+        public? [ContainingClassKey=Anno] constructor([CorrespondingProperty=foo/Anno.i] i: Int): R|foo/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? val i: Int = R|<local>/i|
-            public? get(): Int
+        public? final? [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ContainingClassKey=Anno] get(): Int
 
     }
     public? final? const val CONSTANT: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>
     public final? enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>| {
-        private constructor(): R|foo/MyEnumClass| {
+        private [ContainingClassKey=MyEnumClass] constructor(): R|foo/MyEnumClass| {
             LAZY_super<R|kotlin/Enum<foo/MyEnumClass>|>
         }
 
-        public final static enum entry Entry: R|foo/MyEnumClass| = LAZY_EXPRESSION
-        public final static fun values(): R|kotlin/Array<foo/MyEnumClass>| {
+        public final static [ContainingClassKey=MyEnumClass] enum entry Entry: R|foo/MyEnumClass| = LAZY_EXPRESSION
+        public final static [ContainingClassKey=MyEnumClass] fun values(): R|kotlin/Array<foo/MyEnumClass>| {
         }
 
-        public final static fun valueOf(value: R|kotlin/String|): R|foo/MyEnumClass| {
+        public final static [ContainingClassKey=MyEnumClass] fun valueOf(value: R|kotlin/String|): R|foo/MyEnumClass| {
         }
 
-        public final static val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+        public final static [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
             public get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
 
     }

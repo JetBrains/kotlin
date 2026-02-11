@@ -10,8 +10,8 @@ FILE: delegates.kt
         public? set(<set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
     public final? interface Base : R|kotlin/Any| {
     }
-    public final? class Derived : Base {
-        public? constructor(b: Base): R|Derived| {
+    public final? [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : Base {
+        public? [ContainingClassKey=Derived] constructor(b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
 

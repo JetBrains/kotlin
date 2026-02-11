@@ -4,27 +4,27 @@ FILE: annotationOnDelegatedInterface.kt
 
     }
     public final? class BaseImpl : Base {
-        public? constructor(x: Int): R|BaseImpl| {
+        public? [ContainingClassKey=BaseImpl] constructor([CorrespondingProperty=/BaseImpl.x] x: Int): R|BaseImpl| {
             LAZY_super<<implicit>>
         }
 
-        public? final? val x: Int = R|<local>/x|
-            public? get(): Int
+        public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ContainingClassKey=BaseImpl] get(): Int
 
         public? open? override fun print(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     @Target(LAZY_EXPRESSION) public final? annotation class Some : R|kotlin/Annotation| {
-        public? constructor(s: String): R|Some| {
+        public? [ContainingClassKey=Some] constructor([CorrespondingProperty=/Some.s] s: String): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? val s: String = R|<local>/s|
-            public? get(): String
+        public? final? [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ContainingClassKey=Some] get(): String
 
     }
-    public final? class Derived : Base {
-        public? constructor(b: Base): R|Derived| {
+    public final? [DelegateFieldsMapKey={0=FirFieldSymbol /Derived.$$delegate_0}] class Derived : Base {
+        public? [ContainingClassKey=Derived] constructor(b: Base): R|Derived| {
             LAZY_super<<implicit>>
         }
 

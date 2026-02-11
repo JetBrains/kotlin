@@ -1,14 +1,14 @@
 FILE: positionalDestructuringFullForm.kt
     public final? data class Tuple : R|kotlin/Any| {
-        public? constructor(first: String, second: Int): R|Tuple| {
+        public? [ContainingClassKey=Tuple] constructor([CorrespondingProperty=/Tuple.first] first: String, [CorrespondingProperty=/Tuple.second] second: Int): R|Tuple| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? val first: String = R|<local>/first|
-            public? get(): String
+        public? final? [ComponentFunctionSymbolKey=/Tuple.component1, IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+            public? [ContainingClassKey=Tuple] get(): String
 
-        public? final? val second: Int = R|<local>/second|
-            public? get(): Int
+        public? final? [ComponentFunctionSymbolKey=/Tuple.component2, IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ContainingClassKey=Tuple] get(): Int
 
         public? final operator fun component1(): String
 

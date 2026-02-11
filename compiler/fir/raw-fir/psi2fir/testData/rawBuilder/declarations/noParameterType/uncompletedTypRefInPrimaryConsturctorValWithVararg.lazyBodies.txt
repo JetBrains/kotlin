@@ -1,10 +1,10 @@
 FILE: uncompletedTypRefInPrimaryConsturctorValWithVararg.kt
     public final? class X : R|kotlin/Any| {
-        public? constructor(vararg x: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|X| {
+        public? [ContainingClassKey=X] constructor([CorrespondingProperty=/X.x] vararg x: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? val x: R|kotlin/Array<out ERROR CLASS: Incomplete code>| = R|<local>/x|
-            public? get(): R|kotlin/Array<out ERROR CLASS: Incomplete code>|
+        public? final? [IsFromPrimaryConstructor=true, IsFromVarargKey=true] val x: R|kotlin/Array<out ERROR CLASS: Incomplete code>| = R|<local>/x|
+            public? [ContainingClassKey=X] get(): R|kotlin/Array<out ERROR CLASS: Incomplete code>|
 
     }

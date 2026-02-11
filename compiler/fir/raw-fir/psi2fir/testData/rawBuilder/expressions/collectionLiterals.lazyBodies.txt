@@ -1,51 +1,51 @@
 FILE: collectionLiterals.kt
     public final? annotation class Ann1 : R|kotlin/Annotation| {
-        public? constructor(arr: IntArray): R|Ann1| {
+        public? [ContainingClassKey=Ann1] constructor([CorrespondingProperty=/Ann1.arr] arr: IntArray): R|Ann1| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? val arr: IntArray = R|<local>/arr|
-            public? get(): IntArray
+        public? final? [IsFromPrimaryConstructor=true] val arr: IntArray = R|<local>/arr|
+            public? [ContainingClassKey=Ann1] get(): IntArray
 
     }
     public final? annotation class Ann2 : R|kotlin/Annotation| {
-        public? constructor(arr: DoubleArray): R|Ann2| {
+        public? [ContainingClassKey=Ann2] constructor([CorrespondingProperty=/Ann2.arr] arr: DoubleArray): R|Ann2| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? val arr: DoubleArray = R|<local>/arr|
-            public? get(): DoubleArray
+        public? final? [IsFromPrimaryConstructor=true] val arr: DoubleArray = R|<local>/arr|
+            public? [ContainingClassKey=Ann2] get(): DoubleArray
 
     }
     public final? annotation class Ann3 : R|kotlin/Annotation| {
-        public? constructor(arr: Array<String>): R|Ann3| {
+        public? [ContainingClassKey=Ann3] constructor([CorrespondingProperty=/Ann3.arr] arr: Array<String>): R|Ann3| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? val arr: Array<String> = R|<local>/arr|
-            public? get(): Array<String>
+        public? final? [IsFromPrimaryConstructor=true] val arr: Array<String> = R|<local>/arr|
+            public? [ContainingClassKey=Ann3] get(): Array<String>
 
     }
     @Ann1(LAZY_EXPRESSION) @Ann2(LAZY_EXPRESSION) @Ann3(LAZY_EXPRESSION) public final? class Zero : R|kotlin/Any| {
-        public? constructor(): R|Zero| {
+        public? [ContainingClassKey=Zero] constructor(): R|Zero| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Ann1(LAZY_EXPRESSION) public final? class First : R|kotlin/Any| {
-        public? constructor(): R|First| {
+        public? [ContainingClassKey=First] constructor(): R|First| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Ann2(LAZY_EXPRESSION) public final? class Second : R|kotlin/Any| {
-        public? constructor(): R|Second| {
+        public? [ContainingClassKey=Second] constructor(): R|Second| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Ann3(LAZY_EXPRESSION) public final? class Third : R|kotlin/Any| {
-        public? constructor(): R|Third| {
+        public? [ContainingClassKey=Third] constructor(): R|Third| {
             LAZY_super<R|kotlin/Any|>
         }
 

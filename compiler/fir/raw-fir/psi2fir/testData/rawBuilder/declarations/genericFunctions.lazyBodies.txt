@@ -3,7 +3,7 @@ FILE: genericFunctions.kt
     }
     public? final? inline fun <reified T : Any> Any.safeAs(): T? { LAZY_BLOCK }
     public abstract class Summator : R|kotlin/Any| {
-        public? constructor(): R|Summator| {
+        public? [ContainingClassKey=Summator] constructor(): R|Summator| {
             LAZY_super<R|kotlin/Any|>
         }
 

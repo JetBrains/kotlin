@@ -1,19 +1,19 @@
 FILE: danglingContextParameter.kt
     @Target(LAZY_EXPRESSION, LAZY_EXPRESSION) public final? annotation class Anno : R|kotlin/Annotation| {
-        public? constructor(position: String): R|Anno| {
+        public? [ContainingClassKey=Anno] constructor([CorrespondingProperty=/Anno.position] position: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? val position: String = R|<local>/position|
-            public? get(): String
+        public? final? [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ContainingClassKey=Anno] get(): String
 
     }
     public final? class Foo : R|kotlin/Any| {
-        public? constructor(): R|Foo| {
+        public? [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        context(@Anno(LAZY_EXPRESSION) parameter1: @Anno(LAZY_EXPRESSION) Unresolved, parameter2: List<@Anno(LAZY_EXPRESSION) Unresolved>)
+        [ContainingClassKey=Foo] context(@Anno(LAZY_EXPRESSION) parameter1: @Anno(LAZY_EXPRESSION) Unresolved, parameter2: List<@Anno(LAZY_EXPRESSION) Unresolved>)
         <DANGLING MODIFIER: Top level declaration expected>
     }
     public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

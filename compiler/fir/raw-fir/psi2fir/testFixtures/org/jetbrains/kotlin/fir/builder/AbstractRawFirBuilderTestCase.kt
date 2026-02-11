@@ -74,7 +74,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     protected open fun doRawFirTest(filePath: String) {
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
-        val firFileDump = FirRenderer.withDeclarationAttributes().renderElementAsString(firFile)
+        val firFileDump = dumpFirFile(firFile)
         val expectedPath = expectedPath(filePath, ".txt")
         TestDataAssertions.assertEqualsToFile(File(expectedPath), firFileDump)
         checkAnnotationOwners(filePath, firFile)
@@ -127,6 +127,11 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         return (createFile(filePath, KtNodeTypes.KT_FILE) as KtFile).apply {
             myFile = this
         }
+    }
+
+    protected fun dumpFirFile(firFile: FirFile): String {
+        val renderer = FirRenderer.withDeclarationAttributes()
+        return renderer.renderElementAsString(firFile)
     }
 
     protected fun KtFile.toFirFile(bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL): FirFile {

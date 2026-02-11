@@ -1,42 +1,42 @@
 FILE: targetAnnotationWithDifferentValues.kt
     @Target(LAZY_EXPRESSION) public final? annotation class AnnotationWithArrayLiteral : R|kotlin/Annotation| {
-        public? constructor(): R|AnnotationWithArrayLiteral| {
+        public? [ContainingClassKey=AnnotationWithArrayLiteral] constructor(): R|AnnotationWithArrayLiteral| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Target(LAZY_EXPRESSION) public final? annotation class AnnotationWithArrayLiteralAndIncorrectValue : R|kotlin/Annotation| {
-        public? constructor(): R|AnnotationWithArrayLiteralAndIncorrectValue| {
+        public? [ContainingClassKey=AnnotationWithArrayLiteralAndIncorrectValue] constructor(): R|AnnotationWithArrayLiteralAndIncorrectValue| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Target(LAZY_EXPRESSION) public final? annotation class AnnotationWithArrayLiteralAndSpreadOperator : R|kotlin/Annotation| {
-        public? constructor(): R|AnnotationWithArrayLiteralAndSpreadOperator| {
+        public? [ContainingClassKey=AnnotationWithArrayLiteralAndSpreadOperator] constructor(): R|AnnotationWithArrayLiteralAndSpreadOperator| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Target(LAZY_EXPRESSION) public final? annotation class AnnotationWithArrayOf : R|kotlin/Annotation| {
-        public? constructor(): R|AnnotationWithArrayOf| {
+        public? [ContainingClassKey=AnnotationWithArrayOf] constructor(): R|AnnotationWithArrayOf| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Target(LAZY_EXPRESSION) public final? annotation class AnnotationWithArrayOfAndSpreadOperator : R|kotlin/Annotation| {
-        public? constructor(): R|AnnotationWithArrayOfAndSpreadOperator| {
+        public? [ContainingClassKey=AnnotationWithArrayOfAndSpreadOperator] constructor(): R|AnnotationWithArrayOfAndSpreadOperator| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Target(LAZY_EXPRESSION) public final? annotation class AnnotationWithArrayOfWithoutSpreadOperator : R|kotlin/Annotation| {
-        public? constructor(): R|AnnotationWithArrayOfWithoutSpreadOperator| {
+        public? [ContainingClassKey=AnnotationWithArrayOfWithoutSpreadOperator] constructor(): R|AnnotationWithArrayOfWithoutSpreadOperator| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Target(LAZY_EXPRESSION, LAZY_EXPRESSION) public final? annotation class AnnotationWithVararg : R|kotlin/Annotation| {
-        public? constructor(): R|AnnotationWithVararg| {
+        public? [ContainingClassKey=AnnotationWithVararg] constructor(): R|AnnotationWithVararg| {
             LAZY_super<R|kotlin/Any|>
         }
 

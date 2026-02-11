@@ -1,17 +1,16 @@
 FILE: scriptLevelDestructuringWithAnnotation.kts
     SCRIPT: <script-scriptLevelDestructuringWithAnnotation.kts>
 
-        @DestrAnno(LAZY_EXPRESSION) lval <destruct>: <implicit> = LAZY_EXPRESSION
-        @LeftAnno(LAZY_EXPRESSION) public final val a: <implicit> = LAZY_EXPRESSION
+        @DestrAnno(LAZY_EXPRESSION) [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        @LeftAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>
 
-        @RightAnno(LAZY_EXPRESSION) public final val b: <implicit> = LAZY_EXPRESSION
+        @RightAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val b: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>
 
-        @Destr2Anno(LAZY_EXPRESSION) lval <destruct>: <implicit> = LAZY_EXPRESSION
-        @SecondLeftAnno(LAZY_EXPRESSION) public final val c: <implicit> = LAZY_EXPRESSION
+        @Destr2Anno(LAZY_EXPRESSION) [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        @SecondLeftAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val c: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>
 
-        @SecondRightAnno(LAZY_EXPRESSION) public final val d: <implicit> = LAZY_EXPRESSION
+        @SecondRightAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val d: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>
-

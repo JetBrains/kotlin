@@ -1,6 +1,6 @@
 FILE: invalidWhen.kt
     public final? class SomeClass : R|kotlin/Any| {
-        public? constructor(): R|SomeClass| {
+        public? [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
             LAZY_super<R|kotlin/Any|>
         }
 

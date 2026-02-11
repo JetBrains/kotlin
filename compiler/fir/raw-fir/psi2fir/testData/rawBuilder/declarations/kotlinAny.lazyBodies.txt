@@ -1,6 +1,6 @@
 FILE: kotlinAny.kt
     public open class Any {
-        public? constructor(): R|kotlin/Any|
+        public? [ContainingClassKey=Any] constructor(): R|kotlin/Any|
 
         public open operator fun equals(other: Any?): Boolean
 

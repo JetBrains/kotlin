@@ -11,7 +11,7 @@ FILE: contractDescription.kt
     public? final? fun test_4(): R|kotlin/Unit|
         [L|Contract description] { LAZY_BLOCK }
     public final? class MyClass : R|kotlin/Any| {
-        public? constructor(x: Boolean): R|MyClass|
+        public? [ContainingClassKey=MyClass] constructor(x: Boolean): R|MyClass|
             [L|Contract description] { LAZY_BLOCK }
 
     }

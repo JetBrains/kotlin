@@ -1,14 +1,14 @@
 FILE: dataClassWithAnnotations.kt
     @Anno(LAZY_EXPRESSION) public final? data class Derived : @Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Nested<@Anno(LAZY_EXPRESSION) NestedNested>> {
-        @Anno(LAZY_EXPRESSION) public? constructor(@Anno(LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno(LAZY_EXPRESSION) b: @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>>, c: @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>>): R|Derived| {
+        @Anno(LAZY_EXPRESSION) public? [ContainingClassKey=Derived] constructor([CorrespondingProperty=/Derived.b] @Anno(LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno(LAZY_EXPRESSION) b: @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>>, [CorrespondingProperty=/Derived.c] c: @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>>): R|Derived| {
             LAZY_super<@Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Nested<@Anno(LAZY_EXPRESSION) NestedNested>>>
         }
 
-        @Anno(LAZY_EXPRESSION) @PROPERTY:Anno(LAZY_EXPRESSION) public? final? val b: @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>> = R|<local>/b|
-            @PROPERTY_GETTER:Anno(LAZY_EXPRESSION) public? get(): @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>>
+        @Anno(LAZY_EXPRESSION) @PROPERTY:Anno(LAZY_EXPRESSION) public? final? [ComponentFunctionSymbolKey=/Derived.component1, IsFromPrimaryConstructor=true] val b: @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>> = R|<local>/b|
+            @PROPERTY_GETTER:Anno(LAZY_EXPRESSION) public? [ContainingClassKey=Derived] get(): @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>>
 
-        public? final? val c: @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>> = R|<local>/c|
-            public? get(): @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>>
+        public? final? [ComponentFunctionSymbolKey=/Derived.component2, IsFromPrimaryConstructor=true] val c: @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>> = R|<local>/c|
+            public? [ContainingClassKey=Derived] get(): @Anno(LAZY_EXPRESSION) C<@Anno(LAZY_EXPRESSION) CNested<@Anno(LAZY_EXPRESSION) CNestedNested>>
 
         public? final operator fun component1(): @Anno(LAZY_EXPRESSION) B<@Anno(LAZY_EXPRESSION) BNested<@Anno(LAZY_EXPRESSION) BNestedNested>>
 

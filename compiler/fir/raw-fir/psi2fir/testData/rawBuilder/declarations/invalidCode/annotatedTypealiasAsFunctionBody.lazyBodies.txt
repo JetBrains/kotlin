@@ -1,6 +1,6 @@
 FILE: annotatedTypealiasAsFunctionBody.kt
     public final? annotation class Anno : R|kotlin/Annotation| {
-        public? constructor(): R|Anno| {
+        public? [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
