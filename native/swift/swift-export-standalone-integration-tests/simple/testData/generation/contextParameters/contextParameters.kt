@@ -1,5 +1,4 @@
 // KIND: STANDALONE
-// FREE_COMPILER_ARGS: -Xcontext-parameters
 // MODULE: main
 // FILE: main.kt
 

@@ -7,13 +7,13 @@ class A<T> where T : <!UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>Double
 
 interface B<T, U : <!UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>T.() -> Unit<!>>
 
-fun <T: <!UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!><!UNSUPPORTED_FEATURE!>context(Int)<!> () -> String<!>> foo2() {}
+fun <T: <!UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>context(Int) () -> String<!>> foo2() {}
 
-val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>T: <!UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!><!UNSUPPORTED_FEATURE!>context(Int)<!> () -> String<!><!>> bar2 = fun (x: Int): String { return x.toString() }
+val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>T: <!UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>context(Int) () -> String<!><!>> bar2 = fun (x: Int): String { return x.toString() }
 
-class A2<T> where T : <!UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!><!UNSUPPORTED_FEATURE!>context(Double)<!> (Int) -> Unit<!>
+class A2<T> where T : <!UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>context(Double) (Int) -> Unit<!>
 
-interface B2<T, U : <!UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!><!UNSUPPORTED_FEATURE!>context(T)<!> () -> Unit<!>>
+interface B2<T, U : <!UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>context(T) () -> Unit<!>>
 
 /* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
 nullableType, propertyDeclaration, typeConstraint, typeParameter, typeWithContext, typeWithExtension */
