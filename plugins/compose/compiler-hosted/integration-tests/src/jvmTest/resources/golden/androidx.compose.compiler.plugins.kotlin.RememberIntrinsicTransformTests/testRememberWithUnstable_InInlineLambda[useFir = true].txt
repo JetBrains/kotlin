@@ -34,10 +34,11 @@ fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) 
     InlineWrapper({ %composer: Composer?, %changed: Int ->
       sourceInformationMarkerStart(%composer, <>, "C<rememb...>:Test.kt")
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-      %composer.cache(%dirty and 0b1110 == 0b0100) {
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
         param
       }
       sourceInformationMarkerEnd(%composer)
+      tmp0_group
       sourceInformationMarkerEnd(%composer)
     }, %composer, 0)
     if (isTraceInProgress()) {
