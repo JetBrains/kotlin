@@ -299,10 +299,8 @@ class ObjCExportTranslatorImpl(
                                 origin = ObjCExportStubOrigin(descriptor),
                                 entries = descriptor.enumEntries.mapIndexed { ordinal, entry ->
                                     val objcEnumEntryName = entry.getObjCEnumEntryName()
-                                    val objCName =
-                                        if (objcEnumEntryName.objCName.isNullOrBlank()) namer.getEnumEntrySelector(entry) else objcEnumEntryName.objCName
-                                    val swiftName =
-                                        if (objcEnumEntryName.swiftName.isNullOrBlank()) namer.getEnumEntrySwiftName(entry) else objcEnumEntryName.swiftName
+                                    val objCName = objcEnumEntryName.getName(forSwift = false) ?: namer.getEnumEntrySelector(entry)
+                                    val swiftName = objcEnumEntryName.getName(forSwift = true) ?: namer.getEnumEntrySwiftName(entry)
                                     ObjCNSEnum.Entry(
                                         objCName = nsEnumTypeName.objCName + objCName.replaceFirstChar { it.uppercaseChar() },
                                         swiftName = swiftName,
