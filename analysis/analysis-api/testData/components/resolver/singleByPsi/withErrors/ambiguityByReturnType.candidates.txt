@@ -38,7 +38,7 @@ KtCallExpression(208,319): 'sumOf { c ->'
           contextParameters = []
           callableId = null)
       }
-    isInBestCandidates = false
+    isInBestCandidates = true
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
@@ -79,7 +79,7 @@ KtCallExpression(208,319): 'sumOf { c ->'
           contextParameters = []
           callableId = null)
       }
-    isInBestCandidates = false
+    isInBestCandidates = true
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
@@ -120,7 +120,7 @@ KtCallExpression(208,319): 'sumOf { c ->'
           contextParameters = []
           callableId = null)
       }
-    isInBestCandidates = false
+    isInBestCandidates = true
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
@@ -202,7 +202,7 @@ KtCallExpression(208,319): 'sumOf { c ->'
           contextParameters = []
           callableId = null)
       }
-    isInBestCandidates = false
+    isInBestCandidates = true
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
@@ -284,4 +284,4 @@ KtCallExpression(208,319): 'sumOf { c ->'
           contextParameters = []
           callableId = null)
       }
-    isInBestCandidates = false
+    isInBestCandidates = true
