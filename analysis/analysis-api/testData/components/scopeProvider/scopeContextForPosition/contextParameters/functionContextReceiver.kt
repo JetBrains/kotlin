@@ -3,4 +3,4 @@ fun foo(p: Boolean) {
 
 }
 
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters

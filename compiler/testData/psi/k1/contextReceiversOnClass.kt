@@ -1,4 +1,4 @@
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters
 
 annotation class MyAnnotation
 

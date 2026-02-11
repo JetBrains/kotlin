@@ -6,4 +6,4 @@ class A
 fun foo(p: Boolean) {
     val x = 1
 }</expr>
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters

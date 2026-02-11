@@ -1,4 +1,4 @@
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters
 // MODULE: type_parameters_library
 
 package type_parameters.test

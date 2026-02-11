@@ -8,4 +8,4 @@ class TopLevel<T1> {
     val <T2, T3> C.foo get() = false</expr>
 }
 
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters

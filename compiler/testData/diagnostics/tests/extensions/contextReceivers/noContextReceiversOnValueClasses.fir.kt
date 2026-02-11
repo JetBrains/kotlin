@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED, -CONTEXT_CLASS_OR_CONSTRUCTOR
-// LANGUAGE: +ContextReceivers, +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +ContextReceivers, -ContextParameters, +JvmInlineMultiFieldValueClasses
 // WITH_STDLIB
 // SKIP_TXT
 // WORKS_WHEN_VALUE_CLASS
