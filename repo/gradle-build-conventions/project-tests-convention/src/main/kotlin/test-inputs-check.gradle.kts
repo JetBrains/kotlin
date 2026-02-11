@@ -128,7 +128,8 @@ tasks.withType<Test>().configureEach {
                     )
                 } else if (file.extension == "jar") {
                     listOf(
-                        """permission java.io.FilePermission "${file.absolutePath}", "read";""",
+                        // JvmCompilationUtils.compileJavaFiles uses embedded javaCompiler if no jdkHome is set, and it opens dependencies
+                        """permission java.io.FilePermission "${file.absolutePath}", "read,write";""",
                         """permission java.io.FilePermission "${file.absolutePath}/-", "read";""",
                         """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
                     )
