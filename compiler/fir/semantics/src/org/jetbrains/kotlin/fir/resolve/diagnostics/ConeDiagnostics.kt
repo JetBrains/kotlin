@@ -275,6 +275,11 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
         override val reason: String
             get() = "instance check for erased type"
     }
+
+    class RequiresLanguageFeature(val featureName: String) : ConeContractDescriptionError() {
+        override val reason: String
+            get() = "requires language feature '$featureName' to be enabled"
+    }
 }
 
 class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic {

@@ -10376,6 +10376,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("contractDisabledErrorMessage.kt")
+      public void testContractDisabledErrorMessage() {
+        runTest("compiler/testData/diagnostics/tests/crvDisabled/contractDisabledErrorMessage.kt");
+      }
+
+      @Test
       @TestMetadata("disabledChecker.kt")
       public void testDisabledChecker() {
         runTest("compiler/testData/diagnostics/tests/crvDisabled/disabledChecker.kt");

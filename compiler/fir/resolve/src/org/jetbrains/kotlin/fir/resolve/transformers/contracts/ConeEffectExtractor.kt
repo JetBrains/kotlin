@@ -127,7 +127,7 @@ class ConeEffectExtractor(
                     val reference = functionCall.arguments.getOrNull(0).asContractValueExpression(LAMBDA_ARGUMENT_NAME)
                     ConeReturnsResultOfDeclaration(reference)
                 } else {
-                    ConeContractDescriptionError.NotContractDsl(resolvedId).asElement()
+                    ConeContractDescriptionError.RequiresLanguageFeature("return value checker").asElement()
                 }
             }
 

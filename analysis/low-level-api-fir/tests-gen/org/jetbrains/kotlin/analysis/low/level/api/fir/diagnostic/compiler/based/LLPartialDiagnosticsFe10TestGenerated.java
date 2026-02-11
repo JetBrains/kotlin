@@ -10376,6 +10376,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("contractDisabledErrorMessage.kt")
+      public void testContractDisabledErrorMessage() {
+        runTest("compiler/testData/diagnostics/tests/crvDisabled/contractDisabledErrorMessage.kt");
+      }
+
+      @Test
       @TestMetadata("disabledChecker.kt")
       public void testDisabledChecker() {
         runTest("compiler/testData/diagnostics/tests/crvDisabled/disabledChecker.kt");
