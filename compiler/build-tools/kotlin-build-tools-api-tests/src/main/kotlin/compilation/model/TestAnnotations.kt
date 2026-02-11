@@ -31,3 +31,15 @@ annotation class DefaultStrategyAgnosticCompilationTest
     BtaV2StrategyAgnosticCompilationTestArgumentProvider::class
 )
 annotation class BtaV2StrategyAgnosticCompilationTest
+
+/**
+ * Annotation for parameterized tests that evaluate compilation behavior across BTA versions only.
+ * This involves testing with BTAv1 and BTAv2 toolchains without varying the execution policy.
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.RUNTIME)
+@ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(
+    BtaVersionsCompilationTestArgumentProvider::class
+)
+annotation class BtaVersionsOnlyCompilationTest

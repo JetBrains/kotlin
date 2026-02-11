@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.buildtools.tests
 
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompil
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -96,4 +98,88 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
         }
     }
 
+    @DisplayName("Modifying WithDaemon builder after build does not affect the built policy")
+    @BtaVersionsOnlyCompilationTest
+    fun testWithDaemonBuilderImmutability(toolchain: KotlinToolchains) {
+        val builder = toolchain.daemonExecutionPolicyBuilder().apply {
+            this[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS] = 5000L
+        }
+        val policy1 = builder.build()
+
+        builder[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS] = 10000L
+        val policy2 = builder.build()
+
+        assertEquals(5000L, policy1[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS])
+        assertEquals(10000L, policy2[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS])
+    }
+
+    @DisplayName("Modifying IC configuration builder after build does not affect the built configuration")
+    @DefaultStrategyAgnosticCompilationTest
+    fun testICConfigBuilderImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val toolchain = strategyConfig.first
+        val sources = listOf(workingDirectory.resolve("a.kt").also { it.writeText("class A") })
+        val destination = workingDirectory.resolve("classes")
+        val operationBuilder = toolchain.jvm.jvmCompilationOperationBuilder(sources, destination)
+        val icBuilder = operationBuilder.snapshotBasedIcConfigurationBuilder(
+            workingDirectory = workingDirectory.resolve("ic-work"),
+            sourcesChanges = SourcesChanges.Unknown,
+            dependenciesSnapshotFiles = emptyList(),
+        ).apply {
+            this[JvmSnapshotBasedIncrementalCompilationConfiguration.FORCE_RECOMPILATION] = false
+            this[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES] = true
+        }
+        val icConfig1 = icBuilder.build()
+
+        icBuilder[JvmSnapshotBasedIncrementalCompilationConfiguration.FORCE_RECOMPILATION] = true
+        icBuilder[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES] = false
+        val icConfig2 = icBuilder.build()
+
+        assertEquals(false, icConfig1[JvmSnapshotBasedIncrementalCompilationConfiguration.FORCE_RECOMPILATION])
+        assertEquals(true, icConfig1[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES])
+        assertEquals(true, icConfig2[JvmSnapshotBasedIncrementalCompilationConfiguration.FORCE_RECOMPILATION])
+        assertEquals(false, icConfig2[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES])
+    }
+
+    @DisplayName("toBuilder round-trip: modifying builder from toBuilder does not affect the original operation")
+    @DefaultStrategyAgnosticCompilationTest
+    fun testToBuilderOperationImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val toolchain = strategyConfig.first
+        val sources = listOf(workingDirectory.resolve("a.kt").also { it.writeText("class A") })
+        val destination = workingDirectory.resolve("classes")
+        val original = toolchain.jvm.jvmCompilationOperationBuilder(sources, destination).apply {
+            compilerArguments[JvmCompilerArguments.MODULE_NAME] = "original"
+            compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_17
+        }.build()
+
+        val newBuilder = original.toBuilder()
+        newBuilder.compilerArguments[JvmCompilerArguments.MODULE_NAME] = "modified"
+        newBuilder.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_21
+        val modified = newBuilder.build()
+
+        assertEquals("original", original.compilerArguments[JvmCompilerArguments.MODULE_NAME])
+        assertEquals(JvmTarget.JVM_17, original.compilerArguments[JvmCompilerArguments.JVM_TARGET])
+        assertEquals("modified", modified.compilerArguments[JvmCompilerArguments.MODULE_NAME])
+        assertEquals(JvmTarget.JVM_21, modified.compilerArguments[JvmCompilerArguments.JVM_TARGET])
+    }
+
+    @DisplayName("Modifying ClasspathSnapshottingOperation builder after build does not affect the built operation")
+    @DefaultStrategyAgnosticCompilationTest
+    fun testClasspathSnapshottingBuilderImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val toolchain = strategyConfig.first
+        val classpathEntry = KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath()
+        val builder = toolchain.jvm.classpathSnapshottingOperationBuilder(classpathEntry).apply {
+            this[JvmClasspathSnapshottingOperation.GRANULARITY] = ClassSnapshotGranularity.CLASS_LEVEL
+            this[JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES] = true
+        }
+        val operation1 = builder.build()
+
+        builder[JvmClasspathSnapshottingOperation.GRANULARITY] = ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+        builder[JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES] = false
+        val operation2 = builder.build()
+
+        assertEquals(ClassSnapshotGranularity.CLASS_LEVEL, operation1[JvmClasspathSnapshottingOperation.GRANULARITY])
+        assertEquals(true, operation1[JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES])
+        assertEquals(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, operation2[JvmClasspathSnapshottingOperation.GRANULARITY])
+        assertEquals(false, operation2[JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES])
+    }
 }
