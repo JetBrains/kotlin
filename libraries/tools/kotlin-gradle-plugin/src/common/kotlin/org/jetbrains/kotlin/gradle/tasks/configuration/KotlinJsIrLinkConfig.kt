@@ -76,9 +76,9 @@ internal open class KotlinJsIrLinkConfig(
                 // we need to provide no-op transform for "jar" -> "klib"
                 task.project.dependencies.registerTransform(
                     NoOpWasmBinaryTransform::class.java
-                ) {
-                    it.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT)
-                    it.to.attributes.attribute(
+                ) { transform ->
+                    transform.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT)
+                    transform.to.attributes.attribute(
                         WasmBinaryAttribute.attribute,
                         WasmBinaryAttribute.KLIB
                     )
@@ -86,46 +86,46 @@ internal open class KotlinJsIrLinkConfig(
 
                 task.project.dependencies.registerTransform(
                     WasmBinaryTransform::class.java,
-                ) {
-                    it.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.KLIB)
-                    it.to.attributes.attribute(
+                ) { transform ->
+                    transform.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.KLIB)
+                    transform.to.attributes.attribute(
                         WasmBinaryAttribute.attribute,
                         WasmBinaryAttribute.modeToAttribute(binary.mode)
                     )
 
-                    it.parameters {
-                        it.currentJvmJdkToolsJar.set(
+                    transform.parameters { parameters ->
+                        parameters.currentJvmJdkToolsJar.set(
                             task.defaultKotlinJavaToolchain
                                 .flatMap { it.currentJvmJdkToolsJar }
                         )
-                        it.defaultCompilerClasspath.setFrom(task.defaultCompilerClasspath)
-                        it.kotlinPluginVersion.set(
+                        parameters.defaultCompilerClasspath.setFrom(task.defaultCompilerClasspath)
+                        parameters.kotlinPluginVersion.set(
                             getKotlinPluginVersion(task.logger)
                         )
-                        it.pathProvider.set(
+                        parameters.pathProvider.set(
                             task.path
                         )
-                        it.projectRootFile.set(
+                        parameters.projectRootFile.set(
                             project.projectDir
                         )
                         val projectName = project.name
-                        it.projectName.set(projectName)
-                        it.projectSessionsDir.set(project.kotlinSessionsDir)
+                        parameters.projectName.set(projectName)
+                        parameters.projectSessionsDir.set(project.kotlinSessionsDir)
 
-                        it.buildDir.set(project.layout.buildDirectory.asFile)
+                        parameters.buildDir.set(project.layout.buildDirectory.asFile)
 
-                        it.libraryFilterCacheService.set(task.libraryFilterCacheService)
+                        parameters.libraryFilterCacheService.set(task.libraryFilterCacheService)
 
                         val compilerOptions = task.compilerOptions
-                        it.compilerOptions.set(
+                        parameters.compilerOptions.set(
                             project.provider {
                                 val args = K2JSCompilerArguments()
                                 KotlinCommonCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
                                 args
                             }
                         )
-                        it.enhancedFreeCompilerArgs.set(task.enhancedFreeCompilerArgs)
-                        it.classpath.from(
+                        parameters.enhancedFreeCompilerArgs.set(task.enhancedFreeCompilerArgs)
+                        parameters.classpath.from(
                             compilation.configurations.runtimeDependencyConfiguration!!.incoming.artifactView {
                                 it.componentFilter {
                                     it is ModuleComponentIdentifier
@@ -133,19 +133,19 @@ internal open class KotlinJsIrLinkConfig(
                             }.files
                         )
                         propertiesProvider.kotlinDaemonJvmArgs?.let { kotlinDaemonJvmArgs ->
-                            it.kotlinDaemonJvmArguments.set(providers.provider {
+                            parameters.kotlinDaemonJvmArguments.set(providers.provider {
                                 splitKotlinDaemonArgs(kotlinDaemonJvmArgs)
                             })
                         }
-                        it.compilerExecutionStrategy.convention(propertiesProvider.kotlinCompilerExecutionStrategy).finalizeValueOnRead()
-                        it.useDaemonFallbackStrategy.convention(propertiesProvider.kotlinDaemonUseFallbackStrategy).finalizeValueOnRead()
+                        parameters.compilerExecutionStrategy.convention(propertiesProvider.kotlinCompilerExecutionStrategy).finalizeValueOnRead()
+                        parameters.useDaemonFallbackStrategy.convention(propertiesProvider.kotlinDaemonUseFallbackStrategy).finalizeValueOnRead()
                         project.kotlinPropertiesProvider.wasmPerModuleInvalidate?.let { invalidate ->
-                            it.invalidate.set(invalidate)
+                            parameters.invalidate.set(invalidate)
                         }
 
                         BinaryenPlugin.apply(project)
-                        it.binaryenExec.set(project.extensions.findByType(BinaryenEnvSpec::class.java).executable)
-                        it.mode.set(binary.mode)
+                        parameters.binaryenExec.set(project.extensions.findByType(BinaryenEnvSpec::class.java).executable)
+                        parameters.mode.set(binary.mode)
                     }
                 }
             }
