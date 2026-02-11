@@ -31,6 +31,8 @@ import kotlin.test.assertNotNull
 @SwiftExportGradlePluginTests
 class SwiftExportIT : KGPBaseTest() {
 
+    // USR expectations are hardcoded. See docs/swift-export/testing-usr-stability.md.
+
     private companion object {
         private const val DEFAULT_IOS_DEPLOYMENT_TARGET = "14.1"
     }
@@ -194,7 +196,12 @@ class SwiftExportIT : KGPBaseTest() {
                 target = "arm64-apple-ios$DEFAULT_IOS_DEPLOYMENT_TARGET",
                 sdk = "iphoneos",
                 searchPaths = listOf(builtProductsDir.toFile()),
-                expectedSymbols = setOf("barbarbar()")
+                expectedSymbols = setOf(
+                    SwiftSymbol(
+                        "s:22ExportedKotlinPackages3comO6githubO9jetbrainsO11swiftexportO6SharedE9barbarbars5Int32VyFZ",
+                        listOf("barbarbar()")
+                    )
+                )
             )
         }
     }
@@ -399,7 +406,7 @@ class SwiftExportIT : KGPBaseTest() {
                 target = "arm64-apple-ios${sdkVersion.output.trim()}-simulator",
                 sdk = "iphonesimulator",
                 searchPaths = listOf(builtProductsDir),
-                expectedSymbols = setOf("iosSimulatorArm64Bar()")
+                expectedSymbols = setOf(SwiftSymbol("s:6Shared20iosSimulatorArm64BaryyF", listOf("iosSimulatorArm64Bar()")))
             )
 
             // Verify Swift module API surface for x86_64 (iosX64)
@@ -409,7 +416,7 @@ class SwiftExportIT : KGPBaseTest() {
                 target = "x86_64-apple-ios${sdkVersion.output.trim()}-simulator",
                 sdk = "iphonesimulator",
                 searchPaths = listOf(builtProductsDir),
-                expectedSymbols = setOf("iosX64Bar()")
+                expectedSymbols = setOf(SwiftSymbol("s:6Shared9iosX64BaryyF", listOf("iosX64Bar()")))
             )
         }
     }
@@ -521,15 +528,45 @@ class SwiftExportIT : KGPBaseTest() {
                 target = "arm64-apple-ios$DEFAULT_IOS_DEPLOYMENT_TARGET",
                 sdk = "iphoneos",
                 expectedSymbolsByModule = mapOf(
-                    "Shared" to setOf("foo()"),
-                    "SharedDepOne" to setOf("org.foo.One", "init()"),
-                    "ExportedKotlinPackages" to setOf("org", "org.foo"),
+                    "Shared" to setOf(
+                        SwiftSymbol(
+                            "s:6Shared3foo22ExportedKotlinPackages3orgOABO0A6DepOneE0H0CyF",
+                            listOf("foo()")
+                        )
+                    ),
+                    "SharedDepOne" to setOf(
+                        SwiftSymbol(
+                            "s:22ExportedKotlinPackages3orgO3fooO12SharedDepOneE0H0C",
+                            listOf("org.foo.One")
+                        ),
+                        SwiftSymbol(
+                            "s:22ExportedKotlinPackages3orgO3fooO12SharedDepOneE0H0CAHycfc",
+                            listOf("org.foo.One.init()")
+                        )
+                    ),
+                    "ExportedKotlinPackages" to setOf(
+                        SwiftSymbol("s:22ExportedKotlinPackages3orgO", listOf("org")),
+                        SwiftSymbol("s:22ExportedKotlinPackages3orgO3fooO", listOf("org.foo"))
+                    ),
+                    // KotlinError exports the struct plus protocol-synthesized members from Swift.
                     "KotlinRuntimeSupport" to setOf(
-                        "KotlinError",
-                        "init(wrapped:)",
-                        "wrapped",
-                        "description",
-                        "localizedDescription"
+                        SwiftSymbol("s:20KotlinRuntimeSupport0A5ErrorV", listOf("KotlinError")),
+                        SwiftSymbol(
+                            "s:20KotlinRuntimeSupport0A5ErrorV7wrappedACSo0A4BaseC_tcfc",
+                            listOf("KotlinError.init(wrapped:)")
+                        ),
+                        SwiftSymbol(
+                            "s:20KotlinRuntimeSupport0A5ErrorV7wrappedSo0A4BaseCvp",
+                            listOf("KotlinError.wrapped")
+                        ),
+                        SwiftSymbol(
+                            "s:20KotlinRuntimeSupport0A5ErrorV11descriptionSSvp",
+                            listOf("KotlinError.description")
+                        ),
+                        SwiftSymbol(
+                            "s:s5ErrorP10FoundationE20localizedDescriptionSSvp::SYNTHESIZED::s:20KotlinRuntimeSupport0A5ErrorV",
+                            listOf("KotlinError.localizedDescription")
+                        )
                     )
                 )
             )
@@ -637,7 +674,7 @@ class SwiftExportIT : KGPBaseTest() {
                 target = "arm64-apple-ios17.0",
                 sdk = "iphoneos",
                 searchPaths = listOf(builtProductsDir.toFile()),
-                expectedSymbols = setOf("demo()")
+                expectedSymbols = setOf(SwiftSymbol("s:6Shared4demo5UIKit33UIContentUnavailableConfigurationVyF", listOf("demo()")))
             )
         }
     }
