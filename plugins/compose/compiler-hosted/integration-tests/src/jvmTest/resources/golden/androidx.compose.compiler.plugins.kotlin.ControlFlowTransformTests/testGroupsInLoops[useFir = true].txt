@@ -53,10 +53,11 @@ private fun KeyContent1(items: List<Int>, %composer: Composer?, %changed: Int) {
         %composer.startMovableGroup(<>, item)
         sourceInformation(%composer, "<rememb...>")
         sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-        %composer.cache(false) {
+        val tmp0_group = %composer.cache(false) {
           item
         }
         sourceInformationMarkerEnd(%composer)
+        tmp0_group
         %composer.endMovableGroup()
         %composer.endReplaceGroup()
       } else {
