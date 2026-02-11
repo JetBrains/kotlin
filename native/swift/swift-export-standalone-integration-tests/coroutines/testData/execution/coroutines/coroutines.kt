@@ -64,3 +64,8 @@ suspend fun throwAfter(delay: Long, message: String): Int {
 suspend fun throwImmediately(message: String): Int {
     error(message)
 }
+
+suspend fun throwNonException(message: String): Int {
+    class NonExceptionThrowable(message: String) : Throwable(message)
+    throw NonExceptionThrowable(message)
+}
