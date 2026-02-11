@@ -36,10 +36,11 @@ fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) 
           traceEventStart(<>, %changed, -1, <>)
         }
         sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-        %composer.cache(%composer.changed(param) or %composer.changed(unstable)) {
+        val tmp0_group = %composer.cache(%composer.changed(param) or %composer.changed(unstable)) {
           param
         }
         sourceInformationMarkerEnd(%composer)
+        tmp0_group
         if (isTraceInProgress()) {
           traceEventEnd()
         }
