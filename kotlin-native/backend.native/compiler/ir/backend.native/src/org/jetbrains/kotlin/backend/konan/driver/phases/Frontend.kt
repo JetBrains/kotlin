@@ -48,11 +48,7 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
     lateinit var analysisResult: AnalysisResult
 
     do {
-        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
-                context.messageCollector,
-                input.configuration.languageVersionSettings,
-                input.configuration.renderDiagnosticInternalName,
-        )
+        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(input.configuration)
 
         val sourceFiles = input.getSourceFiles()
 

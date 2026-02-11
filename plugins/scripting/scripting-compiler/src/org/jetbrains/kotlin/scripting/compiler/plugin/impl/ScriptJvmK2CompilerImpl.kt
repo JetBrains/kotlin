@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForLightTree
+import org.jetbrains.kotlin.cli.common.cliDiagnosticsReporter
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -17,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertAnalyzedFirT
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
 import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.FirSession
@@ -171,6 +175,9 @@ class ScriptJvmK2CompilerImpl(
 
         val compilerConfiguration = state.compilerContext.environment.configuration.copy().apply {
             jvmTarget = selectJvmTarget(scriptRefinedCompilationConfiguration, reportingCtx.messageCollector)
+            messageCollector = reportingCtx.messageCollector
+            diagnosticsCollector = reportingCtx.diagnosticsCollector
+            cliDiagnosticsReporter = CliDiagnosticReporter(this)
         }
 
         state.hostConfiguration[ScriptingHostConfiguration.scriptRefinedCompilationConfigurationsCache]

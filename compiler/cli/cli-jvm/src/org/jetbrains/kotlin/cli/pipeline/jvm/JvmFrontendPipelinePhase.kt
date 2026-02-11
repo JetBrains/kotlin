@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -54,7 +53,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): JvmFrontendPipelineArtifact? {
         val (configuration, rootDisposable) = input
-        val diagnosticsCollector = configuration.diagnosticsCollector
 
         val perfManager = configuration.perfManager
         val chunk = configuration.moduleChunk!!
@@ -70,7 +68,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             configuration,
             rootDisposable,
             targetDescription,
-            diagnosticsCollector
         ) ?: run {
             perfManager?.notifyPhaseFinished(PhaseType.Initialization)
             return null
@@ -161,6 +158,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         )
 
         val countFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
+        val diagnosticsCollector = configuration.diagnosticsCollector
         val outputs = sessionsWithSources.map { (session, sources) ->
             val rawFirFiles = when (configuration.useLightTree) {
                 true -> session.buildFirViaLightTree(sources, diagnosticsCollector, countFilesAndLines)
@@ -196,9 +194,9 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         configuration: CompilerConfiguration,
         rootDisposable: Disposable,
         targetDescription: String,
-        diagnosticReporter: BaseDiagnosticsCollector
     ): EnvironmentAndSources? {
         val messageCollector = configuration.messageCollector
+        val diagnosticReporter = configuration.diagnosticsCollector
         return when (configuration.useLightTree) {
             true -> {
                 val environment = createProjectEnvironment(
@@ -211,8 +209,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             }
             false -> {
                 val kotlinCoreEnvironment = K2JVMCompiler.createCoreEnvironment(
-                    rootDisposable, configuration, messageCollector,
-                    targetDescription
+                    rootDisposable, configuration, targetDescription
                 ) ?: return null
 
                 val projectEnvironment = kotlinCoreEnvironment.toVfsBasedProjectEnvironment()
@@ -225,7 +222,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
                 EnvironmentAndSources(projectEnvironment, sources)
             }
-        }.takeUnless { messageCollector.hasErrors() }
+        }.takeUnless { CheckCompilationErrors.CheckDiagnosticCollector.checkHasErrors(configuration) }
     }
 
     private fun groupKtFiles(ktFiles: List<KtFile>): GroupedKtSources {

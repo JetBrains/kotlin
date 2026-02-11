@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.ir.validation.IrValidationException
@@ -97,7 +98,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             configuration.messageCollector.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
         }
         val environment = prepareEnvironment(arguments, configuration, rootDisposable)
-        if (configuration.messageCollector.hasErrors()) {
+        if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
             // Some errors during KotlinCoreEnvironment setup.
             return ExitCode.COMPILATION_ERROR
         }

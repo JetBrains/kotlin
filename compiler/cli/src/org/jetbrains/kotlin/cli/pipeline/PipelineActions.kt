@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.cli.pipeline
 
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
+import org.jetbrains.kotlin.cli.common.treatWarningsAsErrors
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
@@ -19,9 +23,34 @@ abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext
             c: PipelineContext,
         ) {
             val configuration = output.configuration
-            if (configuration.diagnosticsCollector.hasErrors || configuration.messageCollector.hasErrors()) {
+            if (checkHasErrors(configuration)) {
                 throw PipelineStepException()
             }
+        }
+
+        fun checkHasErrorsAndReportToMessageCollector(configuration: CompilerConfiguration): Boolean {
+            if (checkHasErrors(configuration)) {
+                reportToMessageCollector(configuration)
+                return true
+            }
+            return false
+        }
+
+        fun reportToMessageCollector(configuration: CompilerConfiguration) {
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
+                configuration.diagnosticsCollector,
+                configuration.messageCollector,
+                configuration.renderDiagnosticInternalName
+            )
+        }
+
+        fun checkHasErrors(configuration: CompilerConfiguration): Boolean {
+            if (configuration.diagnosticsCollector.hasErrors || configuration.messageCollector.hasErrors()) return true
+            if (configuration.treatWarningsAsErrors) {
+                // In the message collector check for `-Werror` is included into `hasErrors()`
+                return configuration.diagnosticsCollector.hasWarningsForWError
+            }
+            return false
         }
     }
 }

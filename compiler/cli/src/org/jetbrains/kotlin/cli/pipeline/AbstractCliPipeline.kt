@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
@@ -124,7 +125,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
              *   if `-version` flag was passed
              */
             val configuration = input.configuration
-            if (e.definitelyCompilationError || configuration.messageCollector.hasErrors() || configuration.diagnosticsCollector.hasErrors) {
+            if (e.definitelyCompilationError || CheckDiagnosticCollector.checkHasErrors(configuration)) {
                 ExitCode.COMPILATION_ERROR
             } else {
                 ExitCode.OK
