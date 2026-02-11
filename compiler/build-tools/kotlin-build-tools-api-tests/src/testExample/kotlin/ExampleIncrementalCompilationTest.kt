@@ -6,15 +6,19 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_EXPLICIT_BACKING_FIELDS
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.KEEP_IC_CACHES_IN_MEMORY
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.deleteIfExists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
@@ -73,6 +77,38 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
                 SourcesChanges.Known(modifiedFiles = emptyList(), removedFiles = emptyList())
             ) {
                 assertCompiledSources("b.kt")
+            }
+        }
+    }
+
+    @DisplayName("Sample IC test with 2 modules and custom compilation options")
+    @DefaultStrategyAgnosticCompilationTest
+    @TestMetadata("jvm-module-1")
+    fun testExplicitBackingFieldsIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        if (strategyConfig.first::class.simpleName == "KotlinToolchainsV1Adapter") {
+            // `X_EXPLICIT_BACKING_FIELDS` is not supported.
+            return
+        }
+
+        project(strategyConfig) {
+            val module = module("explicit-backing-fields-incremental-1") {
+                @OptIn(ExperimentalCompilerArgument::class)
+                it.compilerArguments[X_EXPLICIT_BACKING_FIELDS] = true
+            }
+
+            val main = module.sourcesDirectory.resolve("Main.kt")
+
+            // Ensure no `OPT_IN_USAGE_ERROR`s are produced
+            module.compileIncrementally(SourcesChanges.Unknown)
+
+            module.compileIncrementally(
+                SourcesChanges.Known(modifiedFiles = listOf(main.toFile()), removedFiles = emptyList()),
+            ) {
+                expectFail()
+                assertCompiledSources("Main.kt")
+                assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
+                assertLogDoesNotContainPatterns(LogLevel.ERROR, ".*Main\\.kt:8:19 This declaration needs opt-in\\. Its usage must be marked with '@Experimental' or '@OptIn\\(Experimental::class\\)'.*".toRegex())
+                assertLogContainsPatterns(LogLevel.ERROR, ".*Main\\.kt:14:19 This declaration needs opt-in\\. Its usage must be marked with '@Experimental' or '@OptIn\\(Experimental::class\\)'.*".toRegex())
             }
         }
     }
