@@ -133,6 +133,47 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
             return
         }
 
+        val workArgs = prepareWasmCompilationArgs(compilerOutputDir, inputFile)
+
+        GradleKotlinCompilerWork(
+            workArgs
+        ).run()
+
+        if (mode == KotlinJsBinaryMode.DEVELOPMENT) return
+
+        val binaryenOutputDirectory = outputs.dir(inputFile.name.replace(".klib", "-transformed"))
+
+        execOps.exec {
+            it.executable = parameters.binaryenExec.get()
+            val inputFileBinaryen = compilerOutputDir.listFiles().first { it.extension == "wasm" }
+            it.setWorkingDir(binaryenOutputDirectory)
+            it.args = binaryenArgs(inputFileBinaryen, binaryenOutputDirectory)
+        }
+
+        fs.copy {
+            it.from(compilerOutputDir)
+            it.into(binaryenOutputDirectory)
+            it.include("*.mjs", "*.js", "*.js.map")
+        }
+
+    }
+
+    private fun binaryenArgs(
+        inputFileBinaryen: File,
+        binaryenOutputDirectory: File,
+    ): MutableList<String> {
+        val newArgs = mutableListOf<String>()
+        newArgs.addAll(BinaryenConfig.binaryenMultimoduleArgs)
+        newArgs.add(inputFileBinaryen.absolutePath)
+        newArgs.add("-o")
+        newArgs.add(binaryenOutputDirectory.resolve(inputFileBinaryen.name).absolutePath)
+        return newArgs
+    }
+
+    private fun prepareWasmCompilationArgs(
+        compilerOutputDir: File,
+        inputFile: File,
+    ): GradleKotlinCompilerWorkArguments {
         val args = parameters.compilerOptions.get().copyOf()
         args.apply {
             this.outputDir = compilerOutputDir.absolutePath
@@ -183,33 +224,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
             } ?: KotlinVersion.DEFAULT,
             compilerArgumentsLogLevel = KotlinCompilerArgumentsLogLevel.DEFAULT,
         )
-
-        GradleKotlinCompilerWork(
-            workArgs
-        ).run()
-
-        if (mode == KotlinJsBinaryMode.DEVELOPMENT) return
-
-        val binaryenOutputDirectory = outputs.dir(inputFile.name.replace(".klib", "-transformed"))
-
-        execOps.exec {
-            it.executable = parameters.binaryenExec.get()
-            val inputFileBinaryen = compilerOutputDir.listFiles().first { it.extension == "wasm" }
-            val newArgs = mutableListOf<String>()
-            newArgs.addAll(BinaryenConfig.binaryenMultimoduleArgs)
-            newArgs.add(inputFileBinaryen.absolutePath)
-            newArgs.add("-o")
-            newArgs.add(binaryenOutputDirectory.resolve(inputFileBinaryen.name).absolutePath)
-            it.setWorkingDir(binaryenOutputDirectory)
-            it.args = newArgs
-        }
-
-        fs.copy {
-            it.from(compilerOutputDir)
-            it.into(binaryenOutputDirectory)
-            it.include("*.mjs", "*.js", "*.js.map")
-        }
-
+        return workArgs
     }
 
     private fun isKotlinLibrary(file: File): Boolean {
