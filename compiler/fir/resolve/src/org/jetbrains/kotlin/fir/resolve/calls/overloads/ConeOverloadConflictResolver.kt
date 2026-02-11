@@ -273,8 +273,7 @@ class ConeOverloadConflictResolver(
             )?.let { return it }
         }
 
-        val filtered = candidates.filterTo(mutableSetOf()) { it.usesSamConversionOrSamConstructor }
-        if (filtered.isNotEmpty()) {
+        if (candidates.any { it.usesSamConversionOrSamConstructor }) {
             findMaximallySpecificCall(candidates, discriminateGenerics = false, useOriginalSamTypes = true)?.let { return setOf(it) }
         }
 
@@ -286,7 +285,7 @@ class ConeOverloadConflictResolver(
         filter: (Candidate) -> Boolean,
         newFlags: () -> DiscriminationFlags,
     ): Set<Candidate>? {
-        val filtered = candidates.filterTo(mutableSetOf()) { filter(it) }
+        val filtered = candidates.filterTo(mutableSetOf(), filter)
         return when (filtered.size) {
             1 -> filtered
             0, candidates.size -> null
@@ -328,7 +327,7 @@ class ConeOverloadConflictResolver(
         call1: CandidateSignature,
         call2: CandidateSignature,
         discriminateGenerics: Boolean,
-        useOriginalSamTypes: Boolean = false
+        useOriginalSamTypes: Boolean,
     ): Boolean {
         return compareCallsByUsedArguments(call1, call2, discriminateGenerics, useOriginalSamTypes)
     }
@@ -374,7 +373,7 @@ class ConeOverloadConflictResolver(
         call1: FlatSignature<Candidate>,
         call2: FlatSignature<Candidate>,
         discriminateGenerics: Boolean,
-        useOriginalSamTypes: Boolean
+        useOriginalSamTypes: Boolean,
     ): Boolean {
         if (discriminateGenerics) {
             val isGeneric1 = call1.isGeneric
