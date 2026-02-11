@@ -15,35 +15,25 @@ import org.jetbrains.kotlin.buildtools.api.konan.NativeDependencies
 import java.nio.file.Path
 
 @ExperimentalBuildToolsApi
-public interface NativeLinkingOperation : BuildOperation<CompilationResult> {
-    public val klibs: List<Path>
-    public val destinationDirectory: Path
+public interface NativeCachingOperation : BuildOperation<CompilationResult> {
+    public val klib: Path
+    public val kind: NativeCacheKind
+    public val outputCache: Path
 
     public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
 
     public interface Builder : BuildOperation.Builder {
-        public val klibs: List<Path>
-        public val destinationDirectory: Path
+        public val klib: Path
+        public val outputCache: Path
         public operator fun <V> get(key: Option<V>): V
         public operator fun <V> set(key: Option<V>, value: V)
-        public fun build(): NativeLinkingOperation
+        public fun build(): NativeCachingOperation
     }
 
     public operator fun <V> get(key: Option<V>): V
 
-    /**
-     * Returns a pre-configured `NativeCachingOperation.Builder` fit for building the correct cache for this `NativeLinkingOperation`.
-     *
-     * **NOTE**: Caches for all dependencies of [klib] must be built and given in [NativeCachingOperation.CACHES]
-     */
-    public fun nativeCachingOperationBuilder(
-        klib: Path,
-        kind: NativeCacheKind,
-        outputCache: Path,
-    ): NativeCachingOperation.Builder
-
     public companion object {
-        // TODO: Native second stage compiler options
+        // TODO: Native second stage compiler options applicable for cache building
 
         /**
          * When empty, the compiler may download the dependencies itself
@@ -51,16 +41,8 @@ public interface NativeLinkingOperation : BuildOperation<CompilationResult> {
         public val NATIVE_DEPENDENCIES: Option<NativeDependencies> = Option("NATIVE_DEPENDENCIES")
 
         /**
-         * Prebuilt caches for a subset of `klibs`. When empty, the compiler may build the caches itself.
+         * Caches for all the dependencies of [klib]. Can be [NativeCacheKind.HEADER].
          */
         public val CACHES: Option<List<NativeCache>> = Option("CACHES")
     }
 }
-
-@ExperimentalBuildToolsApi
-public inline fun NativeLinkingOperation.nativeCachingOperation(
-    klib: Path,
-    kind: NativeCacheKind,
-    outputCache: Path,
-    action: NativeCachingOperation.Builder.() -> Unit,
-): NativeCachingOperation = nativeCachingOperationBuilder(klib, kind, outputCache).apply(action).build()
