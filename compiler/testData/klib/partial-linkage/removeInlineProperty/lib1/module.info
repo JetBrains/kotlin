@@ -1,8 +1,8 @@
 STEP 0:
-    arguments: -Xcontext-parameters -Xklib-ir-inliner=full
+    arguments: -Xklib-ir-inliner=full
     dependencies: stdlib
 STEP 1:
-    arguments: -Xcontext-parameters -Xklib-ir-inliner=full
+    arguments: -Xklib-ir-inliner=full
     dependencies: stdlib
     modifications:
         U : l1.kt.1 -> l1.kt

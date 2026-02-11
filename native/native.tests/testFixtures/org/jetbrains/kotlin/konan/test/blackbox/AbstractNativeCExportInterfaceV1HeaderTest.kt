@@ -42,7 +42,6 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
                 "-opt-in", "kotlin.native.internal.InternalForKotlinNative",
                 "-opt-in", "kotlin.experimental.ExperimentalObjCRefinement",
                 "-Xbinary=cInterfaceMode=v1",
-                "-Xcontext-parameters",
             )),
             nominalPackageName = PackageName(moduleName),
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),

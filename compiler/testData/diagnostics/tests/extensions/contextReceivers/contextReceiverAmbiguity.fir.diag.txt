@@ -1,10 +1,10 @@
 /contextReceiverAmbiguity.fir.kt:(161,168): error: Experimental context receivers are superseded by context parameters.
-Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
+Remove the '-Xcontext-receivers' compiler argument and migrate to the new syntax.
 
 See the context parameters proposal for more details: https://kotl.in/context-parameters
 
 /contextReceiverAmbiguity.fir.kt:(207,214): error: Experimental context receivers are superseded by context parameters.
-Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
+Remove the '-Xcontext-receivers' compiler argument and migrate to the new syntax.
 
 See the context parameters proposal for more details: https://kotl.in/context-parameters
 

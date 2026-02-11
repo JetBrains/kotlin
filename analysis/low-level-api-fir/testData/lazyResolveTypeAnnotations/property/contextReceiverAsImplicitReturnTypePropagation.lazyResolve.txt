@@ -184,7 +184,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<kotlin/Int>|.bar: <ERROR TYPE REF: Unresolved this@List>
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved this@List> {
-            ^ R|/foo<Inapplicable(INAPPLICABLE): /foo>#|
+            ^ context(this@R|/bar|) R|/foo|
         }
     context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: <ERROR TYPE REF: Unresolved this@List>
@@ -207,7 +207,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(CONSTANT_EVALUATION)] val [ResolvedTo(CONSTANT_EVALUATION)] R|kotlin/collections/List<kotlin/Int>|.bar: <ERROR TYPE REF: Unresolved this@List>
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): <ERROR TYPE REF: Unresolved this@List> {
-            ^ R|/foo<Inapplicable(INAPPLICABLE): /foo>#|
+            ^ context(this@R|/bar|) R|/foo|
         }
     context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: <ERROR TYPE REF: Unresolved this@List>
@@ -230,7 +230,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<kotlin/Int>|.bar: <ERROR TYPE REF: Unresolved this@List>
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Unresolved this@List> {
-            ^ R|/foo<Inapplicable(INAPPLICABLE): /foo>#|
+            ^ context(this@R|/bar|) R|/foo|
         }
     context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: <ERROR TYPE REF: Unresolved this@List>
@@ -253,7 +253,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiverAsImplicitReturnTypePropagation.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(BODY_RESOLVE)] val [ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<kotlin/Int>|.bar: <ERROR TYPE REF: Unresolved this@List>
         public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved this@List> {
-            ^ R|/foo<Inapplicable(INAPPLICABLE): /foo>#|
+            ^ context(this@R|/bar|) R|/foo|
         }
     context([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>|)
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val foo: <ERROR TYPE REF: Unresolved this@List>
@@ -276,7 +276,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextReceiverAsImplicitReturnTypePropagation.
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
     public final [ResolvedTo(BODY_RESOLVE)] val [ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<kotlin/Int>|.bar: <ERROR TYPE REF: Unresolved this@List>
         public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved this@List> {
-            ^ R|/foo<Inapplicable(INAPPLICABLE): /foo>#|
+            ^ context(this@R|/bar|) R|/foo|
         }
     context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|) [evaluated = String(context receiver type str)])  kotlin/Int>|)
     public final [ResolvedTo(BODY_RESOLVE)] val foo: <ERROR TYPE REF: Unresolved this@List>
