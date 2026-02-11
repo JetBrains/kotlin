@@ -66,7 +66,7 @@ internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KT
         return result
     }
 
-    fun combinedWith(other: KTypeSubstitutor): KTypeSubstitutor {
+    fun chainedWith(other: KTypeSubstitutor): KTypeSubstitutor {
         // Optimizations
         if (this.substitution.isEmpty()) return other
         if (other.substitution.isEmpty()) return this

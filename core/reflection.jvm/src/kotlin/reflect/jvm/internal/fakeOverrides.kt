@@ -132,7 +132,7 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMemb
         for ((_, notSubstitutedMember) in supertypeMembers.members) {
             val overriddenStorage = notSubstitutedMember.overriddenStorage.copy(
                 instanceReceiverParameter = if (notSubstitutedMember.isStatic) null else thisReceiver,
-                typeSubstitutor = notSubstitutedMember.overriddenStorage.typeSubstitutor.combinedWith(substitutor),
+                typeSubstitutor = notSubstitutedMember.overriddenStorage.typeSubstitutor.chainedWith(substitutor),
                 originalContainerIfFakeOverride = notSubstitutedMember.originalContainer,
             )
             val member = notSubstitutedMember.shallowCopy(notSubstitutedMember.container, overriddenStorage)
