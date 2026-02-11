@@ -6,5 +6,4 @@ fun test() {
 }
 
 // LANGUAGE: +CollectionLiterals
-// COMPILATION_ERRORS
 // WITH_STDLIB

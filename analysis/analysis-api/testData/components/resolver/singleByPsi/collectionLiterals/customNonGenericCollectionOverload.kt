@@ -8,4 +8,3 @@ class MyList {
 val globalList: MyList = <expr>["1", "2"]</expr>
 
 // LANGUAGE: +CollectionLiterals
-// COMPILATION_ERRORS

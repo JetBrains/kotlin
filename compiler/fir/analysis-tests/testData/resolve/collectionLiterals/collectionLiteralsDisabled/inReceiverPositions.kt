@@ -5,7 +5,7 @@
 
 class MyList {
     companion object {
-        <!UNSUPPORTED_FEATURE("The feature \"collection literals\" is unsupported.")!>operator<!> fun of(vararg args: String): MyList = MyList()
+        <!UNSUPPORTED_FEATURE("The feature \"collection literals\" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-XXLanguage:+CollectionLiterals', but note that no stability guarantees are provided.")!>operator<!> fun of(vararg args: String): MyList = MyList()
     }
 }
 
