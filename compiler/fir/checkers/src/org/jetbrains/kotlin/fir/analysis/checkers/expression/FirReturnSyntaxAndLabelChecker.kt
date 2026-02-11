@@ -28,8 +28,10 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKind.Common) {
@@ -105,6 +107,9 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
     ): KtDiagnosticFactory0? {
         // No expression body, all good
         if (targetSymbol.expressionBodyOrNull() == null) return null
+
+        // We allow returns in Unit returning functions to reduce the number of breaking changes (KT-83343)
+        if (edgeCase && targetSymbol.resolvedReturnType.fullyExpandedType().isUnit) return null
 
         val allowWithExplicitType = AllowReturnInExpressionBodyWithExplicitType.isEnabled()
 

@@ -19,5 +19,26 @@ fun foo6(b: Boolean): String = when (1) {
     }
 }
 
+fun fooUnit1(b: Boolean) = run {
+    if (b) return
+    Unit
+}
+
+fun fooUnit2(b: Boolean) = when(1) {
+    else -> {
+        val foo = if (b) return else ""
+        Unit
+    }
+}
+
+typealias MyUnit = Unit
+
+fun fooUnit3(b: Boolean, myUnit: MyUnit) = when(1) {
+    else -> {
+        val foo = if (b) return else ""
+        myUnit
+    }
+}
+
 /* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, localProperty,
 propertyDeclaration, stringLiteral, whenExpression, whenWithSubject */
