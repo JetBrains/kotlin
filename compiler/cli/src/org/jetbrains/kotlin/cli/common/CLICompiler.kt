@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
 import org.jetbrains.kotlin.cli.report
@@ -113,7 +114,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
             setupCommonArguments(configuration, arguments)
             setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
             val paths = computeKotlinPaths(configuration, arguments)
-            if (collector.hasErrors()) {
+            if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
                 return COMPILATION_ERROR
             }
 
@@ -138,7 +139,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
                     performanceManager.dumpPerformanceReport(arguments.dumpPerf!!)
                 }
 
-                return if (collector.hasErrors()) COMPILATION_ERROR else code
+                return if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) COMPILATION_ERROR else code
             } catch (e: CompilationCanceledException) {
                 collector.reportCompilationCancelled(e)
                 return OK

@@ -42,13 +42,11 @@ abstract class Fir2IrCliFacade<Phase, InputPipelineArtifact, OutputPipelineArtif
         }
         @Suppress("UNCHECKED_CAST")
         val cliArtifact = inputArtifact.cliArtifact as InputPipelineArtifact
-
-        val messageCollector = cliArtifact.configuration.messageCollector
         val input = cliArtifact.withNewDiagnosticCollector(
             DiagnosticsCollectorImpl()
         )
         val output = phase.executePhase(input)
-            ?: return processErrorFromCliPhase(messageCollector, testServices)
+            ?: return processErrorFromCliPhase(cliArtifact.configuration, testServices)
         return Fir2IrCliBasedOutputArtifact(output)
     }
 }

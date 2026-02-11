@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.common.profiling.ProfilingCompilerPerformanceMan
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCliPipeline
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.report
@@ -143,14 +144,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
             val dumpModelDir = configuration.get(CommonConfigurationKeys.DUMP_MODEL)
             val environment = createCoreEnvironment(
-                rootDisposable, configuration, messageCollector,
-                moduleChunk.targetDescription()
+                rootDisposable, configuration, moduleChunk.targetDescription()
             ) ?: run {
                 configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
                 return COMPILATION_ERROR
             }
 
             if (environment.getSourceFiles().isEmpty() && !arguments.allowNoSourceFiles && buildFile == null) {
+                CheckDiagnosticCollector.reportToMessageCollector(configuration)
                 if (arguments.version) return OK
 
                 messageCollector.report(ERROR, "No source files")
@@ -161,14 +162,19 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 JvmFrontendPipelinePhase.dumpModel(dumpModelDir, chunk, configuration, arguments)
             }
 
-            if (!KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)) return COMPILATION_ERROR
-            return OK
+            val success = KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)
+            CheckDiagnosticCollector.reportToMessageCollector(configuration)
+            return when {
+                success -> OK
+                else -> COMPILATION_ERROR
+            }
         } catch (e: CompilationException) {
             messageCollector.report(
                 EXCEPTION,
                 OutputMessageUtil.renderException(e),
                 MessageUtil.psiElementToMessageLocation(e.element)
             )
+            CheckDiagnosticCollector.reportToMessageCollector(configuration)
             return INTERNAL_ERROR
         }
     }
@@ -235,20 +241,19 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         fun createCoreEnvironment(
             rootDisposable: Disposable,
             configuration: CompilerConfiguration,
-            messageCollector: MessageCollector,
             targetDescription: String
         ): KotlinCoreEnvironment? {
             val perfManager = configuration.perfManager
             perfManager?.targetDescription = targetDescription
 
-            if (messageCollector.hasErrors()) return null
+            if (CheckDiagnosticCollector.checkHasErrors(configuration)) return null
 
             val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
             val sourceFiles = environment.getSourceFiles()
             perfManager?.addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
 
-            return if (messageCollector.hasErrors()) null else environment
+            return if (CheckDiagnosticCollector.checkHasErrors(configuration)) null else environment
         }
 
         internal fun createCustomPerformanceManagerOrNull(

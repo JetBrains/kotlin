@@ -11,14 +11,17 @@ import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorBasedReporter
 import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.idea.MainFunctionDetector
@@ -93,6 +96,12 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     failOnSyntaxErrors = true
                 ).valueOr { return@withMessageCollector it }
 
+                // TODO(KT-84516): cleanup
+                val compilerConfiguration = context.environment.configuration.copy().apply {
+                    this.messageCollector = messageCollector
+                    diagnosticsCollector = DiagnosticsCollectorImpl()
+                }
+
                 val (sourceFiles, sourceDependencies) =
                     collectRefinedSourcesAndUpdateEnvironment(context, KtFileScriptSource(snippetKtFile), messageCollector) {
                         context.scriptConfigurationsProvider?.getScriptCompilationConfiguration(it, initialConfiguration)
@@ -106,9 +115,11 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
 
                 val ktFiles = sourceFiles.map { it.getKtFile(definition, context.environment.project) }
 
-                checkKotlinPackageUsageForPsi(context.environment.configuration, ktFiles)
+                checkKotlinPackageUsageForPsi(compilerConfiguration, ktFiles)
 
-                if (messageCollector.hasErrors()) return failure(messageCollector)
+                if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(compilerConfiguration)) {
+                    return failure(messageCollector)
+                }
 
                 // TODO: support case then JvmDependencyFromClassLoader is registered in non-first line
                 // registerPackageFragmentProvidersIfNeeded already tries to avoid duplicated registering, but impact on
@@ -147,35 +158,34 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     else -> throw AssertionError("Unexpected result ${analysisResult::class.java}")
                 }
 
-                val codegenDiagnosticsCollector = DiagnosticsCollectorImpl()
-
+                val diagnosticsCollector = compilerConfiguration.diagnosticsCollector
                 val generationState = GenerationState(
                     snippetKtFile.project,
                     compilationState.analyzerEngine.module,
-                    compilationState.environment.configuration,
-                    diagnosticReporter = codegenDiagnosticsCollector,
+                    compilerConfiguration,
+                    diagnosticReporter = diagnosticsCollector,
                 )
 
-                val generatorExtensions = object : JvmGeneratorExtensionsImpl(compilationState.environment.configuration) {
+                val generatorExtensions = object : JvmGeneratorExtensionsImpl(compilerConfiguration) {
                     override fun getPreviousScripts() =
                         state.history.map { compilationState.symbolTable.descriptorExtension.referenceScript(it.item) }
                 }
                 val codegenFactory = JvmIrCodegenFactory(
-                    compilationState.environment.configuration,
+                    compilerConfiguration,
                     compilationState.mangler, compilationState.symbolTable, generatorExtensions
                 )
                 val irBackendInput = codegenFactory.convertToIr(
                     generationState, ktFiles, compilationState.analyzerEngine.trace.bindingContext
                 )
 
-                if (codegenDiagnosticsCollector.hasErrors) {
-                    return failure(messageCollector, *codegenDiagnosticsCollector.scriptDiagnostics(snippet).toTypedArray())
+                if (CheckDiagnosticCollector.checkHasErrors(compilerConfiguration)) {
+                    return failure(messageCollector, *diagnosticsCollector.scriptDiagnostics(snippet).toTypedArray())
                 }
 
                 codegenFactory.generateModule(generationState, irBackendInput)
 
-                if (codegenDiagnosticsCollector.hasErrors) {
-                    return failure(messageCollector, *codegenDiagnosticsCollector.scriptDiagnostics(snippet).toTypedArray())
+                if (CheckDiagnosticCollector.checkHasErrors(compilerConfiguration)) {
+                    return failure(messageCollector, *diagnosticsCollector.scriptDiagnostics(snippet).toTypedArray())
                 }
 
                 state.history.push(lineId, scriptDescriptor)

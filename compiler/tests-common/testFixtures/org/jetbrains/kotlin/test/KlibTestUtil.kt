@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeMetadata
@@ -68,6 +69,7 @@ object KlibTestUtil {
             FilteringMessageCollector(
                 PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false)
             ) /* decline = */ { !it.isError }
+        configuration.renderDiagnosticInternalName = true
         configuration.put(CommonConfigurationKeys.MODULE_NAME, libraryName)
         configuration.addKotlinSourceRoots(sourceFiles.map { it.absolutePath })
         val stdlibFile = ForTestCompileRuntime.stdlibCommonForTests()
@@ -85,11 +87,7 @@ object KlibTestUtil {
 
             val projectContext = ProjectContext(environment.project, "Compile common sources to KLIB metadata")
 
-            val analyzer = AnalyzerWithCompilerReport(
-                configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY),
-                configuration.languageVersionSettings,
-                renderDiagnosticName = true,
-            )
+            val analyzer = AnalyzerWithCompilerReport(configuration)
 
             analyzer.analyzeAndReport(environment.getSourceFiles()) {
                 CommonResolverForModuleFactory.analyzeFiles(

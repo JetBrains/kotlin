@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
@@ -157,17 +158,22 @@ private fun compileImpl(
         return failure(messageCollector)
     }
 
+    // TODO(KT-84516): cleanup
+    val compilerConfiguration = context.environment.configuration.copy().apply {
+        this.messageCollector = messageCollector
+        diagnosticsCollector = DiagnosticsCollectorImpl()
+    }
     val getScriptConfiguration = { sourceCode: SourceCode ->
         val refinedConfiguration =
             context.scriptConfigurationsProvider?.getScriptCompilationConfiguration(sourceCode, context.baseScriptCompilationConfiguration)
                 ?.valueOrNull()?.configuration ?: context.baseScriptCompilationConfiguration
         refinedConfiguration.with {
-            _languageVersion(context.environment.configuration.languageVersionSettings.languageVersion.versionString)
+            _languageVersion(compilerConfiguration.languageVersionSettings.languageVersion.versionString)
             // Adjust definitions so all compiler dependencies are saved in the resulting compilation configuration, so evaluation
             // performed with the expected classpath
             // TODO: make this logic obsolete by injecting classpath earlier in the pipeline
             val depsFromConfiguration = get(dependencies)?.flatMapTo(HashSet()) { (it as? JvmDependency)?.classpath ?: emptyList() }
-            val depsFromCompiler = context.environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
+            val depsFromCompiler = compilerConfiguration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
                 .mapNotNull {
                     when {
                         it is JvmClasspathRoot && !it.isSdkRoot -> it.file
@@ -195,19 +201,19 @@ private fun compileImpl(
         )
     val ktFiles = sourceFiles.map { it.getKtFile(definition, context.environment.project) }
 
-    checkKotlinPackageUsageForPsi(context.environment.configuration, ktFiles)
+    checkKotlinPackageUsageForPsi(compilerConfiguration, ktFiles)
 
     val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
         AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
     }
 
-    if (syntaxErrors || messageCollector.hasErrors()) {
+    if (syntaxErrors || CheckCompilationErrors.CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(compilerConfiguration)) {
         return failure(messageCollector)
     }
 
     registerPackageFragmentProvidersIfNeeded(getScriptConfiguration(sourceFiles.first()), context.environment)
 
-    return if (context.environment.configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+    return if (compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
         doCompileWithK2(context, mainKtSource, ktFiles, sourceDependencies, definition, messageCollector, getScriptConfiguration)
     } else {
         doCompile(context, mainKtSource, ktFiles, sourceDependencies, definition, messageCollector, getScriptConfiguration)
@@ -296,13 +302,7 @@ private fun doCompile(
 }
 
 private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvironment): AnalysisResult {
-    val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
-    val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
-        messageCollector,
-        environment.configuration.languageVersionSettings,
-        environment.configuration.renderDiagnosticInternalName,
-    )
+    val analyzerWithCompilerReport = AnalyzerWithCompilerReport(environment.configuration)
 
     analyzerWithCompilerReport.analyzeAndReport(sourceFiles) {
         val project = environment.project

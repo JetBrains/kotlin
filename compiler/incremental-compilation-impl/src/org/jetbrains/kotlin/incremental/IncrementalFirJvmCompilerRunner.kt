@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
@@ -140,8 +141,7 @@ open class IncrementalFirJvmCompilerRunner(
             }
 
             val paths = computeKotlinPaths(configuration, args)
-            if (collector.hasErrors() || configuration.diagnosticsCollector.hasErrors){
-                configuration.diagnosticsCollector.reportToMessageCollector(configuration.messageCollector, configuration.renderDiagnosticInternalName)
+            if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
                 return ExitCode.COMPILATION_ERROR to emptyList()
             }
 
