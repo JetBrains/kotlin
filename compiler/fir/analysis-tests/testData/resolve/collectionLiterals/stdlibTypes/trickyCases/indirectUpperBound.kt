@@ -29,8 +29,8 @@ fun test() {
     // ambiguity or MutableSet
     throughDeclaredWithUBOnK2(<!AMBIGUOUS_COLLECTION_LITERAL!>[]<!>, { it: MutableSet<Int> -> })
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>select<!>(<!CANNOT_INFER_PARAMETER_TYPE!>select<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>), <!UNRESOLVED_REFERENCE!>materializeFromLambdaInput<!>({ it: Set<Int> -> }))
-    <!CANNOT_INFER_PARAMETER_TYPE!>select<!>(<!CANNOT_INFER_PARAMETER_TYPE!>select<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>), <!UNRESOLVED_REFERENCE!>materializeFromLambdaInput<!>({ it: MutableSet<String> -> }, { it: Set<Int> -> }))
+    select(select([]), materializeFromLambdaInputs({ it: Set<Int> -> }))
+    select(select([]), materializeFromLambdaInputs({ it: MutableSet<String> -> }, { it: Set<Int> -> }))
     select(select([], mutableSetOf()), materializeFromLambdaInputs({ it: MutableSet<String> -> }))
 
     // ambiguity
