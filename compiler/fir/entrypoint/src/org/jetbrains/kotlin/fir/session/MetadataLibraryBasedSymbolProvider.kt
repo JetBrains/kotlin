@@ -84,6 +84,22 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
         }
     }
 
+    private fun getNameResolver(fragment: ProtoBuf.PackageFragment): NameResolver {
+        return fragmentToNameResolver.getOrPut(fragment) {
+            NameResolverImpl(
+                fragment.strings,
+                fragment.qualifiedNames,
+            )
+        }
+    }
+
+    private fun getFinder(fragment: ProtoBuf.PackageFragment, resolver: NameResolver): KlibMetadataClassDataFinder {
+        return fragmentToKlibMetadataClassDataFinder.getOrPut(fragment) {
+            // Assumes the fact that the nameResolver depends only on the fragment.
+            KlibMetadataClassDataFinder(fragment, resolver)
+        }
+    }
+
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
         val packageStringName = if (packageFqName.isRoot) "" else packageFqName.asString()
 
