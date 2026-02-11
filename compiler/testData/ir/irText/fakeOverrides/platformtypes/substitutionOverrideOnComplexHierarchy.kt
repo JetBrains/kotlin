@@ -2,7 +2,7 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 
-// Minor parmeter types' flexibility mismatch
+// Minor parameter types' flexibility mismatch
 // KOTLIN_REFLECT_DUMP_MISMATCH
 
 // FILE: Java1.java
