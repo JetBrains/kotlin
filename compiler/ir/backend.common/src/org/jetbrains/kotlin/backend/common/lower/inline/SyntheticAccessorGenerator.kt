@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -172,7 +173,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             accessor.copyTypeParameters(capturedTypeParameters, IrDeclarationOrigin.SYNTHETIC_ACCESSOR_CAPTURED_TYPE_PARAMETER)
             accessor.copyTypeParametersFrom(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
             val typeParameterMapping = (capturedTypeParameters + source.typeParameters).zip(accessor.typeParameters).toMap()
-            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType, typeParameterMapping)
+            accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType?.classifierOrNull?.defaultType, typeParameterMapping)
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor, typeParameterMapping)
 
             accessor.body = context.irFactory.createBlockBody(
