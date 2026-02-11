@@ -25,4 +25,21 @@ enum class Severity {
         STRONG_WARNING -> CompilerMessageSeverity.STRONG_WARNING
         FIXED_WARNING -> CompilerMessageSeverity.FIXED_WARNING
     }
+
+    val isErrorWhenWError: Boolean
+        get() = when (this) {
+            INFO, ERROR -> false
+            FIXED_WARNING -> false
+            WARNING,
+            STRONG_WARNING -> true
+        }
+
+    val isError: Boolean
+        get() = when (this) {
+            ERROR -> true
+            INFO,
+            WARNING,
+            FIXED_WARNING,
+            STRONG_WARNING -> false
+        }
 }

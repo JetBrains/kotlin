@@ -18,6 +18,9 @@ class PendingDiagnosticsReporterImpl(private val delegate: DiagnosticReporter) :
     override val hasErrors: Boolean
         get() = delegate.hasErrors
 
+    override val hasWarningsForWError: Boolean
+        get() = delegate.hasWarningsForWError
+
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic == null) return
         when (val filePath = context.containingFilePath) {

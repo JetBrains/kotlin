@@ -27,6 +27,7 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
     val diagnosticReporter: DiagnosticReporter = diagnosticReporter.deduplicating()
 
     override val hasErrors: Boolean get() = diagnosticReporter.hasErrors
+    override val hasWarningsForWError: Boolean get() = diagnosticReporter.hasWarningsForWError
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         diagnosticReporter.report(diagnostic, context)

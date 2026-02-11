@@ -37,6 +37,7 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
     val CLI_DIAGNOSTICS_REPORTER by key<CliDiagnosticReporter>(lazyDefaultValue = """error("CLI diagnostic reporter is not initialized")""")
 
     val RENDER_DIAGNOSTIC_INTERNAL_NAME by key<Boolean>()
+    val TREAT_WARNINGS_AS_ERRORS by key<Boolean>()
 
     val ALLOW_KOTLIN_PACKAGE by key<Boolean>()
 
