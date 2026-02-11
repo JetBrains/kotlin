@@ -1,4 +1,4 @@
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters
 // IGNORE_BACKEND_K2: ANY
 // IGNORE_HEADER_MODE: JVM_IR
 // TARGET_BACKEND: JVM_IR

@@ -5,5 +5,5 @@ fun usage() {
     <expr>::foo</expr>
 }
 
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters
 // COMPILATION_ERRORS

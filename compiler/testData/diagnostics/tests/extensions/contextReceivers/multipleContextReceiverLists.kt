@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters
 
 <!MULTIPLE_CONTEXT_LISTS!>context(String) context(<!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
 fun foo() {}

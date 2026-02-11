@@ -1,15 +1,15 @@
-/contextReceiverAmbiguity.fir.kt:(141,148): error: Experimental context receivers are superseded by context parameters.
+/contextReceiverAmbiguity.fir.kt:(161,168): error: Experimental context receivers are superseded by context parameters.
 Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
 
 See the context parameters proposal for more details: https://kotl.in/context-parameters
 
-/contextReceiverAmbiguity.fir.kt:(187,194): error: Experimental context receivers are superseded by context parameters.
+/contextReceiverAmbiguity.fir.kt:(207,214): error: Experimental context receivers are superseded by context parameters.
 Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
 
 See the context parameters proposal for more details: https://kotl.in/context-parameters
 
-/contextReceiverAmbiguity.fir.kt:(243,247): error: Cannot infer type for type parameter 'R'. Specify it explicitly.
+/contextReceiverAmbiguity.fir.kt:(263,267): error: Cannot infer type for type parameter 'R'. Specify it explicitly.
 
-/contextReceiverAmbiguity.fir.kt:(262,265): error: Overload resolution ambiguity between candidates:
+/contextReceiverAmbiguity.fir.kt:(282,285): error: Overload resolution ambiguity between candidates:
 context(String) fun foo(x: Comparable<*>): Unit
 context(String) fun foo(x: Number): Unit

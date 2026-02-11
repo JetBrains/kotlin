@@ -1,4 +1,4 @@
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters
 // COMPILATION_ERRORS
 
 @Target(AnnotationTarget.TYPE)

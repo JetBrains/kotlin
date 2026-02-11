@@ -1,4 +1,4 @@
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers, -ContextParameters
 // IGNORE_BACKEND_K2: ANY
 // KT-61141: kotlin.Comparator instead of java.util.Comparator
 // IGNORE_BACKEND_K1: NATIVE, JS_IR, WASM_JS
