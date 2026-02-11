@@ -32,7 +32,7 @@ abstract class CollectionLiteralResolutionStrategy(protected val context: Resolu
         topLevelCandidate: Candidate,
         expectedType: FirRegularClassSymbol?,
     ): FirFunctionCall? {
-        var call = prepareRawCall(collectionLiteralAtom.expression, topLevelCandidate, expectedType) ?: return null
+        var call = prepareRawCall(collectionLiteralAtom.expression, expectedType) ?: return null
         call = components.callResolver.resolveCallAndSelectCandidate(call, ResolutionMode.ContextDependent, topLevelCandidate)
         call = context.bodyResolveComponents.callCompleter.completeCall(call, ResolutionMode.ContextDependent)
 
@@ -50,7 +50,6 @@ abstract class CollectionLiteralResolutionStrategy(protected val context: Resolu
 
     protected abstract fun prepareRawCall(
         collectionLiteral: FirCollectionLiteral,
-        topLevelCandidate: Candidate,
         expectedClass: FirRegularClassSymbol?
     ): FirFunctionCall?
 }
@@ -90,7 +89,6 @@ private class CollectionLiteralResolutionStrategyThroughCompanion(context: Resol
 
     override fun prepareRawCall(
         collectionLiteral: FirCollectionLiteral,
-        topLevelCandidate: Candidate,
         expectedClass: FirRegularClassSymbol?
     ): FirFunctionCall? {
         val companion = expectedClass?.companionObjectIfDefinedOperatorOf ?: return null
@@ -121,7 +119,6 @@ private class CollectionLiteralResolutionStrategyForStdlibType(context: Resoluti
 
     override fun prepareRawCall(
         collectionLiteral: FirCollectionLiteral,
-        topLevelCandidate: Candidate,
         expectedClass: FirRegularClassSymbol?,
     ): FirFunctionCall? {
         if (expectedClass == null) return null
