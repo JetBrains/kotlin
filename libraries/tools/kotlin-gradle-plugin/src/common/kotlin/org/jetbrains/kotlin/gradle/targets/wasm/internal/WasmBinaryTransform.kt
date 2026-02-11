@@ -83,10 +83,6 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
         @get:Classpath
         internal abstract val classpath: ConfigurableFileCollection
 
-        @get:Input
-        @get:Optional
-        internal abstract val invalidate: Property<String>
-
         @get:Internal
         internal abstract val kotlinDaemonJvmArguments: ListProperty<String>
 

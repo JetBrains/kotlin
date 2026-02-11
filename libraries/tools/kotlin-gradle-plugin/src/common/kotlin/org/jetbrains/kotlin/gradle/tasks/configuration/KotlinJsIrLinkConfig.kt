@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.internal.NoOpWasmBinaryTransform
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryTransform
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.supportsPerKlibCompilation
-import org.jetbrains.kotlin.gradle.utils.findByType
 import org.jetbrains.kotlin.gradle.utils.kotlinSessionsDir
-import org.jetbrains.kotlin.platform.wasm.WasmTarget
 
 @OptIn(ExperimentalWasmDsl::class)
 internal open class KotlinJsIrLinkConfig(
@@ -139,9 +137,6 @@ internal open class KotlinJsIrLinkConfig(
                         }
                         parameters.compilerExecutionStrategy.convention(propertiesProvider.kotlinCompilerExecutionStrategy).finalizeValueOnRead()
                         parameters.useDaemonFallbackStrategy.convention(propertiesProvider.kotlinDaemonUseFallbackStrategy).finalizeValueOnRead()
-                        project.kotlinPropertiesProvider.wasmPerModuleInvalidate?.let { invalidate ->
-                            parameters.invalidate.set(invalidate)
-                        }
 
                         BinaryenPlugin.apply(project)
                         parameters.binaryenExec.set(project.extensions.findByType(BinaryenEnvSpec::class.java).executable)
