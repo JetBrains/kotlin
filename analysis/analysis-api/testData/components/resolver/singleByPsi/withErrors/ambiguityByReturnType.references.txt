@@ -3,5 +3,10 @@ KtNameReferenceExpression(208,213): 'sumOf'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.Int): kotlin.Int
-      1: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.UInt): kotlin.UInt
+      0: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> ERROR_TYPE(Symbol not found for java/math/BigDecimal)): ERROR_TYPE(Symbol not found for java/math/BigDecimal)
+      1: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> ERROR_TYPE(Symbol not found for java/math/BigInteger)): ERROR_TYPE(Symbol not found for java/math/BigInteger)
+      2: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.Double): kotlin.Double
+      3: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.Int): kotlin.Int
+      4: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.Long): kotlin.Long
+      5: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.UInt): kotlin.UInt
+      6: (in kotlin.collections) inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.ULong): kotlin.ULong
