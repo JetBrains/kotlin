@@ -143,10 +143,10 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
 
         val binaryenOutputDirectory = outputs.dir(inputFile.name.replace(".klib", "-transformed"))
 
+        val inputFileBinaryen = compilerOutputDir.listFiles().first { it.extension == "wasm" }
         execOps.exec {
             it.executable = parameters.binaryenExec.get()
-            val inputFileBinaryen = compilerOutputDir.listFiles().first { it.extension == "wasm" }
-            it.setWorkingDir(binaryenOutputDirectory)
+            it.workingDir = binaryenOutputDirectory
             it.args = binaryenArgs(inputFileBinaryen, binaryenOutputDirectory)
         }
 
