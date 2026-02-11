@@ -12,12 +12,12 @@
 using namespace kotlin;
 
 namespace {
-
-class FlushActionActivator final : public mm::ExtraSafePointActionActivator<FlushActionActivator> {};
-
+class FlushActionActivator final : public mm::ExtraSafePointActionActivator<FlushActionActivator> {
+};
 } // namespace
 
-void gc::mark::ConcurrentMark::ThreadData::onSuspendForGC() noexcept {}
+void gc::mark::ConcurrentMark::ThreadData::onSuspendForGC() noexcept {
+}
 
 bool gc::mark::ConcurrentMark::ThreadData::tryLockRootSet() noexcept {
     bool expected = false;
@@ -89,13 +89,19 @@ void gc::mark::ConcurrentMark::markInSTW() {
         GCLogDebug(gcHandle().getEpoch(), "Building mark closure (attempt #%zu)", iter);
         Mark<MarkTraits>(gcHandle(), mainWorker);
 
-        // Mark() might have shared some batches while building closure, run one more full iteration in STW to let things settle
-        RuntimeCheck(iter <= compiler::concurrentMarkMaxIterations() + 1, "Failed to terminate mark in STW in a single iteration");
         ++iter;
-        if (iter >= compiler::concurrentMarkMaxIterations()) {
+        if (iter == compiler::concurrentMarkMaxIterations() || compiler::concurrentMarkMaxIterations() == 0) {
             GCLogWarning(gcHandle().getEpoch(), "Finishing mark closure in STW after (%zu concurrent attempts)", iter);
             stopTheWorld(gcHandle(), "GC stop the world: concurrent mark took too long");
             terminateInSTW = true;
+            Mark<MarkTraits>(gcHandle(), mainWorker);
+            // Mark() can share batches when building the closure.
+            // During normal mark termination this means we have to run one more interation.
+            // During abnormal termination (in STW) just re-read the counter ahead of time -
+            // there are no mutators running to mess with it now.
+            everSharedBatches = parallelProcessor_->batchesEverShared();
+            bool terminated = tryTerminateMark(everSharedBatches);
+            RuntimeCheck(terminated, "Failed to terminate mark in STW");
         }
     } while (!tryTerminateMark(everSharedBatches));
 
@@ -133,7 +139,9 @@ void gc::mark::ConcurrentMark::tryCollectRootSet(mm::ThreadData& thread, MarkTra
     auto& gcData = thread.gc().impl().mark_;
     if (!gcData.tryLockRootSet()) return;
 
-    GCLogDebug(gcHandle().getEpoch(), "Root set collection on thread %" PRIuPTR " for thread %" PRIuPTR, konan::currentThreadId(), thread.threadId());
+    GCLogDebug(
+            gcHandle().getEpoch(), "Root set collection on thread %" PRIuPTR " for thread %" PRIuPTR, konan::currentThreadId(),
+            thread.threadId());
     gcData.publish();
     collectRootSetForThread<MarkTraits>(gcHandle(), markQueue, thread);
 }
