@@ -7,7 +7,7 @@ FILE: twoUpperBounds.kt
     public final fun <K : R|kotlin/collections/MutableSet<kotlin/Int>|> throughDeclared(k: R|K|, l: R|(K) -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/throughTwoLambdas|<R|it(kotlin/collections/Set<kotlin/Int> & kotlin/collections/List<kotlin/Int>)|>(<collectionLiteralCall>(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
+        R|/throughTwoLambdas<Inapplicable(INAPPLICABLE): /throughTwoLambdas>#|<R|it(kotlin/collections/Set<kotlin/Int> & kotlin/collections/List<kotlin/Int>)|>(<Unsupported collection literal type>#(), vararg(throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/Set<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
             ^@throughTwoLambdas Unit
         }
         , throughTwoLambdas@fun <anonymous>(<unused var>: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| <inline=Unknown>  {
@@ -56,7 +56,7 @@ FILE: twoUpperBounds.kt
             ^@throughTwoLambdas Unit
         }
         ))
-        R|/throughDeclared|<R|it(kotlin/collections/MutableSet<kotlin/Int> & kotlin/collections/List<kotlin/Int>)|>(<collectionLiteralCall>(), <L> = throughDeclared@fun <anonymous>(<unused var>: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| <inline=NoInline>  {
+        R|/throughDeclared<Inapplicable(INAPPLICABLE): /throughDeclared>#|<R|it(kotlin/collections/MutableSet<kotlin/Int> & kotlin/collections/List<kotlin/Int>)|>(<Unsupported collection literal type>#(), <L> = throughDeclared@fun <anonymous>(<unused var>: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| <inline=NoInline>  {
             ^@throughDeclared Unit
         }
         )

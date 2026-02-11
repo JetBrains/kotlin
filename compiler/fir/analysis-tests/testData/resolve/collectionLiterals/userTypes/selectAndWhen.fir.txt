@@ -47,18 +47,18 @@ FILE: selectAndWhen.kt
         R|/select|<R|ListA<kotlin/Int>|>(vararg(Q|ListA|.R|/ListA.Companion.of|<R|kotlin/Int|>(), Q|ListA.Companion|.R|/ListA.Companion.of|<R|kotlin/Int|>()))
         R|/select|<R|ListA<kotlin/Int>|>(vararg(Q|ListA|.R|/ListA.Companion.of|<R|kotlin/Int|>(), Q|ListA.Companion|.R|/ListA.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))))
         R|/select|<R|ListA<kotlin/Int>|>(vararg(Q|ListA|.R|/ListA.Companion.of|<R|kotlin/Int|>(), Q|ListA.Companion|.R|/ListA.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))))
-        lval p1: R|ListA<*>| = R|/select<CS errors: /select>#|<R|ListA<*>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter B>>(), <collectionLiteralCall>()))
-        lval p2: R|ListA<kotlin/Int>| = R|/select|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <collectionLiteralCall>()))
-        lval p3: R|ListA<*>| = R|/select<CS errors: /select>#|<R|ListA<*>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter B>>(), <collectionLiteralCall>(Int(42))))
-        lval p4: R|ListA<*>| = R|/select|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <collectionLiteralCall>()))
-        lval p5: R|ListA<kotlin/Int>| = R|/select|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <collectionLiteralCall>(Int(42))))
-        lval p6: R|ListA<*>| = R|/select|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <collectionLiteralCall>(Int(42))))
-        lval p7: R|ListA<kotlin/Int>| = R|/select|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <collectionLiteralCall>(Int(42))))
-        lval p8: R|ListA<kotlin/Int>| = R|/select|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <collectionLiteralCall>()))
+        lval p1: R|ListA<*>| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|ListA<*>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter B>>(), <Unsupported collection literal type>#()))
+        lval p2: R|ListA<kotlin/Int>| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <Unsupported collection literal type>#()))
+        lval p3: R|ListA<*>| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|ListA<*>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter B>>(), <Unsupported collection literal type>#(Int(42))))
+        lval p4: R|ListA<*>| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <Unsupported collection literal type>#()))
+        lval p5: R|ListA<kotlin/Int>| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <Unsupported collection literal type>#(Int(42))))
+        lval p6: R|ListA<*>| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <Unsupported collection literal type>#(Int(42))))
+        lval p7: R|ListA<kotlin/Int>| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <Unsupported collection literal type>#(Int(42))))
+        lval p8: R|ListA<kotlin/Int>| = R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <Unsupported collection literal type>#()))
     }
     public final fun testSelectWithUpperBounds(): R|kotlin/Unit| {
-        R|/selectWithStarDUB|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <collectionLiteralCall>(Int(42))))
-        R|/selectWithDUB|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <collectionLiteralCall>(Int(42))))
+        R|/selectWithStarDUB<Inapplicable(INAPPLICABLE): /selectWithStarDUB>#|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <Unsupported collection literal type>#(Int(42))))
+        R|/selectWithDUB<Inapplicable(INAPPLICABLE): /selectWithDUB>#|<R|ListB<kotlin/Int>|>(vararg(Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(), <Unsupported collection literal type>#(Int(42))))
     }
     public final fun testWhen(): R|kotlin/Unit| {
         when () {
@@ -99,7 +99,7 @@ FILE: selectAndWhen.kt
 
         lval p1: R|ListA<*>| = when () {
             Boolean(true) ->  {
-                <collectionLiteralCall>()
+                <Unsupported collection literal type>#()
             }
             else ->  {
                 Q|ListB|.R|/ListB.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter B>>()
@@ -108,7 +108,7 @@ FILE: selectAndWhen.kt
 
         lval p2: R|ListA<kotlin/Int>| = when () {
             Boolean(true) ->  {
-                <collectionLiteralCall>()
+                <Unsupported collection literal type>#()
             }
             else ->  {
                 Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>()
@@ -117,7 +117,7 @@ FILE: selectAndWhen.kt
 
         lval p3: R|ListA<*>| = when () {
             Boolean(true) ->  {
-                <collectionLiteralCall>()
+                <Unsupported collection literal type>#()
             }
             else ->  {
                 Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>(vararg(Int(42)))
@@ -126,7 +126,7 @@ FILE: selectAndWhen.kt
 
         lval p4: R|ListA<kotlin/Int>| = when () {
             Boolean(true) ->  {
-                <collectionLiteralCall>(Int(42))
+                <Unsupported collection literal type>#(Int(42))
             }
             else ->  {
                 Q|ListB|.R|/ListB.Companion.of|<R|kotlin/Int|>()

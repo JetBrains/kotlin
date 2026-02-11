@@ -248,14 +248,11 @@ class FirCallResolver(
             origin = origin,
             resolutionMode = resolutionMode,
             implicitInvokeMode = if (qualifiedAccess is FirImplicitInvokeCall) ImplicitInvokeMode.Regular else ImplicitInvokeMode.None,
-            isCollectionLiteralCall = containingCallCandidateForCL != null
+            containingCandidateForCollectionLiteral = containingCallCandidateForCL,
         )
         towerResolver.reset()
 
-        val candidateFactory = when (containingCallCandidateForCL) {
-            null -> CandidateFactory(resolutionContext, info)
-            else -> CandidateFactory.createForCollectionLiterals(resolutionContext, containingCallCandidateForCL, info)
-        }
+        val candidateFactory = CandidateFactory(resolutionContext, info)
 
         val resultCollector: CandidateCollector = towerResolver.runResolver(info, resolutionContext, collector, candidateFactory)
         var (reducedCandidates, applicability) = reduceCandidates(resultCollector, explicitReceiver, resolutionContext)

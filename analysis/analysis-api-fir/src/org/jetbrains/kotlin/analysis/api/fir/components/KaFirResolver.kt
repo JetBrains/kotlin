@@ -295,18 +295,6 @@ internal class KaFirResolver(
     }
 
     private fun FirCollectionLiteral.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt = with(analysisSession) {
-        val resolvedType = resolvedType as? ConeClassLikeType
-        if (resolvedType is ConeErrorType) {
-            return KaBaseSymbolResolutionError(
-                backingDiagnostic = createKaDiagnostic(
-                    source = source,
-                    coneDiagnostic = resolvedType.diagnostic,
-                    psi = psi,
-                ),
-                backingCandidateSymbols = emptyList(),
-            )
-        }
-
         val resolvedSymbol = arrayOfSymbol(this@toKaSymbolResolutionAttempt)
         if (resolvedSymbol != null) {
             return KaBaseSymbolResolutionSuccess(resolvedSymbol)

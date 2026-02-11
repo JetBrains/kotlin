@@ -2183,6 +2183,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("clAmbiguityWithLambdasInside.kt")
+        public void testClAmbiguityWithLambdasInside() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777/clAmbiguityWithLambdasInside.kt");
+        }
+
+        @Test
         @TestMetadata("enabledNestedCL.kt")
         public void testEnabledNestedCL() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt81777/enabledNestedCL.kt");

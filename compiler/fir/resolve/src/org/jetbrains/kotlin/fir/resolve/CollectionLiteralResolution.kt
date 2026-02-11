@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -143,26 +144,28 @@ private class CollectionLiteralResolutionStrategyForStdlibType(context: Resoluti
 
 }
 
+class ErrorCollectionLiteralResolutionStrategy(context: ResolutionContext) : CollectionLiteralResolutionStrategy(context) {
+    override fun declaresOperatorOf(expectedType: FirRegularClassSymbol): Boolean = false
+
+    override fun prepareRawCall(
+        collectionLiteral: FirCollectionLiteral,
+        expectedClass: FirRegularClassSymbol?,
+    ): FirFunctionCall {
+        return buildFunctionCall {
+            source = collectionLiteral.source
+            argumentList = collectionLiteral.argumentList
+            calleeReference = buildSimpleNamedReference {
+                source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall)
+                name = SpecialNames.ERROR_NAME_FOR_COLLECTION_LITERAL_CALL
+            }
+        }
+    }
+}
+
 context(context: ResolutionContext)
 fun <T : Any> tryAllCLResolutionStrategies(attempt: CollectionLiteralResolutionStrategy.() -> T?): T? {
     CollectionLiteralResolutionStrategyThroughCompanion(context).attempt()?.let { return it }
     return CollectionLiteralResolutionStrategyForStdlibType(context).attempt()
-}
-
-fun ResolutionContext.runResolutionForDanglingCollectionLiteral(collectionLiteral: FirCollectionLiteral) {
-    // If there are any diagnostics on the call that we miss, even better: we report `UNSUPPORTED_COLLECTION_LITERAL_TYPE` anyway.
-    val fakeCall = bodyResolveComponents.syntheticCallGenerator
-        .generateFakeCallForDanglingCollectionLiteral(collectionLiteral, this)
-    val completedCall = bodyResolveComponents.callCompleter.completeCall(fakeCall, ResolutionMode.ContextIndependent)
-
-    val newArgumentList = buildArgumentList {
-        for (argument in completedCall.arguments) {
-            check(argument is FirVarargArgumentsExpression) { "Arguments should me mapped to vararg" }
-            arguments += argument.arguments
-        }
-    }
-
-    collectionLiteral.replaceArgumentList(newArgumentList)
 }
 
 context(resolutionContext: ResolutionContext)

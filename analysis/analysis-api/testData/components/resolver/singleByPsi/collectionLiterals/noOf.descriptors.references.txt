@@ -3,7 +3,7 @@ KtCollectionLiteralExpression(73,88): '["1", "2", "3"]'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      Nothing (Unresolved reference)
+      (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
 
 KtCallExpression(62,89): 'acceptList(["1", "2", "3"])'
   KtInvokeFunctionReference:

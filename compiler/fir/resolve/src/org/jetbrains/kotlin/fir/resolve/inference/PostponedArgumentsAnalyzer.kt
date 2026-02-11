@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnsupportedCollectionLiteralType
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.isEnabled
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.resolve.ErrorCollectionLiteralResolutionStrategy
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
@@ -28,7 +30,6 @@ import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
 import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
 import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
-import org.jetbrains.kotlin.fir.resolve.runResolutionForDanglingCollectionLiteral
 import org.jetbrains.kotlin.fir.resolve.tryAllCLResolutionStrategies
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
@@ -226,7 +227,7 @@ class PostponedArgumentsAnalyzer(
     ) {
         val originalExpression = atom.expression
 
-        val newExpression: FirFunctionCall? = context(resolutionContext) {
+        var newExpression: FirFunctionCall? = context(resolutionContext) {
             val classForResolution = when (precalculatedBounds) {
                 is CollectionLiteralBounds.SingleBound -> precalculatedBounds.bound
                 is CollectionLiteralBounds.NonTvExpected -> precalculatedBounds.bound
@@ -241,10 +242,20 @@ class PostponedArgumentsAnalyzer(
         }
 
         if (newExpression == null) {
-            // There may be callable references/lambdas inside collection literal. We need to resolve them somehow.
-            // When fallback is implemented, this part likely will become obsolete.
-            resolutionContext.runResolutionForDanglingCollectionLiteral(originalExpression)
-            return
+            newExpression = ErrorCollectionLiteralResolutionStrategy(resolutionContext)
+                .resolveCollectionLiteral(atom, topLevelCandidate, null)!!
+                .apply {
+                    val calleeReference = calleeReference as? FirErrorReferenceWithCandidate
+                        ?: error("${ErrorCollectionLiteralResolutionStrategy::class.simpleName} must return callee reference with error candidate")
+
+                    val calleeReferenceWithNewDiagnostic = FirErrorReferenceWithCandidate(
+                        source = calleeReference.source,
+                        name = calleeReference.name,
+                        candidate = calleeReference.candidate,
+                        diagnostic = ConeUnsupportedCollectionLiteralType,
+                    )
+                    replaceCalleeReference(calleeReferenceWithNewDiagnostic)
+                }
         }
 
         atom.containingCallCandidate.setUpdatedCollectionLiteral(originalExpression, newExpression)

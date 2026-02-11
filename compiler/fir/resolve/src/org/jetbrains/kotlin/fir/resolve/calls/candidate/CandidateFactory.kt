@@ -42,6 +42,9 @@ class CandidateFactory private constructor(
 
     companion object {
         private fun buildBaseSystem(context: ResolutionContext, callInfo: CallInfo): ConstraintStorage {
+            callInfo.containingCandidateForCollectionLiteral?.let {
+                return buildBaseSystemForContainingCallAwareCases(context, it, callInfo)
+            }
             val system = context.inferenceComponents.createConstraintSystem()
             callInfo.argumentAtoms.forEach {
                 system.addSubsystemFromAtom(it)
@@ -58,13 +61,6 @@ class CandidateFactory private constructor(
             containingCall: Candidate,
         ): CandidateFactory =
             CandidateFactory(context, buildBaseSystemForContainingCallAwareCases(context, containingCall, null))
-
-        fun createForCollectionLiterals(
-            context: ResolutionContext,
-            containingCall: Candidate,
-            callInfo: CallInfo,
-        ): CandidateFactory =
-            CandidateFactory(context, buildBaseSystemForContainingCallAwareCases(context, containingCall, callInfo))
 
         private fun buildBaseSystemForContainingCallAwareCases(
             context: ResolutionContext,

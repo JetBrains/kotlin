@@ -32,6 +32,13 @@ object SpecialNames {
     @JvmField
     val SAFE_IDENTIFIER_FOR_NO_NAME = Name.identifier("no_name_in_PSI_3d19d79d_1ba9_4cd0_b7f5_b46aa3cd5d40")
 
+    /**
+     * We don't want a collection literal call with ambiguous bounds resolve to anything meaningful,
+     * but on the other hand, we still want to resolve it as a regular call.
+     */
+    @JvmField
+    val ERROR_NAME_FOR_COLLECTION_LITERAL_CALL = Name.identifier("<error collection literal>")
+
     const val ANONYMOUS_STRING = "<anonymous>"
 
     @JvmField

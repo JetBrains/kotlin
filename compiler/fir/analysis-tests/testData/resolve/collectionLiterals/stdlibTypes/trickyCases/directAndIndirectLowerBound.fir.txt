@@ -10,7 +10,7 @@ FILE: directAndIndirectLowerBound.kt
     }
     public final fun test(): R|kotlin/Unit| {
         R|/select|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(R|/select|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(), R|kotlin/collections/setOf|<R|kotlin/String|>())), R|kotlin/collections/setOf|<R|kotlin/Int|>()))
-        R|/select|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(), R|/select|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(<collectionLiteralCall>(), R|kotlin/collections/setOf|<R|kotlin/Int|>()))))
+        R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(), R|/select|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(<Unsupported collection literal type>#(), R|kotlin/collections/setOf|<R|kotlin/Int|>()))))
     }
     public final fun testWhen(): R|kotlin/Unit| {
         when () {
@@ -37,7 +37,7 @@ FILE: directAndIndirectLowerBound.kt
                         R|kotlin/collections/setOf|<R|kotlin/Int|>()
                     }
                     else ->  {
-                        <collectionLiteralCall>()
+                        <Unsupported collection literal type>#()
                     }
                 }
 
@@ -50,9 +50,9 @@ FILE: directAndIndirectLowerBound.kt
     }
     public final fun deepTests(): R|kotlin/Unit| {
         R|/select|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(R|/id|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(R|/id|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(R|/id|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(R|/select|<R|kotlin/collections/Set<it(kotlin/Comparable<*> & java/io/Serializable)>|>(vararg(Q|kotlin/collections|.R|kotlin/collections/setOf|<R|it(kotlin/Comparable<*> & java/io/Serializable)|>(), R|kotlin/collections/setOf|<R|kotlin/String|>()))))), R|kotlin/collections/setOf|<R|kotlin/Int|>()))
-        R|/select|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(R|/id|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/id|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/id|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/select|<R|kotlin/collections/MutableSet<kotlin/Int>|>(vararg(<collectionLiteralCall>(), R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>()))))), R|kotlin/collections/setOf|<R|kotlin/Int|>()))
-        R|/select|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(R|/id|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/id|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/id|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/select|<R|kotlin/collections/MutableSet<kotlin/Int>|>(vararg(R|kotlin/run|<R|kotlin/collections/MutableSet<kotlin/Int>|>(<L> = run@fun <anonymous>(): R|kotlin/collections/MutableSet<kotlin/Int>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            ^ <collectionLiteralCall>()
+        R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(R|/id|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/id|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/id|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/select|<R|kotlin/collections/MutableSet<kotlin/Int>|>(vararg(<Unsupported collection literal type>#(), R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>()))))), R|kotlin/collections/setOf|<R|kotlin/Int|>()))
+        R|/select<Inapplicable(INAPPLICABLE): /select>#|<R|kotlin/collections/Set<kotlin/Int>|>(vararg(R|/id|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/id|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/id|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|/select|<R|kotlin/collections/MutableSet<kotlin/Int>|>(vararg(R|kotlin/run|<R|kotlin/collections/MutableSet<kotlin/Int>|>(<L> = run@fun <anonymous>(): R|kotlin/collections/MutableSet<kotlin/Int>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ <Unsupported collection literal type>#()
         }
         ), R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>()))))), R|kotlin/collections/setOf|<R|kotlin/Int|>()))
     }
