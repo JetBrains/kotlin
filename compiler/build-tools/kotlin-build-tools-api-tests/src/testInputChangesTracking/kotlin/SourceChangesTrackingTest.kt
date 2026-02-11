@@ -57,17 +57,16 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
                 },
             )
 
-            // Ensure no `OPT_IN_USAGE_ERROR`s are produced
+            // `Main.kt` won't compile even for the first time because of the second `OPT_IN_USAGE_ERROR`s.
+            // Note that we'd still only see the second one, though, because of KT-63767.
+            // Also note that compiling `Main.kt` will prevent the second compilation call from reusing
+            // the pre-compiled `A.kt` result, hence dropping `Main.kt` during the first run.
             module.createPredefinedFile("A.kt", "1")
-            module.createPredefinedFile("Main.kt", "1")
             module.compile {
-                assertCompiledSources("A.kt", "Main.kt")
-                assertAddedOutputs(
-                    "A.class", "Experimental.class",
-                    "MainKt.class", $$"MainKt$main$1.class", $$"I$DefaultImpls.class", "I.class", $$"MainKt$main$2.class",
-                )
+                assertCompiledSources("A.kt")
+                assertAddedOutputs("A.class", "Experimental.class")
             }
-            module.changeFile("Main.kt") { "$it // DUMMY_CHANGE" }
+            module.createPredefinedFile("Main.kt", "1")
 
             module.compile {
                 expectFail()
