@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.klib.compatibility.WarningStatus
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
-import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import kotlin.test.fail
 
@@ -31,10 +30,6 @@ abstract class NativeLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompa
 
     private val nativeHome: File
         get() = currentCustomNativeCompilerSettings.nativeHome
-
-    private val nativeTarget: String by lazy {
-        HostManager.host.visibleName
-    }
 
     val patchedNativeStdlibWithoutJarManifest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         createPatchedLibrary(nativeStdlibPath)
@@ -86,7 +81,6 @@ abstract class NativeLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompa
                 this.outputName = outputDir.resolve(moduleName).absolutePath
                 this.moduleName = moduleName
                 this.produce = "library"
-                this.target = nativeTarget
                 this.nostdlib = true
                 if (exportKlibToOlderAbiVersion) {
                     this.languageVersion = "${LanguageVersion.LATEST_STABLE.major}.${LanguageVersion.LATEST_STABLE.minor - 1}"
