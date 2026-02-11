@@ -246,7 +246,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<List<String?>>("altererNames")
         }
         val SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR by error<PsiElement>()
-        val UNSUPPORTED_COLLECTION_LITERAL_TYPE by error<PsiElement>()
         val AMBIGUOUS_COLLECTION_LITERAL by error<KtCollectionLiteralExpression> {
             parameter<List<FirRegularClassSymbol>>("candidatesWithOf")
         }

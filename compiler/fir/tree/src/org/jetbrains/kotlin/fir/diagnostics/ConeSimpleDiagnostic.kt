@@ -121,10 +121,6 @@ object ConeContextParameterWithDefaultValue : ConeDiagnostic {
     override val reason: String get() = "Context parameters cannot have default values"
 }
 
-object ConeUnsupportedCollectionLiteralType : ConeDiagnostic {
-    override val reason: String get() = "Unsupported collection literal type"
-}
-
 class ConeCollectionLiteralAmbiguity(val candidatesWithOf: List<FirRegularClassSymbol>) : ConeDiagnostic {
     override val reason: String get() = "Ambiguous collection literal"
 }

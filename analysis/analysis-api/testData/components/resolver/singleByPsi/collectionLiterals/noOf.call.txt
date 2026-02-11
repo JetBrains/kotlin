@@ -1,4 +1,4 @@
 KtCollectionLiteralExpression(73,88): '["1", "2", "3"]'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNSUPPORTED_COLLECTION_LITERAL_TYPE: No 'of' operator is defined for the expected type.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'listOf'.>

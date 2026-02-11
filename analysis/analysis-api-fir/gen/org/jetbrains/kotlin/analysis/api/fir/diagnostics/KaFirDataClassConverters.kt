@@ -643,12 +643,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.UNSUPPORTED_COLLECTION_LITERAL_TYPE) { firDiagnostic ->
-        UnsupportedCollectionLiteralTypeImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.AMBIGUOUS_COLLECTION_LITERAL) { firDiagnostic ->
         AmbiguousCollectionLiteralImpl(
             firDiagnostic.a.map { firRegularClassSymbol ->

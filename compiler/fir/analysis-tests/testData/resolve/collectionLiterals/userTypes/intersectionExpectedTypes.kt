@@ -21,8 +21,8 @@ fun viaSmartcast(x: Any) {
     x as A
     x as B
 
-    expectThroughTV(x, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
-    expectThroughTV(x, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+    expectThroughTV(x, <!UNRESOLVED_REFERENCE!>[42]<!>)
+    expectThroughTV(x, <!UNRESOLVED_REFERENCE!>[]<!>)
 }
 
 fun viaWhen() {
@@ -31,7 +31,7 @@ fun viaWhen() {
             true -> object : A, B {}
             else -> object : B, A {}
         },
-        <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>,
+        <!UNRESOLVED_REFERENCE!>["42"]<!>,
     )
 }
 
@@ -56,7 +56,7 @@ fun intersectionWithOuterTvInPCLA() {
     <!CANNOT_INFER_PARAMETER_TYPE!>buildBox<!> {
         val x = get()
         x as B
-        <!CANNOT_INFER_PARAMETER_TYPE!>expectThroughTV<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>, x)
+        <!CANNOT_INFER_PARAMETER_TYPE!>expectThroughTV<!>(<!UNRESOLVED_REFERENCE!>[42]<!>, x)
         Unit
     }
 }

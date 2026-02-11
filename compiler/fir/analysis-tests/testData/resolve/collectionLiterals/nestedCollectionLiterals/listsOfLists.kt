@@ -18,7 +18,7 @@ fun test() {
 
     takeListListInt([<!ARGUMENT_TYPE_MISMATCH!>[1, '2', 3]<!>])
     takeListListInt([<!ARGUMENT_TYPE_MISMATCH!>[1, null, 3]<!>])
-    takeListListInt([[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]])
+    takeListListInt([[<!UNRESOLVED_REFERENCE!>[]<!>]])
     takeListListInt(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
 
     takeListList<Int>([])
@@ -27,13 +27,13 @@ fun test() {
 
     takeListList<Int>([<!ARGUMENT_TYPE_MISMATCH!>[1, '2', 3]<!>])
     takeListList<Int>([<!ARGUMENT_TYPE_MISMATCH!>[1, null, 3]<!>])
-    takeListList<Int>([[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]])
+    takeListList<Int>([[<!UNRESOLVED_REFERENCE!>[]<!>]])
     takeListList<Int>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
 
     <!CANNOT_INFER_PARAMETER_TYPE!>takeListList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     <!CANNOT_INFER_PARAMETER_TYPE!>takeListList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>]<!>)
     takeListList([[1, 2, 3]])
-    <!CANNOT_INFER_PARAMETER_TYPE!>takeListList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]<!>]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeListList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNRESOLVED_REFERENCE!>[]<!>]<!>]<!>)
     takeListList([[1, '2', 3]])
     takeListList([[1, null, 3]])
     <!CANNOT_INFER_PARAMETER_TYPE!>takeListList<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
@@ -42,8 +42,8 @@ fun test() {
     lst = [<!ARGUMENT_TYPE_MISMATCH!>["1", "2", "3"]<!>]
     lst = []
     lst = [[]]
-    lst = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]]
-    lst = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>]]
+    lst = [[<!UNRESOLVED_REFERENCE!>[]<!>]]
+    lst = [[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>]]
     lst = [[1, 2, 3]]
 }
 

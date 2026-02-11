@@ -5,9 +5,15 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeCollectionLiteralAmbiguity
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeUnsupportedCollectionLiteralType
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.inference.CollectionLiteralBounds
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -24,6 +30,8 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.ConeStubType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 context(resolutionContext: ResolutionContext)
 fun ConeKotlinType.getClassRepresentativeForCollectionLiteralResolution(): FirRegularClassSymbol? {
@@ -84,6 +92,28 @@ fun Collection<FirRegularClassSymbol>.chooseSingleClassFromIntersectionComponent
 fun CollectionLiteralBounds?.toConeDiagnostic(): ConeDiagnostic {
     return when (this) {
         is CollectionLiteralBounds.Ambiguity -> ConeCollectionLiteralAmbiguity(bounds.toList())
-        else -> ConeUnsupportedCollectionLiteralType
+        else -> error("Fallback should be used instead")
+    }
+}
+
+fun BodyResolveComponents.buildCollectionLiteralCallForStdlibType(
+    packageName: FqName,
+    functionName: Name,
+    collectionLiteral: FirCollectionLiteral,
+): FirFunctionCall {
+    return buildFunctionCall {
+        explicitReceiver = buildResolvedQualifier {
+            packageFqName = packageName
+            source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.DesugaredReceiverForOperatorOfCall)
+            resolvedToCompanionObject = false
+        }.apply {
+            setTypeOfQualifier(this@buildCollectionLiteralCallForStdlibType)
+        }
+        source = collectionLiteral.source
+        calleeReference = buildSimpleNamedReference {
+            source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall)
+            name = functionName
+        }
+        argumentList = collectionLiteral.argumentList
     }
 }

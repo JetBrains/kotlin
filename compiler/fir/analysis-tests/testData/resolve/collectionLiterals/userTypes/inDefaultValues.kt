@@ -32,7 +32,7 @@ fun inFunction(
     d: Nested = [[]],
     e: Nested = [<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>],
     f: Nested = [["1", "2", "3"]],
-    g: Nested = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]],
+    g: Nested = [[<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>]],
     h: Nested = [],
 ) = Unit
 

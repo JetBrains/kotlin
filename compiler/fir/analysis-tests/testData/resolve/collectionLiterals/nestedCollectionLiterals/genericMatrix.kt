@@ -43,7 +43,7 @@ fun testMatrixInt() {
         [7, 8, 9],
     ]<!>)
     takeMatrixInt([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
-    takeMatrixInt([[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>]])
+    takeMatrixInt([[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>]])
 
     takeMatrix<Int>([
         [1, 2, 3],
@@ -69,13 +69,13 @@ fun testMatrixInt() {
         [7, 8, 9],
     ]<!>)
     takeMatrix<Int>([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
-    takeMatrix<Int>([[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>]])
+    takeMatrix<Int>([[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>]])
 
     var matrix: Matrix<Int> = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     matrix = []
     matrix = [[]]
-    matrix = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]]
-    matrix = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>]]
+    matrix = [[<!UNRESOLVED_REFERENCE!>[]<!>]]
+    matrix = [[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>]]
     matrix = [<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>]
     matrix <!ASSIGNMENT_TYPE_MISMATCH!>=<!> [[1, null, 3]]
     matrix <!ASSIGNMENT_TYPE_MISMATCH!>=<!> [[1, "2", 3]]
@@ -88,7 +88,7 @@ fun testMatrix() {
     <!CANNOT_INFER_PARAMETER_TYPE!>takeMatrix<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     <!CANNOT_INFER_PARAMETER_TYPE!>takeMatrix<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>]<!>)
     takeMatrix([[1]])
-    <!CANNOT_INFER_PARAMETER_TYPE!>takeMatrix<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]<!>]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeMatrix<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>[<!UNRESOLVED_REFERENCE!>[]<!>]<!>]<!>)
     <!CANNOT_INFER_PARAMETER_TYPE!>takeMatrix<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!ARGUMENT_TYPE_MISMATCH!>1<!>]<!>)
     takeMatrix([
         [1, 2, 3],

@@ -33,7 +33,7 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>(IntegerLiteral(42)))
 
 ##### Continue Call Completion:
 
-1. `ERROR CLASS: Unresolved name: <error collection literal> <: TypeVariable(T)` _from Argument R?C|special/error|(IntegerLiteral(42))_
+1. `ERROR CLASS: Unresolved name: listOf <: TypeVariable(T)` _from Argument Q|kotlin/collections|.R?C|special/error|(IntegerLiteral(42))_
 2. __ConstrainingTypeIsError__
 3. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
@@ -83,7 +83,7 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>())
 
 ##### Continue Call Completion:
 
-1. `ERROR CLASS: Unresolved name: <error collection literal> <: TypeVariable(T)` _from Argument R?C|special/error|()_
+1. `ERROR CLASS: Unresolved name: listOf <: TypeVariable(T)` _from Argument Q|kotlin/collections|.R?C|special/error|()_
 2. __ConstrainingTypeIsError__
 3. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
@@ -205,7 +205,7 @@ expectThroughTV#(when () {
 
 ##### Continue Call Completion:
 
-1. `ERROR CLASS: Unresolved name: <error collection literal> <: TypeVariable(T)` _from Argument R?C|special/error|(String(42))_
+1. `ERROR CLASS: Unresolved name: listOf <: TypeVariable(T)` _from Argument Q|kotlin/collections|.R?C|special/error|(String(42))_
 2. __ConstrainingTypeIsError__
 3. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
@@ -596,7 +596,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
 
 ##### Continue Continue Call Completion:
 
-1. `ERROR CLASS: Unresolved name: <error collection literal> <: TypeVariable(T)` _from Argument R?C|special/error|(IntegerLiteral(42))_
+1. `ERROR CLASS: Unresolved name: listOf <: TypeVariable(T)` _from Argument Q|kotlin/collections|.R?C|special/error|(IntegerLiteral(42))_
 2. __ConstrainingTypeIsError__
 3. Choose `TypeVariable(X)` with `Readiness(
    	 true ALLOWED

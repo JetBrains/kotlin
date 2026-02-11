@@ -494,10 +494,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SelfCallInNestedObjectConstructorError::class
     }
 
-    interface UnsupportedCollectionLiteralType : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = UnsupportedCollectionLiteralType::class
-    }
-
     interface AmbiguousCollectionLiteral : KaFirDiagnostic<KtCollectionLiteralExpression> {
         override val diagnosticClass get() = AmbiguousCollectionLiteral::class
         val candidatesWithOf: List<KaClassLikeSymbol>

@@ -579,11 +579,6 @@ internal class SelfCallInNestedObjectConstructorErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SelfCallInNestedObjectConstructorError
 
-internal class UnsupportedCollectionLiteralTypeImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnsupportedCollectionLiteralType
-
 internal class AmbiguousCollectionLiteralImpl(
     override val candidatesWithOf: List<KaClassLikeSymbol>,
     firDiagnostic: KtPsiDiagnostic,

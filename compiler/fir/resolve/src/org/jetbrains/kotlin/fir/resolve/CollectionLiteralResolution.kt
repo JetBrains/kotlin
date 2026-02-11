@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCollectionLiteralAtom
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCan
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.CollectionNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -124,23 +125,22 @@ private class CollectionLiteralResolutionStrategyForStdlibType(context: Resoluti
         if (expectedClass == null) return null
         val (packageName, functionName) = toCollectionOfFactoryPackageAndName(expectedClass, context.session) ?: return null
 
-        return buildFunctionCall {
-            explicitReceiver = buildResolvedQualifier {
-                packageFqName = packageName
-                source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.DesugaredReceiverForOperatorOfCall)
-                resolvedToCompanionObject = false
-            }.apply {
-                setTypeOfQualifier(components)
-            }
-            source = collectionLiteral.source
-            calleeReference = buildSimpleNamedReference {
-                source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall)
-                name = functionName
-            }
-            argumentList = collectionLiteral.argumentList
-        }
+        return components.buildCollectionLiteralCallForStdlibType(packageName, functionName, collectionLiteral)
     }
+}
 
+class FallbackCollectionLiteralResolutionStrategy(context: ResolutionContext) : CollectionLiteralResolutionStrategy(context) {
+    override fun declaresOperatorOf(expectedType: FirRegularClassSymbol): Boolean = false
+
+    override fun prepareRawCall(
+        collectionLiteral: FirCollectionLiteral,
+        expectedClass: FirRegularClassSymbol?,
+    ): FirFunctionCall {
+        val packageName = StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
+        val functionName = CollectionNames.Factories.LIST_OF
+
+        return components.buildCollectionLiteralCallForStdlibType(packageName, functionName, collectionLiteral)
+    }
 }
 
 class ErrorCollectionLiteralResolutionStrategy(context: ResolutionContext) : CollectionLiteralResolutionStrategy(context) {

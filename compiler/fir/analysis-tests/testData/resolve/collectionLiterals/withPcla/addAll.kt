@@ -4,36 +4,36 @@
 
 fun ambiguity() {
     <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
-        addAll(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+        addAll(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
-        addAll(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
+    buildList {
+        addAll([1, 2, 3])
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
-        addAll(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
-        addAll(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>)
+    buildList {
+        addAll([42])
+        addAll(["42"])
     }
 }
 
 fun resolvesToCollection() {
     <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
-        addAll(0, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+        addAll(0, <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
-        addAll(0, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
+    buildList {
+        addAll(0, [1, 2, 3])
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
-        addAll(0, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
-        addAll(0, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>)
+    buildList {
+        addAll(0, [42])
+        addAll(0, ["42"])
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>buildSet<!> {
-        addAll(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-        addAll(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
+    buildSet {
+        addAll([])
+        addAll([1, 2, 3])
     }
 }
 

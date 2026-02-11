@@ -839,7 +839,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSIGNED_LITERAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_COLLECTION_LITERAL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION
@@ -1767,10 +1766,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE,
             "Nested {0} accessed via instance reference.",
             RENDER_CLASS_OR_OBJECT_NAME_QUOTED,
-        )
-        map.put(
-            UNSUPPORTED_COLLECTION_LITERAL_TYPE,
-            "No 'of' operator is defined for the expected type."
         )
         map.put(
             AMBIGUOUS_COLLECTION_LITERAL,
