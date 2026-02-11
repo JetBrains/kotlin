@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.WasmBinary
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 
 @OptIn(ExperimentalWasmDsl::class)
 internal val WasmBinaryPreparationSetupAction = KotlinTargetSideEffect { target ->
@@ -45,8 +46,7 @@ internal val WasmBinaryPreparationSetupAction = KotlinTargetSideEffect { target 
             }
             val wasmBinaryConfiguration = compilation.project.configurations.maybeCreateResolvable(binary.wasmBinaryConfigurationName) {
                 description = "Wasm binaries for main."
-                @Suppress("DEPRECATION")
-                isVisible = false
+                setInvisibleIfSupported()
                 KotlinUsages.configureProducerRuntimeUsage(this, target)
                 attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                 attributes.attribute(WasmBinaryAttribute.attribute, attributeValue)
@@ -59,8 +59,7 @@ internal val WasmBinaryPreparationSetupAction = KotlinTargetSideEffect { target 
 
                 val wasmBinaryOutputConfiguration = project.configurations.maybeCreateConsumable(binary.wasmBinaryOutputConfigurationName) {
                     description = "Wasm binary output."
-                    @Suppress("DEPRECATION")
-                    isVisible = false
+                    setInvisibleIfSupported()
                     KotlinUsages.configureProducerRuntimeUsage(this, target)
                     attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                     attributes.attribute(WasmBinaryAttribute.attribute, attributeValue)
