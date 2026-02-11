@@ -2124,6 +2124,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     }
 
     @Test
+    @TestMetadata("ambiguity.kt")
+    public void testAmbiguity() {
+      run("ambiguity.kt");
+    }
+
+    @Test
     @TestMetadata("array.kt")
     public void testArray() {
       run("array.kt");

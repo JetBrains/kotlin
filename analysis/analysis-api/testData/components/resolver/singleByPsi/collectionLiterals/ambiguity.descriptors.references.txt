@@ -1,0 +1,6 @@
+KtCollectionLiteralExpression(327,336): '[1, 2, 3]'
+  KtCollectionLiteralReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>

@@ -1,0 +1,4 @@
+KtCollectionLiteralExpression(327,336): '[1, 2, 3]'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNSUPPORTED_COLLECTION_LITERAL_TYPE: No 'of' operator is defined for the expected type.>

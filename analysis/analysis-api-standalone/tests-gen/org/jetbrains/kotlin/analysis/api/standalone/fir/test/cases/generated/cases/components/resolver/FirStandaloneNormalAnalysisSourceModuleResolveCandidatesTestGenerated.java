@@ -2200,6 +2200,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesTestGenerat
     }
 
     @Test
+    @TestMetadata("ambiguity.kt")
+    public void testAmbiguity() {
+      run("ambiguity.kt");
+    }
+
+    @Test
     @TestMetadata("array.kt")
     public void testArray() {
       run("array.kt");
