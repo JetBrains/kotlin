@@ -566,8 +566,17 @@ internal class SirAsSwiftSourcesPrinter private constructor(
                 is SirDictionaryType ->
                     "[${keyType.swiftRender(SirTypeVariance.INVARIANT)}: ${valueType.swiftRender(SirTypeVariance.INVARIANT)}]"
 
-                is SirFunctionalType ->
-                    "(${parameterTypes.render()})${" async throws".takeIf { isAsync } ?: ""} -> ${returnType.swiftRender(SirTypeVariance.COVARIANT)}"
+                is SirFunctionalType -> {
+                    val parameters = parameterTypes.render()
+                    val async = " async".takeIf { isAsync } ?: ""
+                    val throws = when (errorType) {
+                        SirType.never -> ""
+                        SirType.any -> " throws"
+                        else -> " throws(${errorType.swiftRender(SirTypeVariance.COVARIANT)})"
+                    }
+                    val returnType = returnType.swiftRender(SirTypeVariance.COVARIANT)
+                    "($parameters)$async$throws -> $returnType"
+                }
 
                 else -> swiftName
             }

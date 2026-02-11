@@ -16,3 +16,5 @@ fun demo_ft_produce(): suspend (Int) -> Int = TODO()
 typealias AliasedFunctionType = (Float) -> Int
 
 suspend fun produce_function_typealias(): AliasedFunctionType = TODO()
+
+suspend fun produce_suspend_function_typealias(): suspend (Double) -> Int = TODO()

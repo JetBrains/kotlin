@@ -70,7 +70,17 @@ val SirType.swiftName
         ).joinToString("")
         is SirErrorType -> "ERROR_TYPE"
         is SirUnsupportedType -> "Swift.Never"
-        is SirFunctionalType -> "(${parameterTypes.joinToString { it.annotatedSwiftName }})${" async".takeIf { isAsync } ?: ""} -> ${returnType.swiftName}"
+        is SirFunctionalType -> {
+            val parameters = parameterTypes.joinToString { it.annotatedSwiftName }
+            val async = " async".takeIf { isAsync } ?: ""
+            val throws = when (errorType) {
+                SirType.never -> ""
+                SirType.any -> " throws"
+                else -> " throws(${errorType.swiftName})"
+            }
+            val returnType = returnType.swiftName
+            "($parameters)$async$throws -> $returnType"
+        }
     }
 
 val SirType.annotatedSwiftName

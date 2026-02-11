@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.expandedType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 public class SirTypeProviderImpl(
     private val sirSession: SirSession,
@@ -99,12 +100,13 @@ public class SirTypeProviderImpl(
                 }
                 is KaFunctionType -> {
                     SirFunctionalType(
-                        isAsync = kaType.isSuspendFunctionType,
                         parameterTypes = listOfNotNull(
                             kaType.receiverType?.translateType(ctx.copy(currentPosition = ctx.currentPosition.flip()))
                                 ?.withEscapingIfNeeded()
                         ) + kaType.parameterTypes
                             .map { it.translateType(ctx.copy(currentPosition = ctx.currentPosition.flip())).withEscapingIfNeeded() },
+                        isAsync = kaType.isSuspendFunctionType,
+                        errorType = kaType.isSuspendFunctionType.ifTrue { SirType.any } ?: SirType.never,
                         returnType = kaType.returnType.translateType(ctx.copy(currentPosition = ctx.currentPosition)),
                     )
                         .withEscapingIfNeeded()
