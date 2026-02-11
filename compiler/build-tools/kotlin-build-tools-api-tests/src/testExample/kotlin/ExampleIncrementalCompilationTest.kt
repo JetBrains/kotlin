@@ -97,9 +97,12 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
             }
 
             val main = module.sourcesDirectory.resolve("Main.kt")
+            val mainContents = main.readText()
 
-            // Ensure no `OPT_IN_USAGE_ERROR`s are produced
+            // First time, `main` won't compile because of two `OPT_IN_USAGE_ERROR`s
+            main.deleteIfExists()
             module.compileIncrementally(SourcesChanges.Unknown)
+            main.writeText(mainContents)
 
             module.compileIncrementally(
                 SourcesChanges.Known(modifiedFiles = listOf(main.toFile()), removedFiles = emptyList()),
