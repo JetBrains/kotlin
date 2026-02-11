@@ -70,5 +70,11 @@ fun testMultiline(s: String?, sb: StringBuilder) {
     }
 }
 
+fun testNonLocalReturn(s: String?): Int {
+    s?.myLet<String, Nothing> { return 42 }
+    s?.myLet<String, String> { return 42 }
+    return 0
+}
+
 /* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contractReturnsResultOfEffect, contracts, functionDeclaration,
 functionalType, inline, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */

@@ -59,9 +59,10 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
     // TODO(KT-84196): analyze all return points inside the lambda, not just the last statement
     context(context: CheckerContext)
     private fun FirAnonymousFunction.lastStatementIsIgnorable(): Boolean {
-        val lastStatement = body?.statements?.lastOrNull() as? FirReturnExpression ?: return false
+        val returnExpression = body?.statements?.lastOrNull() as? FirReturnExpression ?: return false
+        if (returnExpression.target.labeledElement != this) return true // non-local return => Nothing => ignorable
 
-        val result = lastStatement.result
+        val result = returnExpression.result
         if (result.resolvedType.isIgnorable()) return true
         if (result.toResolvedCallableSymbol(context.session)?.isSubjectToCheck() == false) return true
         return false
