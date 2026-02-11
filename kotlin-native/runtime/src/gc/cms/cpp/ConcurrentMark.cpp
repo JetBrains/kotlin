@@ -80,7 +80,7 @@ void gc::mark::ConcurrentMark::markInSTW() {
 
     // Mutator threads might release their internal batch at a pretty arbitrary moment (during a barrier execution with overflow).
     // So there are not so many reliable ways to track releases of new work.
-    // The number of batches sharad inside a parallel processor may only grow,
+    // The number of batches shared inside a parallel processor may only grow,
     // we use this number to decide when to finish the mark.
     auto everSharedBatches = parallelProcessor_->batchesEverShared();
     size_t iter = 0;
@@ -89,9 +89,10 @@ void gc::mark::ConcurrentMark::markInSTW() {
         GCLogDebug(gcHandle().getEpoch(), "Building mark closure (attempt #%zu)", iter);
         Mark<MarkTraits>(gcHandle(), mainWorker);
 
-        RuntimeCheck(iter <= compiler::concurrentMarkMaxIterations(), "Failed to terminate mark in STW in a single iteration");
+        // Mark() might have shared some batches while building closure, run one more full iteration in STW to let things settle
+        RuntimeCheck(iter <= compiler::concurrentMarkMaxIterations() + 1, "Failed to terminate mark in STW in a single iteration");
         ++iter;
-        if (iter == compiler::concurrentMarkMaxIterations()) {
+        if (iter >= compiler::concurrentMarkMaxIterations()) {
             GCLogWarning(gcHandle().getEpoch(), "Finishing mark closure in STW after (%zu concurrent attempts)", iter);
             stopTheWorld(gcHandle(), "GC stop the world: concurrent mark took too long");
             terminateInSTW = true;
@@ -146,7 +147,7 @@ bool gc::mark::ConcurrentMark::tryTerminateMark(std::size_t& everSharedBatches) 
     flushMutatorQueues();
 
     // After the mutators have been forced to flush their local queues,
-    // there is only on possibility for this counter to remain the same as on a previous iteration:
+    // there is only one possibility for this counter to remain the same as on a previous iteration:
     // 1. Mutator local queues are empty,
     // 2. AND were empty before the flush request was made,
     // 3. AND the last attempt at completing mark closure encountered 0 new objects // FIXME this is actually redundant
@@ -156,7 +157,7 @@ bool gc::mark::ConcurrentMark::tryTerminateMark(std::size_t& everSharedBatches) 
         parallelProcessor_->resetForNewWork();
         return false;
     }
-    RuntimeAssert(nowSharedBatches == everSharedBatches, "This number must decrease");
+    RuntimeAssert(nowSharedBatches == everSharedBatches, "This number must never decrease");
 
     barriers::switchToWeakProcessingBarriers();
     return true;
