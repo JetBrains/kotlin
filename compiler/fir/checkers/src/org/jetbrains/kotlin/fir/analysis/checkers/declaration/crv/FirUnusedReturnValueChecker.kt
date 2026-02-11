@@ -46,7 +46,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
             if (expression.origin == FirFunctionCallOrigin.Operator && resolvedSymbol?.name?.asString() == "set") return false
 
             // returnsResultOf contracts:
-            if (resolvedSymbol != null && lambdaResultIsIgnorable(expression, resolvedSymbol)) return false
+            if (resolvedSymbol != null && hasContractAndPropagatesIgnorable(expression, resolvedSymbol)) return false
             // TODO(KT-84198): technically, this whole shouldUse thing should be recursive, because we may have x?.let { a[b] = c } or x?.let { y?.let { ... }}
         }
 
@@ -68,11 +68,17 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
     }
 
     context(context: CheckerContext)
-    private fun lambdaResultIsIgnorable(functionCall: FirFunctionCall, resolvedSymbol: FirCallableSymbol<*>): Boolean {
+    private fun hasContractAndPropagatesIgnorable(functionCall: FirFunctionCall, resolvedSymbol: FirCallableSymbol<*>): Boolean {
         val parameterIndex = resolvedSymbol.getReturnsResultOfParameterIndex() ?: return false
-        val lambdaFunction = functionCall.getLambdaArgumentAtIndex(parameterIndex) ?: return false
-
-        return lambdaFunction.lastStatementIsIgnorable()
+        val functionalArgument = functionCall.arguments.getOrNull(parameterIndex) ?: return false
+        return when (functionalArgument) {
+            is FirAnonymousFunctionExpression -> functionalArgument.anonymousFunction.lastStatementIsIgnorable()
+            is FirCallableReferenceAccess -> functionalArgument.calleeReference.toResolvedCallableSymbol(discardErrorReference = true)
+                ?.let { refSymbol ->
+                    refSymbol.resolvedReturnType.isIgnorable() || !refSymbol.isSubjectToCheck()
+                } ?: false
+            else -> false
+        }
     }
 
     context(context: CheckerContext)

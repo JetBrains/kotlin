@@ -9,18 +9,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsResultOfDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.mustUseReturnValueStatusComponent
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.functionTypeKind
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.type
-import kotlin.collections.orEmpty
 
 context(context: CheckerContext)
 internal fun ConeKotlinType.isIgnorable(): Boolean {
@@ -38,14 +34,6 @@ internal fun FirCallableSymbol<*>.getReturnsResultOfParameterIndex(): Int? {
         }
     }
     return null
-}
-
-internal fun FirFunctionCall.getLambdaArgumentAtIndex(parameterIndex: Int): FirAnonymousFunction? {
-    val arguments = argumentList.arguments
-    if (parameterIndex < 0 || parameterIndex >= arguments.size) return null
-
-    val argument = arguments[parameterIndex]
-    return (argument as? FirAnonymousFunctionExpression)?.anonymousFunction
 }
 
 internal fun ConeKotlinType.isFunctionalTypeThatReturnsUnit(session: FirSession): Boolean =

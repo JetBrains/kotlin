@@ -10491,6 +10491,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("returnsResultOfFunctionReferences.kt")
+        public void testReturnsResultOfFunctionReferences() {
+          runTest("compiler/testData/diagnostics/tests/crvFull/contracts/returnsResultOfFunctionReferences.kt");
+        }
+
+        @Test
         @TestMetadata("returnsResultOfLib.kt")
         public void testReturnsResultOfLib() {
           runTest("compiler/testData/diagnostics/tests/crvFull/contracts/returnsResultOfLib.kt");
