@@ -229,11 +229,17 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 val optimized =
                     projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/optimized")
 
-                original.listDirectoryEntries("*.wasm").forEach {
-                    assertTrue {
-                        Files.size(it) > Files.size(optimized.resolve(it.name))
+                original.listDirectoryEntries("*.wasm")
+                    .also {
+                        assertTrue {
+                            it.size > 1
+                        }
                     }
-                }
+                    .forEach {
+                        assertTrue {
+                            Files.size(it) > Files.size(optimized.resolve(it.name))
+                        }
+                    }
             }
 
             build(":wasmJsD8ProductionRun") {
