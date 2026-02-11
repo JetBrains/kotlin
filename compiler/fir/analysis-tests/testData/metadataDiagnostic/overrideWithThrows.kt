@@ -7,6 +7,6 @@ interface A {
 
 // MODULE: app(lib)
 class B : A {
-    <!INCOMPATIBLE_THROWS_OVERRIDE!>@Throws(Exception::class)<!>
+    @Throws(Exception::class)
     override fun foo() {}
 }
