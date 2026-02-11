@@ -101,6 +101,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtContextReceiver
@@ -242,6 +243,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val AMBIGUOUS_ALTERED_ASSIGN: KtDiagnosticFactory1<List<String?>> = KtDiagnosticFactory1("AMBIGUOUS_ALTERED_ASSIGN", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val UNSUPPORTED_COLLECTION_LITERAL_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNSUPPORTED_COLLECTION_LITERAL_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val AMBIGUOUS_COLLECTION_LITERAL: KtDiagnosticFactory1<List<FirRegularClassSymbol>> = KtDiagnosticFactory1("AMBIGUOUS_COLLECTION_LITERAL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtCollectionLiteralExpression::class, getRendererFactory())
     val IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT: KtDiagnosticFactory1<FirPropertySymbol> = KtDiagnosticFactory1("IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT", WARNING, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, KtExpression::class, getRendererFactory())
     val IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT_ERROR: KtDiagnosticFactory1<FirPropertySymbol> = KtDiagnosticFactory1("IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT_ERROR", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, KtExpression::class, getRendererFactory())
 

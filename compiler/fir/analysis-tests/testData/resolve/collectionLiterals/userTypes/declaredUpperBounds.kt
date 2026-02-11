@@ -28,7 +28,7 @@ fun testIdA() {
 
     // non-declared upper bound is `MyListB<*>`, `MyListA<*> & MyListB<*>` is used for lookup
     // ==> fallback
-    val y: MyListB<*> = idA(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
+    val y: MyListB<*> = idA(<!AMBIGUOUS_COLLECTION_LITERAL!>[42]<!>)
 
     // MyListA.of
     val z: MyListA<*> = idA([42])

@@ -18,7 +18,7 @@ fun test() {
     select(
         mutableSetOf<Int>(),
         select(
-            <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>,
+            <!AMBIGUOUS_COLLECTION_LITERAL!>[]<!>,
             setOf<Int>(),
         ),
     )
@@ -37,7 +37,7 @@ fun testWhen() {
     when {
         cond() -> when {
             cond() -> setOf<Int>()
-            else -> <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>
+            else -> <!AMBIGUOUS_COLLECTION_LITERAL!>[]<!>
         }
         else -> mutableSetOf<Int>()
     }
@@ -54,14 +54,14 @@ fun deepTests() {
     // still ambiguity
     select(
         id(id(id(
-            select(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, mutableSetOf<Int>()),
+            select(<!AMBIGUOUS_COLLECTION_LITERAL!>[]<!>, mutableSetOf<Int>()),
         ))),
         setOf<Int>(),
     )
 
     select(
         id(id(id(
-            select(run { <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!> }, mutableSetOf<Int>()),
+            select(run { <!AMBIGUOUS_COLLECTION_LITERAL!>[]<!> }, mutableSetOf<Int>()),
         ))),
         setOf<Int>(),
     )

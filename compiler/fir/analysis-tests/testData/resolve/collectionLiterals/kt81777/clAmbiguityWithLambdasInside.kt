@@ -5,9 +5,9 @@
 fun <T> select(vararg x: T): T = x[0]
 
 fun ambiguities() {
-    val _: Set<*> = select(<!CANNOT_INFER_PARAMETER_TYPE!>mutableSetOf<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{}]<!>)
-    val _: Set<*> = select(<!CANNOT_INFER_PARAMETER_TYPE!>mutableSetOf<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ x: Int -> }]<!>)
-    val _: Set<*> = select(<!CANNOT_INFER_PARAMETER_TYPE!>mutableSetOf<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> }]<!>)
+    val _: Set<*> = select(<!CANNOT_INFER_PARAMETER_TYPE!>mutableSetOf<!>(), <!AMBIGUOUS_COLLECTION_LITERAL!>[{}]<!>)
+    val _: Set<*> = select(<!CANNOT_INFER_PARAMETER_TYPE!>mutableSetOf<!>(), <!AMBIGUOUS_COLLECTION_LITERAL!>[{ x: Int -> }]<!>)
+    val _: Set<*> = select(<!CANNOT_INFER_PARAMETER_TYPE!>mutableSetOf<!>(), <!AMBIGUOUS_COLLECTION_LITERAL!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> }]<!>)
 }
 
 fun noAmbiguities() {

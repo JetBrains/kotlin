@@ -658,6 +658,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeContextParameterWithDefaultValue -> FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT.createOn(source, session)
     is ConeCyclicTypeBound -> null // reported in FirCyclicTypeBoundsChecker
     is ConeUnsupportedCollectionLiteralType -> FirErrors.UNSUPPORTED_COLLECTION_LITERAL_TYPE.createOn(source, session)
+    is ConeCollectionLiteralAmbiguity -> FirErrors.AMBIGUOUS_COLLECTION_LITERAL.createOn(source, candidatesWithOf, session)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 

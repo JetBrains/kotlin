@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtContextReceiver
@@ -644,6 +645,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.UNSUPPORTED_COLLECTION_LITERAL_TYPE) { firDiagnostic ->
         UnsupportedCollectionLiteralTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.AMBIGUOUS_COLLECTION_LITERAL) { firDiagnostic ->
+        AmbiguousCollectionLiteralImpl(
+            firDiagnostic.a.map { firRegularClassSymbol ->
+                firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firRegularClassSymbol)
+            },
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

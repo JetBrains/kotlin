@@ -58,7 +58,7 @@ fun testFoo() {
     foo([setOf("42"), [42]])
 
     // ambiguity because from expansion of outer CL LOWER(MutableSet), from foo UPPER(Set)
-    foo([mutableSetOf("42"), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>])
+    foo([mutableSetOf("42"), <!AMBIGUOUS_COLLECTION_LITERAL!>[42]<!>])
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, nullableType, stringLiteral,

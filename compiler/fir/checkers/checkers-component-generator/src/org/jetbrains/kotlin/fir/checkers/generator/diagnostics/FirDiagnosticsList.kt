@@ -247,6 +247,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR by error<PsiElement>()
         val UNSUPPORTED_COLLECTION_LITERAL_TYPE by error<PsiElement>()
+        val AMBIGUOUS_COLLECTION_LITERAL by error<KtCollectionLiteralExpression> {
+            parameter<List<FirRegularClassSymbol>>("candidatesWithOf")
+        }
         val IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT by warning<KtExpression>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FirPropertySymbol>("property")
         }

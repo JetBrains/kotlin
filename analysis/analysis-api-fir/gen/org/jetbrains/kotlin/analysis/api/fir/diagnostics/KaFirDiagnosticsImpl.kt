@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtContextReceiver
@@ -582,6 +583,12 @@ internal class UnsupportedCollectionLiteralTypeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnsupportedCollectionLiteralType
+
+internal class AmbiguousCollectionLiteralImpl(
+    override val candidatesWithOf: List<KaClassLikeSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtCollectionLiteralExpression>(firDiagnostic, token), KaFirDiagnostic.AmbiguousCollectionLiteral
 
 internal class ImplicitPropertyTypeMakesBehaviorOrderDependantImpl(
     override val property: KaVariableSymbol,

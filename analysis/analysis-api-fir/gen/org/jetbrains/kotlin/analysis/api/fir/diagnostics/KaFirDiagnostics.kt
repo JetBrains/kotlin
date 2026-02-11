@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtContextReceiver
@@ -495,6 +496,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface UnsupportedCollectionLiteralType : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UnsupportedCollectionLiteralType::class
+    }
+
+    interface AmbiguousCollectionLiteral : KaFirDiagnostic<KtCollectionLiteralExpression> {
+        override val diagnosticClass get() = AmbiguousCollectionLiteral::class
+        val candidatesWithOf: List<KaClassLikeSymbol>
     }
 
     interface ImplicitPropertyTypeMakesBehaviorOrderDependant : KaFirDiagnostic<KtExpression> {
