@@ -16,6 +16,7 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.supportsPerKlibCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
@@ -107,7 +108,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
                 it.executable = binaryen.requireConfigured().executable
                 it.dependsOn(binaryen.setupTaskProvider)
                 it.dependsOn(compilation.compileTaskProvider)
-                if (project.kotlinPropertiesProvider.wasmPerModule && compilation.wasmTarget != WasmTarget.WASI) {
+                if (project.kotlinPropertiesProvider.wasmPerModule && compilation.wasmTarget.supportsPerKlibCompilation()) {
                     it.binaryenArguments.set(BinaryenConfig.binaryenMultimoduleArgs)
                 }
                 it.configuration()

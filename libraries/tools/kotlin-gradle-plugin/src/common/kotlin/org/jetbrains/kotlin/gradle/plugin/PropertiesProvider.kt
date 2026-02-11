@@ -55,6 +55,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_WASM_PER_MODULE
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_WASM_PER_MODULE_INVALIDATE
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
@@ -179,11 +181,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
                 )
             } ?: KotlinIrJsGeneratedTSValidationStrategy.IGNORE
 
+    /**
+     * Enable open world per module wasm compilation mode.
+     */
     val wasmPerModule: Boolean
-        get() = booleanProperty("kotlin.wasm.per.module") ?: false
+        get() = booleanProperty(KOTLIN_WASM_PER_MODULE) ?: false
 
+    /**
+     * Invalidate Gradle artifact transforms because Gradle lacks the feature
+     * https://github.com/gradle/gradle/issues/29918
+     */
     val wasmPerModuleInvalidate: String?
-        get() = property("kotlin.wasm.per.module.invalidate").orNull
+        get() = property(KOTLIN_WASM_PER_MODULE_INVALIDATE).orNull
 
     val incrementalMultiplatform: Boolean?
         get() = booleanProperty("kotlin.incremental.multiplatform")
@@ -790,6 +799,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.eagerUnresolvedDependenciesDiagnostic")
         val KOTLIN_DISPLAY_DIAGNOSTICS_IN_IDE_BUILD_LOG = property("kotlin.displayDiagnosticsInIdeBuildLog")
         val KOTLIN_KMP_SEPARATE_COMPILATION = property("kotlin.kmp.separateCompilation")
+
+        val KOTLIN_WASM_PER_MODULE = property("$KOTLIN_INTERNAL_NAMESPACE.wasm.perModule")
+        val KOTLIN_WASM_PER_MODULE_INVALIDATE = property("$KOTLIN_INTERNAL_NAMESPACE.wasm.perModule.invalidate")
 
         /**
          * Internal properties: builds get big non-suppressible warning when such properties are used

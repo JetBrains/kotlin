@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.NoOpWasmBinaryTransform
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryTransform
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.supportsPerKlibCompilation
 import org.jetbrains.kotlin.gradle.utils.findByType
 import org.jetbrains.kotlin.gradle.utils.kotlinSessionsDir
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -35,7 +36,8 @@ internal open class KotlinJsIrLinkConfig(
     private val compilation
         get() = binary.compilation
 
-    private val wasmPerModule = project.kotlinPropertiesProvider.wasmPerModule && compilation.wasmTarget != WasmTarget.WASI
+    private val wasmPerModule = project.kotlinPropertiesProvider.wasmPerModule &&
+            compilation.wasmTarget.supportsPerKlibCompilation()
 
     init {
         configureTask { task ->
@@ -163,7 +165,7 @@ internal open class KotlinJsIrLinkConfig(
                         KotlinJsBinaryMode.PRODUCTION -> {
                             configureOptions(
                                 compilation,
-//                                ENABLE_DCE,
+                                ENABLE_DCE,
                                 MINIMIZED_MEMBER_NAMES
                             )
                         }

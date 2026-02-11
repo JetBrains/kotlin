@@ -263,7 +263,7 @@ data class BuildOptions(
         }
 
         if (wasmOptions != null) {
-            wasmOptions.perModule?.let { arguments.add("-Pkotlin.wasm.per.module=$it") }
+            wasmOptions.perModule?.let { arguments.add("-Pkotlin.internal.wasm.perModule=$it") }
         }
 
         if (androidVersion != null) {
