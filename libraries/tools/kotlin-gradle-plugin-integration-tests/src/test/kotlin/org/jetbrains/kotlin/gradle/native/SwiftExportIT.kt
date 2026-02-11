@@ -31,6 +31,8 @@ import kotlin.test.assertNotNull
 @SwiftExportGradlePluginTests
 class SwiftExportIT : KGPBaseTest() {
 
+    // USR expectations are hardcoded. See docs/swift-export/testing-usr-stability.md.
+
     private companion object {
         private const val DEFAULT_IOS_DEPLOYMENT_TARGET = "14.1"
     }
@@ -194,7 +196,12 @@ class SwiftExportIT : KGPBaseTest() {
                 target = "arm64-apple-ios$DEFAULT_IOS_DEPLOYMENT_TARGET",
                 sdk = "iphoneos",
                 searchPaths = listOf(builtProductsDir.toFile()),
-                expectedSymbols = setOf("barbarbar()")
+                expectedSymbols = setOf(
+                    SwiftSymbol(
+                        "s:22ExportedKotlinPackages3comO6githubO9jetbrainsO11swiftexportO6SharedE9barbarbars5Int32VyFZ",
+                        listOf("barbarbar()")
+                    )
+                )
             )
         }
     }
@@ -399,7 +406,7 @@ class SwiftExportIT : KGPBaseTest() {
                 target = "arm64-apple-ios${sdkVersion.output.trim()}-simulator",
                 sdk = "iphonesimulator",
                 searchPaths = listOf(builtProductsDir),
-                expectedSymbols = setOf("iosSimulatorArm64Bar()")
+                expectedSymbols = setOf(SwiftSymbol("s:6Shared20iosSimulatorArm64BaryyF", listOf("iosSimulatorArm64Bar()")))
             )
 
             // Verify Swift module API surface for x86_64 (iosX64)
@@ -409,7 +416,7 @@ class SwiftExportIT : KGPBaseTest() {
                 target = "x86_64-apple-ios${sdkVersion.output.trim()}-simulator",
                 sdk = "iphonesimulator",
                 searchPaths = listOf(builtProductsDir),
-                expectedSymbols = setOf("iosX64Bar()")
+                expectedSymbols = setOf(SwiftSymbol("s:6Shared9iosX64BaryyF", listOf("iosX64Bar()")))
             )
         }
     }
@@ -523,47 +530,38 @@ class SwiftExportIT : KGPBaseTest() {
                 expectedSymbolsByModule = mapOf(
                     "Shared" to setOf(
                         SwiftSymbol(
-                            demangledId = "Shared.foo() -> (extension in SharedDepOne):ExportedKotlinPackages.org.foo.One",
-                            pathComponents = listOf("foo()")
+                            "s:6Shared3foo22ExportedKotlinPackages3orgOABO0A6DepOneE0H0CyF",
+                            listOf("foo()")
                         )
                     ),
                     "SharedDepOne" to setOf(
                         SwiftSymbol(
-                            demangledId = "(extension in SharedDepOne):ExportedKotlinPackages.org.foo.One",
-                            pathComponents = listOf("org.foo.One")
+                            "s:22ExportedKotlinPackages3orgO3fooO12SharedDepOneE0H0C",
+                            listOf("org.foo.One")
                         ),
                         SwiftSymbol(
-                            demangledId = "(extension in SharedDepOne):ExportedKotlinPackages.org.foo.One.init() -> (extension in SharedDepOne):ExportedKotlinPackages.org.foo.One",
-                            pathComponents = listOf("org.foo.One.init()")
+                            "s:22ExportedKotlinPackages3orgO3fooO12SharedDepOneE0H0CAHycfc",
+                            listOf("org.foo.One.init()")
                         )
                     ),
                     "ExportedKotlinPackages" to setOf(
-                        SwiftSymbol(
-                            demangledId = "ExportedKotlinPackages.org",
-                            pathComponents = listOf("org")
-                        ),
-                        SwiftSymbol(
-                            demangledId = "ExportedKotlinPackages.org.foo",
-                            pathComponents = listOf("org.foo")
-                        )
+                        SwiftSymbol("s:22ExportedKotlinPackages3orgO", listOf("org")),
+                        SwiftSymbol("s:22ExportedKotlinPackages3orgO3fooO", listOf("org.foo"))
                     ),
                     // KotlinError exports the struct and its declared members.
                     "KotlinRuntimeSupport" to setOf(
+                        SwiftSymbol("s:20KotlinRuntimeSupport0A5ErrorV", listOf("KotlinError")),
                         SwiftSymbol(
-                            demangledId = "KotlinRuntimeSupport.KotlinError",
-                            pathComponents = listOf("KotlinError")
+                            "s:20KotlinRuntimeSupport0A5ErrorV7wrappedACSo0A4BaseC_tcfc",
+                            listOf("KotlinError.init(wrapped:)")
                         ),
                         SwiftSymbol(
-                            demangledId = "KotlinRuntimeSupport.KotlinError.init(wrapped: __C.KotlinBase) -> KotlinRuntimeSupport.KotlinError",
-                            pathComponents = listOf("KotlinError.init(wrapped:)")
+                            "s:20KotlinRuntimeSupport0A5ErrorV7wrappedSo0A4BaseCvp",
+                            listOf("KotlinError.wrapped")
                         ),
                         SwiftSymbol(
-                            demangledId = "KotlinRuntimeSupport.KotlinError.wrapped : __C.KotlinBase",
-                            pathComponents = listOf("KotlinError.wrapped")
-                        ),
-                        SwiftSymbol(
-                            demangledId = "KotlinRuntimeSupport.KotlinError.description : Swift.String",
-                            pathComponents = listOf("KotlinError.description")
+                            "s:20KotlinRuntimeSupport0A5ErrorV11descriptionSSvp",
+                            listOf("KotlinError.description")
                         )
                     )
                 )
@@ -672,7 +670,7 @@ class SwiftExportIT : KGPBaseTest() {
                 target = "arm64-apple-ios17.0",
                 sdk = "iphoneos",
                 searchPaths = listOf(builtProductsDir.toFile()),
-                expectedSymbols = setOf("demo()")
+                expectedSymbols = setOf(SwiftSymbol("s:6Shared4demo5UIKit33UIContentUnavailableConfigurationVyF", listOf("demo()")))
             )
         }
     }

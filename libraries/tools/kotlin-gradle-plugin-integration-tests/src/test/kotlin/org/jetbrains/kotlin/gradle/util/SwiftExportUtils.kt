@@ -147,7 +147,7 @@ private fun symbolgraphOutputDir(workingDir: File, moduleName: String): File {
 }
 
 /**
- * Parses symbol graph JSON and extracts symbol names.
+ * Parses symbol graph JSON and extracts symbol identifiers.
  */
 private object SymbolGraphParsing {
     @Serializable
@@ -157,7 +157,15 @@ private object SymbolGraphParsing {
 
     @Serializable
     data class Symbol(
+        val identifier: SymbolIdentifier? = null,
         val names: SymbolNames? = null,
+        val pathComponents: List<String>? = null,
+    )
+
+    @Serializable
+    data class SymbolIdentifier(
+        val precise: String,
+        val interfaceLanguage: String? = null,
     )
 
     @Serializable
@@ -168,9 +176,43 @@ private object SymbolGraphParsing {
     val json = Json { ignoreUnknownKeys = true }
 }
 
-private fun parseSymbolGraphNames(symbolGraphFile: File): Set<String> {
+/**
+ * Swift symbol for symbolgraph-extract assertions.
+ *
+ * This is a data class for convenience, but equality and hashing are still based only on
+ * [precise] (the USR), while [pathComponents] are for readable diagnostics.
+ */
+internal data class SwiftSymbol(
+    val precise: String,
+    val pathComponents: List<String>,
+) {
+    val displayName: String
+        get() = pathComponents.joinToString(".")
+
+    override fun equals(other: Any?): Boolean =
+        other is SwiftSymbol && other.precise == precise
+
+    override fun hashCode(): Int = precise.hashCode()
+
+    override fun toString(): String = "$displayName ($precise)"
+}
+
+private fun parseSymbolGraphSymbols(symbolGraphFile: File): Set<SwiftSymbol> {
     val graph = SymbolGraphParsing.json.decodeFromString<SymbolGraphParsing.SymbolGraph>(symbolGraphFile.readText())
-    return graph.symbols.mapNotNull { it.names?.title }.toSet()
+    var skippedCount = 0
+    val symbols = graph.symbols.mapNotNull { symbol ->
+        val precise = symbol.identifier?.precise
+        val pathComponents = symbol.pathComponents
+        if (precise == null || pathComponents == null) {
+            skippedCount++
+            return@mapNotNull null
+        }
+        SwiftSymbol(precise = precise, pathComponents = pathComponents)
+    }.toSet()
+    if (skippedCount > 0) {
+        println("Warning: Skipped $skippedCount symbols without identifier/pathComponents in ${symbolGraphFile.path}")
+    }
+    return symbols
 }
 
 private fun extractModuleSymbols(
@@ -179,7 +221,7 @@ private fun extractModuleSymbols(
     target: String,
     sdk: String,
     searchPaths: List<File>,
-): Set<String> {
+): Set<SwiftSymbol> {
     val result = swiftSymbolgraphExtract(workingDir, moduleName, target, sdk, searchPaths)
     assert(result.isSuccessful) {
         "symbolgraph-extract failed for module $moduleName: ${result.output}"
@@ -193,7 +235,7 @@ private fun extractModuleSymbols(
                 "Search paths: $searchPaths"
     }
 
-    return allSymbolGraphFiles.flatMap { parseSymbolGraphNames(it) }.toSet()
+    return allSymbolGraphFiles.flatMap { parseSymbolGraphSymbols(it) }.toSet()
 }
 
 /**
@@ -205,7 +247,7 @@ internal fun assertSwiftModuleSymbols(
     target: String,
     sdk: String = "iphoneos",
     searchPaths: List<File>,
-    expectedSymbols: Set<String>,
+    expectedSymbols: Set<SwiftSymbol>,
 ) {
     val actualSymbols = extractModuleSymbols(workingDir, moduleName, target, sdk, searchPaths)
     assertEquals(
@@ -236,7 +278,7 @@ internal fun assertAllSwiftModuleSymbols(
     builtProductsDir: File,
     target: String,
     sdk: String = "iphoneos",
-    expectedSymbolsByModule: Map<String, Set<String>>,
+    expectedSymbolsByModule: Map<String, Set<SwiftSymbol>>,
 ) {
     val allDirEntries = builtProductsDir.listFiles() ?: emptyArray()
     val swiftModuleDirs = allDirEntries.filter { it.isDirectory && it.name.endsWith(".swiftmodule") }
