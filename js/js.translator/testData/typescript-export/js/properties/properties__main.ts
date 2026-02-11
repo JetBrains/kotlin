@@ -3,6 +3,8 @@ import _val = JS_TESTS.foo._val;
 import _var = JS_TESTS.foo._var;
 import _valCustom = JS_TESTS.foo._valCustom;
 import _valCustomWithField = JS_TESTS.foo._valCustomWithField;
+import valWithExplicitBackingField = JS_TESTS.foo.valWithExplicitBackingField;
+import A = JS_TESTS.foo.A;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -28,6 +30,10 @@ function box(): string {
     assert(JS_TESTS.foo._varCustomWithField === 10);
     JS_TESTS.foo._varCustomWithField = 10;
     assert(JS_TESTS.foo._varCustomWithField === 1000);
+
+    assert(valWithExplicitBackingField === 42);
+    const a = new A();
+    assert(a.valWithExplicitBackingField === 42);
 
     return "OK";
 }

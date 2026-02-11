@@ -10,5 +10,7 @@ declare namespace JS_TESTS {
         const _valCustomWithField: number;
         let _varCustom: number;
         let _varCustomWithField: number;
+        const valWithExplicitBackingField: any;
+        /* ErrorDeclaration: Class declarations are not implemented yet */
     }
 }
