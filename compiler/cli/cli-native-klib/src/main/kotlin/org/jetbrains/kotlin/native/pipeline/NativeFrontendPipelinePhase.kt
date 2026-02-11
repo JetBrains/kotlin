@@ -6,20 +6,12 @@
 package org.jetbrains.kotlin.native.pipeline
 
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.prepareNativeSessions
-import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
-import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
-import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -65,18 +57,17 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
     private inline fun <F> NativeFirstStagePhaseContext.firFrontend(
         configuration: CompilerConfiguration,
         files: List<F>,
-        fileHasSyntaxErrors: (F) -> Boolean,
+        checkSyntaxErrors: (F) -> Unit,
         noinline isCommonSource: (F) -> Boolean,
         noinline fileBelongsToModule: (F, String) -> Boolean,
         buildResolveAndCheckFir: (FirSession, List<F>, BaseDiagnosticsCollector) -> SingleModuleFrontendOutput,
     ): AllModulesFrontendOutput {
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val diagnosticsReporter = DiagnosticsCollectorImpl()
-        val renderDiagnosticNames = configuration.renderDiagnosticInternalName
 
         // FIR
         val mainModuleName = Name.special("<${config.moduleId}>")
-        val syntaxErrors = files.fold(false) { errorsFound, file -> fileHasSyntaxErrors(file) or errorsFound }
+        files.forEach { checkSyntaxErrors(it) }
         val dependencyList = DependencyListForCliModule.build {
             val (interopLibs, regularLibs) = config.loadedKlibs.all.partition { it.isCInteropLibrary() }
             defaultDependenciesSet(mainModuleName) {
@@ -116,30 +107,21 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         }
 
         outputs.runPlatformCheckers(diagnosticsReporter)
-        // This seems rudimental, but it fixes the error reporting in the case of one-stage compilation
-        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
-        return if (syntaxErrors || diagnosticsReporter.hasErrors) {
-            throw CompilationErrorException("Compilation failed: there were frontend errors")
-        } else {
-            AllModulesFrontendOutput(outputs)
-        }
+        return AllModulesFrontendOutput(outputs)
     }
 
     private fun NativeFirstStagePhaseContext.firFrontendWithPsi(
         input: KotlinCoreEnvironment,
         configuration: CompilerConfiguration,
     ): AllModulesFrontendOutput {
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        // FIR
-
         val perfManager = configuration.perfManager
         val ktFiles = input.getSourceFiles()
         perfManager?.addSourcesStats(ktFiles.size, input.countLinesOfCode(ktFiles))
         return firFrontend(
             configuration,
             ktFiles,
-            fileHasSyntaxErrors = {
-                AnalyzerWithCompilerReport.reportSyntaxErrors(it, messageCollector).isHasErrors
+            checkSyntaxErrors = {
+                AnalyzerWithCompilerReport.reportSyntaxErrors(it, configuration.diagnosticsCollector).isHasErrors
             },
             isCommonSource = isCommonSourceForPsi,
             fileBelongsToModule = fileBelongsToModuleForPsi,
@@ -170,11 +152,11 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         return firFrontend(
             configuration,
             ktSourceFiles,
-            fileHasSyntaxErrors = { false },
+            checkSyntaxErrors = {},
             isCommonSource = { groupedSources.isCommonSourceForLt(it) },
             fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
             buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
-                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, null)
+                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, countFilesAndLines = null)
             },
         )
     }
