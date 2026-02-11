@@ -16,12 +16,22 @@ import kotlin.test.*
 fun createIntWrapper(): Any = IntWrapper(117)
 fun createStringWrapper(): Any = StringWrapper("fail")
 
+fun foo(x: Int?) {
+    x?.let {
+        val i = createIntWrapper()
+        initInstance(i, IntWrapper(it))
+        assertEquals((i as IntWrapper).x, 42)
+    }
+}
+
 fun box(): String {
     val i = createIntWrapper()
     initInstance(i, IntWrapper(42))
     assertEquals((i as IntWrapper).x, 42)
     initInstance(i, IntWrapper("zzz"))
     assertEquals((i as IntWrapper).x, 3)
+
+    foo(42)
 
     val s = createStringWrapper()
     initInstance(s, StringWrapper("OK"))
