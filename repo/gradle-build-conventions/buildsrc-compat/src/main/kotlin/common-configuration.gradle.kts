@@ -319,7 +319,6 @@ fun Project.configureTests() {
             ":compiler:multiplatform-parsing",
             ":compiler:psi:psi-api",
             ":compiler:test-infrastructure-utils",
-            ":compiler:tests-different-jdk",
             ":compiler:tests-integration",
             ":compose-compiler-gradle-plugin",
             ":examples:scripting-jvm-embeddable-host",
