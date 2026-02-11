@@ -17,68 +17,94 @@ struct Data {
 
 @file:OptIn(
     kotlinx.cinterop.ExperimentalForeignApi::class,
-    kotlin.experimental.ExperimentalNativeApi::class,
-    kotlin.native.runtime.NativeRuntimeApi::class
+    kotlin.experimental.ExperimentalNativeApi::class
 )
 
 import rttiMapRuntimeType.*
 import kotlinx.cinterop.*
-import kotlin.native.runtime.GC
+import kotlin.native.internal.GCUnsafeCall
+import kotlin.native.internal.NativePtr
 
-// Class with both CPointer (raw pointer -> RT_NATIVE_PTR) and Kotlin object (-> RT_OBJECT)
-// Both are `ptr` in LLVM - tests that isObjectType distinguishes them correctly
+// RT_OBJECT = 1 in Konan_RuntimeType
+const val RT_OBJECT = 1
+// RT_NATIVE_PTR = 8 in Konan_RuntimeType
+const val RT_NATIVE_PTR = 8
+
+// Class with both CPointer (raw pointer -> RT_NATIVE_PTR) and Kotlin object (-> RT_OBJECT).
+// Both are `ptr` in LLVM IR — mapRuntimeType must use isObjectType to distinguish them.
 class MixedPointerHolder(
-    val rawPointer: CPointer<Data>?,    // RT_NATIVE_PTR (8)
-    val kotlinObject: Any?               // RT_OBJECT (1)
+    val rawPointer: CPointer<Data>?,    // should be RT_NATIVE_PTR (8)
+    val kotlinObject: Any?               // should be RT_OBJECT (1)
 )
 
 // Multiple interleaved fields to stress-test field ordering
 class InterleavedHolder(
-    val obj1: String?,
-    val ptr1: CPointer<Data>?,
-    val obj2: Any?,
-    val ptr2: CPointer<Data>?,
-    val obj3: List<Int>?
+    val obj1: String?,                   // should be RT_OBJECT (1)
+    val ptr1: CPointer<Data>?,           // should be RT_NATIVE_PTR (8)
+    val obj2: Any?,                      // should be RT_OBJECT (1)
+    val ptr2: CPointer<Data>?,           // should be RT_NATIVE_PTR (8)
+    val obj3: List<Int>?                 // should be RT_OBJECT (1)
 )
 
-// Array holder - tests array element type identification
-class ArrayHolder(
-    val kotlinArray: Array<String>?,     // Object array elements -> RT_OBJECT
-    val nativePointer: CPointer<Data>?   // RT_NATIVE_PTR
-)
+// Direct calls to Kotlin/Native runtime debug functions.
+// These read the extended type info (field types populated by RTTIGenerator.mapRuntimeType).
+// Using @GCUnsafeCall keeps the thread in RUNNABLE state, avoiding thread state assertion.
+@GCUnsafeCall("Konan_DebugGetFieldCount")
+external fun debugGetFieldCount(obj: Any): Int
+
+@GCUnsafeCall("Konan_DebugGetFieldType")
+external fun debugGetFieldType(obj: Any, index: Int): Int
+
+@GCUnsafeCall("Konan_DebugGetFieldName")
+external fun debugGetFieldName(obj: Any, index: Int): NativePtr
+
+// Inspect the extended RTTI field types using runtime debug functions.
+// This directly reads the fieldTypes_ array populated by RTTIGenerator.mapRuntimeType.
+fun inspectFieldTypes(obj: Any): Map<String, Int> {
+    val count = debugGetFieldCount(obj)
+    val result = mutableMapOf<String, Int>()
+    for (i in 0 until count) {
+        val namePtr = debugGetFieldName(obj, i)
+        val name = interpretCPointer<ByteVar>(namePtr)?.toKString() ?: "?"
+        val type = debugGetFieldType(obj, i)
+        result[name] = type
+    }
+    return result
+}
 
 fun box(): String {
     memScoped {
         val data = alloc<Data>()
         data.value = 42
 
-        // Test 1: MixedPointerHolder
+        // --- Test 1: MixedPointerHolder ---
+        // Verify RTTI field types directly (the values populated by mapRuntimeType)
         val holder1 = MixedPointerHolder(data.ptr, "test object")
-        if (holder1.rawPointer?.pointed?.value != 42) return "FAIL: rawPointer value"
-        if (holder1.kotlinObject != "test object") return "FAIL: kotlinObject value"
+        val types1 = inspectFieldTypes(holder1)
 
-        // Test 2: InterleavedHolder - multiple fields
-        val holder2 = InterleavedHolder(
-            "first",
-            data.ptr,
-            listOf(1, 2, 3),
-            data.ptr,
-            listOf(4, 5, 6)
-        )
-        if (holder2.obj1 != "first") return "FAIL: obj1"
-        if (holder2.ptr1?.pointed?.value != 42) return "FAIL: ptr1"
+        if (types1.size != 2)
+            return "FAIL: MixedPointerHolder field count = ${types1.size}, expected 2"
+        if (types1["rawPointer"] != RT_NATIVE_PTR)
+            return "FAIL: rawPointer has runtime type ${types1["rawPointer"]}, expected RT_NATIVE_PTR ($RT_NATIVE_PTR)"
+        if (types1["kotlinObject"] != RT_OBJECT)
+            return "FAIL: kotlinObject has runtime type ${types1["kotlinObject"]}, expected RT_OBJECT ($RT_OBJECT)"
 
-        // Test 3: ArrayHolder
-        val holder3 = ArrayHolder(arrayOf("a", "b"), data.ptr)
-        if (holder3.kotlinArray?.size != 2) return "FAIL: array size"
+        // --- Test 2: InterleavedHolder ---
+        // Multiple interleaved object/pointer fields
+        val holder2 = InterleavedHolder("first", data.ptr, listOf(1, 2, 3), data.ptr, listOf(4, 5, 6))
+        val types2 = inspectFieldTypes(holder2)
 
-        // Force GC - if types are wrong, this could crash or corrupt data
-        GC.collect()
+        if (types2.size != 5)
+            return "FAIL: InterleavedHolder field count = ${types2.size}, expected 5"
 
-        // Verify values survive GC (would fail if object refs weren't traced)
-        if (holder1.kotlinObject != "test object") return "FAIL: kotlinObject after GC"
-        if (holder2.obj1 != "first") return "FAIL: obj1 after GC"
-        if ((holder2.obj2 as? List<*>)?.size != 3) return "FAIL: obj2 after GC"
+        for (name in listOf("obj1", "obj2", "obj3")) {
+            if (types2[name] != RT_OBJECT)
+                return "FAIL: $name has runtime type ${types2[name]}, expected RT_OBJECT ($RT_OBJECT)"
+        }
+        for (name in listOf("ptr1", "ptr2")) {
+            if (types2[name] != RT_NATIVE_PTR)
+                return "FAIL: $name has runtime type ${types2[name]}, expected RT_NATIVE_PTR ($RT_NATIVE_PTR)"
+        }
     }
 
     return "OK"
