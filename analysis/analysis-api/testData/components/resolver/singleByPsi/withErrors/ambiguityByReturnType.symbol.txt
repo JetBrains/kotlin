@@ -1,9 +1,19 @@
 KtCallExpression(208,319): 'sumOf { c ->'
   KaSymbolResolutionError:
     candidateSymbols = [
+      kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> java.math.BigDecimal): java.math.BigDecimal,
+      kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> java.math.BigInteger): java.math.BigInteger,
+      kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.Double): kotlin.Double,
       kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.Int): kotlin.Int,
-      kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.UInt): kotlin.UInt
+      kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.Long): kotlin.Long,
+      kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.UInt): kotlin.UInt,
+      kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.ULong): kotlin.ULong
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun <T> Iterable<T>.sumOf(selector: (T) -> BigDecimal): BigDecimal
+    fun <T> Iterable<T>.sumOf(selector: (T) -> BigInteger): BigInteger
+    fun <T> Iterable<T>.sumOf(selector: (T) -> Double): Double
     fun <T> Iterable<T>.sumOf(selector: (T) -> Int): Int
-    fun <T> Iterable<T>.sumOf(selector: (T) -> UInt): UInt>
+    fun <T> Iterable<T>.sumOf(selector: (T) -> Long): Long
+    fun <T> Iterable<T>.sumOf(selector: (T) -> UInt): UInt
+    fun <T> Iterable<T>.sumOf(selector: (T) -> ULong): ULong>
