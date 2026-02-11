@@ -2,6 +2,7 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
+// LANGUAGE: +ExplicitBackingFields
 // MODULE: JS_TESTS
 // FILE: properties.kt
 
@@ -33,3 +34,16 @@ var _varCustom: Int
 var _varCustomWithField: Int = 1
     get() = field * 10
     set(value) { field = value * 10 }
+
+@JsExport
+val valWithExplicitBackingField: Any
+    field = 42
+
+@JsExport
+class A {
+    val valWithExplicitBackingField: Any field: Int
+
+    init {
+        valWithExplicitBackingField = 42
+    }
+}
