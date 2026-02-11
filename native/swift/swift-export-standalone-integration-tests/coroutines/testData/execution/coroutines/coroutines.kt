@@ -69,3 +69,48 @@ suspend fun throwNonException(message: String): Int {
     class NonExceptionThrowable(message: String) : Throwable(message)
     throw NonExceptionThrowable(message)
 }
+
+suspend fun neverCompletes(): Int = coroutineScope {
+    suspendCancellableCoroutine { cont ->
+        cont.invokeOnCancellation {}
+    }
+}
+
+suspend fun finallyDelayInt(delay: Long, onFinally: (() -> Unit)?): Int {
+    var result = 0
+    try {
+        delay(delay)
+        return 67
+    } finally {
+        onFinally?.invoke()
+    }
+    return result
+}
+
+suspend fun completeTwiceSuccessThenSuccessDeterministic(): Int {
+    val gate = CompletableDeferred<Int>()
+    gate.complete(42)
+    gate.complete(43) // must be ignored
+    return gate.await()
+}
+
+suspend fun completeTwiceSuccessThenThrowDeterministic(message: String): Int {
+    val gate = CompletableDeferred<Int>()
+    gate.complete(42)
+    gate.completeExceptionally(IllegalStateException(message)) // must be ignored
+    return gate.await()
+}
+
+suspend fun completeTwiceThrowThenSuccessDeterministic(message: String): Int {
+    val gate = CompletableDeferred<Int>()
+    gate.completeExceptionally(IllegalStateException(message))
+    gate.complete(42) // must be ignored
+    return gate.await() // throws
+}
+
+suspend fun completeTwiceCancelThenSuccessDeterministic(): Int {
+    val gate = CompletableDeferred<Int>()
+    gate.completeExceptionally(CancellationException("cancel-first"))
+    gate.complete(42) // must be ignored
+    return gate.await() // throws CancellationException -> Swift CancellationError
+}

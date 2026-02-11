@@ -150,6 +150,163 @@ func testNonExceptionThrowing() async {
 }
 
 @Test
+func testNeverCompletesIsCancellable() async throws {
+    let task = Task<Int32, any Error>.detached {
+        return try await neverCompletes()
+    }
+
+    try await Task.sleep(nanoseconds: 50_000_000)
+    task.cancel()
+
+    let result = await task.result
+    #expect(task.isCancelled)
+    #expect(result == .failure(CancellationError()))
+}
+
+@Test
+func testMultipleCancelsAreIdempotent() async throws {
+    let task = Task<Int32, any Error>.detached {
+        return try await neverCompletes()
+    }
+
+    try await Task.sleep(nanoseconds: 50_000_000)
+    task.cancel()
+    task.cancel()
+    task.cancel()
+    task.cancel()
+
+    let result = await task.result
+    #expect(task.isCancelled)
+    #expect(result == .failure(CancellationError()))
+}
+
+@Test
+func testParentCancellationPropagatesToStructuredChild() async throws {
+    let parent = Task<Int32, any Error>.detached {
+    async let child: Int32 = try await neverCompletes()
+        return try await child
+    }
+
+    try await Task.sleep(nanoseconds: 50_000_000)
+    parent.cancel()
+
+    let result = await parent.result
+    #expect(parent.isCancelled)
+    #expect(result == .failure(CancellationError()))
+}
+
+@Test
+func testCancellationRaceLoop() async throws {
+    let cancelDelaysMs: [UInt64] = [0, 1, 5, 10, 20, 35, 50, 75, 100, 150]
+
+    let kotlinDelayMs: Int64 = 2_000
+
+    try await withThrowingTaskGroup(of: Void.self) { group in
+        for (i, cancelDelayMs) in cancelDelaysMs.enumerated() {
+            group.addTask {
+                let task = Task<Int32, any Error>.detached {
+                    return try await callAfter(delay: kotlinDelayMs) {
+                        Issue.record("Iteration \(i): callback should not be invoked if task was cancelled before delay")
+                        return 42
+                    }
+                }
+
+                if cancelDelayMs > 0 {
+                    try await Task.sleep(nanoseconds: cancelDelayMs * 1_000_000)
+                }
+                task.cancel()
+
+                let result = await task.result
+
+                switch result {
+                case .success(let v):
+                    #expect(v == 42)
+                case .failure(let e):
+                    #expect(e is CancellationError, "Iteration \(i) failed with non-cancellation error: \(e)")
+                }
+            }
+        }
+
+        for try await _ in group {}
+    }
+}
+
+@Test
+func testFinallyCancelBeforeEnd() async throws {
+    let task = Task<Int32, any Error>.detached {
+        try await confirmation("Kotlin finally hook called", expectedCount: 1) { confirm in
+            // Long delay so we can reliably cancel while suspended.
+            return try await finallyDelayInt(delay: 3_000) {
+                confirm() // must be called from Kotlin `finally`
+            }
+        }
+    }
+
+    try await Task.sleep(nanoseconds: 50_000_000)
+    task.cancel()
+
+    let result = await task.result
+    #expect(result == .failure(CancellationError()))
+}
+
+@Test
+func testFinallyCancelAfterEnd() async throws {
+    let task = Task<Int32, any Error>.detached {
+        try await confirmation("Kotlin finally hook called", expectedCount: 1) { confirm in
+            return try await finallyDelayInt(delay: 20) {
+                confirm()
+            }
+        }
+    }
+
+    try await Task.sleep(nanoseconds: 1_000_000_000)
+    task.cancel()
+
+    let result = await task.result
+    #expect(result == .success(67))
+}
+
+@Test
+func testDoubleCompletionDet_successThenSuccess() async throws {
+    let v: Int32 = try await completeTwiceSuccessThenSuccessDeterministic()
+    #expect(v == 42)
+}
+
+@Test
+func testDoubleCompletionDet_successThenThrow() async throws {
+    let v: Int32 = try await completeTwiceSuccessThenThrowDeterministic(message: "boom")
+    #expect(v == 42)
+}
+
+@Test
+func testDoubleCompletionDet_throwThenSuccess() async {
+    let task = Task<Int32, any Error>.detached {
+        try await completeTwiceThrowThenSuccessDeterministic(message: "first-throw")
+    }
+
+    let result = await task.result
+
+    switch result {
+    case .success:
+        Issue.record("Expected failure, but got success")
+    case .failure(let e):
+        #expect(!(e is CancellationError))
+        #expect(String(describing: e).contains("first-throw"))
+    }
+}
+
+@Test
+func testDoubleCompletionDet_cancelThenSuccess() async {
+    let task = Task<Int32, any Error>.detached {
+        try await completeTwiceCancelThenSuccessDeterministic()
+    }
+
+    let result = await task.result
+    #expect(task.isCancelled)
+    #expect(result == .failure(CancellationError()))
+}
+
+@Test
 func testCallingKotlinLambdaThatUsesCoroutines() async throws {
     let block = testPrimitiveProducedLambda()
     try #expect(await block() == 42)
