@@ -200,11 +200,11 @@ interface WasmBinary {
 
     @InternalKotlinGradlePluginApi
     val wasmBinaryConfigurationName
-        get() = compilation.disambiguateName("wasmBinary${name}Configuration")
+        get() = compilation.disambiguateName("wasmBinary${name}")
 
     @InternalKotlinGradlePluginApi
     val wasmBinaryOutputConfigurationName
-        get() = compilation.disambiguateName("wasmBinary${name}OutputConfiguration")
+        get() = compilation.disambiguateName("wasmBinary${name}Output")
 }
 
 internal fun TaskProvider<BinaryenExec>.configureOptimizeTask(binary: WasmBinary) {
