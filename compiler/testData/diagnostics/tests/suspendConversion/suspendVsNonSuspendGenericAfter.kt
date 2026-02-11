@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -DiscriminateSuspendInOverloadResolution
+// LANGUAGE: +DiscriminateSuspendInOverloadResolution
 // ISSUE: KT-82869
 fun foo(supplier: suspend () -> String): String = ""
 fun <T> foo(supplier: () -> String): T = TODO()

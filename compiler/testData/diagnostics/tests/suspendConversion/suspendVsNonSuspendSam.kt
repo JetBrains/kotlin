@@ -1,5 +1,6 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -DiscriminateSuspendInOverloadResolution
 // ISSUE: KT-82869
 fun interface MySupplier<T> {
     fun get(): T

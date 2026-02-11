@@ -70,6 +70,9 @@ class ConeOverloadConflictResolver(
     private val transformerComponents: BodyResolveComponents,
 ) : ConeCallConflictResolver() {
 
+    private val discriminateSuspendFunctionTypesEnabled: Boolean =
+        inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.DiscriminateSuspendInOverloadResolution)
+
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateAbstracts: Boolean,
@@ -277,6 +280,16 @@ class ConeOverloadConflictResolver(
             findMaximallySpecificCall(candidates, discriminateGenerics = false, useOriginalSamTypes = true)?.let { return setOf(it) }
         }
 
+        if (discriminateSuspendFunctionTypesEnabled) {
+            findMaximallySpecificCall(candidates, discriminateGenerics = false, discriminateSuspendFunctionTypes = true)
+                ?.let { return setOf(it) }
+
+            if (discriminationFlags.generics) {
+                findMaximallySpecificCall(candidates, discriminateGenerics = true, discriminateSuspendFunctionTypes = true)
+                    ?.let { return setOf(it) }
+            }
+        }
+
         return candidates
     }
 
@@ -303,7 +316,8 @@ class ConeOverloadConflictResolver(
     private fun findMaximallySpecificCall(
         candidates: Set<Candidate>,
         discriminateGenerics: Boolean,
-        useOriginalSamTypes: Boolean = false
+        useOriginalSamTypes: Boolean = false,
+        discriminateSuspendFunctionTypes: Boolean = false,
     ): Candidate? {
         if (candidates.size <= 1) return candidates.singleOrNull()
 
@@ -313,7 +327,13 @@ class ConeOverloadConflictResolver(
 
         val bestCandidatesByParameterTypes = candidateSignatures.filter { signature ->
             candidateSignatures.all { other ->
-                signature === other || isEquallyOrMoreSpecificCallWithArgumentMapping(signature, other, discriminateGenerics, useOriginalSamTypes)
+                signature === other || isEquallyOrMoreSpecificCallWithArgumentMapping(
+                    signature,
+                    other,
+                    discriminateGenerics,
+                    useOriginalSamTypes,
+                    discriminateSuspendFunctionTypes,
+                )
             }
         }
 
@@ -328,8 +348,9 @@ class ConeOverloadConflictResolver(
         call2: CandidateSignature,
         discriminateGenerics: Boolean,
         useOriginalSamTypes: Boolean,
+        discriminateSuspendFunctionTypes: Boolean,
     ): Boolean {
-        return compareCallsByUsedArguments(call1, call2, discriminateGenerics, useOriginalSamTypes)
+        return compareCallsByUsedArguments(call1, call2, discriminateGenerics, useOriginalSamTypes, discriminateSuspendFunctionTypes)
     }
 
     private fun List<CandidateSignature>.exactMaxWith(): CandidateSignature? {
@@ -374,6 +395,7 @@ class ConeOverloadConflictResolver(
         call2: FlatSignature<Candidate>,
         discriminateGenerics: Boolean,
         useOriginalSamTypes: Boolean,
+        discriminateSuspendFunctionTypes: Boolean,
     ): Boolean {
         if (discriminateGenerics) {
             val isGeneric1 = call1.isGeneric
@@ -395,14 +417,18 @@ class ConeOverloadConflictResolver(
         }.isSignatureEquallyOrMoreSpecific(
             call1,
             call2,
-            SpecificityComparisonWithNumerics,
+            if (discriminateSuspendFunctionTypes) specificityComparisonDiscriminateSuspendFunctionTypes else specificityComparisonDontDiscriminateSuspendFunctionTypes,
             specificityComparator,
             useOriginalSamTypes
         )
     }
 
-    @Suppress("PrivatePropertyName")
-    private val SpecificityComparisonWithNumerics = object : SpecificityComparisonCallbacks {
+    private val specificityComparisonDiscriminateSuspendFunctionTypes = SpecificityComparison(discriminateSuspendFunctionTypes = true)
+    private val specificityComparisonDontDiscriminateSuspendFunctionTypes = SpecificityComparison(discriminateSuspendFunctionTypes = false)
+
+    private inner class SpecificityComparison(
+        private val discriminateSuspendFunctionTypes: Boolean
+    ) : SpecificityComparisonCallbacks {
         override fun isNonSubtypeEquallyOrMoreSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean {
             requireOrDescribe(specific is ConeKotlinType, specific)
             requireOrDescribe(general is ConeKotlinType, general)
@@ -437,7 +463,7 @@ class ConeOverloadConflictResolver(
                 return true
             }
 
-            if (discriminateSuspend &&
+            if (discriminateSuspendFunctionTypes &&
                 specificClassId.functionTypeKind(inferenceComponents.session) == FunctionTypeKind.Function &&
                 generalClassId.functionTypeKind(inferenceComponents.session) == FunctionTypeKind.SuspendFunction
             ) {
@@ -458,9 +484,6 @@ class ConeOverloadConflictResolver(
             } else {
                 !isUnsigned
             }
-
-        private val discriminateSuspend: Boolean =
-            inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.DiscriminateSuspendInOverloadResolution)
     }
 
     private fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {

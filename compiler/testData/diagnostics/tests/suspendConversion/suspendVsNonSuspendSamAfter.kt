@@ -1,19 +1,21 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -DiscriminateSuspendInOverloadResolution
+// LANGUAGE: +DiscriminateSuspendInOverloadResolution
 // ISSUE: KT-82869
+fun interface MySupplier<T> {
+    fun get(): T
+}
+
 fun foo(supplier: suspend () -> String): String = ""
-fun <T> foo(supplier: () -> String): T = TODO()
+fun foo(supplier: MySupplier<String>): Any = Any()
 
 suspend fun bar(): String = ""
 
 fun main() {
-    val x: String = foo {
+    foo {
         bar() // Shouldn't be ILLEGAL_SUSPEND_FUNCTION_CALL?
-    }
-
-    x.length
+    }.length
 }
 
 /* GENERATED_FIR_TAGS: funInterface, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
-localProperty, nullableType, propertyDeclaration, stringLiteral, suspend, typeParameter */
+nullableType, samConversion, stringLiteral, suspend, typeParameter */

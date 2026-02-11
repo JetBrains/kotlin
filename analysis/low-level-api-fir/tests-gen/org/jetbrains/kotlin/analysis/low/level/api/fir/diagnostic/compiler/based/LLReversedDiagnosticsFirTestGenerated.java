@@ -8096,6 +8096,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       public void testDiscriminateSuspendFunctionTypeBefore() {
         runTest("compiler/fir/analysis-tests/testData/resolve/overloadResolution/discriminateSuspendFunctionTypeBefore.kt");
       }
+
+      @Test
+      @TestMetadata("discriminateSuspendFunctionTypeInCombinationWithGenericsAfter.kt")
+      public void testDiscriminateSuspendFunctionTypeInCombinationWithGenericsAfter() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/overloadResolution/discriminateSuspendFunctionTypeInCombinationWithGenericsAfter.kt");
+      }
     }
 
     @Nested

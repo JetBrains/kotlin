@@ -297,6 +297,44 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
 12. Combine `T <: TypeVariable(T)` with `TypeVariable(T) <: T`
     1. `TypeVariable(T) == T`
 
+##### Some compareCallsByUsedArguments() call:
+
+1. New `TypeVariable(T)` for `FirNamedFunctionSymbol kotlin/collections/flatMapTo`s parameter 0
+2. New `TypeVariable(R)` for `FirNamedFunctionSymbol kotlin/collections/flatMapTo`s parameter 1
+3. New `TypeVariable(C)` for `FirNamedFunctionSymbol kotlin/collections/flatMapTo`s parameter 2
+4. `TypeVariable(T) <: kotlin/Any?` _from SimpleConstraintSystemConstraintPosition_
+5. `TypeVariable(R) <: kotlin/Any?` _from SimpleConstraintSystemConstraintPosition_
+6. `TypeVariable(C) <: kotlin/collections/MutableCollection<in TypeVariable(R)>` _from SimpleConstraintSystemConstraintPosition_
+7. `kotlin/collections/Iterable<T> <: kotlin/collections/Iterable<TypeVariable(T)>` _from SimpleConstraintSystemConstraintPosition_
+    1. `T <: TypeVariable(T)`
+8. `C <: TypeVariable(C)` _from SimpleConstraintSystemConstraintPosition_
+9. Combine `C <: TypeVariable(C)` with `TypeVariable(C) <: kotlin/collections/MutableCollection<in TypeVariable(R)>`
+    1. `TypeVariable(R) <: R`
+10. `(T) -> kotlin/collections/Iterable<R> <: (TypeVariable(T)) -> kotlin/sequences/Sequence<TypeVariable(R)>` _from SimpleConstraintSystemConstraintPosition_
+    1. `TypeVariable(T) <: T`
+11. __NewConstraintError: `(T) -> kotlin/collections/Iterable<R> <: (TypeVariable(T)) -> kotlin/sequences/Sequence<TypeVariable(R)>`__
+12. Combine `T <: TypeVariable(T)` with `TypeVariable(T) <: T`
+    1. `TypeVariable(T) == T`
+
+##### Some compareCallsByUsedArguments() call:
+
+1. New `TypeVariable(T)` for `FirNamedFunctionSymbol kotlin/collections/flatMapTo`s parameter 0
+2. New `TypeVariable(R)` for `FirNamedFunctionSymbol kotlin/collections/flatMapTo`s parameter 1
+3. New `TypeVariable(C)` for `FirNamedFunctionSymbol kotlin/collections/flatMapTo`s parameter 2
+4. `TypeVariable(T) <: kotlin/Any?` _from SimpleConstraintSystemConstraintPosition_
+5. `TypeVariable(R) <: kotlin/Any?` _from SimpleConstraintSystemConstraintPosition_
+6. `TypeVariable(C) <: kotlin/collections/MutableCollection<in TypeVariable(R)>` _from SimpleConstraintSystemConstraintPosition_
+7. `kotlin/collections/Iterable<T> <: kotlin/collections/Iterable<TypeVariable(T)>` _from SimpleConstraintSystemConstraintPosition_
+    1. `T <: TypeVariable(T)`
+8. `C <: TypeVariable(C)` _from SimpleConstraintSystemConstraintPosition_
+9. Combine `C <: TypeVariable(C)` with `TypeVariable(C) <: kotlin/collections/MutableCollection<in TypeVariable(R)>`
+    1. `TypeVariable(R) <: R`
+10. `(T) -> kotlin/sequences/Sequence<R> <: (TypeVariable(T)) -> kotlin/collections/Iterable<TypeVariable(R)>` _from SimpleConstraintSystemConstraintPosition_
+    1. `TypeVariable(T) <: T`
+11. __NewConstraintError: `(T) -> kotlin/sequences/Sequence<R> <: (TypeVariable(T)) -> kotlin/collections/Iterable<TypeVariable(R)>`__
+12. Combine `T <: TypeVariable(T)` with `TypeVariable(T) <: T`
+    1. `TypeVariable(T) == T`
+
 ### Call 4
 
 ```
