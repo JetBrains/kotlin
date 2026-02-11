@@ -12127,6 +12127,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         }
 
         @Test
+        @TestMetadata("explicitBackingFieldInConstProperty.kt")
+        public void testExplicitBackingFieldInConstProperty() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldInConstProperty.kt");
+        }
+
+        @Test
         @TestMetadata("explicitBackingFieldInInterface.kt")
         public void testExplicitBackingFieldInInterface() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldInInterface.kt");
