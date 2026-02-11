@@ -2040,6 +2040,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("fallbackWithoutStdlib.kt")
+      public void testFallbackWithoutStdlib() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/fallbackWithoutStdlib.kt");
+      }
+
+      @Test
       @TestMetadata("kt82684.kt")
       public void testKt82684() {
         runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt82684.kt");
@@ -2308,6 +2314,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         @TestMetadata("matrix.kt")
         public void testMatrix() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/nestedCollectionLiterals/matrix.kt");
+        }
+
+        @Test
+        @TestMetadata("withFallbacks.kt")
+        public void testWithFallbacks() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/nestedCollectionLiterals/withFallbacks.kt");
         }
       }
 
@@ -2603,6 +2615,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("fallbackInWhen.kt")
+        public void testFallbackInWhen() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/fallbackInWhen.kt");
+        }
+
+        @Test
         @TestMetadata("flexibleExpectedTypes.kt")
         public void testFlexibleExpectedTypes() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/flexibleExpectedTypes.kt");
@@ -2654,6 +2672,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         @TestMetadata("setOperatorOf.kt")
         public void testSetOperatorOf() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/setOperatorOf.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleFallback.kt")
+        public void testSimpleFallback() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/simpleFallback.kt");
         }
 
         @Nested

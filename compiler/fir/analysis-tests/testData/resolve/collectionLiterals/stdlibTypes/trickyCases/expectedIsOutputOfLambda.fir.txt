@@ -39,4 +39,24 @@ FILE: expectedIsOutputOfLambda.kt
             ^ R|kotlin/collections/setOf|<R|kotlin/String|>(R|<local>/it|)
         }
         )
+        R|/assertEq<Inapplicable(INAPPLICABLE): /assertEq>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<Unsupported collection literal type>#(), <L> = assertEq@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: <error collection literal>> <inline=NoInline>  {
+            ^ <Unsupported collection literal type>#(Int(42))
+        }
+        )
+        R|/assertEq<Inapplicable(INAPPLICABLE): /assertEq>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<Unsupported collection literal type>#(Int(42)), <L> = assertEq@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: <error collection literal>> <inline=NoInline>  {
+            ^ <Unsupported collection literal type>#()
+        }
+        )
+        R|/assertEqWithInput<Inapplicable(INAPPLICABLE): /assertEqWithInput>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|kotlin/String|>(<Unsupported collection literal type>#(Int(42)), String(), <L> = assertEqWithInput@fun <anonymous>(it: R|kotlin/String|): <ERROR TYPE REF: Unresolved name: <error collection literal>> <inline=NoInline>  {
+            ^ <Unsupported collection literal type>#()
+        }
+        )
+        R|/assertEqWithInput<Inapplicable(INAPPLICABLE): /assertEqWithInput>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|kotlin/String|>(<Unsupported collection literal type>#(), String(), <L> = assertEqWithInput@fun <anonymous>(it: R|kotlin/String|): <ERROR TYPE REF: Unresolved name: <error collection literal>> <inline=NoInline>  {
+            ^ <Unsupported collection literal type>#(R|<local>/it|)
+        }
+        )
+        R|/assertEqWithInput<Inapplicable(INAPPLICABLE): /assertEqWithInput>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, R|kotlin/String|>(R|/id|<<ERROR TYPE REF: Cannot infer argument for type parameter L>>(<Unsupported collection literal type>#()), String(), <L> = assertEqWithInput@fun <anonymous>(it: R|kotlin/String|): <ERROR TYPE REF: Cannot infer argument for type parameter L> <inline=NoInline>  {
+            ^ R|/id|<<ERROR TYPE REF: Cannot infer argument for type parameter L>>(<Unsupported collection literal type>#(R|<local>/it|))
+        }
+        )
     }
