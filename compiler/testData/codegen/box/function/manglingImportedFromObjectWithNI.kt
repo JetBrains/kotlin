@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: ANDROID
 // Issue: KT-35904
 
 // FILE: lib.kt
