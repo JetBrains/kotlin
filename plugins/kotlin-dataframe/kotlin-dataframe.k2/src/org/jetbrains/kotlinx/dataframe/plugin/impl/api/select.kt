@@ -66,6 +66,10 @@ internal class And0 : AbstractInterpreter<ColumnsResolver>() {
             override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
                 return receiver.resolve(df) + other.resolve(df)
             }
+
+            override fun toString(): String {
+                return "$receiver and $other"
+            }
         }
     }
 }
@@ -785,6 +789,10 @@ fun Arguments.stringApiColumnResolver(path: ColumnPath, type: ConeKotlinType): S
         override fun resolve(context: ColumnResolutionContext): List<ColumnWithPath<Any?>> {
             return resolve(context.df.cast<ConeTypesAdapter>().toPluginDataFrameSchema())
                 .map { ColumnWithPath(it.column.asDataColumn(), it.path) }
+        }
+
+        override fun toString(): String {
+            return "StringApiReference($path: $type)"
         }
     }
 }
