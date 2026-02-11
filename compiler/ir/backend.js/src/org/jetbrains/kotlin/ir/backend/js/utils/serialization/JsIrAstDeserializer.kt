@@ -10,83 +10,24 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramTestEnvironment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.readTypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.JsTemplateStringLiteral
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.serialization.js.AbstractDeserializer
 import java.math.BigInteger
-import java.nio.ByteBuffer
 import java.util.*
 
 fun deserializeJsIrProgramFragment(input: ByteArray): JsIrProgramFragments {
     return JsIrAstDeserializer(input).readFragments()
 }
 
-private class JsIrAstDeserializer(private val source: ByteArray) {
-
-    private val buffer = ByteBuffer.wrap(source)
-
+private class JsIrAstDeserializer(source: ByteArray) : AbstractDeserializer(source) {
     private val scope = emptyScope
     private val fileStack: Deque<String> = ArrayDeque()
 
-    private val stringTable = readArray { readString() }
     private val nameTable = readArray { readName() }
-
-    private fun readByte(): Byte {
-        return buffer.get()
-    }
-
-    private fun readBoolean(): Boolean {
-        return readByte() != 0.toByte()
-    }
-
-    private fun readInt(): Int {
-        return buffer.int
-    }
-
-    private fun readDouble(): Double {
-        return buffer.double
-    }
-
-    private inline fun <R> readBytes(transform: (offset: Int, length: Int) -> R): R {
-        val length = readInt()
-        val offset = buffer.position()
-        val result = transform(offset, length)
-        buffer.position(offset + length)
-        return result
-    }
-
-    private fun readByteArray(): ByteArray = readBytes { offset, length ->
-        source.copyOfRange(offset, offset + length)
-    }
-
-    private fun readString(): String = readBytes { offset, length ->
-        String(source, offset, length, SerializationCharset)
-    }
-
-    private inline fun <reified T> readArray(readElement: () -> T): Array<T> {
-        return Array<T>(readInt()) { readElement() }
-    }
-
-    private inline fun readRepeated(readElement: () -> Unit) {
-        var length = readInt()
-        while (length-- > 0) {
-            readElement()
-        }
-    }
-
-    private inline fun <T> readList(readElement: () -> T): List<T> {
-        val length = readInt()
-        val result = ArrayList<T>(length)
-        for (i in 0 until length) {
-            result.add(readElement())
-        }
-        return result
-    }
-
-    private inline fun <T> ifTrue(then: () -> T): T? {
-        return if (readBoolean()) then() else null
-    }
 
     fun readFragments(): JsIrProgramFragments {
         return JsIrProgramFragments(readFragment(), ifTrue { readFragment() })
@@ -116,7 +57,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
 
             ifTrue { mainFunctionTag = readString() }
             ifTrue { testEnvironment = readTestEnvironment() }
-            ifTrue { dts = TypeScriptDefinitionsFragment(readString()) }
+            ifTrue { dts = readTypeScriptFragment() }
 
             readRepeated { definitions += stringTable[readInt()] }
         }

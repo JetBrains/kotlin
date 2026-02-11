@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
+import org.jetbrains.kotlin.ir.backend.js.tsexport.writeTypeScriptFragment
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.serialization.js.ast.AbstractSerializer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.OutputStream
 import java.util.*
@@ -20,73 +21,11 @@ fun JsIrProgramFragments.serializeTo(output: OutputStream) {
     JsIrAstSerializer().append(this).saveTo(output)
 }
 
-private class DataWriter {
-
-    val data = ByteArrayOutputStream()
-    private val output = DataOutputStream(data)
-
-    fun saveTo(output: DataOutputStream) {
-        output.let {
-            data.writeTo(it)
-        }
-    }
-
-    fun writeByte(byte: Int) {
-        // Limit bytes to positive values to avoid conversion in deserializer
-        if ((byte and 0x7F.inv()) != 0) error("Byte out of bounds: $byte")
-        output.writeByte(byte)
-    }
-
-    fun writeByteArray(byteArray: ByteArray) {
-        output.writeInt(byteArray.size)
-        output.write(byteArray)
-    }
-
-    fun writeString(string: String) {
-        writeByteArray(string.toByteArray(SerializationCharset))
-    }
-
-    fun writeBoolean(boolean: Boolean) {
-        output.writeBoolean(boolean)
-    }
-
-    fun writeInt(int: Int) {
-        output.writeInt(int)
-    }
-
-    fun writeDouble(double: Double) {
-        output.writeDouble(double)
-    }
-
-    inline fun <T> writeCollection(collection: Collection<T>, writeItem: (T) -> Unit) {
-        output.writeInt(collection.size)
-        collection.forEach(writeItem)
-    }
-
-    inline fun <T> ifNotNull(t: T?, write: (T) -> Unit): T? {
-        output.writeBoolean(t != null)
-        if (t != null) {
-            write(t)
-        }
-        return t
-    }
-
-    inline fun ifTrue(condition: Boolean, write: () -> Unit) {
-        output.writeBoolean(condition)
-        if (condition) {
-            write()
-        }
-    }
-}
-
-private class JsIrAstSerializer {
-
+private class JsIrAstSerializer : AbstractSerializer() {
     private val fragmentSerializer = DataWriter()
     private val nameSerializer = DataWriter()
-    private val stringSerializer = DataWriter()
 
     private val nameMap = mutableMapOf<JsName, Int>()
-    private val stringMap = mutableMapOf<String, Int>()
     private val fileStack: Deque<String> = ArrayDeque()
     private val importedNames = mutableSetOf<JsName>()
 
@@ -102,16 +41,10 @@ private class JsIrAstSerializer {
         return this
     }
 
-    fun saveTo(rawOutput: OutputStream) {
-        DataOutputStream(rawOutput).use {
-            it.writeInt(stringMap.size)
-            stringSerializer.saveTo(it)
-
-            it.writeInt(nameMap.size)
-            nameSerializer.saveTo(it)
-
-            fragmentSerializer.saveTo(it)
-        }
+    override fun DataOutputStream.serialize() {
+        writeInt(nameMap.size)
+        nameSerializer.saveTo(this)
+        fragmentSerializer.saveTo(this)
     }
 
     private fun DataWriter.writeFragment(fragment: JsIrProgramFragment) {
@@ -161,7 +94,7 @@ private class JsIrAstSerializer {
         }
 
         ifNotNull(fragment.dts) {
-            writeString(it.raw)
+            writeTypeScriptFragment(it)
         }
 
         writeCollection(fragment.definitions) {
@@ -747,11 +680,6 @@ private class JsIrAstSerializer {
     private fun DataWriter.writeLocalAlias(alias: LocalAlias) {
         writeInt(internalizeName(alias.name))
         ifNotNull(alias.tag) { writeInt(internalizeString(it)) }
-    }
-
-    private fun internalizeString(string: String) = stringMap.getOrPut(string) {
-        stringSerializer.writeString(string)
-        stringMap.size
     }
 
     private fun DataWriter.writeComment(comment: JsComment) {

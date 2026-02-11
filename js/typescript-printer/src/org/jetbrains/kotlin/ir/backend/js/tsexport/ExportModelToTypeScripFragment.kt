@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.tsexport
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private const val NonNullable = "NonNullable"
@@ -33,6 +34,22 @@ public fun List<ExportedDeclaration>.toTypeScriptFragment(moduleKind: ModuleKind
     return ExportModelToTypeScripFragment(moduleKind).generateTypeScriptFragment(this)
 }
 
+@JvmInline
+private value class ImportedTypes(private val map: MutableMap<ClassId, String>) {
+    fun importType(classId: ClassId, importedName: String) {
+        map.put(classId, importedName)?.let {
+            if (it != importedName) error("Type imported with different names in a single fragment: $classId")
+        }
+    }
+}
+
+@JvmInline
+private value class ExportedTypes(private val map: MutableMap<ClassId, String>) {
+    fun declareType(classId: ClassId, exportedName: String) {
+        map.put(classId, exportedName)?.let { error("Type declared multiple times: $classId") }
+    }
+}
+
 public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) {
     private val isEsModules = moduleKind == ModuleKind.ES
     private val indent: String = moduleKind.initialIndent
@@ -46,12 +63,18 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
         }
 
     public fun generateTypeScriptFragment(declarations: List<ExportedDeclaration>): TypeScriptDefinitionsFragment {
-        return TypeScriptDefinitionsFragment(declarations.toTypeScript())
+        val importedTypes = mutableMapOf<ClassId, String>()
+        val exportedTypes = mutableMapOf<ClassId, String>()
+        val raw = context(ImportedTypes(importedTypes), ExportedTypes(exportedTypes)) {
+            declarations.toTypeScript()
+        }
+        return TypeScriptDefinitionsFragment(raw, importedTypes, exportedTypes)
     }
 
     private val ExportedDeclaration.isDefaultExport: Boolean
         get() = attributes.contains(ExportedAttribute.DefaultExport)
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun List<ExportedDeclaration>.toTypeScript(): String {
         return joinToString("\n") {
             it.toTypeScript(
@@ -61,9 +84,11 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
         }
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun List<ExportedDeclaration>.toTypeScript(indent: String): String =
         joinToString("") { it.toTypeScript(indent) + "\n" }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): String =
         attributes.toTypeScript(indent) + indent + when (this) {
             is ErrorDeclaration -> generateTypeScriptString()
@@ -100,18 +125,22 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
         return "/* ErrorDeclaration: $message */"
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun ExportedNamespace.generateTypeScriptString(indent: String, prefix: String): String {
         return "${prefix.takeIf { !isPrivate } ?: "declare "}namespace $name {\n" + declarations.toTypeScript("$indent    ") + "$indent}"
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun ExportedConstructor.generateTypeScriptString(indent: String): String {
         return "${visibility.keyword}constructor(${parameters.generateTypeScriptString(indent)});"
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun ExportedConstructSignature.generateTypeScriptString(indent: String): String {
         return "new${renderTypeParameters(typeParameters)}(${parameters.generateTypeScriptString(indent)}): ${returnType.toTypeScript(indent)};"
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun ExportedProperty.generateTypeScriptString(indent: String, prefix: String): String {
         val extraIndent = "$indent    "
         val optional = if (isOptional) "?" else ""
@@ -146,6 +175,7 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
         }
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun renderTypeParameters(typeParameters: List<ExportedTypeParameter>): String = if (typeParameters.isNotEmpty()) {
         typeParameters.joinToString(", ", "<", ">") { tp ->
             tp.constraint?.let {
@@ -156,6 +186,7 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
         ""
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun ExportedFunction.generateTypeScriptString(indent: String, prefix: String): String {
         val visibility = if (isProtected) "protected " else ""
 
@@ -198,7 +229,10 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
         }
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun ExportedObject.generateTypeScriptString(indent: String, prefix: String): String {
+        originalClassId?.let { exports.declareType(it, name) }
+
         val shouldGenerateObjectWithGetInstance = isEsModules && !isExternal && isTopLevel
         val constructorTypeReference =
             if (shouldGenerateObjectWithGetInstance) MetadataConstructor else "$name.$Metadata.$MetadataConstructor"
@@ -280,7 +314,10 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
         return "$objectClass\n$objectMetadata${generateDefaultExportIfNeed(name, indent)}"
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun ExportedRegularClass.generateTypeScriptString(indent: String, prefix: String): String {
+        originalClassId?.let { exports.declareType(it, name) }
+
         val keyword = if (isInterface) "interface" else "class"
         val superInterfacesKeyword = if (isInterface) "extends" else "implements"
 
@@ -348,6 +385,7 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
         return if (name.isValidES5Identifier()) klassExport + staticsExport else ""
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun List<ExportedType>.toExtendsClause(indent: String): String {
         if (isEmpty()) return ""
 
@@ -371,6 +409,7 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
         }
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun List<ExportedType>.toImplementsClause(superInterfacesKeyword: String, indent: String): String {
         val (exportedInterfaces, nonExportedInterfaces) = partition { it !is ExportedType.ImplicitlyExportedType }
         val listOfNonExportedInterfaces = nonExportedInterfaces.joinToString(", ") {
@@ -389,6 +428,7 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
         }
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun List<ExportedParameter>.generateTypeScriptString(indent: String): String {
         var couldBeOptional = true
         return asReversed()
@@ -400,6 +440,7 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
             .joinToString()
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun ExportedParameter.toTypeScript(indent: String, index: Int, couldBeOptional: Boolean): String {
         val name = name?.let { makeValidES5Identifier(it, withHash = false) } ?: "p$index"
         val type = if (hasDefaultValue && !couldBeOptional) {
@@ -409,6 +450,7 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
         return "$name$questionMark: ${type.toTypeScript(indent)}"
     }
 
+    context(imports: ImportedTypes, exports: ExportedTypes)
     private fun ExportedType.toTypeScript(indent: String, isInCommentContext: Boolean = false): String = when (this) {
         is ExportedType.Primitive -> typescript
         is ExportedType.Array -> "Array<${elementType.toTypeScript(indent, isInCommentContext)}>"
@@ -421,6 +463,7 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
             "abstract new " + renderTypeParameters(typeParameters) + "() => ${returnType.toTypeScript(indent, isInCommentContext)}"
 
         is ExportedType.ClassType -> {
+            classId?.let { imports.importType(it, name) }
             name + if (arguments.isNotEmpty()) "<${arguments.joinToString(", ") { it.toTypeScript(indent, isInCommentContext) }}>" else ""
         }
 

@@ -77,12 +77,12 @@ class JsExecutableProducer(
         val cachedProgram = jsMultiArtifactCache.loadProgramHeadersFromCache()
 
         stopwatch.startNext("Cross module references resolving")
-        val resolver = CrossModuleDependenciesResolver(moduleKind, cachedProgram.map { it.jsIrHeader })
-        val crossModuleReferences = resolver.resolveCrossModuleDependencies(relativeRequirePath)
+        val jsResolver = CrossModuleDependenciesResolver(moduleKind, cachedProgram.map { it.jsIrHeader })
+        val jsCrossModuleReferences = jsResolver.resolveCrossModuleDependencies(relativeRequirePath)
         val mainModuleTsFragments = mutableListOf<TypeScriptDefinitionsFragment>()
 
         stopwatch.startNext("Loading JS IR modules with updated cross module references")
-        jsMultiArtifactCache.loadRequiredJsIrModules(crossModuleReferences)
+        jsMultiArtifactCache.loadRequiredJsIrModules(jsCrossModuleReferences)
 
         fun CacheInfo.compileModule(moduleName: String, isMainModule: Boolean): CompilationOutputs {
             var mergedTsFragment: TypeScriptDefinitionsFragment? = null
@@ -128,7 +128,7 @@ class JsExecutableProducer(
 
             stopwatch.startNext("Initializing JS imports")
             val associatedModule = jsIrHeader.associatedModule ?: icError("can not load module $moduleName")
-            val crossRef = crossModuleReferences[jsIrHeader] ?: icError("can not find cross references for module $moduleName")
+            val crossRef = jsCrossModuleReferences[jsIrHeader] ?: icError("can not find cross references for module $moduleName")
             crossRef.initJsImportsForModule(associatedModule)
 
             stopwatch.startNext("Generating JS code")

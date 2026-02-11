@@ -5,13 +5,45 @@
 
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
+import org.jetbrains.kotlin.serialization.js.ast.AbstractSerializer
+import org.jetbrains.kotlin.serialization.js.ast.AbstractSerializer.DataWriter
+import java.io.DataOutputStream
 import java.io.File
-import kotlin.io.writeText
+import kotlin.collections.component1
+import kotlin.collections.component2
 
-public fun serializeTypeScriptFragment(input: File, fragment: TypeScriptDefinitionsFragment?) {
+public fun serializeTypeScriptFragment(output: File, fragment: TypeScriptDefinitionsFragment?) {
     if (fragment != null) {
-        input.writeText(fragment.raw)
+        TypeScriptFragmentSerializer()
+            .append(fragment)
+            .saveTo(output.outputStream())
     } else {
-        input.delete()
+        output.delete()
+    }
+}
+
+context(serializer: AbstractSerializer)
+public fun DataWriter.writeTypeScriptFragment(fragment: TypeScriptDefinitionsFragment) {
+    writeString(fragment.raw)
+    writeCollection(fragment.importedTypes.entries) { (classId, name) ->
+        serializer.internalizeString(classId.asString())
+        serializer.internalizeString(name)
+    }
+    writeCollection(fragment.exportedTypes.entries) { (classId, name) ->
+        writeString(classId.asString())
+        writeString(name)
+    }
+}
+
+
+private class TypeScriptFragmentSerializer : AbstractSerializer() {
+    private val fragmentSerializer = DataWriter()
+
+    override fun DataOutputStream.serialize() {
+        fragmentSerializer.saveTo(this)
+    }
+
+    fun append(fragment: TypeScriptDefinitionsFragment) = apply {
+        fragmentSerializer.writeTypeScriptFragment(fragment)
     }
 }

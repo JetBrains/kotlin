@@ -7,11 +7,29 @@ package org.jetbrains.kotlin.ir.backend.js.tsexport
 
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.name.ClassId
 
 public class TypeScriptMerger(private val moduleKind: ModuleKind) {
     public fun mergeIntoSingleFragment(fragments: List<TypeScriptDefinitionsFragment>): TypeScriptDefinitionsFragment {
         require(fragments.isNotEmpty())
-        return fragments.singleOrNull() ?: TypeScriptDefinitionsFragment(fragments.joinToString("\n") { it.raw })
+        fragments.singleOrNull()?.let { return it }
+
+        var metFirst = false
+        val raw = StringBuilder()
+        val exportedTypes = mutableMapOf<ClassId, String>()
+        val importedTypes = mutableMapOf<ClassId, String>()
+
+        for (fragment in fragments) {
+            if (metFirst) raw.append('\n')
+            else metFirst = true
+
+            raw.append(fragment.raw)
+            exportedTypes.putAll(fragment.exportedTypes)
+            importedTypes.putAll(fragment.importedTypes)
+        }
+
+
+        return TypeScriptDefinitionsFragment(raw.toString(), importedTypes, exportedTypes)
     }
 
     public fun generateSingleWrappedTypeScriptDefinitions(

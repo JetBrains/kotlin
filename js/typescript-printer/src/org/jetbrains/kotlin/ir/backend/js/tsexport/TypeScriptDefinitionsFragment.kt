@@ -5,5 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
-@JvmInline
-public value class TypeScriptDefinitionsFragment(public val raw: String)
+import org.jetbrains.kotlin.name.ClassId
+
+public data class TypeScriptDefinitionsFragment(
+    public val raw: String,
+    public val importedTypes: Map<ClassId, String>,
+    public val exportedTypes: Map<ClassId, String>,
+)

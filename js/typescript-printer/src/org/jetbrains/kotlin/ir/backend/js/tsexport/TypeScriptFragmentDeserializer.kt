@@ -5,8 +5,23 @@
 
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.serialization.js.AbstractDeserializer
 import java.io.File
 
 public fun deserializeTypeScriptFragment(input: File): TypeScriptDefinitionsFragment {
-    return TypeScriptDefinitionsFragment(input.readText())
+    return TypeScriptFragmentDeserializer(input.readBytes()).readTypeScriptFragment()
+}
+
+public fun AbstractDeserializer.readTypeScriptFragment(): TypeScriptDefinitionsFragment {
+    val raw = readString()
+    val importedTypes = readMap { readClassId() to stringTable[readInt()] }
+    val exportedTypes = readMap { readClassId() to stringTable[readInt()] }
+    return TypeScriptDefinitionsFragment(raw, importedTypes, exportedTypes)
+}
+
+private fun AbstractDeserializer.readClassId(): ClassId =
+    ClassId.fromString(stringTable[readInt()])
+
+private class TypeScriptFragmentDeserializer(source: ByteArray) : AbstractDeserializer(source) {
 }
