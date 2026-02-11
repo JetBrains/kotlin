@@ -26,19 +26,12 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReferenc
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallableReferenceInfo
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
-import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeArgumentMapping
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirTypeVariablesAfterPCLATransformer
-import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
@@ -48,7 +41,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -66,7 +58,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.isError
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -88,7 +79,7 @@ class FirCallCompletionResultsWriterTransformer(
     //  For now, however, they are intentionally separated. Related issue: KT-81110.
     private var insideAnnotationContext: Boolean = false,
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE),
-    SessionAndScopeSessionHolder{
+    SessionAndScopeSessionHolder {
 
     private fun finallySubstituteOrNull(
         type: ConeKotlinType,
@@ -420,7 +411,7 @@ class FirCallCompletionResultsWriterTransformer(
         val subCandidate = calleeReference.candidate
         val resultType = result.resolvedType.substituteType(
             subCandidate,
-            substitutor = subCandidate.prepareCustomReturnTypeSubstitutorForFunctionCall() ?: finalSubstitutor
+            substitutor = finalSubstitutor
         )
         val allArgs = calleeReference.computeAllArguments(originalArgumentList)
         val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(allArgs)
@@ -462,67 +453,6 @@ class FirCallCompletionResultsWriterTransformer(
             predefinedMapping != null -> predefinedMapping.keys.toList()
             else -> candidate.argumentMapping.keys.unwrapAtoms()
         }
-    }
-
-
-    /**
-     * For Java constructors (both real and SAM ones) call with explicit type arguments, replace relevant values with non-flexible
-     * counterparts.
-     *
-     * That hack is necessary because
-     * at [org.jetbrains.kotlin.fir.resolve.calls.CreateFreshTypeVariableSubstitutorStage.getTypePreservingFlexibilityWrtTypeVariable]
-     * we add flexible type constraints even for explicit type arguments.
-     *
-     * It's necessary because of lack of KT-59138 we need to preserve argument-lambda parameters flexible (see KT-67999), even for nullable
-     * type argument.
-     *
-     * But at the same time, for constructors we'd like to see the invariant `typeOf<JavaClass<T>()> := JavaClass<T>`,
-     * and not `JavaClass<T!>`.
-     *
-     * See K1 counterpart at [org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall.getSubstitutorWithoutFlexibleTypes].
-     *
-     * @return `null` for all other cases where [finalSubstitutor] should be used
-     */
-    private fun Candidate.prepareCustomReturnTypeSubstitutorForFunctionCall(): ConeSubstitutor? {
-        if (typeArgumentMapping == TypeArgumentMapping.NoExplicitArguments) return null
-
-        val symbol = symbol
-        // We're only interested in Java constructors (both real and SAM ones)
-        if (!symbol.isJavaConstructor() && !symbol.isSyntheticSamConstructor()) return null
-
-        val baseSubstitutor = finalSubstitutor
-        val overridingMap = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
-
-        for ((index, freshVariable) in freshVariables.withIndex()) {
-            val baseTypeArgument = baseSubstitutor.substituteOrNull(freshVariable.defaultType) ?: continue
-            if (baseTypeArgument !is ConeFlexibleType) continue
-
-            val typeArgument = typeArgumentMapping[index]
-            if (typeArgument is FirPlaceholderProjection) continue
-            val explicitArgument = typeArgument.toConeTypeProjection().type ?: continue
-
-            overridingMap[freshVariable.typeConstructor] =
-                baseTypeArgument.withNullabilityOf(explicitArgument, session.typeContext)
-        }
-
-        if (overridingMap.isEmpty()) return null
-
-        return ChainedSubstitutor(
-            createTypeSubstitutorByTypeConstructor(overridingMap, session.typeContext, approximateIntegerLiterals = false),
-            baseSubstitutor,
-        )
-    }
-
-    private fun FirBasedSymbol<*>.isJavaConstructor(): Boolean {
-        if (this !is FirConstructorSymbol) return false
-
-        return this.unwrapUseSiteSubstitutionOverrides().origin == FirDeclarationOrigin.Enhancement
-    }
-
-    private fun FirBasedSymbol<*>.isSyntheticSamConstructor(): Boolean {
-        if (this !is FirSyntheticFunctionSymbol) return false
-
-        return this.unwrapUseSiteSubstitutionOverrides().origin == FirDeclarationOrigin.SamConstructor
     }
 
     private fun FirCall.transformArgumentList(

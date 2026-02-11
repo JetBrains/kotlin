@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
@@ -205,6 +206,9 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible) &&
             with(context.typeContext) { isNullableType() }
         ) {
+            return false
+        }
+        if (typeParameter is FirConstructedClassTypeParameterRef || typeParameter.symbol.origin == FirDeclarationOrigin.SamConstructor) {
             return false
         }
         return typeParameter.symbol.resolvedBounds.any {
