@@ -91,6 +91,10 @@ internal class KaFe10Resolver(
         error("Not supported")
     }
 
+    override fun KDocReference.resolveToSymbolsForCompletion(): List<KaSymbol> = withValidityAssertion {
+        error("Not supported")
+    }
+
     override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? {
         when (psi) {
             is KtCallableReferenceExpression -> return performSymbolResolution(psi.callableReference)

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.getTagIfSubject
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSyntheticJavaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
@@ -32,6 +33,23 @@ internal class KaFirKDocReference(element: KDocName) : KDocReference(element), K
             contextElement = element,
             containedTagSectionIfSubject
         ).toSet()
+    }
+
+    fun KaFirSession.resolveToSymbolsForCompletion(): Collection<KaSymbol> = withValidityAssertion {
+        this.cacheStorage.resolveToSymbolsForCompletionCache.value.getOrPut(this@KaFirKDocReference) {
+            val fullFqName = generateSequence(element) { it.parent as? KDocName }.last().getQualifiedNameAsFqName()
+            val selectedFqName = element.getQualifiedNameAsFqName()
+            val containedTagSectionIfSubject = element.getTagIfSubject()?.knownTag
+
+            return KDocReferenceResolver.resolveKdocFqName(
+                useSiteSession,
+                selectedFqName,
+                fullFqName,
+                contextElement = element,
+                containedTagSectionIfSubject,
+                completionMode = true
+            )
+        }
     }
 
     override fun getResolvedToPsi(

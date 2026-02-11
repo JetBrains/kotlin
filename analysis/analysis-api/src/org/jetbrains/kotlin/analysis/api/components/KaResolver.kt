@@ -781,6 +781,14 @@ public interface KaResolver : KaSessionComponent {
     @KaNonPublicApi
     @KaK1Unsupported
     public fun KDocReference.resolveToSymbolWithClassicKDocResolver(): KaSymbol?
+
+    /**
+     * Resolves [this] for the completion purposes.
+     * Returns found classes and packages across all visible scopes.
+     */
+    @KaIdeApi
+    @KaK1Unsupported
+    public fun KDocReference.resolveToSymbolsForCompletion(): List<KaSymbol>
 }
 
 /**
@@ -1787,5 +1795,20 @@ context(session: KaSession)
 public fun KDocReference.resolveToSymbolWithClassicKDocResolver(): KaSymbol? {
     return with(session) {
         resolveToSymbolWithClassicKDocResolver()
+    }
+}
+
+/**
+ * Resolves [this] for the completion purposes.
+ * Returns found classes and packages across all visible scopes.
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaIdeApi
+@KaK1Unsupported
+@KaContextParameterApi
+context(session: KaSession)
+public fun KDocReference.resolveToSymbolsForCompletion(): List<KaSymbol> {
+    return with(session) {
+        resolveToSymbolsForCompletion()
     }
 }

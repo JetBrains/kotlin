@@ -49,6 +49,10 @@ internal class KaFirInternalCacheStorage(private val analysisSession: KaFirSessi
         softCachedValueWithPsiKey { ConcurrentHashMap<KaSymbolBasedReference, Collection<KaSymbol>>() }
     }
 
+    val resolveToSymbolsForCompletionCache: CachedValue<ConcurrentHashMap<KaSymbolBasedReference, Collection<KaSymbol>>> by lazy {
+        softCachedValueWithPsiKey { ConcurrentHashMap<KaSymbolBasedReference, Collection<KaSymbol>>() }
+    }
+
     /**
      * The lifetime of this cache is the same as the corresponding [org.jetbrains.kotlin.analysis.api.KaSession],
      * so it doesn't require additional invalidation.

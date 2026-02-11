@@ -91,8 +91,10 @@ internal object KDocReferenceResolver {
      * @param contextElement the context element in which the KDoc is defined
      * @param containedTagSectionIfSubject the containing KDoc tag section if the link is the subject of this section
      *        (e.g., `@param` or `@property`).
+     * @param completionMode whether the resolver is used for completion purposes. If set to `true`, the resolver returns just
+     *        classes and packages retrieved from all the visible scopes.
      *
-     * @return the set of [KaSymbol](s) resolved from the fully qualified name
+     * @return the set of [KaSymbol]s resolved from the fully qualified name
      *         based on the selected FqName and context element
      */
     internal fun resolveKdocFqName(
@@ -100,7 +102,8 @@ internal object KDocReferenceResolver {
         selectedFqName: FqName,
         fullFqName: FqName,
         contextElement: KtElement,
-        containedTagSectionIfSubject: KDocKnownTag?
+        containedTagSectionIfSubject: KDocKnownTag?,
+        completionMode: Boolean = false
     ): Set<KaSymbol> {
         with(analysisSession) {
             if (KotlinKDocResolutionStrategyProviderService
@@ -117,7 +120,7 @@ internal object KDocReferenceResolver {
 
             val contextDeclarationOrSelf = contextElement.getContextElementOrSelf()
             val fullSymbolsResolved =
-                resolveKdocFqName(fullFqName, contextDeclarationOrSelf, containedTagSectionIfSubject)
+                resolveKdocFqName(fullFqName, contextDeclarationOrSelf, containedTagSectionIfSubject, completionMode)
             if (selectedFqName == fullFqName) {
                 return fullSymbolsResolved.mapTo(mutableSetOf()) { it.symbol }
             }
@@ -128,7 +131,8 @@ internal object KDocReferenceResolver {
                     selectedFqName = selectedFqName,
                     fullFqName = parentFqName,
                     contextElement = contextDeclarationOrSelf,
-                    containedTagSectionIfSubject = null
+                    containedTagSectionIfSubject = null,
+                    completionMode = completionMode
                 )
             }
             val goBackSteps = fullFqName.pathSegments().size - selectedFqName.pathSegments().size
@@ -245,13 +249,16 @@ internal object KDocReferenceResolver {
     private fun KaSession.resolveKdocFqName(
         fqName: FqName,
         contextElement: KtElement,
-        containedTagSectionIfSubject: KDocKnownTag?
+        containedTagSectionIfSubject: KDocKnownTag?,
+        completionMode: Boolean
     ): List<ResolveResult> {
-        handleContextDeclarations(fqName, contextElement, containedTagSectionIfSubject)?.let { return it }
+        if (!completionMode) {
+            handleContextDeclarations(fqName, contextElement, containedTagSectionIfSubject)?.let { return it }
+        }
 
         val visibleResolutionScopes = getVisibleScopes(contextElement)
 
-        return findSymbolsInScopes(fqName, contextElement, visibleResolutionScopes, containedTagSectionIfSubject)
+        return findSymbolsInScopes(fqName, contextElement, visibleResolutionScopes, containedTagSectionIfSubject, completionMode)
     }
 
     /**
@@ -482,13 +489,31 @@ internal object KDocReferenceResolver {
         fqName: FqName,
         contextElement: KtElement,
         visibleResolutionScopes: List<KaScope>,
-        containedTagSectionIfSubject: KDocKnownTag?
+        containedTagSectionIfSubject: KDocKnownTag?,
+        completionMode: Boolean
     ): List<ResolveResult> {
         val shortName = fqName.shortName()
 
         val allScopesPossiblyContainingName = sequence {
             yieldAll(applyScopeReduction(fqName, visibleResolutionScopes))
             yieldIfNotNull(getLongestExistingPackageScope(fqName))
+        }
+
+        if (completionMode) {
+            return buildList {
+                allScopesPossiblyContainingName.forEach { currentScope ->
+                    currentScope.classifiers(shortName).toSet()
+                        .getNonHiddenDeclarations().let { addAll(it.toResolveResults()) }
+                }
+
+                findPackage(fqName)?.let {
+                    add(it.toResolveResult())
+                }
+
+                resolveKdocFqName(useSiteSession, fqName, contextElement).filter { symbol ->
+                    symbol is KaClassLikeSymbol || symbol is KaPackageSymbol
+                }.toResolveResults().let { addAll(it) }
+            }
         }
 
         if (containedTagSectionIfSubject.isThrowableExpected()) {

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.references.ClassicKDocReferenceResolver
+import org.jetbrains.kotlin.analysis.api.fir.references.KaFirKDocReference
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
@@ -172,6 +173,12 @@ internal class KaFirResolver(
             fullFqName,
             element,
         ).firstOrNull()
+    }
+
+    override fun KDocReference.resolveToSymbolsForCompletion(): List<KaSymbol> = withValidityAssertion {
+        with(this as KaFirKDocReference) {
+            return analysisSession.resolveToSymbolsForCompletion().toList()
+        }
     }
 
     override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? = wrapError(psi) {
