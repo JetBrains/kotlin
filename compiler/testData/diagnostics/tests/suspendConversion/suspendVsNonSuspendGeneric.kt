@@ -1,10 +1,6 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-82869
-fun interface MySupplier<T> {
-    fun get(): T
-}
-
 fun foo(supplier: suspend () -> String): String = ""
 fun <T> foo(supplier: () -> String): T = TODO()
 
