@@ -76,5 +76,10 @@ fun testNonLocalReturn(s: String?): Int {
     return 0
 }
 
+fun testNoExplicitReturns(s: String?) {
+    s?.myLet<String, Nothing> { throw IllegalStateException("a") }
+    s?.myLet<String, String> { throw IllegalStateException("a") }
+}
+
 /* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contractReturnsResultOfEffect, contracts, functionDeclaration,
 functionalType, inline, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */

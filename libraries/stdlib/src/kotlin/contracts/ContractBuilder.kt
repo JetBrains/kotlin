@@ -126,6 +126,29 @@ public interface ContractBuilder {
      * This information is currently used by the Kotlin's return value checker and instructs it
      * to look inside [lambda] to decide whether function with contract is ignorable.
      *
+     * If the functional parameter result is returned only in one of the possible execution paths (i.e., in [InvocationKind.AT_MOST_ONCE] situation),
+     * contract still should mention it. If the function accepts multiple functional parameters, the contract may be specified several times
+     * and should list all potential invocations from all execution paths.
+     *
+     * For example:
+     * ```kotlin
+     * inline fun <T, R> T.selector(condition: (T) -> Boolean?, a: (T) -> R, b: (T) -> R): R? {
+     *     contract {
+     *         callsInPlace(a, InvocationKind.AT_MOST_ONCE)
+     *         callsInPlace(b, InvocationKind.AT_MOST_ONCE)
+     *         returnsResultOf(a)
+     *         returnsResultOf(b)
+     *     }
+     *     return when (condition(this)) {
+     *         true -> a(this)
+     *         false -> b(this)
+     *         null -> null
+     *     }
+     * }
+     * ```
+     * `a` and `b` are mentioned in the `returnsResultOf` contract because each of them is returned from the function in at least one of the paths.
+     * `condition` is not mentioned in the contract because it is not returned from the function on all the paths.
+     *
      * This contract is experimental, and it is allowed to use it only with the 'Return value checker' feature enabled.
      */
     @ContractsDsl

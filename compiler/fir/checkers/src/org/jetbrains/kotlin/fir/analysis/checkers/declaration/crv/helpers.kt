@@ -24,16 +24,17 @@ internal fun ConeKotlinType.isIgnorable(): Boolean {
 }
 
 @OptIn(SymbolInternals::class)
-internal fun FirCallableSymbol<*>.getReturnsResultOfParameterIndex(): Int? {
-    val declaration = fir as? FirContractDescriptionOwner ?: return null
-    val contractDescription = declaration.contractDescription as? FirResolvedContractDescription ?: return null
-    for (effectDeclaration in contractDescription.effects) {
-        val effect = effectDeclaration.effect
-        if (effect is ConeReturnsResultOfDeclaration) {
-            return effect.valueParameterReference.parameterIndex
+internal fun FirCallableSymbol<*>.indicesOfPropagatingFunctionalParameters(): List<Int> {
+    val declaration = fir as? FirContractDescriptionOwner ?: return emptyList()
+    val contractDescription = declaration.contractDescription as? FirResolvedContractDescription ?: return emptyList()
+    return buildList {
+        for (effectDeclaration in contractDescription.effects) {
+            val effect = effectDeclaration.effect
+            if (effect is ConeReturnsResultOfDeclaration) {
+                add(effect.valueParameterReference.parameterIndex)
+            }
         }
     }
-    return null
 }
 
 internal fun ConeKotlinType.isFunctionalTypeThatReturnsUnit(session: FirSession): Boolean =

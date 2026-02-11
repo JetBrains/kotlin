@@ -10485,6 +10485,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("multipleParams.kt")
+        public void testMultipleParams() {
+          runTest("compiler/testData/diagnostics/tests/crvFull/contracts/multipleParams.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleReturns.kt")
+        public void testMultipleReturns() {
+          runTest("compiler/testData/diagnostics/tests/crvFull/contracts/multipleReturns.kt");
+        }
+
+        @Test
         @TestMetadata("returnsResultOf.kt")
         public void testReturnsResultOf() {
           runTest("compiler/testData/diagnostics/tests/crvFull/contracts/returnsResultOf.kt");
