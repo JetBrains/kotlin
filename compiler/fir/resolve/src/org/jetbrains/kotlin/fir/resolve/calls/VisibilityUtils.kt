@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
+import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -28,8 +29,7 @@ import org.jetbrains.kotlin.fir.types.isNullableNothing
 import org.jetbrains.kotlin.fir.types.makeConeTypeDefinitelyNotNullOrNotNull
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.fir.unwrapFakeOverrides
-import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
+import org.jetbrains.kotlin.fir.unwrapFakeOverridesAccountingForExplicitBackingFields
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private fun FirVisibilityChecker.isVisible(
@@ -184,7 +184,11 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiver: FirEx
 }
 
 private fun FirMemberDeclaration.getBackingFieldIfApplicable(): FirBackingField? {
-    val field = (this as? FirProperty)?.unwrapFakeOverrides()?.getExplicitBackingField() ?: return null
+    val fieldOwner = when {
+        this !is FirProperty -> return null
+        else -> this.unwrapFakeOverridesAccountingForExplicitBackingFields()
+    }
+    val field = fieldOwner.getExplicitBackingField() ?: return null
 
     // This check prevents resolving protected and
     // public fields.

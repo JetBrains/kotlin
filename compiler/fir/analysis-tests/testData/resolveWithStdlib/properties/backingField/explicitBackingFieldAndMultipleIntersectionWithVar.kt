@@ -9,7 +9,7 @@ open class ClassWithValAnyAndField {
         field = 20
 }
 
-<!VAR_OVERRIDDEN_BY_VAL!><!VAR_IMPLEMENTED_BY_INHERITED_VAL_ERROR, VAR_TYPE_MISMATCH_ON_INHERITANCE!>class TestA<!> : ClassWithValAnyAndField(), InterfaceWithVarNumber<!>
+<!VAR_IMPLEMENTED_BY_INHERITED_VAL_ERROR, VAR_TYPE_MISMATCH_ON_INHERITANCE!>class TestA<!> : ClassWithValAnyAndField(), InterfaceWithVarNumber
 <!PROPERTY_TYPE_MISMATCH_ON_INHERITANCE!>class TestB<!> : ClassWithValAnyAndField(), InterfaceWithValNumber
 
 interface InterfaceWithVarAny { var y: Any }
@@ -20,7 +20,7 @@ open class ClassWithValNumberAndField {
         field = 20
 }
 
-<!VAR_OVERRIDDEN_BY_VAL!><!VAR_IMPLEMENTED_BY_INHERITED_VAL_ERROR, VAR_TYPE_MISMATCH_ON_INHERITANCE!>class TestC<!> : ClassWithValNumberAndField(), InterfaceWithVarAny<!>
+<!VAR_IMPLEMENTED_BY_INHERITED_VAL_ERROR, VAR_TYPE_MISMATCH_ON_INHERITANCE!>class TestC<!> : ClassWithValNumberAndField(), InterfaceWithVarAny
 class TestD : ClassWithValNumberAndField(), InterfaceWithValAny
 
 /* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, integerLiteral, interfaceDeclaration, propertyDeclaration */

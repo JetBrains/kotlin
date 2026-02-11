@@ -124,6 +124,19 @@ inline fun <reified D : FirCallableDeclaration> D.unwrapFakeOverrides(): D {
     } while (true)
 }
 
+inline fun <reified D : FirCallableDeclaration> D.unwrapFakeOverridesAccountingForExplicitBackingFields(): D {
+    var current = this
+
+    do {
+        // Explicit fields of intersection overrides point to the proper
+        // bases themselves, unlike other types of fake overrides.
+        if (current.isIntersectionOverride) return current
+
+        val next = current.originalIfFakeOverride() ?: return current
+        current = next
+    } while (true)
+}
+
 inline fun <reified D : FirCallableDeclaration> D.unwrapFakeOverridesOrDelegated(): D {
     var current = this
 
@@ -160,6 +173,9 @@ inline fun <reified S : FirCallableSymbol<*>> S.unwrapUseSiteSubstitutionOverrid
 }
 
 inline fun <reified S : FirCallableSymbol<*>> S.unwrapFakeOverrides(): S = fir.unwrapFakeOverrides().symbol as S
+
+inline fun <reified S : FirCallableSymbol<*>> S.unwrapFakeOverridesAccountingForExplicitBackingFields(): S =
+    fir.unwrapFakeOverridesAccountingForExplicitBackingFields().symbol as S
 
 inline fun <reified S : FirCallableSymbol<*>> S.unwrapSubstitutionOverrides(): S = fir.unwrapSubstitutionOverrides().symbol as S
 
