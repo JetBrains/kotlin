@@ -90,12 +90,6 @@ internal object nativeMemUtils {
     fun copyMemory(dest: NativePointed, length: Int, src: NativePointed) =
             unsafe.copyMemory(src.address, dest.address, length.toLong())
 
-
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-    inline fun <reified T> allocateInstance(): T {
-        return unsafe.allocateInstance(T::class.java) as T
-    }
-
     internal fun allocRaw(size: Long, align: Int): NativePtr {
         val address = unsafe.allocateMemory(size)
         if (address % align != 0L) TODO(align.toString())
