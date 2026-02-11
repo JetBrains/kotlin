@@ -27,6 +27,7 @@ abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : Abst
     @Suppress("JUnitTestCaseWithNoTests")
     class WasmWasiKlibLoaderTest : AbstractWasmKlibLoaderTest(WasmTarget.WASI)
 
+    // Test comment
     override val stdlib: String
         get() = WasmEnvironmentConfigurator.stdlibPath(target)
 
