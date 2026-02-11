@@ -13,7 +13,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           KaVariableSignature:
             name = a
             receiverType = null
-            returnType = O1
+            returnType = kotlin.Int
             symbol = a: O1
             contextParameters = []
             callableId = null,
@@ -27,19 +27,22 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           KaVariableSignature:
             name = c
             receiverType = null
-            returnType = T1
+            returnType = kotlin.String
             symbol = c: T1
             contextParameters = []
             callableId = null
         ]
         contextParameters = []
         callableId = /function
-      typeArgumentsMapping = {}
+      typeArgumentsMapping = {
+        T1 -> (kotlin.String),
+        O1 -> (kotlin.Int)
+      }
       valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = a
           receiverType = null
-          returnType = O1
+          returnType = kotlin.Int
           symbol = a: O1
           contextParameters = []
           callableId = null),
@@ -53,7 +56,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
         "str" -> (KaVariableSignature:
           name = c
           receiverType = null
-          returnType = T1
+          returnType = kotlin.String
           symbol = c: T1
           contextParameters = []
           callableId = null)
@@ -74,7 +77,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           KaVariableSignature:
             name = a
             receiverType = null
-            returnType = O2
+            returnType = kotlin.Int
             symbol = a: O2
             contextParameters = []
             callableId = null,
@@ -88,19 +91,22 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           KaVariableSignature:
             name = c
             receiverType = null
-            returnType = T2
+            returnType = kotlin.String
             symbol = c: T2
             contextParameters = []
             callableId = null
         ]
         contextParameters = []
         callableId = /function
-      typeArgumentsMapping = {}
+      typeArgumentsMapping = {
+        T2 -> (kotlin.String),
+        O2 -> (kotlin.Int)
+      }
       valueArgumentMapping = {
         1 -> (KaVariableSignature:
           name = a
           receiverType = null
-          returnType = O2
+          returnType = kotlin.Int
           symbol = a: O2
           contextParameters = []
           callableId = null),
@@ -114,7 +120,7 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
         "str" -> (KaVariableSignature:
           name = c
           receiverType = null
-          returnType = T2
+          returnType = kotlin.String
           symbol = c: T2
           contextParameters = []
           callableId = null)
