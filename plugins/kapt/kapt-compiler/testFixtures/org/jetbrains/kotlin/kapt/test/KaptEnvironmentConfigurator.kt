@@ -7,17 +7,12 @@ package org.jetbrains.kotlin.kapt.test
 
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
-import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.kapt.KAPT_OPTIONS
-import org.jetbrains.kotlin.kapt.KaptComponentRegistrar
-import org.jetbrains.kotlin.kapt.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.AptMode
 import org.jetbrains.kotlin.kapt.base.DetectMemoryLeaksMode
 import org.jetbrains.kotlin.kapt.base.KaptFlag
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -69,10 +64,7 @@ class KaptEnvironmentConfigurator(
                 mode = AptMode.STUBS_AND_APT
 
                 if (processingClasspath.isEmpty()) {
-                    // Workaround for a difference in K1/K2 kapt setup code. In K2 kapt, `checkOptions` skips stub generation if processing
-                    // classpath is empty, which makes integration tests fail.
-                    // Note that K1 kapt also has `checkOptions` but it's not called from integration tests because those tests create kapt
-                    // extension manually (see `KaptIntegrationEnvironmentConfigurator`) instead of going through `KaptComponentRegistrar`.
+                    // `checkOptions` skips stub generation if processing classpath is empty, which makes integration tests fail.
                     processingClasspath.add(File("."))
                 }
             }
@@ -88,19 +80,5 @@ class KaptEnvironmentConfigurator(
             val moduleBuilder = ModuleBuilder(module.name, "", "test-module")
             configuration.put(JVMConfigurationKeys.MODULES, listOf(moduleBuilder))
         }
-    }
-}
-
-class KaptRegularExtensionForTestConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
-        module: TestModule,
-        configuration: CompilerConfiguration,
-    ) {
-        val analysisExtension = object : PartialAnalysisHandlerExtension() {
-            override val analyzeDefaultParameterValues: Boolean
-                get() = testServices.kaptOptionsProvider[module][KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]
-        }
-        AnalysisHandlerExtension.registerExtension(analysisExtension)
-        StorageComponentContainerContributor.registerExtension(KaptComponentRegistrar.KaptComponentContributor(analysisExtension))
     }
 }

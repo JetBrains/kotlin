@@ -1,15 +1,11 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.kapt.test.runners
+package org.jetbrains.kotlin.kapt.test
 
 import org.jetbrains.kotlin.kapt.base.util.doOpenInternalPackagesIfRequired
-import org.jetbrains.kotlin.kapt.test.JvmCompilerWithKaptFacade
-import org.jetbrains.kotlin.kapt.test.KaptContextBinaryArtifact
-import org.jetbrains.kotlin.kapt.test.KaptEnvironmentConfigurator
-import org.jetbrains.kotlin.kapt.test.KaptRegularExtensionForTestConfigurator
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
 import org.jetbrains.kotlin.kapt.test.handlers.KaptAnnotationProcessingHandler
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -28,7 +24,7 @@ abstract class AbstractIrKotlinKaptContextTest : AbstractKotlinCompilerTest() {
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         globalDefaults {
-            frontend = FrontendKinds.ClassicFrontend
+            frontend = FrontendKinds.FIR
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Binary
         }
@@ -41,7 +37,6 @@ abstract class AbstractIrKotlinKaptContextTest : AbstractKotlinCompilerTest() {
             ::CommonEnvironmentConfigurator,
             ::JvmEnvironmentConfigurator,
             ::KaptEnvironmentConfigurator,
-            ::KaptRegularExtensionForTestConfigurator,
         )
 
         facadeStep(::JvmCompilerWithKaptFacade)
