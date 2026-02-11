@@ -9,9 +9,9 @@ void __root___closure_property_set__TypesOfArguments__U2829202D_U20Swift_Void__(
 
 void * __root___foo_1();
 
-void __root___foo_consume_consuming__TypesOfArguments__U2828Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__(void (^block)(void *));
+void __root___foo_consume_consuming__TypesOfArguments__U2840escapingU2028Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__(void (^block)(void *));
 
-void __root___foo_consume_consuming_2__TypesOfArguments__U2828Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__(void (^block)(void *));
+void __root___foo_consume_consuming_2__TypesOfArguments__U2840escapingU2028Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__(void (^block)(void *));
 
 void __root___foo_consume_producing__TypesOfArguments__U2829202D_U202829202D_U20Swift_Void__(void (^(^block)(void))(void));
 

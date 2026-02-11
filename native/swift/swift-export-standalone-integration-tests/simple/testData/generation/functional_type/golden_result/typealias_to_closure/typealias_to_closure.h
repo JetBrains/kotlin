@@ -3,7 +3,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-void * __root___foo_flow_with_callback__TypesOfArguments__U282829202D_U20Swift_Int32U29202D_U20Swift_Int32__(int32_t (^callback)(void *));
+void * __root___foo_flow_with_callback__TypesOfArguments__U2840escapingU202829202D_U20Swift_Int32U29202D_U20Swift_Int32__(int32_t (^callback)(void *));
 
 void * __root___typealias_demo__TypesOfArguments__U28Swift_Int32_U20Swift_Int32U29202D_U20Swift_Void__(void (^input)(int32_t, int32_t));
 

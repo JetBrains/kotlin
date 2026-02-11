@@ -25,7 +25,7 @@ public func foo_1() -> () -> Swift.Void {
 public func foo_consume_consuming(
     block: @escaping (@escaping (Swift.UInt32, Swift.UInt32) -> Swift.ClosedRange<Swift.Int32>) -> Swift.Void
 ) -> Swift.Void {
-    return __root___foo_consume_consuming__TypesOfArguments__U2828Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__({
+    return __root___foo_consume_consuming__TypesOfArguments__U2840escapingU2028Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__({
         let originalBlock = block
         return { arg0 in return originalBlock({
         let pointerToBlock = arg0
@@ -36,7 +36,7 @@ public func foo_consume_consuming(
 public func foo_consume_consuming_2(
     block: @escaping (@escaping (Swift.UInt32, Swift.UInt32) -> Swift.ClosedRange<Swift.Int32>) -> Swift.Void
 ) -> Swift.Void {
-    return __root___foo_consume_consuming_2__TypesOfArguments__U2828Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__({
+    return __root___foo_consume_consuming_2__TypesOfArguments__U2840escapingU2028Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__({
         let originalBlock = block
         return { arg0 in return originalBlock({
         let pointerToBlock = arg0

@@ -4,8 +4,8 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
-@ExportedBridge("__root___foo_flow_with_callback__TypesOfArguments__U282829202D_U20Swift_Int32U29202D_U20Swift_Int32__")
-public fun __root___foo_flow_with_callback__TypesOfArguments__U282829202D_U20Swift_Int32U29202D_U20Swift_Int32__(callback: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___foo_flow_with_callback__TypesOfArguments__U2840escapingU202829202D_U20Swift_Int32U29202D_U20Swift_Int32__")
+public fun __root___foo_flow_with_callback__TypesOfArguments__U2840escapingU202829202D_U20Swift_Int32U29202D_U20Swift_Int32__(callback: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __callback = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Int>(callback);
         { arg0: Function0<Int> ->

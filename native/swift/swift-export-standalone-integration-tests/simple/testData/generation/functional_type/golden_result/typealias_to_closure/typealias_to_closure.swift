@@ -8,7 +8,7 @@ public func foo_flow_with_callback(
     callback: @escaping typealias_to_closure.CallbackWithInnerClosure
 ) -> typealias_to_closure.CallbackWithInnerClosure {
     return {
-        let pointerToBlock = __root___foo_flow_with_callback__TypesOfArguments__U282829202D_U20Swift_Int32U29202D_U20Swift_Int32__({
+        let pointerToBlock = __root___foo_flow_with_callback__TypesOfArguments__U2840escapingU202829202D_U20Swift_Int32U29202D_U20Swift_Int32__({
         let originalBlock = callback
         return { arg0 in return originalBlock({
         let pointerToBlock = arg0

@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.sir
 
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.expandedType
 import org.jetbrains.kotlin.sir.util.swiftFqName
+import kotlin.collections.plus
 
 sealed interface SirType {
     val attributes: List<SirAttribute>
@@ -112,6 +114,18 @@ class SirExistentialType(
         return this::class.hashCode()
     }
 }
+
+val SirNominalType.escaping: SirNominalType get() = copyAppendingAttributes(SirAttribute.Escaping)
+
+val SirFunctionalType.escaping: SirFunctionalType get() = copyAppendingAttributes(SirAttribute.Escaping)
+
+val SirType.escaping: SirType get() = when (this) {
+        is SirNominalType if (this.typeDeclaration as? SirTypealias)?.expandedType?.let { it is SirFunctionalType } == true ->
+            escaping
+        is SirFunctionalType -> escaping
+        else ->
+            this
+    }
 
 /**
  * A synthetic type for unknown Kotlin types. For example,

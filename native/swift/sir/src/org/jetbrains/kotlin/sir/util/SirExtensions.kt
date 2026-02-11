@@ -70,8 +70,14 @@ val SirType.swiftName
         ).joinToString("")
         is SirErrorType -> "ERROR_TYPE"
         is SirUnsupportedType -> "Swift.Never"
-        is SirFunctionalType -> "(${parameterTypes.joinToString { it.swiftName }})${" async".takeIf { isAsync } ?: ""} -> ${returnType.swiftName}"
+        is SirFunctionalType -> "(${parameterTypes.joinToString { it.annotatedSwiftName }})${" async".takeIf { isAsync } ?: ""} -> ${returnType.swiftName}"
     }
+
+val SirType.annotatedSwiftName
+    get(): String = (this.attributes.map {
+        assert(it.arguments.isNullOrEmpty()) { "Rendering swift attributes with arguments is not supported" }
+        "@${it.identifier.swiftIdentifier}${it.arguments?.let { "()" } ?: ""}"
+    } + this.swiftName).joinToString(" ")
 
 val SirDeclaration.swiftParentNamePrefix: String?
     get() = this.parent.swiftFqNameOrNull

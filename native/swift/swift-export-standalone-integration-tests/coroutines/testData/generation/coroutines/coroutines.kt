@@ -13,3 +13,6 @@ fun demo(): Flow<Int> = TODO()
 
 fun demo_ft_produce(): suspend (Int) -> Int = TODO()
 
+typealias AliasedFunctionType = (Float) -> Int
+
+suspend fun produce_function_typealias(): AliasedFunctionType = TODO()

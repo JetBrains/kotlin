@@ -726,7 +726,7 @@ internal sealed class Bridge(
                 returnType: SwiftToKotlinBridge,
             ): AsContravariantBlock = AsContravariantBlock(
                 SirFunctionalType(
-                    parameterTypes = parameters.map { it.swiftType },
+                    parameterTypes = parameters.map { it.swiftType.escaping },
                     returnType = returnType.swiftType,
                 ),
                 parameters,
@@ -826,7 +826,7 @@ internal sealed class Bridge(
                 returnType: KotlinToSwiftBridge
             ): AsCovariantBlock = AsCovariantBlock(
                 SirFunctionalType(
-                    parameterTypes = parameters.map { it.swiftType },
+                    parameterTypes = parameters.map { it.swiftType.escaping },
                     returnType = returnType.swiftType,
                 ),
             )
