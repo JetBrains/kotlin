@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.kapt.cli.test
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import org.jetbrains.kotlin.cli.common.arguments.readArgumentsFromArgFile
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.BeforeEach
