@@ -1,0 +1,32 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+open class /A { // /A|null[0]
+    final val p0 // /A.p0|{}p0[0]
+        final fun <get-p0>(): kotlin/Any // /A.p0.<get-p0>|<get-p0>(){}[0]
+    final val p1 // /A.p1|{}p1[0]
+        final fun <get-p1>(): kotlin/Any // /A.p1.<get-p1>|<get-p1>(){}[0]
+    final val p2 // /A.p2|{}p2[0]
+        final fun <get-p2>(): /I // /A.p2.<get-p2>|<get-p2>(){}[0]
+    final val p3 // /A.p3|{}p3[0]
+        final fun <get-p3>(): /I // /A.p3.<get-p3>|<get-p3>(){}[0]
+    final val p4 // /A.p4|{}p4[0]
+        final fun <get-p4>(): /I // /A.p4.<get-p4>|<get-p4>(){}[0]
+    constructor <init>() // /A.<init>|<init>(){}[0]
+}
+final class /B : /A { // /B|null[0]
+    constructor <init>() // /B.<init>|<init>(){}[0]
+}
+abstract interface /I // /I|null[0]
+final value class /V : /I { // /V|null[0]
+    final val x // /V.x|{}x[0]
+        final fun <get-x>(): kotlin/Int // /V.x.<get-x>|<get-x>(){}[0]
+    constructor <init>() // /V.<init>|<init>(){}[0]
+    constructor <init>(kotlin/Int) // /V.<init>|<init>(kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /V.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /V.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // /V.toString|toString(){}[0]
+}

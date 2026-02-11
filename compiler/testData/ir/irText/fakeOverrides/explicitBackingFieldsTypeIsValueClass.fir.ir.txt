@@ -1,0 +1,237 @@
+FILE fqName:<root> fileName:/explicitBackingFieldsTypeIsValueClass.kt
+  CLASS CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
+    PROPERTY name:p0 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:p0 type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=42
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p0> visibility:public modality:FINAL returnType:kotlin.Any
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY name:p0 visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-p0> (): kotlin.Any declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p0 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p0>' type=<root>.A origin=null
+    PROPERTY name:p1 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:p1 type:<root>.V visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) declared in <root>.V' type=<root>.V origin=null
+            ARG x: CONST Int type=kotlin.Int value=42
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p1> visibility:public modality:FINAL returnType:kotlin.Any
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY name:p1 visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-p1> (): kotlin.Any declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p1 type:<root>.V visibility:private [final]' type=<root>.V origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p1>' type=<root>.A origin=null
+    PROPERTY name:p2 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:p2 type:<root>.V visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) declared in <root>.V' type=<root>.V origin=null
+            ARG x: CONST Int type=kotlin.Int value=42
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p2> visibility:public modality:FINAL returnType:<root>.I
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY name:p2 visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-p2> (): <root>.I declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p2 type:<root>.V visibility:private [final]' type=<root>.V origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p2>' type=<root>.A origin=null
+    PROPERTY name:p3 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:p3 type:<root>.V visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.V' type=<root>.V origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p3> visibility:public modality:FINAL returnType:<root>.I
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY name:p3 visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-p3> (): <root>.I declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p3 type:<root>.V visibility:private [final]' type=<root>.V origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p3>' type=<root>.A origin=null
+    PROPERTY name:p4 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:p4 type:<root>.V visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p4> visibility:public modality:FINAL returnType:<root>.I
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY name:p4 visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-p4> (): <root>.I declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p4 type:<root>.V visibility:private [final]' type=<root>.V origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p4>' type=<root>.A origin=null
+    ANONYMOUS_INITIALIZER isStatic=false
+      BLOCK_BODY
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p4 type:<root>.V visibility:private [final]' type=kotlin.Unit origin=null
+          receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
+          value: CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) declared in <root>.V' type=<root>.V origin=null
+            ARG x: CONST Int type=kotlin.Int value=42
+    CONSTRUCTOR visibility:public returnType:<root>.A [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+  CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B
+    PROPERTY name:p visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:p type:<root>.I visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'public final fun <get-p4> (): <root>.I declared in <root>.B' type=<root>.I origin=GET_PROPERTY
+            ARG <this>: GET_VAR '<this>: <root>.B declared in <root>.B' type=<root>.B origin=IMPLICIT_ARGUMENT
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL returnType:<root>.I
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
+        correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-p> (): <root>.I declared in <root>.B'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.I visibility:private [final]' type=<root>.I origin=null
+              receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-p>' type=<root>.B origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.B [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.A
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.A
+    PROPERTY FAKE_OVERRIDE name:p0 visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final p0: kotlin.Any declared in <root>.A
+      FUN FAKE_OVERRIDE name:<get-p0> visibility:public modality:FINAL returnType:kotlin.Any [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:p0 visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-p0> (): kotlin.Any declared in <root>.A
+    PROPERTY FAKE_OVERRIDE name:p1 visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final p1: kotlin.Any declared in <root>.A
+      FUN FAKE_OVERRIDE name:<get-p1> visibility:public modality:FINAL returnType:kotlin.Any [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:p1 visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-p1> (): kotlin.Any declared in <root>.A
+    PROPERTY FAKE_OVERRIDE name:p2 visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final p2: <root>.I declared in <root>.A
+      FUN FAKE_OVERRIDE name:<get-p2> visibility:public modality:FINAL returnType:<root>.I [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:p2 visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-p2> (): <root>.I declared in <root>.A
+    PROPERTY FAKE_OVERRIDE name:p3 visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final p3: <root>.I declared in <root>.A
+      FUN FAKE_OVERRIDE name:<get-p3> visibility:public modality:FINAL returnType:<root>.I [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:p3 visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-p3> (): <root>.I declared in <root>.A
+    PROPERTY FAKE_OVERRIDE name:p4 visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final p4: <root>.I declared in <root>.A
+      FUN FAKE_OVERRIDE name:<get-p4> visibility:public modality:FINAL returnType:<root>.I [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:p4 visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-p4> (): <root>.I declared in <root>.A
+  CLASS CLASS name:V modality:FINAL visibility:public [value] superTypes:[<root>.I]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.V
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'x: kotlin.Int declared in <root>.V.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.V
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.V'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.V declared in <root>.V.<get-x>' type=<root>.V origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.V
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) declared in <root>.V'
+          ARG x: CONST Int type=kotlin.Int value=42
+    CONSTRUCTOR visibility:public returnType:<root>.V [primary]
+      VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:V modality:FINAL visibility:public [value] superTypes:[<root>.I]' type=kotlin.Unit
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.V
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.V
+              GET_VAR 'other: kotlin.Any? declared in <root>.V.equals' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.V'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.V [val]
+          TYPE_OP type=<root>.V origin=IMPLICIT_CAST typeOperand=<root>.V
+            GET_VAR 'other: kotlin.Any? declared in <root>.V.equals' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                ARG arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR '<this>: <root>.V declared in <root>.V.equals' type=<root>.V origin=null
+                ARG arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.V declared in <root>.V.equals' type=<root>.V origin=null
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.V'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.V'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN returnType:kotlin.Int
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.V
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.I
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.V'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.V declared in <root>.V.hashCode' type=<root>.V origin=null
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.V
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.I
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.V'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="V("
+            CONST String type=kotlin.String value="x="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.V declared in <root>.V.toString' type=<root>.V origin=null
+            CONST String type=kotlin.String value=")"
+  CLASS INTERFACE name:I modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.I
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
