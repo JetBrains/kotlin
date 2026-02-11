@@ -94,6 +94,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ALTERED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ANNOTATION_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_ANONYMOUS_TYPE_INFERRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_COLLECTION_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_CONTEXT_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_EXPECTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND
@@ -1771,6 +1772,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             UNSUPPORTED_COLLECTION_LITERAL_TYPE,
             "No 'of' operator is defined for the expected type."
+        )
+        map.put(
+            AMBIGUOUS_COLLECTION_LITERAL,
+            "Type of collection literal is ambiguous. Multiple candidates declare operator ''of'':{0}",
+            SYMBOLS_ON_NEXT_LINES,
         )
 
         // Context parameters resolution

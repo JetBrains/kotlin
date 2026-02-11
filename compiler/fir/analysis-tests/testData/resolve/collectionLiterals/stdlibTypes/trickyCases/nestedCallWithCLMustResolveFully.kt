@@ -13,7 +13,7 @@ fun main() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(dubRun([1, 2, 3], [4, 5, 6]) { 42 })
 
     // ambiguity
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(dubRun(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>, mutableSetOf(4, 5, 6)) { 42 })
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(dubRun(<!AMBIGUOUS_COLLECTION_LITERAL!>[1, 2, 3]<!>, mutableSetOf(4, 5, 6)) { 42 })
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,

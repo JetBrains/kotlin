@@ -18,7 +18,7 @@ FILE: nestedCallWithCLMustResolveFully.kt
             ^ Int(42)
         }
         ))
-        <Ambiguity: foo, [/foo, /foo]>#(R|/dubRun|<R|kotlin/collections/MutableSet<kotlin/Int>|, R|kotlin/Int|>(<Unsupported collection literal type>#(Int(1), Int(2), Int(3)), R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(vararg(Int(4), Int(5), Int(6))), <L> = dubRun@fun <anonymous>(it: R|kotlin/collections/MutableSet<kotlin/Int>|): R|kotlin/Int| <inline=NoInline>  {
+        <Ambiguity: foo, [/foo, /foo]>#(R|/dubRun|<R|kotlin/collections/MutableSet<kotlin/Int>|, R|kotlin/Int|>(<Ambiguous collection literal>#(Int(1), Int(2), Int(3)), R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(vararg(Int(4), Int(5), Int(6))), <L> = dubRun@fun <anonymous>(it: R|kotlin/collections/MutableSet<kotlin/Int>|): R|kotlin/Int| <inline=NoInline>  {
             ^ Int(42)
         }
         ))

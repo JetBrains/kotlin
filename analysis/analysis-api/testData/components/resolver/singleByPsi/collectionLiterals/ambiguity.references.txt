@@ -2,5 +2,9 @@ KtCollectionLiteralExpression(327,336): '[1, 2, 3]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<AMBIGUOUS_COLLECTION_LITERAL: Type of collection literal is ambiguous. Multiple candidates declare operator 'of':
+    class MyChildList : MyList
+    class MyList : Any>
     symbols:
       Nothing (Unresolved reference)

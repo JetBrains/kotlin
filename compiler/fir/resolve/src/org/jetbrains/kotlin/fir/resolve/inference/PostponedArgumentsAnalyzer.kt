@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
-import org.jetbrains.kotlin.fir.diagnostics.ConeUnsupportedCollectionLiteralType
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.isEnabled
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
 import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
 import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
+import org.jetbrains.kotlin.fir.resolve.toConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.tryAllCLResolutionStrategies
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
@@ -252,7 +252,7 @@ class PostponedArgumentsAnalyzer(
                         source = calleeReference.source,
                         name = calleeReference.name,
                         candidate = calleeReference.candidate,
-                        diagnostic = ConeUnsupportedCollectionLiteralType,
+                        diagnostic = precalculatedBounds.toConeDiagnostic(),
                     )
                     replaceCalleeReference(calleeReferenceWithNewDiagnostic)
                 }

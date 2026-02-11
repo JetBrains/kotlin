@@ -27,20 +27,20 @@ fun test() {
     throughDeclaredWithUBOnK2([""], { it: Set<Int> -> })
 
     // ambiguity or MutableSet
-    throughDeclaredWithUBOnK2(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, { it: MutableSet<Int> -> })
+    throughDeclaredWithUBOnK2(<!AMBIGUOUS_COLLECTION_LITERAL!>[]<!>, { it: MutableSet<Int> -> })
 
     <!CANNOT_INFER_PARAMETER_TYPE!>select<!>(<!CANNOT_INFER_PARAMETER_TYPE!>select<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>), <!UNRESOLVED_REFERENCE!>materializeFromLambdaInput<!>({ it: Set<Int> -> }))
     <!CANNOT_INFER_PARAMETER_TYPE!>select<!>(<!CANNOT_INFER_PARAMETER_TYPE!>select<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>), <!UNRESOLVED_REFERENCE!>materializeFromLambdaInput<!>({ it: MutableSet<String> -> }, { it: Set<Int> -> }))
     select(select([], mutableSetOf()), materializeFromLambdaInputs({ it: MutableSet<String> -> }))
 
     // ambiguity
-    select(select(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, mutableSetOf()), materializeFromLambdaInputs({ it: Set<String> -> }))
+    select(select(<!AMBIGUOUS_COLLECTION_LITERAL!>[]<!>, mutableSetOf()), materializeFromLambdaInputs({ it: Set<String> -> }))
 
     // ambiguity or MutableSet
     //  the difference is that in the first case all three TVs are subtypes of MutableSet
     //  in the second, TVs of selects are only subtypes of Set & the third TV is also subtype of MutableSet
     val expected1: MutableSet<String> = select(select([]), materializeFromLambdaInputs({ it: Set<String> -> }))
-    val expected2: Set<String> = select(select(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>), materializeFromLambdaInputs({ it: MutableSet<String> -> }))
+    val expected2: Set<String> = select(select(<!AMBIGUOUS_COLLECTION_LITERAL!>[]<!>), materializeFromLambdaInputs({ it: MutableSet<String> -> }))
 }
 
 /* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, collectionLiteral, functionDeclaration, integerLiteral,

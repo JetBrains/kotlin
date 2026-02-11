@@ -1,4 +1,6 @@
 KtCollectionLiteralExpression(327,336): '[1, 2, 3]'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNSUPPORTED_COLLECTION_LITERAL_TYPE: No 'of' operator is defined for the expected type.>
+    diagnostic = ERROR<AMBIGUOUS_COLLECTION_LITERAL: Type of collection literal is ambiguous. Multiple candidates declare operator 'of':
+    class MyChildList : MyList
+    class MyList : Any>
