@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
 import java.io.File
@@ -143,7 +144,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
 
         val binaryenOutputDirectory = outputs.dir(inputFile.name.replace(".klib", "-transformed"))
 
-        val inputFileBinaryen = compilerOutputDir.listFiles().first { it.extension == "wasm" }
+        val inputFileBinaryen = compilerOutputDir.listFilesOrEmpty().first { it.extension == "wasm" }
         execOps.exec {
             it.executable = parameters.binaryenExec.get()
             it.workingDir = binaryenOutputDirectory
