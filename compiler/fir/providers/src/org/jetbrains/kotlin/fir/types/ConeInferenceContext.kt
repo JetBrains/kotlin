@@ -84,15 +84,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun makeLowerBoundDefinitelyNotNullOrNotNull(flexibleType: FlexibleTypeMarker): KotlinTypeMarker {
         require(flexibleType is ConeFlexibleType)
 
-        if (flexibleType.isTrivial) {
-            return ConeFlexibleType(
-                flexibleType.lowerBound.makeConeTypeDefinitelyNotNullOrNotNull(this, preserveAttributes = true),
-                flexibleType.upperBound,
-                isTrivial = true
-            )
-        }
-
-        return super.makeLowerBoundDefinitelyNotNullOrNotNull(flexibleType)
+        return ConeFlexibleType(
+            flexibleType.lowerBound.makeConeTypeDefinitelyNotNullOrNotNull(this, preserveAttributes = true),
+            flexibleType.upperBound,
+            isTrivial = flexibleType.isTrivial
+        )
     }
 
     override fun createSimpleType(
