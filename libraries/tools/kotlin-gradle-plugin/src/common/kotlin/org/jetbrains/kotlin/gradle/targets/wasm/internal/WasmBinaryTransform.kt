@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import org.jetbrains.kotlin.gradle.tasks.normalizeJvmArgs
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -188,7 +189,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
         args.freeArgs += parameters.enhancedFreeCompilerArgs.get()
 
         val normalizedKotlinDaemonJvmArguments = parameters.kotlinDaemonJvmArguments.map {
-            it.map { arg -> arg.trim().removePrefix("-") }
+            normalizeJvmArgs(it)
         }
 
         val workArgs = GradleKotlinCompilerWorkArguments(

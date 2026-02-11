@@ -134,7 +134,7 @@ internal open class KotlinJsIrLinkConfig(
                         )
                         propertiesProvider.kotlinDaemonJvmArgs?.let { kotlinDaemonJvmArgs ->
                             it.kotlinDaemonJvmArguments.set(providers.provider {
-                                kotlinDaemonJvmArgs.split("\\s+".toRegex())
+                                splitKotlinDaemonArgs(kotlinDaemonJvmArgs)
                             })
                         }
                         it.compilerExecutionStrategy.convention(propertiesProvider.kotlinCompilerExecutionStrategy).finalizeValueOnRead()

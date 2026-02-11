@@ -13,6 +13,8 @@ internal interface CompileUsingKotlinDaemonWithNormalization : CompileUsingKotli
     @get:Internal
     val normalizedKotlinDaemonJvmArguments: Provider<List<String>>
         get() = kotlinDaemonJvmArguments.map {
-            it.map { arg -> arg.trim().removePrefix("-") }
+            normalizeJvmArgs(it)
         }
 }
+
+internal fun normalizeJvmArgs(args: List<String>): List<String> = args.map { arg -> arg.trim().removePrefix("-") }
