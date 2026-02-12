@@ -498,8 +498,15 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     fun testContextualDeclarationUse() = muteForK1 {
-        val library = compileLibrary("library", additionalOptions = listOf(CommonCompilerArguments::contextParameters.cliArgument))
-        compileKotlin("contextualDeclarationUse.kt", tmpdir, listOf(library), additionalOptions = listOf(CommonCompilerArguments::skipPrereleaseCheck.cliArgument))
+        val library = compileLibrary("library")
+        compileKotlin(
+            "contextualDeclarationUse.kt", tmpdir, listOf(library),
+            additionalOptions = listOf(
+                CommonCompilerArguments::skipPrereleaseCheck.cliArgument,
+                CommonCompilerArguments::languageVersion.cliArgument,
+                LanguageVersion.KOTLIN_2_3.versionString,
+            )
+        )
     }
 
     // KT-60531 K2/JS: Report diagnostics before running FIR2IR
