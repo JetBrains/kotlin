@@ -22,6 +22,7 @@ suspend fun sInt(): Int = suspendCoroutineUninterceptedOrReturn { x ->
 }
 
 suspend fun <T : Any> sGeneric(): T = suspendCoroutineUninterceptedOrReturn { x ->
+    println("sGeneric")
     x.resume("zzz" as T)
     COROUTINE_SUSPENDED
 }
@@ -284,6 +285,7 @@ suspend fun s23(f: Boolean) {
 
 // CHECK-LABEL: define ptr @"kfun:#s24#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any
 suspend fun s24() {
+    println("s24")
     // CHECK: call void @"kfun:$s24COROUTINE${{[0-9]*}}.<init>#internal
     sInt()
 }
@@ -293,7 +295,8 @@ class Data(val x: Int)
 
 // CHECK-LABEL: define ptr @"kfun:#s25#suspend(kotlin.coroutines.Continuation<Data>){}kotlin.Any
 suspend fun s25(): Data {
-    // CHECK: call void @"kfun:$s25COROUTINE${{[0-9]*}}.<init>#internal
+    println("s25")
+    // CHECK-NOT: call void @"kfun:$s25COROUTINE${{[0-9]*}}.<init>#internal
     return sGeneric<Data>()
 }
 // CHECK-LABEL: epilogue:
@@ -304,6 +307,7 @@ fun builder(c: suspend () -> Unit) {
 
 // CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
+    var result = "fail"
     builder {
         s1()
         s2()
@@ -329,7 +333,11 @@ fun box(): String {
         s22()
         s23(true)
         s24()
-        s25().x
+        try {
+            result = s25().x.toString()
+        } catch (_: ClassCastException) {
+            result = "OK"
+        }
     }
-    return "OK"
+    return result
 }
