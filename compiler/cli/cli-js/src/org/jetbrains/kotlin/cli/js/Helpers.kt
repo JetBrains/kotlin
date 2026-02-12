@@ -124,15 +124,6 @@ internal fun calculateSourceMapSourceRoot(
     return commonPath?.path ?: "."
 }
 
-fun reportCollectedDiagnostics(
-    compilerConfiguration: CompilerConfiguration,
-    diagnosticsReporter: BaseDiagnosticsCollector,
-    messageCollector: MessageCollector
-) {
-    val renderName = compilerConfiguration.renderDiagnosticInternalName
-    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderName)
-}
-
 internal val CompilerConfiguration.platformChecker: KlibPlatformChecker
     get() = if (wasmCompilation) KlibPlatformChecker.Wasm(wasmTarget.alias) else KlibPlatformChecker.JS
 

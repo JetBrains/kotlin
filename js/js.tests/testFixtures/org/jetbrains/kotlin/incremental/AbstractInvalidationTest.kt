@@ -11,6 +11,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.backend.common.phaser.then
+import org.jetbrains.kotlin.cli.common.allowNoSourceFiles
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.createPerformanceManagerFor
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
-import org.jetbrains.kotlin.cli.js.reportCollectedDiagnostics
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineContext
@@ -164,7 +164,8 @@ abstract class AbstractInvalidationTest(
         }
         initializeWorkingDir(projectInfo, testDirectory, sourceDir, buildDir)
 
-        createProjectStepsExecutor(projectInfo, modulesInfos, testDirectory, sourceDir, buildDir, jsDir).execute()
+        val executor = createProjectStepsExecutor(projectInfo, modulesInfos, testDirectory, sourceDir, buildDir, jsDir)
+        executor.execute()
     }
 
     private fun resolveModuleArtifact(moduleName: String, buildDir: File): File {
@@ -421,11 +422,13 @@ abstract class AbstractInvalidationTest(
         val performanceManager = createPerformanceManagerFor(configuration.targetPlatform ?: error("Expected a target platform"))
         val phaseConfig = createPhaseConfig(stepId, buildDir)
 
+        configuration.messageCollector = messageCollector
         configuration.addSourcesFromDir(sourceDir)
         configuration.produceKlibFile = true
         configuration.outputDir = outputKlibFile.parentFile
         configuration.phaseConfig = phaseConfig
         configuration.renderDiagnosticInternalName = true
+        configuration.allowNoSourceFiles = true
 
         val klibSerializationCompoundPhase = WebFrontendPipelinePhase then
                 WebFir2IrPipelinePhase then
@@ -446,7 +449,7 @@ abstract class AbstractInvalidationTest(
             // Check for an error below.
         }
 
-        reportCollectedDiagnostics(configuration, diagnosticCollector, messageCollector)
+        CheckDiagnosticCollector.reportToMessageCollector(configuration)
 
         if (messageCollector.hasErrors()) {
             val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
