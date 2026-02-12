@@ -2736,6 +2736,12 @@ public class SourceResolveCandidatesFirTreeConsistencyTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("namedFullWithGeneric.kt")
+    public void testNamedFullWithGeneric() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/destructuringDeclaration/namedFullWithGeneric.kt");
+    }
+
+    @Test
     @TestMetadata("namedShort.kt")
     public void testNamedShort() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/destructuringDeclaration/namedShort.kt");

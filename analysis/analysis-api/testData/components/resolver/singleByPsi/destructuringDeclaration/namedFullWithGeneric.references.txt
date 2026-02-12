@@ -1,0 +1,7 @@
+KtDestructuringDeclarationEntry(137,146): 'val prop2'
+  KtDestructuringDeclarationReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in <local>: usage) val prop2: kotlin.String
+      1: (in foo.MyDataClass) val prop2: T
