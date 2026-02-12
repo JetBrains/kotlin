@@ -689,22 +689,6 @@ private fun collectKotlinJvmArgs(
         // (currently if we don't attach fast enough, the Kotlin daemon will fail to launch).
         add("-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=$kotlinDaemonDebugPort")
     }
-//
-    // Kover agent for coverage collection in Gradle TestKit tests
-    val koverAgentJar = System.getProperty("koverAgentJar")
-    val koverOutputDir = System.getProperty("koverOutputDir")
-    if (koverAgentJar != null && koverOutputDir != null) {
-        val koverDir = File(koverOutputDir)
-        val reportFile = File(koverDir, "kotlin-daemon.ic")
-        // Kover agent requires argumentsto be passed via a file with format: file:<path_to_args_file>
-        // Use stable file in koverOutputDir instead of temp file - temp files get deleted before Kotlin daemon reads them
-        val argsFile = File(koverDir, "kover-agent-kotlin.args")
-        argsFile.writeText("""
-            report.file=${reportFile.absolutePath}
-            report.append=true
-        """.trimIndent())
-        add("-javaagent:$koverAgentJar=file:${argsFile.absolutePath}")
-    }
 }
 
 
