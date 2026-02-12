@@ -179,40 +179,61 @@ private object SymbolGraphParsing {
 /**
  * Swift symbol for symbolgraph-extract assertions.
  *
- * This is a data class for convenience, but equality and hashing are still based only on
- * [precise] (the USR), while [pathComponents] are for readable diagnostics.
+ * [demangledId] stores the demangled USR (for example, "Shared.foo() -> ()").
+ * [pathComponents] are for readable diagnostics and do not participate in equality.
  */
 internal data class SwiftSymbol(
-    val precise: String,
+    val demangledId: String,
     val pathComponents: List<String>,
 ) {
+    init {
+        require(demangledId.isNotBlank()) { "demangledId must not be blank" }
+    }
+
     val displayName: String
         get() = pathComponents.joinToString(".")
 
     override fun equals(other: Any?): Boolean =
-        other is SwiftSymbol && other.precise == precise
+        other is SwiftSymbol && other.demangledId == demangledId
 
-    override fun hashCode(): Int = precise.hashCode()
+    override fun hashCode(): Int = demangledId.hashCode()
 
-    override fun toString(): String = "$displayName ($precise)"
+    override fun toString(): String = demangledId
 }
 
-private fun parseSymbolGraphSymbols(symbolGraphFile: File): Set<SwiftSymbol> {
-    val graph = SymbolGraphParsing.json.decodeFromString<SymbolGraphParsing.SymbolGraph>(symbolGraphFile.readText())
-    var skippedCount = 0
-    val symbols = graph.symbols.mapNotNull { symbol ->
-        val precise = symbol.identifier?.precise
-        val pathComponents = symbol.pathComponents
-        if (precise == null || pathComponents == null) {
-            skippedCount++
-            return@mapNotNull null
+/**
+ * Demangles a raw USR using `xcrun swift-demangle`.
+ *
+ * Compound USRs with `::SYNTHESIZED::` represent protocol extension members synthesized for
+ * a concrete type. Each part is demangled separately and reassembled for readability.
+ */
+private fun demangleUsr(rawUsr: String, workingDir: File): String {
+    if ("::SYNTHESIZED::" in rawUsr) {
+        val parts = rawUsr.split("::SYNTHESIZED::", limit = 2)
+        require(parts.size == 2) {
+            "Malformed SYNTHESIZED USR (expected 2 parts, got ${parts.size}): $rawUsr"
         }
-        SwiftSymbol(precise = precise, pathComponents = pathComponents)
-    }.toSet()
-    if (skippedCount > 0) {
-        println("Warning: Skipped $skippedCount symbols without identifier/pathComponents in ${symbolGraphFile.path}")
+        val (left, right) = parts
+        return "${demangleSingleUsr(left, workingDir)} [SYNTHESIZED for ${demangleSingleUsr(right, workingDir)}]"
     }
-    return symbols
+    return demangleSingleUsr(rawUsr, workingDir)
+}
+
+/**
+ * Demangles a single USR by converting the `s:` prefix to `$s` (Swift mangled symbol format).
+ * USRs without the `s:` prefix are passed through unchanged.
+ */
+private fun demangleSingleUsr(rawUsr: String, workingDir: File): String {
+    val mangled = if (rawUsr.startsWith("s:")) rawUsr.replaceFirst("s:", "\$s") else rawUsr
+    val result = runProcess(listOf("xcrun", "swift-demangle", "--compact", mangled), workingDir)
+    val output = result.output.trim()
+    assert(result.isSuccessful) {
+        "swift-demangle failed for USR '$rawUsr' (mangled: '$mangled'): ${result.output}"
+    }
+    assert(output.isNotEmpty()) {
+        "swift-demangle returned empty output for USR '$rawUsr' (mangled: '$mangled')"
+    }
+    return output
 }
 
 private fun extractModuleSymbols(
@@ -222,20 +243,25 @@ private fun extractModuleSymbols(
     sdk: String,
     searchPaths: List<File>,
 ): Set<SwiftSymbol> {
-    val result = swiftSymbolgraphExtract(workingDir, moduleName, target, sdk, searchPaths)
+    val outputDir = symbolgraphOutputDir(workingDir, moduleName)
+    val result = swiftSymbolgraphExtract(workingDir, moduleName, target, sdk, searchPaths, outputDir)
     assert(result.isSuccessful) {
         "symbolgraph-extract failed for module $moduleName: ${result.output}"
     }
 
-    val outputDir = symbolgraphOutputDir(workingDir, moduleName)
-    val allSymbolGraphFiles = outputDir.listFiles()?.filter { it.name.endsWith(".symbols.json") } ?: emptyList()
+    val allSymbolGraphFiles = outputDir.listFiles()?.filter { it.name.endsWith(".symbols.json") }.orEmpty()
 
-    assert(allSymbolGraphFiles.isNotEmpty()) {
-        "No symbol graph files found for module $moduleName in: ${outputDir.absolutePath}. " +
-                "Search paths: $searchPaths"
-    }
-
-    return allSymbolGraphFiles.flatMap { parseSymbolGraphSymbols(it) }.toSet()
+    return allSymbolGraphFiles.flatMap { symbolGraphFile ->
+        val graph = SymbolGraphParsing.json.decodeFromString<SymbolGraphParsing.SymbolGraph>(symbolGraphFile.readText())
+        graph.symbols.mapNotNull { symbol ->
+            val precise = symbol.identifier?.precise ?: return@mapNotNull null
+            val pathComponents = symbol.pathComponents ?: return@mapNotNull null
+            SwiftSymbol(
+                demangledId = demangleUsr(precise, workingDir),
+                pathComponents = pathComponents
+            )
+        }
+    }.toSet()
 }
 
 /**
