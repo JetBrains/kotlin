@@ -9,11 +9,11 @@ interface B {
     fun b(): Int
 }
 
-context(A)
-val a = <!CONTEXT_PARAMETERS_WITH_BACKING_FIELD!>1<!>
+<!CONTEXT_PARAMETERS_WITH_BACKING_FIELD!>context<!>(A)
+val a = 1
 
-context(A, B)
-var b = <!CONTEXT_PARAMETERS_WITH_BACKING_FIELD!>2<!>
+<!CONTEXT_PARAMETERS_WITH_BACKING_FIELD!>context<!>(A, B)
+var b = 2
 
 context(A, B)
 val c get() = <!NO_CONTEXT_ARGUMENT!>a<!>() + <!NO_CONTEXT_ARGUMENT, NO_CONTEXT_ARGUMENT!>b<!>()
