@@ -1,3 +1,6 @@
+import kotlin.io.path.createFile
+import kotlin.io.path.exists
+
 plugins {
     id("com.gradle.develocity")
     id("com.gradle.common-custom-user-data-gradle-plugin") apply false
@@ -22,6 +25,23 @@ develocity {
 
         capture {
             uploadInBackground.set(isTeamcityBuild.map { !it })
+        }
+
+        /*
+        Indicate if a teamcity agent is considered 'cold' or 'warm'
+        'cold': The agent has never executed any Gradle build invocation prior
+        'warm': The agent has completed at least one Gradle build invocation, subsequent builds are supposed to be faster
+        */
+        val warmAgentMarker = gradle.gradleUserHomeDir.resolve(".kotlin.build.agent.warm").toPath()
+        background {
+            if (isTeamcityBuild.get()) {
+                if (!warmAgentMarker.exists()) {
+                    warmAgentMarker.createFile()
+                    value("Agent State", "cold")
+                } else {
+                    value("Agent State", "warm")
+                }
+            }
         }
 
         obfuscation {
