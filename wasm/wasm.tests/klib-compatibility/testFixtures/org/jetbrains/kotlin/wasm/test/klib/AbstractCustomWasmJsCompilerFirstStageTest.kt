@@ -72,7 +72,8 @@ open class AbstractCustomWasmJsCompilerFirstStageTest(val testDataRoot: String =
 
         commonConfigurationForWasmSecondStageTest(
             pathToTestDir = testDataRoot,
-            testGroupOutputDirPrefix = "customWasmJsCompilerFirstStageTest/",
+            testGroupOutputDirPrefix = this@AbstractCustomWasmJsCompilerFirstStageTest::class.java.simpleName +
+                    customWasmJsCompilerSettings.defaultLanguageVersion,
         )
         useConfigurators(
             ::WasmSecondStageEnvironmentConfigurator.bind(WasmTarget.JS),
