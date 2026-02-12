@@ -1220,24 +1220,25 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
 }
 
-fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean): IndexerResult {
+fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean, temporaryFilesDir: java.io.File? = null): IndexerResult {
     val result = NativeIndexImpl(library, verbose)
-    return buildNativeIndexImpl(result, allowPrecompiledHeaders)
+    return buildNativeIndexImpl(result, allowPrecompiledHeaders, temporaryFilesDir)
 }
 
-fun buildNativeIndexImpl(index: NativeIndexImpl, allowPrecompiledHeaders: Boolean): IndexerResult {
-    val compilation = indexDeclarations(index, allowPrecompiledHeaders)
+fun buildNativeIndexImpl(index: NativeIndexImpl, allowPrecompiledHeaders: Boolean, temporaryFilesDir: java.io.File? = null): IndexerResult {
+    val compilation = indexDeclarations(index, allowPrecompiledHeaders, temporaryFilesDir)
     return IndexerResult(index, compilation)
 }
 
-private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHeaders: Boolean): Compilation {
+private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHeaders: Boolean, temporaryFilesDir: java.io.File? = null): Compilation {
     // Below, declarations from PCH should be excluded to restrict `visitChildren` to visit local declarations only
     withIndex(excludeDeclarationsFromPCH = true) { index ->
         val errors = mutableListOf<Diagnostic>()
         val translationUnit = nativeIndex.library.parse(
                 index,
                 options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_ForSerialization,
-                diagnosticHandler = { if (it.isError()) errors.add(it) }
+                diagnosticHandler = { if (it.isError()) errors.add(it) },
+                temporaryFilesDir = temporaryFilesDir,
         )
         try {
             if (errors.isNotEmpty()) {
@@ -1246,7 +1247,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
             translationUnit.ensureNoCompileErrors()
 
             val compilation = nativeIndex.library.let {
-                if (allowPrecompiledHeaders) it.withPrecompiledHeader(translationUnit) else it
+                if (allowPrecompiledHeaders) it.withPrecompiledHeader(translationUnit, temporaryFilesDir) else it
             }
 
             UnitsHolder(index).use { unitsHolder ->
@@ -1301,8 +1302,8 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
                 val compilationWithPCH = if (allowPrecompiledHeaders)
                     compilation as CompilationWithPCH
                 else
-                    compilation.withPrecompiledHeader(translationUnit)
-                findMacros(nativeIndex, compilationWithPCH, unitsToProcess, ownHeaders)
+                    compilation.withPrecompiledHeader(translationUnit, temporaryFilesDir)
+                findMacros(nativeIndex, compilationWithPCH, unitsToProcess, ownHeaders, temporaryFilesDir)
 
                 return compilation
             }

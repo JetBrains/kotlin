@@ -29,11 +29,12 @@ internal fun findMacros(
         nativeIndex: NativeIndexImpl,
         compilation: CompilationWithPCH,
         translationUnits: List<CXTranslationUnit>,
-        headers: Set<ClangFile?>
+        headers: Set<ClangFile?>,
+        temporaryFilesDir: File? = null,
 ) {
     val names = collectMacroNames(nativeIndex, translationUnits, headers)
     // TODO: apply user-defined filters.
-    val macros = expandMacros(compilation, names, typeConverter = { nativeIndex.convertType(it) })
+    val macros = expandMacros(compilation, names, typeConverter = { nativeIndex.convertType(it) }, temporaryFilesDir = temporaryFilesDir)
 
     macros.filterIsInstanceTo(nativeIndex.macroConstants)
     macros.filterIsInstanceTo(nativeIndex.wrappedMacros)
@@ -53,10 +54,11 @@ private typealias TypeConverter = (CValue<CXType>) -> Type
 private fun expandMacros(
         library: CompilationWithPCH,
         names: List<String>,
-        typeConverter: TypeConverter
+        typeConverter: TypeConverter,
+        temporaryFilesDir: File? = null,
 ): List<MacroDef> {
     withIndex(excludeDeclarationsFromPCH = true) { index ->
-        val sourceFile = library.createTempSource()
+        val sourceFile = library.createTempSource(temporaryFilesDir)
         val compilerArgs = library.compilerArgs.toMutableList()
         // We disable implicit function declaration to filter out cases when a macro is expanded as a function
         // or function-like construction (e.g. #define FOO throw()) but such a function is undeclared.

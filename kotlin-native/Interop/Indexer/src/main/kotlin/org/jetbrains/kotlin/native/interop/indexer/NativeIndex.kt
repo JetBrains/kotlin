@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.native.interop.indexer
 
-import java.io.File
-
 enum class Language(val sourceFileExtension: String, val clangLanguageName: String) {
     C("c", "c"),
     CPP("cpp", "c++"),
@@ -58,7 +56,6 @@ interface Compilation {
     val additionalPreambleLines: List<String>
     val compilerArgs: List<String>
     val language: Language
-    val temporaryFilesDir: File?
 }
 
 fun defaultCompilerArgs(language: Language): List<String> =
@@ -92,10 +89,9 @@ fun defaultCompilerArgs(language: Language): List<String> =
 data class CompilationWithPCH(
         override val compilerArgs: List<String>,
         override val language: Language,
-        override val temporaryFilesDir: File? = null
 ) : Compilation {
-    constructor(compilerArgs: List<String>, precompiledHeader: String, language: Language, temporaryFilesDir: File? = null)
-            : this(compilerArgs + listOf("-include-pch", precompiledHeader), language, temporaryFilesDir)
+    constructor(compilerArgs: List<String>, precompiledHeader: String, language: Language)
+            : this(compilerArgs + listOf("-include-pch", precompiledHeader), language)
 
     override val includes: List<IncludeInfo>
         get() = emptyList()
@@ -121,7 +117,6 @@ data class NativeLibrary(
         val headerFilter: NativeLibraryHeaderFilter,
         val objCClassesIncludingCategories: Set<String>,
         val allowIncludingObjCCategoriesFromDefFile: Boolean,
-        override val temporaryFilesDir: File? = null,
 ) : Compilation
 
 data class IndexerResult(val index: NativeIndex, val compilation: Compilation)
@@ -129,7 +124,7 @@ data class IndexerResult(val index: NativeIndex, val compilation: Compilation)
 /**
  * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).
  */
-fun buildNativeIndex(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean = true): IndexerResult = buildNativeIndexImpl(library, verbose, allowPrecompiledHeaders)
+fun buildNativeIndex(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean = true, temporaryFilesDir: java.io.File? = null): IndexerResult = buildNativeIndexImpl(library, verbose, allowPrecompiledHeaders, temporaryFilesDir)
 
 /**
  * This class describes the IR of definitions from C header file(s).

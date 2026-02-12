@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.native.interop.indexer.CompilationWithPCH
 import org.jetbrains.kotlin.native.interop.indexer.Language
 import org.jetbrains.kotlin.native.interop.indexer.mapFragmentIsCompilable
 import org.jetbrains.kotlin.native.interop.indexer.precompileHeaders
+import java.io.File
 
 internal val INVALID_CLANG_IDENTIFIER_REGEX = "[^a-zA-Z1-9_]".toRegex()
 
@@ -31,7 +32,8 @@ class SimpleBridgeGeneratorImpl(
         private val jvmFileClassName: String,
         private val libraryForCStubs: Compilation,
         override val topLevelNativeScope: NativeScope,
-        private val topLevelKotlinScope: KotlinScope
+        private val topLevelKotlinScope: KotlinScope,
+        private val temporaryFilesDir: File? = null,
 ) : SimpleBridgeGenerator {
 
     private var nextUniqueId = 0
@@ -224,7 +226,7 @@ class SimpleBridgeGeneratorImpl(
         val includedBridges = mutableListOf<NativeBridge>()
         val excludedClients = mutableSetOf<NativeBacked>()
 
-        val libraryWithPCH = if (libraryForCStubs is CompilationWithPCH) libraryForCStubs else libraryForCStubs.precompileHeaders()
+        val libraryWithPCH = if (libraryForCStubs is CompilationWithPCH) libraryForCStubs else libraryForCStubs.precompileHeaders(temporaryFilesDir)
 
         nativeBridges.map { it.second.nativeLines }
                 .mapFragmentIsCompilable(libraryWithPCH)

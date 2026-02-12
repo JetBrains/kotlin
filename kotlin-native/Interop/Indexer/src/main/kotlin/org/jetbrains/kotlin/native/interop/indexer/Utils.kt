@@ -183,7 +183,8 @@ private fun tryGetClangInvocationResultMessage(compilerArgs: List<String>): Stri
 internal fun Compilation.parse(
         index: CXIndex,
         options: Int = 0,
-        diagnosticHandler: DiagnosticHandler? = null
+        diagnosticHandler: DiagnosticHandler? = null,
+        temporaryFilesDir: File? = null,
 ): CXTranslationUnit {
     val arguments = this.compilerArgs.toMutableList()
     val serializedDiagnosticsFile: File?
@@ -194,8 +195,9 @@ internal fun Compilation.parse(
         // See https://youtrack.jetbrains.com/issue/KT-35059.
         // So instead instruct Clang to serialize diagnostics to file and then deserialize them.
         // This way it is possible to find diagnostics from imported modules as well.
-        val tempDir = this.temporaryFilesDir?.toPath()?.also { Files.createDirectories(it) }
-        serializedDiagnosticsFile = Files.createTempFile(tempDir, "cinterop", ".d").toFile()
+        val tempDir = temporaryFilesDir?.toPath()?.also { Files.createDirectories(it) }
+        serializedDiagnosticsFile = (if (tempDir != null) Files.createTempFile(tempDir, "cinterop", ".d")
+                else Files.createTempFile("cinterop", ".d")).toFile()
         if (tempDir == null) {
             serializedDiagnosticsFile.deleteOnExit()
         }
@@ -211,7 +213,7 @@ internal fun Compilation.parse(
         serializedDiagnosticsFile = null
     }
 
-    val result = parseTranslationUnit(index, this.createTempSource(), arguments, options)
+    val result = parseTranslationUnit(index, this.createTempSource(temporaryFilesDir), arguments, options)
     try {
         // Note: in some cases (like when imported module is not found) the file remains empty,
         // and deserialization will fail. Handling this by checking the file is not empty:
@@ -399,9 +401,10 @@ internal fun Appendable.appendPreamble(compilation: Compilation) = this.apply {
 /**
  * Creates temporary source file which includes the library.
  */
-internal fun Compilation.createTempSource(): File {
-    val tempDir = this.temporaryFilesDir?.toPath()?.also { Files.createDirectories(it) }
-    val result = Files.createTempFile(tempDir, null, ".${language.sourceFileExtension}").toFile()
+internal fun Compilation.createTempSource(temporaryFilesDir: File? = null): File {
+    val tempDir = temporaryFilesDir?.toPath()?.also { Files.createDirectories(it) }
+    val result = (if (tempDir != null) Files.createTempFile(tempDir, null, ".${language.sourceFileExtension}")
+            else Files.createTempFile(null, ".${language.sourceFileExtension}")).toFile()
     if (tempDir == null) {
         result.deleteOnExit()
     }
@@ -418,13 +421,11 @@ fun Compilation.copy(
         additionalPreambleLines: List<String> = this.additionalPreambleLines,
         compilerArgs: List<String> = this.compilerArgs,
         language: Language = this.language,
-        temporaryFilesDir: File? = this.temporaryFilesDir
 ): Compilation = CompilationImpl(
         includes = includes,
         additionalPreambleLines = additionalPreambleLines,
         compilerArgs = compilerArgs,
         language = language,
-        temporaryFilesDir = temporaryFilesDir
 )
 
 data class CompilationImpl(
@@ -432,7 +433,6 @@ data class CompilationImpl(
         override val additionalPreambleLines: List<String>,
         override val compilerArgs: List<String>,
         override val language: Language,
-        override val temporaryFilesDir: File? = null
 ) : Compilation
 
 /**
@@ -440,20 +440,21 @@ data class CompilationImpl(
  *
  * @return the library which includes the precompiled header instead of original ones.
  */
-fun Compilation.precompileHeaders(): CompilationWithPCH = withIndex(excludeDeclarationsFromPCH = false) { index ->
+fun Compilation.precompileHeaders(temporaryFilesDir: File? = null): CompilationWithPCH = withIndex(excludeDeclarationsFromPCH = false) { index ->
     val options = CXTranslationUnit_ForSerialization or CXTranslationUnit_DetailedPreprocessingRecord
-    val translationUnit = parse(index, options)
+    val translationUnit = parse(index, options, temporaryFilesDir = temporaryFilesDir)
     try {
         translationUnit.ensureNoCompileErrors()
-        withPrecompiledHeader(translationUnit)
+        withPrecompiledHeader(translationUnit, temporaryFilesDir)
     } finally {
         clang_disposeTranslationUnit(translationUnit)
     }
 }
 
-internal fun Compilation.withPrecompiledHeader(translationUnit: CXTranslationUnit): CompilationWithPCH {
-    val tempDir = this.temporaryFilesDir?.toPath()?.also { Files.createDirectories(it) }
-    val precompiledHeader = Files.createTempFile(tempDir, null, ".pch").toFile().apply {
+internal fun Compilation.withPrecompiledHeader(translationUnit: CXTranslationUnit, temporaryFilesDir: File? = null): CompilationWithPCH {
+    val tempDir = temporaryFilesDir?.toPath()?.also { Files.createDirectories(it) }
+    val precompiledHeader = (if (tempDir != null) Files.createTempFile(tempDir, null, ".pch")
+            else Files.createTempFile(null, ".pch")).toFile().apply {
         if (tempDir == null) this.deleteOnExit()
     }
     val errorCode = clang_saveTranslationUnit(translationUnit, precompiledHeader.absolutePath, 0)
@@ -475,7 +476,6 @@ internal fun Compilation.withPrecompiledHeader(translationUnit: CXTranslationUni
         this.compilerArgs,
         precompiledHeader.absolutePath,
         this.language,
-        this.temporaryFilesDir
     )
 }
 

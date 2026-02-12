@@ -26,6 +26,7 @@ class StubIrContext(
         val libName: String,
         val allowPrecompiledHeaders: Boolean,
         val metadataVersion: KlibMetadataVersion,
+        val temporaryFilesDir: File? = null,
 ) {
     val libraryForCStubs = configuration.library.copy(
             includes = mutableListOf<IncludeInfo>().apply {
@@ -46,7 +47,7 @@ class StubIrContext(
                         Language.OBJECTIVE_C -> listOf("void objc_terminate();")
                     }
     ).let {
-        if (allowPrecompiledHeaders) it.precompileHeaders() else it
+        if (allowPrecompiledHeaders) it.precompileHeaders(temporaryFilesDir) else it
     }
 
     // TODO: Used only for JVM.

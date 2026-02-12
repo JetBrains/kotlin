@@ -312,8 +312,10 @@ private fun processCLib(
 
     val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
 
+    val temporaryFilesDir = cinteropArguments.tempDir?.let { File(it) }
+
     // when this tool does not compile native library, make the generated source consumable by external compiler (i.e. do not strip includes)
-    val (nativeIndex, compilation) = buildNativeIndexImpl(library, verbose, allowPrecompiledHeaders = nativeLibsDir != null)
+    val (nativeIndex, compilation) = buildNativeIndexImpl(library, verbose, allowPrecompiledHeaders = nativeLibsDir != null, temporaryFilesDir = temporaryFilesDir)
 
     val target = tool.target
 
@@ -360,7 +362,8 @@ private fun processCLib(
             mode,
             libName,
             allowPrecompiledHeaders = nativeLibsDir != null,
-            KlibMetadataVersion(cinteropArguments.klibAbiCompatibilityLevel.toCInteropKlibMetadataVersion().toArray())
+            KlibMetadataVersion(cinteropArguments.klibAbiCompatibilityLevel.toCInteropKlibMetadataVersion().toArray()),
+            temporaryFilesDir = temporaryFilesDir,
     )
     val stubIrOutput = run {
         val outKtFileCreator = {
@@ -599,14 +602,11 @@ internal fun buildNativeLibrary(
         "#define $it \"$it\""
     }
 
-    val temporaryFilesDir = arguments.tempDir?.let { File(it) }
-
     val compilation = CompilationImpl(
             includes = headerFiles.map { IncludeInfo(it, null) },
             additionalPreambleLines = def.defHeaderLines + predefinedMacrosRedefinitions,
             compilerArgs = defaultCompilerArgs(language) + compilerOpts + tool.platformCompilerOpts,
             language = language,
-            temporaryFilesDir = temporaryFilesDir
     )
 
     val headerFilter: NativeLibraryHeaderFilter
@@ -651,7 +651,6 @@ internal fun buildNativeLibrary(
             headerFilter = headerFilter,
             objCClassesIncludingCategories = objCClassesIncludingCategories,
             allowIncludingObjCCategoriesFromDefFile = def.config.allowIncludingObjCCategoriesFromDefFile,
-            temporaryFilesDir = temporaryFilesDir,
     )
 }
 
