@@ -14,7 +14,9 @@ dependencies {
     testFixturesApi(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
     testFixturesApi(testFixtures(project(":kotlin-lombok-compiler-plugin")))
     testFixturesApi(testFixtures(project(":kotlin-noarg-compiler-plugin")))
+    testFixturesApi(testFixtures(project(":kotlin-power-assert-compiler-plugin")))
     testFixturesApi(testFixtures(project(":plugins:parcelize:parcelize-compiler")))
+    testFixturesApi(testFixtures(project(":plugins:plugin-sandbox")))
 
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
 
@@ -61,4 +63,5 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.compiler.plugins.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
+    withPluginSandboxAnnotations()
 }

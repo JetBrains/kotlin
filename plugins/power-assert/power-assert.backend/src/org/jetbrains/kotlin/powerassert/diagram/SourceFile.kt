@@ -30,11 +30,17 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.powerassert.earliestStartOffset
 import org.jetbrains.kotlin.powerassert.getExplicitReceiver
 
-data class SourceFile(
+class SourceFile private constructor(
     val irFile: IrFile,
+    private val source: String,
 ) {
-    private val source = irFile.readSourceText()
-        .replace("\r\n", "\n") // Normalize line endings in the same way the compiler does.
+    companion object {
+        fun findSource(irFile: IrFile): SourceFile? {
+            var source = irFile.readSourceText() ?: return null
+            source = source.replace("\r\n", "\n") // Normalize line endings in the same way the compiler does.
+            return SourceFile(irFile, source)
+        }
+    }
 
     fun getSourceRangeInfo(element: IrElement): SourceRangeInfo {
         return irFile.fileEntry.getSourceRangeInfo(element.startOffset, element.endOffset)
@@ -77,7 +83,7 @@ data class SourceFile(
     }
 }
 
-private fun IrFile.readSourceText(): String {
+private fun IrFile.readSourceText(): String? {
     // Try and access the source text via FIR metadata.
     val sourceFile = (metadata as? FirMetadataSource.File)?.fir?.sourceFile
     if (sourceFile != null) {
@@ -89,5 +95,5 @@ private fun IrFile.readSourceText(): String {
         is PsiIrFileEntry -> return entry.psiFile.text
     }
 
-    error("Unable to find source for IrFile: $path")
+    return null
 }

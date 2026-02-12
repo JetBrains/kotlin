@@ -34,4 +34,10 @@ public class PluginInteractionFirBlackBoxCodegenTestGenerated extends AbstractPl
   public void testParcelizeAndSupertypesGenerator() {
     runTest("plugins/plugins-interactions-testing/testData/box/parcelizeAndSupertypesGenerator.kt");
   }
+
+  @Test
+  @TestMetadata("powerAssertAndTopLevelGenerator.kt")
+  public void testPowerAssertAndTopLevelGenerator() {
+    runTest("plugins/plugins-interactions-testing/testData/box/powerAssertAndTopLevelGenerator.kt");
+  }
 }
