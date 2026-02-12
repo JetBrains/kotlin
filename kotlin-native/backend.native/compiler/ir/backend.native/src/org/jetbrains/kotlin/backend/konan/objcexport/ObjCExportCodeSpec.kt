@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import java.io.PrintStream
@@ -155,7 +156,7 @@ internal class ObjCExportCodeSpec(
 )
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String, symbolTable: SymbolTable, mapper: ObjCExportMapper) {
+internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String, signaturer: IdSignatureComposer, mapper: ObjCExportMapper) {
     PrintStream(path).use { out ->
         out.println("# Classes mapping")
         for (type in types) {
@@ -174,7 +175,7 @@ internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String, sym
             is ObjCGetterForNSEnumType -> true
         }
 
-        fun ObjCMethodSpec.getMapping(objcClass: String, overrides: Map<IdSignature?, IdSignature?>): String? = when (this) {
+        fun ObjCMethodSpec.getMapping(objcClass: String, overrides: Map<IdSignature, IdSignature>): String? = when (this) {
             is ObjCClassMethodForKotlinEnumValuesOrEntries -> "$objcClass.$selector,${valuesFunctionSymbol.signature}"
             is ObjCFactoryMethodForKotlinArrayConstructor -> "$objcClass.${baseMethod.selector},${baseMethod.symbol.signature}"
             is ObjCGetterForKotlinEnumEntry -> "$objcClass.$selector,${irEnumEntrySymbol.signature}"
@@ -191,9 +192,9 @@ internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String, sym
         for (type in types) {
             val overrides = buildMap {
                 for (method in type.irClassSymbol.descriptor.contributedMethods) {
-                    val signature = symbolTable.descriptorExtension.referenceSimpleFunction(method).signature
+                    val signature = signaturer.composeSignature(method) ?: continue
                     for (base in mapper.getBaseMethods(method.original)) {
-                        val baseSignature = symbolTable.descriptorExtension.referenceSimpleFunction(base).signature
+                        val baseSignature = signaturer.composeSignature(base) ?: continue
                         put(baseSignature, signature)
                     }
                 }
