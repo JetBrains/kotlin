@@ -250,7 +250,7 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
          * A custom renderer for formatting compiler diagnostic messages.
          */
         @JvmField
-        public val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer?> = Option("COMPILER_MESSAGE_RENDERER")
+        public val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> = Option("COMPILER_MESSAGE_RENDERER")
     }
 
     public enum class CompilerArgumentsLogLevel {
