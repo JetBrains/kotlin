@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageCo
 import org.jetbrains.kotlin.cli.common.allowKotlinPackage
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.checkForUnexpectedKlibLibraries
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.incrementalCompilationIsEnabledForJs
@@ -221,6 +222,14 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
 
         val libraries: List<String> = configureLibraries(arguments.libraries) + listOfNotNull(arguments.includes)
         val friendLibraries: List<String> = configureLibraries(arguments.friendModules)
+
+        configuration.checkForUnexpectedKlibLibraries(
+            librariesToCheck = friendLibraries,
+            librariesToCheckArgument = K2JSCompilerArguments::friendModules.cliArgument,
+            allLibraries = libraries,
+            allLibrariesArgument = K2JSCompilerArguments::libraries.cliArgument,
+        )
+
         configuration.libraries += libraries
         configuration.friendLibraries += friendLibraries
         arguments.includes?.let { configuration.includes = it }
