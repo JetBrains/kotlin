@@ -3,6 +3,7 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
@@ -56,10 +57,25 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
     freeCompilerArgs.add("-Xcontext-parameters")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
+
+    if (this is KotlinJvmCompilerOptions) {
+        suppressRedundantCliArgumentWarning()
+    }
 }
 
 fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
     freeCompilerArgs.add("-Xreturn-value-checker=full")
+}
+
+/**
+ * Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
+ * But this produces a warning
+ * "The argument ... is redundant for the current language version ..."
+ * in the bootstrap test and fails because of -Werror.
+ * To work around it, we suppress the warning.
+ */
+fun KotlinCommonCompilerOptions.suppressRedundantCliArgumentWarning() {
+    freeCompilerArgs.add("-Xwarning-level=REDUNDANT_CLI_ARG:disabled")
 }
 
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"
@@ -102,6 +118,7 @@ kotlin {
                         )
                         mainCompilationOptions()
                         addReturnValueCheckerInfo()
+                        suppressRedundantCliArgumentWarning()
                     }
                 }
             }
@@ -119,6 +136,7 @@ kotlin {
                                 diagnosticNamesArg
                             )
                         )
+                        suppressRedundantCliArgumentWarning()
                     }
                 }
             }

@@ -772,6 +772,13 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
 
             "-Xfragment-refines=nativeMain:nativeWasm,nativeMain:nativeWasmWasi,nativeMain:common,nativeWasmWasi:nativeWasm,nativeWasm:common,nativeWasm:commonNonJvm,commonNonJvm:common",
             "-Xmanifest-native-targets=${platformManager.targetValues.joinToString(separator = ",") { it.visibleName }}",
+
+            // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
+            // But this produces a warning
+            // "The argument ... is redundant for the current language version ..."
+            // in the bootstrap test and fails because of -Werror.
+            // To work around it, we suppress the warning.
+            "-Xwarning-level=REDUNDANT_CLI_ARG:disabled",
     ))
 
     val common by sourceSets.creating {
