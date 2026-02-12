@@ -142,5 +142,11 @@ private external fun nativeReplaceFirst(source: JsString, oldValue: JsString, ne
 private external fun nativeReplaceFirstIgnore(source: JsString, oldValue: JsString, newValue: JsString): String
 
 @OptIn(ExperimentalWasmJsInterop::class)
-@JsFun("(str) => [...str].reverse().join('')")
+//@JsFun("Function.prototype.call.bind(function(str) { return [...str].reverse().join(''); })")
+@JsFun("""
+    (() => {
+        String.prototype.reverse = function() { return [...this].reverse().join(''); };
+        return Function.prototype.call.bind(String.prototype.reverse);
+    })()
+""")
 internal external fun reverseJsString(source: JsString): JsString
