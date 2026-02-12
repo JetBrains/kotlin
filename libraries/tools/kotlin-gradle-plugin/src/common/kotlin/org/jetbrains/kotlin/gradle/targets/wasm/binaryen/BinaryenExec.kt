@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
-import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
 import javax.inject.Inject
 
@@ -54,20 +53,20 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         }
     )
 
-    @Deprecated("Use inputFiles instead", replaceWith = ReplaceWith("inputFiles"))
+    @Deprecated("Use inputFiles instead. Scheduled for removal in Kotlin 2.5.", replaceWith = ReplaceWith("inputFiles"))
     @get:Internal
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
 
-    @Deprecated("BinaryenExec can now work with multiple files, so outputFileName is not used anymore")
+    @Deprecated("BinaryenExec can now work with multiple files, so outputFileName is not used anymore.  Scheduled for removal in Kotlin 2.5.")
     @get:Input
     @get:Optional
     abstract val outputFileName: Property<String>
 
     @Suppress("DEPRECATION")
-    @Deprecated("Use outputDirectory instead", replaceWith = ReplaceWith("outputDirectory"))
+    @Deprecated("Use outputDirectory instead. Scheduled for removal in Kotlin 2.5.", replaceWith = ReplaceWith("outputDirectory"))
     @Internal
     val outputFileProperty: Provider<RegularFile> = outputDirectory.zip(outputFileName) { dir: Directory, fileName: String ->
         dir.file(fileName)
