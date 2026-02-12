@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.TargetBackendTestSkipper
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
@@ -28,7 +29,7 @@ import org.junit.jupiter.api.Tag
 open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest() {
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         super.configure(builder)
-        useMetaTestConfigurators(::TargetBackendTestSkipper)
+        useMetaTestConfigurators(::TargetBackendTestSkipper, ::UnsupportedFeaturesTestConfigurator)
         globalDefaults {
             frontend = if (customNativeCompilerSettings.defaultLanguageVersion.usesK2) FrontendKinds.FIR else FrontendKinds.ClassicFrontend
             targetPlatform = NativePlatforms.unspecifiedNativePlatform

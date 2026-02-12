@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
@@ -45,6 +46,7 @@ open class AbstractCustomJsCompilerFirstStageTest(val testDataRoot: String = "co
             +WITH_STDLIB
         }
 
+        useMetaTestConfigurators(::UnsupportedFeaturesTestConfigurator)
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::JsFirstStageEnvironmentConfigurator,

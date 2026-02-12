@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -43,6 +44,7 @@ open class AbstractCustomWasmJsCompilerFirstStageTest(val testDataRoot: String =
             dependencyKind = DependencyKind.Binary
         }
 
+        useMetaTestConfigurators(::UnsupportedFeaturesTestConfigurator)
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::WasmFirstStageEnvironmentConfigurator.bind(WasmTarget.JS),
