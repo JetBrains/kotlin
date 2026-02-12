@@ -637,6 +637,16 @@ tasks.register<JavaExec>("koverCustomHtmlReport") {
 
     val koverReportFiles = koverReportsDir.map { it.asFileTree.matching { include("*.ic") } }
 
+    onlyIf {
+        val reportFiles = koverReportFiles.get().files
+        if (reportFiles.isEmpty()) {
+            logger.lifecycle("Skipping koverCustomHtmlReport: no Kover .ic reports found in ${koverReportsDir.get().asFile.absolutePath}")
+            false
+        } else {
+            true
+        }
+    }
+
     classpath(koverCli)
     mainClass = "kotlinx.kover.cli.MainKt"
 
@@ -647,9 +657,6 @@ tasks.register<JavaExec>("koverCustomHtmlReport") {
 
     argumentProviders.add(CommandLineArgumentProvider {
         val reportFiles = koverReportFiles.get().files.sortedBy { it.name }
-        check(reportFiles.isNotEmpty()) {
-            "No Kover .ic reports found in ${koverReportsDir.get().asFile.absolutePath}"
-        }
 
         val classSubDirs = classesDirs.flatMap { dir ->
             dir.get().asFile.listFiles()
