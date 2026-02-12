@@ -437,7 +437,8 @@ Modes:
 * strict (experimental; treat like other supported nullability annotations)
 * warn (report a warning)""".asReleaseDependent()
         argumentType = StringArrayType.defaultNull
-        argumentTypeDescription = "{ignore/strict/warn}|under-migration:{ignore/strict/warn}|@<fq.name>:{ignore/strict/warn}".asReleaseDependent()
+        argumentTypeDescription =
+            "{ignore/strict/warn}|under-migration:{ignore/strict/warn}|@<fq.name>:{ignore/strict/warn}".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_50,
@@ -719,10 +720,25 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         name = "Xprofile"
         compilerName = "profileCompilerCommand"
         description =
-            """Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
-`profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.
-If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.
-Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>""".asReleaseDependent()
+            ReleaseDependent(
+                """
+            Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
+            `profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.
+            If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath. 
+            Individual parameter values are separated by the system path separator.
+            Example (Unix/Linux): -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>
+            Example (Windows): -Xprofile=<PATH_TO_ASYNC_PROFILER>\async-profiler\build\libasyncProfiler.so;event=cpu,interval=1ms,threads,start;<SNAPSHOT_DIR_PATH>
+            """.trimIndent(),
+                valueInVersions = mapOf(
+                    KotlinReleaseVersion.v1_0_0..KotlinReleaseVersion.v2_3_20 to
+                            """
+                    Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
+                    `profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.
+                    If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.
+                    Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>
+                    """.trimIndent()
+                )
+            )
         argumentType = StringType.defaultNull
         argumentTypeDescription = "<profilerPath:command:outputDir>".asReleaseDependent()
 

@@ -61,7 +61,7 @@ class ProfilingCompilerPerformanceManager(
 
     companion object {
         fun create(profileCompilerArgument: String, detailedPerf: Boolean): ProfilingCompilerPerformanceManager {
-            val (path, command, outputDir) = profileCompilerArgument.split(":", limit = 3)
+            val (path, command, outputDir) = profileCompilerArgument.split(File.pathSeparator, limit = 3)
             return ProfilingCompilerPerformanceManager(path, command, File(outputDir)).apply {
                 this.detailedPerf = detailedPerf
             }
