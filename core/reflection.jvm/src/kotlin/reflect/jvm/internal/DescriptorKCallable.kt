@@ -112,7 +112,12 @@ internal abstract class DescriptorKCallable<out R>(
 
     private val _typeParameters = ReflectProperties.lazySoft {
         descriptor.typeParameters.map { descriptor ->
-            KTypeParameterImpl(this, descriptor, overriddenStorage.typeSubstitutor)
+            KTypeParameterImpl(this, descriptor)
+        }.onEach { typeParameter ->
+            typeParameter.upperBounds = typeParameter.upperBounds.map {
+                overriddenStorage.typeSubstitutor.substitute(it).type
+                    ?: starProjectionInTopLevelTypeIsNotPossible(containerForDebug = container)
+            }
         }
     }
 
