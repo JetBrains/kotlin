@@ -154,6 +154,75 @@ class MainKtsIT {
     }
 
     @Test
+    fun testCacheIfContentOfImportedFilesChanges() {
+        val script = File("$TEST_DATA_ROOT/import-and-cache-called.main.kts").absolutePath
+        val importedDirectlyScript = File("$TEST_DATA_ROOT/import-and-cache-imported-directly.main.kts")
+        val importedTransitivelyScript = File("$TEST_DATA_ROOT/import-and-cache-imported-transitively.main.kts")
+        val cache = createTempDirectory("main.kts.test")
+        var importedDirectlyBackup: String? = null
+        var importedTransitivelyBackup: String? = null
+
+        try {
+            // Run for the first time - populate the cache.
+            runWithKotlinRunner(
+                script,
+                listOf(
+                    "From module imported transitively: 1",
+                    "From module imported directly: 1",
+                    "From called module: 1",
+                ),
+                cacheDir = cache)
+
+            // Modify file imported transitively.
+            importedTransitivelyScript.apply {
+                importedTransitivelyBackup = readText()
+                writeText("println(\"From module imported transitively: 2\")")
+            }
+
+            // Run the script again.
+            runWithKotlinRunner(
+                script,
+                listOf(
+                    // TODO: this test displays current undesired behavior.
+                    //  The below value should be 2. It's 1 because changes in imported files don't cause recompilation taking into account
+                    //  the changes, and a stale compiled JAR is used.
+                    //  See https://youtrack.jetbrains.com/issue/KT-42101
+                    "From module imported transitively: 1",
+                    "From module imported directly: 1",
+                    "From called module: 1",
+                ),
+                cacheDir = cache)
+
+            // Modify file imported directly.
+            importedDirectlyScript.apply {
+                importedDirectlyBackup = readText()
+                writeText("""
+                    @file:Import("import-and-cache-imported-transitively.main.kts")
+                    println("From module imported directly: 2")
+                """.trimIndent())
+            }
+
+            // Run the script again.
+            runWithKotlinRunner(
+                script,
+                listOf(
+                    // TODO: this test displays current undesired behavior.
+                    //  The two below values should be 2. It's 1 because changes in imported files don't cause recompilation taking into
+                    //  account the changes, and a stale compiled JAR is used.
+                    //  See https://youtrack.jetbrains.com/issue/KT-42101
+                    "From module imported transitively: 1",
+                    "From module imported directly: 1",
+                    "From called module: 1",
+                ),
+                cacheDir = cache)
+        } finally {
+            importedTransitivelyBackup?.let { importedTransitivelyScript.writeText(it) }
+            importedDirectlyBackup?.let { importedDirectlyScript.writeText(it) }
+            cache.toFile().deleteRecursively()
+        }
+    }
+
+    @Test
     fun testHelloSerialization() {
         val paths = PathUtil.kotlinPathsForDistDirectory
         val serializationPlugin = paths.jar(KotlinPaths.Jar.SerializationPlugin)
