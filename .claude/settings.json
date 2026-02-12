@@ -19,7 +19,11 @@
       "mcp__jetbrains__rename_refactoring",
       "mcp__jetbrains__replace_text_in_file",
       "mcp__jetbrains__search_in_files_by_regex",
-      "mcp__jetbrains__search_in_files_by_text"
+      "mcp__jetbrains__search_in_files_by_text",
+      "mcp__jetbrains__search_symbol",
+      "mcp__jetbrains__read_file",
+      "mcp__jetbrains__search_text",
+      "mcp__jetbrains__search_file"
     ]
   }
 }
