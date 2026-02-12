@@ -117,7 +117,7 @@ class CompilerConfiguration {
     override fun toString(): String {
         return buildString {
             for ((key, value) in map) {
-                append(key).append("=")
+                append(key).append(":")
                 when (value) {
                     is Collection<*> -> {
                         appendLine()
@@ -131,7 +131,7 @@ class CompilerConfiguration {
                             append("  ").append(k).append("=").appendLine(v)
                         }
                     }
-                    else -> append("  ").appendLine(value)
+                    else -> append(" ").appendLine(value)
                 }
             }
         }.trim()
