@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +ExplicitBackingFields
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ExplicitBackingFields +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -19,7 +19,7 @@ object O {
 
 actual fun calculateFlag() = true
 
-fun bar() = O.f
+fun bar(): String = <!RETURN_TYPE_MISMATCH!>O.f<!>
 
 /* GENERATED_FIR_TAGS: actual, equalityExpression, expect, explicitBackingField, functionDeclaration, localProperty,
 objectDeclaration, propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

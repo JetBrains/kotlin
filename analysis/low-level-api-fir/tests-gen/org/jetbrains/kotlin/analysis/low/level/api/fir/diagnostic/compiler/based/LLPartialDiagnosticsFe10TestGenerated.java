@@ -315,6 +315,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     }
 
     @Test
+    @TestMetadata("commonObjectWithBackingField.kt")
+    public void testCommonObjectWithBackingField() {
+      runTest("compiler/testData/diagnostics/tests/commonObjectWithBackingField.kt");
+    }
+
+    @Test
     @TestMetadata("companionObjectInEnumAccess.kt")
     public void testCompanionObjectInEnumAccess() {
       runTest("compiler/testData/diagnostics/tests/companionObjectInEnumAccess.kt");
@@ -30365,12 +30371,6 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("collections.kt")
       public void testCollections() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/collections.kt");
-      }
-
-      @Test
-      @TestMetadata("commonObjectWithBackingField.kt")
-      public void testCommonObjectWithBackingField() {
-        runTest("compiler/testData/diagnostics/tests/multiplatform/commonObjectWithBackingField.kt");
       }
 
       @Test

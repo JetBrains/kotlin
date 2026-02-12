@@ -48149,57 +48149,15 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
-      @TestMetadata("backingFieldVisibility.kt")
-      public void testBackingFieldVisibility() {
-        runTest("compiler/testData/codegen/box/properties/backingField/backingFieldVisibility.kt");
-      }
-
-      @Test
       @TestMetadata("backingFieldWithSmartTypeParameters.kt")
       public void testBackingFieldWithSmartTypeParameters() {
         runTest("compiler/testData/codegen/box/properties/backingField/backingFieldWithSmartTypeParameters.kt");
       }
 
       @Test
-      @TestMetadata("charSequenceWithBackingField1.kt")
-      public void testCharSequenceWithBackingField1() {
-        runTest("compiler/testData/codegen/box/properties/backingField/charSequenceWithBackingField1.kt");
-      }
-
-      @Test
-      @TestMetadata("charSequenceWithBackingField2.kt")
-      public void testCharSequenceWithBackingField2() {
-        runTest("compiler/testData/codegen/box/properties/backingField/charSequenceWithBackingField2.kt");
-      }
-
-      @Test
-      @TestMetadata("charSequenceWithBackingField3.kt")
-      public void testCharSequenceWithBackingField3() {
-        runTest("compiler/testData/codegen/box/properties/backingField/charSequenceWithBackingField3.kt");
-      }
-
-      @Test
-      @TestMetadata("charSequenceWithBackingField4.kt")
-      public void testCharSequenceWithBackingField4() {
-        runTest("compiler/testData/codegen/box/properties/backingField/charSequenceWithBackingField4.kt");
-      }
-
-      @Test
-      @TestMetadata("charSequenceWithBackingField5.kt")
-      public void testCharSequenceWithBackingField5() {
-        runTest("compiler/testData/codegen/box/properties/backingField/charSequenceWithBackingField5.kt");
-      }
-
-      @Test
       @TestMetadata("equalsHashCodeWithValueClassExplicitBackingFieldAndSupertype.kt")
       public void testEqualsHashCodeWithValueClassExplicitBackingFieldAndSupertype() {
         runTest("compiler/testData/codegen/box/properties/backingField/equalsHashCodeWithValueClassExplicitBackingFieldAndSupertype.kt");
-      }
-
-      @Test
-      @TestMetadata("explicitBackingFieldInAnonymous.kt")
-      public void testExplicitBackingFieldInAnonymous() {
-        runTest("compiler/testData/codegen/box/properties/backingField/explicitBackingFieldInAnonymous.kt");
       }
 
       @Test
@@ -48221,24 +48179,6 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
-      @TestMetadata("getterReturnTypeWithBackingField.kt")
-      public void testGetterReturnTypeWithBackingField() {
-        runTest("compiler/testData/codegen/box/properties/backingField/getterReturnTypeWithBackingField.kt");
-      }
-
-      @Test
-      @TestMetadata("independentBackingFieldType.kt")
-      public void testIndependentBackingFieldType() {
-        runTest("compiler/testData/codegen/box/properties/backingField/independentBackingFieldType.kt");
-      }
-
-      @Test
-      @TestMetadata("lateinitBackingFields.kt")
-      public void testLateinitBackingFields() {
-        runTest("compiler/testData/codegen/box/properties/backingField/lateinitBackingFields.kt");
-      }
-
-      @Test
       @TestMetadata("multipleInterfacesExplicitBackingField.kt")
       public void testMultipleInterfacesExplicitBackingField() {
         runTest("compiler/testData/codegen/box/properties/backingField/multipleInterfacesExplicitBackingField.kt");
@@ -48254,12 +48194,6 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("nullableSupertypeWithValueClassExplicitBackingField.kt")
       public void testNullableSupertypeWithValueClassExplicitBackingField() {
         runTest("compiler/testData/codegen/box/properties/backingField/nullableSupertypeWithValueClassExplicitBackingField.kt");
-      }
-
-      @Test
-      @TestMetadata("overriddenPropertiesWithExplicitBackingFields.kt")
-      public void testOverriddenPropertiesWithExplicitBackingFields() {
-        runTest("compiler/testData/codegen/box/properties/backingField/overriddenPropertiesWithExplicitBackingFields.kt");
       }
 
       @Test
