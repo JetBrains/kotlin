@@ -1,3 +1,6 @@
+// ISSUE: KT-83308, fixed in 2.4.0-Beta1
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.3
+
 fun interface SomeFun {
     override fun toString(): String
 }
