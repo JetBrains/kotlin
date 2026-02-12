@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS
@@ -192,3 +193,22 @@ private val LANGUAGE_VERSION_TO_ABI_COMPATIBILITY_LEVEL =
             }
         }
     }
+
+fun CompilerConfiguration.checkForUnexpectedKlibLibraries(
+    librariesToCheck: List<String>,
+    librariesToCheckArgument: String,
+    allLibraries: List<String>,
+    allLibrariesArgument: String,
+) {
+    if (librariesToCheck.isEmpty()) return
+
+    val unexpectedLibraries = librariesToCheck subtract allLibraries.toSet()
+    if (unexpectedLibraries.isNotEmpty()) {
+        messageCollector.report(
+            WARNING,
+            "There are libraries in $librariesToCheckArgument CLI argument " +
+                    "that are not included in $allLibrariesArgument CLI argument: " +
+                    unexpectedLibraries.joinToString()
+        )
+    }
+}

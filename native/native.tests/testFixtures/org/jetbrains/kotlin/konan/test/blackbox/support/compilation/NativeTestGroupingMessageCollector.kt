@@ -68,6 +68,7 @@ internal class NativeTestGroupingMessageCollector(
             isPreReleaseBinariesWarning(message)
                     || isUnsafeCompilerArgumentsWarning(message)
                     || isLibraryIncludedMoreThanOnceWarning(message)
+                    || isUnknownFriendLibrariesWarning(message)
                     || isK2Experimental(message)
                     || isPartialLinkageWarning(message)
                     || isKlibLoader(message)
@@ -113,6 +114,9 @@ internal class NativeTestGroupingMessageCollector(
         return libraryPath == pathOfCachedLibraryWithTests
     }
 
+    private fun isUnknownFriendLibrariesWarning(message: String): Boolean =
+        message.startsWith(UNKNOWN_FRIEND_LIBRARIES_WARNING_PREFIX)
+
     private fun isK2Experimental(message: String): Boolean = message.startsWith(K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX)
 
     private fun isKlibLoader(message: String): Boolean = message.startsWith(KLIB_LOADER_WARNING_PREFIX)
@@ -131,6 +135,7 @@ internal class NativeTestGroupingMessageCollector(
         private const val PRE_RELEASE_WARNING_PREFIX = "Following manually enabled features will force generation of pre-release binaries: "
         private const val UNSAFE_COMPILER_ARGS_WARNING_PREFIX = "ATTENTION!\nThis build uses unsafe internal compiler arguments:\n\n"
         private const val LIBRARY_INCLUDED_MORE_THAN_ONCE_WARNING_PREFIX = "library included more than once: "
+        private const val UNKNOWN_FRIEND_LIBRARIES_WARNING_PREFIX = "There are libraries in -friend-modules CLI argument that are not included in -library CLI argument:"
         private const val K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX = "Language version 2.0 is experimental"
         private const val KLIB_LOADER_WARNING_PREFIX = "KLIB loader: "
         private const val CONTEXT_RECEIVERS_WARNING_PREFIX = "Experimental context receivers are superseded by context parameters"

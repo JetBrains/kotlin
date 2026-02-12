@@ -136,11 +136,13 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         // Existing friend that is also passed via `-library`.
         moduleB.compileToKlibsViaCli(extraCliArgs = listOf("-library", moduleAKlibPath, "-friend-modules", moduleAKlibPath)) { _, successKlib ->
             successKlib.assertNoKlibLoaderIssues()
+            successKlib.assertNoFriendIssues()
         }
 
         // Existing friend that is not passed via `-library`.
         moduleB.compileToKlibsViaCli(extraCliArgs = listOf("-friend-modules", moduleAKlibPath)) { _, successKlib ->
             successKlib.assertNoKlibLoaderIssues()
+            successKlib.assertUnexpectedFriends(moduleAKlibPath)
         }
 
         val nonExistentKlibPath = "non-existent-klib.klib"
@@ -148,11 +150,13 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         // Non-existing friend that is also passed via `-library`.
         moduleB.compileToKlibsViaCli(extraCliArgs = listOf("-library", nonExistentKlibPath, "-friend-modules", nonExistentKlibPath)) { _, successKlib ->
             successKlib.assertLibraryNotFound(nonExistentKlibPath)
+            successKlib.assertNoFriendIssues()
         }
 
         // Non-existing friend that is not passed via `-library`.
         moduleB.compileToKlibsViaCli(extraCliArgs = listOf("-friend-modules", nonExistentKlibPath)) { _, successKlib ->
             successKlib.assertNoKlibLoaderIssues()
+            successKlib.assertUnexpectedFriends(nonExistentKlibPath)
         }
     }
 
@@ -331,5 +335,28 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
 
         assertEquals(1, toolOutput.size)
         assertTrue("KLIB loader: Library not found: $libraryPath" in toolOutput[0])
+    }
+
+    private fun TestCompilationResult.Success<out KLIB>.assertNoFriendIssues() {
+        val compilationToolCall = loggedData as LoggedData.CompilationToolCall
+        assertEquals(ExitCode.OK, compilationToolCall.exitCode)
+
+        val toolOutput = compilationToolCall.toolOutput.lineSequence()
+            .filter { "-friend-modules" in it && " -libraries" in it }
+            .toList()
+
+        assertEquals(0, toolOutput.size)
+    }
+
+    private fun TestCompilationResult.Success<out KLIB>.assertUnexpectedFriends(friendPath: String) {
+        val compilationToolCall = loggedData as LoggedData.CompilationToolCall
+        assertEquals(ExitCode.OK, compilationToolCall.exitCode)
+
+        val toolOutput = compilationToolCall.toolOutput.lineSequence()
+            .filter { " -friend-modules" in it && " -library" in it }
+            .toList()
+
+        assertEquals(1, toolOutput.size)
+        assertTrue(": $friendPath" in toolOutput[0])
     }
 }

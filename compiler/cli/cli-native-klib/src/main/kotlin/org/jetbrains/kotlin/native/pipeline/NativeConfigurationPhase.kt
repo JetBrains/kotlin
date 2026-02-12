@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.native.pipeline
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
-import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.checkForUnexpectedKlibLibraries
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
@@ -74,6 +75,17 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         } ?: NativePlatforms.unspecifiedNativePlatform
 
         configuration.konanLibraries = arguments.libraries?.toList().orEmpty()
+        arguments.friendModules?.let {
+            configuration.konanFriendLibraries = it.split(File.pathSeparator).filterNot(String::isEmpty)
+
+            configuration.checkForUnexpectedKlibLibraries(
+                librariesToCheck = configuration.konanFriendLibraries,
+                librariesToCheckArgument = K2NativeCompilerArguments::friendModules.cliArgument,
+                allLibraries = configuration.konanLibraries,
+                allLibrariesArgument = K2NativeCompilerArguments::libraries.cliArgument
+            )
+        }
+
         configuration.konanNoStdlib = arguments.nostdlib
         configuration.konanNoDefaultLibs = arguments.nodefaultlibs
 
@@ -82,9 +94,6 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         configuration.konanDontCompressKlib = arguments.nopack
 
         arguments.outputName?.let { configuration.konanOutputPath = it }
-        arguments.friendModules?.let {
-            configuration.konanFriendLibraries = it.split(File.pathSeparator).filterNot(String::isEmpty)
-        }
         arguments.refinesPaths?.let {
             configuration.konanRefinesModules = it.filterNot(String::isEmpty)
         }
