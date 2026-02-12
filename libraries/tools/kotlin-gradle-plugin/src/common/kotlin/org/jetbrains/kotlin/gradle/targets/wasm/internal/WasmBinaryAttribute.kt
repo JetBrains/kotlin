@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 
 internal object WasmBinaryAttribute {
     val attribute: Attribute<String> = Attribute.of("org.jetbrains.kotlin.wasm.binary", String::class.java)
+    val compilationNameAttribute: Attribute<String> = Attribute.of("org.jetbrains.kotlin.wasm.compilation.name", String::class.java)
 
-    const val KLIB = "klib"
+    const val KLIB_ARTIFACT = "klib"
+    const val KLIB_ATTRIBUTE_VALUE = "<$KLIB_ARTIFACT>"
 
     const val WASM_BINARY_DEVELOPMENT = "wasm-binary-development"
     const val WASM_BINARY_PRODUCTION = "wasm-binary-production"
@@ -22,10 +24,15 @@ internal object WasmBinaryAttribute {
             artifactType.attributes.attribute(attribute, WASM_BINARY_DEVELOPMENT)
         }
 
-        project.dependencies.artifactTypes.maybeCreate(KLIB).also { artifactType ->
+        project.dependencies.artifactTypes.maybeCreate(KLIB_ARTIFACT).also { artifactType ->
             artifactType.attributes.attribute(
                 attribute,
-                KLIB
+                KLIB_ATTRIBUTE_VALUE
+            )
+
+            artifactType.attributes.attribute(
+                compilationNameAttribute,
+                KLIB_ATTRIBUTE_VALUE
             )
         }
     }

@@ -50,6 +50,7 @@ internal val WasmBinaryPreparationSetupAction = KotlinTargetSideEffect { target 
                 KotlinUsages.configureProducerRuntimeUsage(this, target)
                 attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                 attributes.attribute(WasmBinaryAttribute.attribute, attributeValue)
+                attributes.attribute(WasmBinaryAttribute.compilationNameAttribute, compilation.name)
 
                 usesPlatformOf(target)
             }
@@ -63,6 +64,7 @@ internal val WasmBinaryPreparationSetupAction = KotlinTargetSideEffect { target 
                     KotlinUsages.configureProducerRuntimeUsage(this, target)
                     attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                     attributes.attribute(WasmBinaryAttribute.attribute, attributeValue)
+//                    attributes.attribute(WasmBinaryAttribute.compilationNameAttribute, compilation.name)
                     usesPlatformOf(target)
 
                     project.artifacts.add(

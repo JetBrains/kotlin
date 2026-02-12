@@ -6,25 +6,15 @@
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.InvalidUserDataException
-import org.gradle.api.artifacts.component.ModuleComponentIdentifier
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
-import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.NoOpWasmBinaryTransform
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
-import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryTransform
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.supportsPerKlibCompilation
-import org.jetbrains.kotlin.gradle.utils.kotlinSessionsDir
 
 @OptIn(ExperimentalWasmDsl::class)
 internal open class KotlinJsIrLinkConfig(
@@ -66,89 +56,6 @@ internal open class KotlinJsIrLinkConfig(
             task.compilerOptions.moduleName.set(compilation.outputModuleName)
 
             task._outputFileProperty.convention(binary.mainFile.map { it.asFile })
-
-            if (wasmPerModule) {
-                WasmBinaryAttribute.setupTransform(task.project)
-
-                // sometimes there are jar files in classpath, not KLIB
-                // we need to provide no-op transform for "jar" -> "klib"
-                task.project.dependencies.registerTransform(
-                    NoOpWasmBinaryTransform::class.java
-                ) { transform ->
-                    transform.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT)
-                    transform.to.attributes.attribute(
-                        WasmBinaryAttribute.attribute,
-                        WasmBinaryAttribute.KLIB
-                    )
-                }
-
-                task.project.dependencies.registerTransform(
-                    WasmBinaryTransform::class.java,
-                ) { transform ->
-                    transform.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.KLIB)
-                    transform.to.attributes.attribute(
-                        WasmBinaryAttribute.attribute,
-                        WasmBinaryAttribute.modeToAttribute(binary.mode)
-                    )
-
-                    transform.parameters { parameters ->
-                        parameters.currentJvmJdkToolsJar.set(
-                            task.defaultKotlinJavaToolchain
-                                .flatMap { it.currentJvmJdkToolsJar }
-                        )
-                        parameters.defaultCompilerClasspath.setFrom(task.defaultCompilerClasspath)
-                        parameters.kotlinPluginVersion.set(
-                            getKotlinPluginVersion(task.logger)
-                        )
-                        parameters.pathProvider.set(
-                            task.path
-                        )
-                        parameters.projectRootFile.set(
-                            project.projectDir
-                        )
-                        val projectName = project.name
-                        parameters.projectName.set(projectName)
-                        parameters.projectSessionsDir.set(project.kotlinSessionsDir)
-
-                        parameters.buildDir.set(project.layout.buildDirectory.asFile)
-
-                        parameters.libraryFilterCacheService.set(task.libraryFilterCacheService)
-
-                        val compilerOptions = task.compilerOptions
-                        parameters.compilerOptions.set(
-                            project.provider {
-                                val args = K2JSCompilerArguments()
-                                KotlinCommonCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
-                                args
-                            }
-                        )
-                        parameters.enhancedFreeCompilerArgs.set(task.enhancedFreeCompilerArgs)
-                        parameters.classpath.from(
-                            compilation.configurations.runtimeDependencyConfiguration
-                                ?.incoming
-                                ?.artifactView {
-                                    it.componentFilter { id ->
-                                        id is ModuleComponentIdentifier
-                                    }
-                                }
-                                ?.files ?: error("JS or Wasm compilation should contain runtime configuration")
-                        )
-                        propertiesProvider.kotlinDaemonJvmArgs?.let { kotlinDaemonJvmArgs ->
-                            parameters.kotlinDaemonJvmArguments.set(providers.provider {
-                                splitKotlinDaemonArgs(kotlinDaemonJvmArgs)
-                            })
-                        }
-                        parameters.compilerExecutionStrategy.convention(propertiesProvider.kotlinCompilerExecutionStrategy)
-                            .finalizeValueOnRead()
-                        parameters.useDaemonFallbackStrategy.convention(propertiesProvider.kotlinDaemonUseFallbackStrategy)
-                            .finalizeValueOnRead()
-
-                        BinaryenPlugin.apply(project)
-                        parameters.binaryenExec.set(project.extensions.findByType(BinaryenEnvSpec::class.java).executable)
-                        parameters.mode.set(binary.mode)
-                    }
-                }
-            }
         }
     }
 
