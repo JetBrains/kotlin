@@ -6,8 +6,8 @@ FILE: replPropertyDelegated.repl.kts
 
         public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final? object Provider : R|kotlin/Any| {
-            private constructor(): R|ReplPropertyDelegated_repl.Provider| {
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplPropertyDelegated_repl, ReplSnippetTopLevelDeclaration=true] object Provider : R|kotlin/Any| {
+            private [ContainingClassKey=Provider] constructor(): R|ReplPropertyDelegated_repl.Provider| {
                 LAZY_super<R|kotlin/Any|>
             }
 
@@ -15,10 +15,10 @@ FILE: replPropertyDelegated.repl.kts
 
         }
 
-        public? final? val foo: <implicit>by REPL_EXPRESSION_REF
-            public? get(): <implicit> { LAZY_BLOCK }
+        public? final? [ReplSnippetTopLevelDeclaration=true] val foo: <implicit>by REPL_EXPRESSION_REF
+            public? [ContainingClassKey=ReplPropertyDelegated_repl] get(): <implicit> { LAZY_BLOCK }
 
-        public? final? val bar: <implicit>by REPL_EXPRESSION_REF
-            public? get(): <implicit> { LAZY_BLOCK }
+        public? final? [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+            public? [ContainingClassKey=ReplPropertyDelegated_repl] get(): <implicit> { LAZY_BLOCK }
 
     }

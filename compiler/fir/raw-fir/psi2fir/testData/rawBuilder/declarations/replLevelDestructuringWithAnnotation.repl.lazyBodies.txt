@@ -6,16 +6,16 @@ FILE: replLevelDestructuringWithAnnotation.repl.kts
 
         public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @LeftAnno(LAZY_EXPRESSION) public final val a: <implicit> = REPL_EXPRESSION_REF
+        @LeftAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val a: <implicit> = REPL_EXPRESSION_REF
             public get(): <implicit>
 
-        @RightAnno(LAZY_EXPRESSION) public final val b: <implicit> = REPL_EXPRESSION_REF
+        @RightAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val b: <implicit> = REPL_EXPRESSION_REF
             public get(): <implicit>
 
-        @SecondLeftAnno(LAZY_EXPRESSION) public final val c: <implicit> = REPL_EXPRESSION_REF
+        @SecondLeftAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val c: <implicit> = REPL_EXPRESSION_REF
             public get(): <implicit>
 
-        @SecondRightAnno(LAZY_EXPRESSION) public final val d: <implicit> = REPL_EXPRESSION_REF
+        @SecondRightAnno(LAZY_EXPRESSION) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ReplSnippetTopLevelDeclaration=true] val d: <implicit> = REPL_EXPRESSION_REF
             public get(): <implicit>
 
     }

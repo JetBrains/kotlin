@@ -6,29 +6,29 @@ FILE: replSealedClass.repl.kts
 
         public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public sealed class Base : R|kotlin/Any| {
-            protected constructor(): R|ReplSealedClass_repl.Base| {
+        public sealed [ContainingReplKey=FirReplSnippetSymbol ReplSealedClass_repl, ReplSnippetTopLevelDeclaration=true] class Base : R|kotlin/Any| {
+            protected [ContainingClassKey=Base] constructor(): R|ReplSealedClass_repl.Base| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? class Foo : Base {
-            public? constructor(): R|ReplSealedClass_repl.Foo| {
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplSealedClass_repl, ReplSnippetTopLevelDeclaration=true] class Foo : Base {
+            public? [ContainingClassKey=Foo] constructor(): R|ReplSealedClass_repl.Foo| {
                 LAZY_super<Base>
             }
 
         }
 
-        public final? object Bar : Base {
-            private constructor(): R|ReplSealedClass_repl.Bar| {
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplSealedClass_repl, ReplSnippetTopLevelDeclaration=true] object Bar : Base {
+            private [ContainingClassKey=Bar] constructor(): R|ReplSealedClass_repl.Bar| {
                 LAZY_super<Base>
             }
 
         }
 
-        public abstract class Baz : Base {
-            public? constructor(): R|ReplSealedClass_repl.Baz| {
+        public abstract [ContainingReplKey=FirReplSnippetSymbol ReplSealedClass_repl, ReplSnippetTopLevelDeclaration=true] class Baz : Base {
+            public? [ContainingClassKey=Baz] constructor(): R|ReplSealedClass_repl.Baz| {
                 LAZY_super<Base>
             }
 

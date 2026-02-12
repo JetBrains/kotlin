@@ -6,16 +6,16 @@ FILE: replSmartcastImplDelegate.repl.kts
 
         public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final? interface MyInterface : R|kotlin/Any| {
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplSmartcastImplDelegate_repl, ReplSnippetTopLevelDeclaration=true] interface MyInterface : R|kotlin/Any| {
             public? final? fun foo(): R|kotlin/Unit|
 
         }
 
-        public? final? val localProperty: Any = REPL_EXPRESSION_REF
-            public? get(): Any
+        public? final? [ReplSnippetTopLevelDeclaration=true] val localProperty: Any = REPL_EXPRESSION_REF
+            public? [ContainingClassKey=ReplSmartcastImplDelegate_repl] get(): Any
 
-        public final? class MyClass : MyInterface {
-            public? constructor(): R|ReplSmartcastImplDelegate_repl.MyClass| {
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplSmartcastImplDelegate_repl, DelegateFieldsMapKey={0=FirFieldSymbol /ReplSmartcastImplDelegate_repl.MyClass.$$delegate_0}, ReplSnippetTopLevelDeclaration=true] class MyClass : MyInterface {
+            public? [ContainingClassKey=MyClass] constructor(): R|ReplSmartcastImplDelegate_repl.MyClass| {
                 LAZY_super<<implicit>>
             }
 

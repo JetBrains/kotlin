@@ -6,19 +6,19 @@ FILE: replSimple.repl.kts
 
         public final fun $$eval(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final? class Builder : R|kotlin/Any| {
-            public? constructor(): R|ReplSimple_repl.Builder| {
+        public final? [ContainingReplKey=FirReplSnippetSymbol ReplSimple_repl, ReplSnippetTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
+            public? [ContainingClassKey=Builder] constructor(): R|ReplSimple_repl.Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
 
             public? final? var version: String = LAZY_EXPRESSION
-                public? get(): String
-                public? set(value: String): R|kotlin/Unit|
+                public? [ContainingClassKey=Builder] get(): String
+                public? [ContainingClassKey=Builder] set(value: String): R|kotlin/Unit|
 
             public? final? fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public final? class Nested : R|kotlin/Any| {
-                public? constructor(): R|ReplSimple_repl.Builder.Nested| {
+            public final? [ContainingReplKey=FirReplSnippetSymbol ReplSimple_repl] class Nested : R|kotlin/Any| {
+                public? [ContainingClassKey=Nested] constructor(): R|ReplSimple_repl.Builder.Nested| {
                     LAZY_super<R|kotlin/Any|>
                 }
 
@@ -30,11 +30,11 @@ FILE: replSimple.repl.kts
 
         }
 
-        public? final? fun build(action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ReplSnippetTopLevelDeclaration=true] fun build(action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? fun build2(action: ( Builder.() -> Unit )): Builder { LAZY_BLOCK }
+        public? final? [ReplSnippetTopLevelDeclaration=true] fun build2(action: ( Builder.() -> Unit )): Builder { LAZY_BLOCK }
 
-        public? final? val builder: <implicit> = REPL_EXPRESSION_REF
-            public? get(): <implicit>
+        public? final? [ReplSnippetTopLevelDeclaration=true] val builder: <implicit> = REPL_EXPRESSION_REF
+            public? [ContainingClassKey=ReplSimple_repl] get(): <implicit>
 
     }
