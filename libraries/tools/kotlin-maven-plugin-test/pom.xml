@@ -83,12 +83,6 @@
             <version>4.0.29</version>
         </dependency>
 
-        <!-- TODO: KT-83110 Remove dependency to intellij platform from kotlin-maven-plugin-test -->
-        <dependency>
-            <groupId>com.jetbrains.intellij.platform</groupId>
-            <artifactId>util</artifactId>
-            <version>251.27812.49</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-settings</artifactId>
@@ -163,20 +157,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <!-- TODO: KT-83110 Remove dependency to intellij platform from kotlin-maven-plugin-test -->
-        <repository>
-            <id>intellij-repo</id>
-            <name>JetBrains IntelliJ IDEA Repo</name>
-            <url>https://www.jetbrains.com/intellij-repository/releases</url>
-        </repository>
-        <repository>
-            <id>intellij-dependencies</id>
-            <name>JetBrains IntelliJ IDEA Dependencies</name>
-            <url>https://packages.jetbrains.team/maven/p/ij/intellij-dependencies</url>
-        </repository>
-    </repositories>
 
     <profiles>
         <!--

@@ -2,12 +2,13 @@ package org.jetbrains.kotlin.maven;
 
 import kotlin.io.TextStreamsKt;
 import kotlin.text.StringsKt;
+import org.apache.commons.io.file.PathUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.kotlin.maven.plugin.test.MavenTestExecutionContext;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -33,12 +34,16 @@ class MavenProject {
 
     MavenProject(@NotNull String name) throws IOException {
         File originalProjectDir = new File("src/test/resources/" + name);
-        workingDir = FileUtil.createTempDirectory("maven-test-" + name, null);
+        workingDir = Files.createTempDirectory("maven-test-" + name).toFile();
         File[] filesToCopy = originalProjectDir.listFiles();
 
         for (File from : filesToCopy) {
             File to = new File(workingDir, from.getName());
-            FileUtil.copyFileOrDir(from, to);
+            if (from.isDirectory()) {
+                PathUtils.copyDirectory(from.toPath(), to.toPath());
+            } else {
+                PathUtils.copyFile(from.toURI().toURL(), to.toPath());
+            }
         }
 
         mavenTestExecutionContext = createMavenTestExecutionContextFromEnvironment(

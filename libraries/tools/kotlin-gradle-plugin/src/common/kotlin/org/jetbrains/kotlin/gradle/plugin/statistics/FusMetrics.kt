@@ -376,7 +376,7 @@ internal object KotlinJsIrTargetMetrics : FusMetrics {
 
 internal object MultiplatformTargetMetrics : FusMetrics {
     internal fun collectMetrics(target: KotlinTarget, project: Project) {
-        /* Report the platform to tbe build stats service */
+        /* Report the platform to the build stats service */
         val targetName = if (target is KotlinNativeTarget) target.konanTarget.name
         else target.platformType.name
         project.addConfigurationMetrics {
