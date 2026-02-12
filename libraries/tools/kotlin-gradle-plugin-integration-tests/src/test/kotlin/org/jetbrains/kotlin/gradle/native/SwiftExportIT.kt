@@ -31,7 +31,8 @@ import kotlin.test.assertNotNull
 @SwiftExportGradlePluginTests
 class SwiftExportIT : KGPBaseTest() {
 
-    // USR expectations are hardcoded. See docs/swift-export/testing-usr-stability.md.
+    // Raw USR expectations are hardcoded with demangled form for readability.
+    // See docs/swift-export/testing-usr-stability.md.
 
     private companion object {
         private const val DEFAULT_IOS_DEPLOYMENT_TARGET = "14.1"
@@ -198,8 +199,8 @@ class SwiftExportIT : KGPBaseTest() {
                 searchPaths = listOf(builtProductsDir.toFile()),
                 expectedSymbols = setOf(
                     SwiftSymbol(
-                        "s:22ExportedKotlinPackages3comO6githubO9jetbrainsO11swiftexportO6SharedE9barbarbars5Int32VyFZ",
-                        listOf("barbarbar()")
+                        demangledId = "static (extension in Shared):ExportedKotlinPackages.com.github.jetbrains.swiftexport.barbarbar() -> Swift.Int32",
+                        pathComponents = listOf("barbarbar()")
                     )
                 )
             )
@@ -406,7 +407,12 @@ class SwiftExportIT : KGPBaseTest() {
                 target = "arm64-apple-ios${sdkVersion.output.trim()}-simulator",
                 sdk = "iphonesimulator",
                 searchPaths = listOf(builtProductsDir),
-                expectedSymbols = setOf(SwiftSymbol("s:6Shared20iosSimulatorArm64BaryyF", listOf("iosSimulatorArm64Bar()")))
+                expectedSymbols = setOf(
+                    SwiftSymbol(
+                        demangledId = "Shared.iosSimulatorArm64Bar() -> ()",
+                        pathComponents = listOf("iosSimulatorArm64Bar()")
+                    )
+                )
             )
 
             // Verify Swift module API surface for x86_64 (iosX64)
@@ -416,7 +422,12 @@ class SwiftExportIT : KGPBaseTest() {
                 target = "x86_64-apple-ios${sdkVersion.output.trim()}-simulator",
                 sdk = "iphonesimulator",
                 searchPaths = listOf(builtProductsDir),
-                expectedSymbols = setOf(SwiftSymbol("s:6Shared9iosX64BaryyF", listOf("iosX64Bar()")))
+                expectedSymbols = setOf(
+                    SwiftSymbol(
+                        demangledId = "Shared.iosX64Bar() -> ()",
+                        pathComponents = listOf("iosX64Bar()")
+                    )
+                )
             )
         }
     }
@@ -530,42 +541,51 @@ class SwiftExportIT : KGPBaseTest() {
                 expectedSymbolsByModule = mapOf(
                     "Shared" to setOf(
                         SwiftSymbol(
-                            "s:6Shared3foo22ExportedKotlinPackages3orgOABO0A6DepOneE0H0CyF",
-                            listOf("foo()")
+                            demangledId = "Shared.foo() -> (extension in SharedDepOne):ExportedKotlinPackages.org.foo.One",
+                            pathComponents = listOf("foo()")
                         )
                     ),
                     "SharedDepOne" to setOf(
                         SwiftSymbol(
-                            "s:22ExportedKotlinPackages3orgO3fooO12SharedDepOneE0H0C",
-                            listOf("org.foo.One")
+                            demangledId = "(extension in SharedDepOne):ExportedKotlinPackages.org.foo.One",
+                            pathComponents = listOf("org.foo.One")
                         ),
                         SwiftSymbol(
-                            "s:22ExportedKotlinPackages3orgO3fooO12SharedDepOneE0H0CAHycfc",
-                            listOf("org.foo.One.init()")
+                            demangledId = "(extension in SharedDepOne):ExportedKotlinPackages.org.foo.One.init() -> (extension in SharedDepOne):ExportedKotlinPackages.org.foo.One",
+                            pathComponents = listOf("org.foo.One.init()")
                         )
                     ),
                     "ExportedKotlinPackages" to setOf(
-                        SwiftSymbol("s:22ExportedKotlinPackages3orgO", listOf("org")),
-                        SwiftSymbol("s:22ExportedKotlinPackages3orgO3fooO", listOf("org.foo"))
+                        SwiftSymbol(
+                            demangledId = "ExportedKotlinPackages.org",
+                            pathComponents = listOf("org")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "ExportedKotlinPackages.org.foo",
+                            pathComponents = listOf("org.foo")
+                        )
                     ),
                     // KotlinError exports the struct plus protocol-synthesized members from Swift.
                     "KotlinRuntimeSupport" to setOf(
-                        SwiftSymbol("s:20KotlinRuntimeSupport0A5ErrorV", listOf("KotlinError")),
                         SwiftSymbol(
-                            "s:20KotlinRuntimeSupport0A5ErrorV7wrappedACSo0A4BaseC_tcfc",
-                            listOf("KotlinError.init(wrapped:)")
+                            demangledId = "KotlinRuntimeSupport.KotlinError",
+                            pathComponents = listOf("KotlinError")
                         ),
                         SwiftSymbol(
-                            "s:20KotlinRuntimeSupport0A5ErrorV7wrappedSo0A4BaseCvp",
-                            listOf("KotlinError.wrapped")
+                            demangledId = "KotlinRuntimeSupport.KotlinError.init(wrapped: __C.KotlinBase) -> KotlinRuntimeSupport.KotlinError",
+                            pathComponents = listOf("KotlinError.init(wrapped:)")
                         ),
                         SwiftSymbol(
-                            "s:20KotlinRuntimeSupport0A5ErrorV11descriptionSSvp",
-                            listOf("KotlinError.description")
+                            demangledId = "KotlinRuntimeSupport.KotlinError.wrapped : __C.KotlinBase",
+                            pathComponents = listOf("KotlinError.wrapped")
                         ),
                         SwiftSymbol(
-                            "s:s5ErrorP10FoundationE20localizedDescriptionSSvp::SYNTHESIZED::s:20KotlinRuntimeSupport0A5ErrorV",
-                            listOf("KotlinError.localizedDescription")
+                            demangledId = "KotlinRuntimeSupport.KotlinError.description : Swift.String",
+                            pathComponents = listOf("KotlinError.description")
+                        ),
+                        SwiftSymbol(
+                            demangledId = "(extension in Foundation):Swift.Error.localizedDescription : Swift.String [SYNTHESIZED for KotlinRuntimeSupport.KotlinError]",
+                            pathComponents = listOf("KotlinError.localizedDescription")
                         )
                     )
                 )
@@ -674,7 +694,12 @@ class SwiftExportIT : KGPBaseTest() {
                 target = "arm64-apple-ios17.0",
                 sdk = "iphoneos",
                 searchPaths = listOf(builtProductsDir.toFile()),
-                expectedSymbols = setOf(SwiftSymbol("s:6Shared4demo5UIKit33UIContentUnavailableConfigurationVyF", listOf("demo()")))
+                expectedSymbols = setOf(
+                    SwiftSymbol(
+                        demangledId = "Shared.demo() -> UIKit.UIContentUnavailableConfiguration",
+                        pathComponents = listOf("demo()")
+                    )
+                )
             )
         }
     }
