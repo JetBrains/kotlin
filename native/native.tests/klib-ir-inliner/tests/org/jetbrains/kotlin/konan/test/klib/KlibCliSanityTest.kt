@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.buildDir
@@ -87,7 +89,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             addRegularModule("b") {
                 sourceFileAddend("fun foo() = a.a(0)") // call a real function from "a"
             }
-        }.compileToKlibsViaCli(extraCliArgs = listOf("-library", moduleAKlibRelativePath)) { _, successKlib ->
+        }.compileToKlibsViaCli(extraCliArgs = listOf(CLI_PARAM_LIBRARIES, moduleAKlibRelativePath)) { _, successKlib ->
             successKlib.assertNoKlibLoaderIssues()
         }
     }
@@ -104,15 +106,29 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             modules.modules[0].sourceFile.parentFile.resolve("non-existent-klib").absolutePath,
             modules.modules[0].sourceFile.parentFile.resolve("non-existent-klib.klib").absolutePath,
         ).forEach { libraryPath ->
-            modules.compileToKlibsViaCli(extraCliArgs = listOf("-library", libraryPath)) { _, successKlib ->
+            modules.compileToKlibsViaCli(
+                extraCliArgs = listOf(
+                    CLI_PARAM_LIBRARIES, libraryPath,
+                )
+            ) { _, successKlib ->
                 successKlib.assertLibraryNotFound(libraryPath)
             }
 
-            modules.compileToKlibsViaCli(extraCliArgs = listOf("-library", libraryPath, "-friend-modules", libraryPath)) { _, successKlib ->
+            modules.compileToKlibsViaCli(
+                extraCliArgs = listOf(
+                    CLI_PARAM_LIBRARIES, libraryPath,
+                    CLI_PARAM_FRIENDS, libraryPath,
+                )
+            ) { _, successKlib ->
                 successKlib.assertLibraryNotFound(libraryPath)
             }
 
-            modules.compileToKlibsViaCli(extraCliArgs = listOf("-library", libraryPath, "-Xinclude=$libraryPath")) { _, successKlib ->
+            modules.compileToKlibsViaCli(
+                extraCliArgs = listOf(
+                    CLI_PARAM_LIBRARIES, libraryPath,
+                    CLI_ARG_INCLUDES(libraryPath),
+                )
+            ) { _, successKlib ->
                 successKlib.assertLibraryNotFound(libraryPath)
             }
         }
@@ -134,13 +150,22 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         }
 
         // Existing friend that is also passed via `-library`.
-        moduleB.compileToKlibsViaCli(extraCliArgs = listOf("-library", moduleAKlibPath, "-friend-modules", moduleAKlibPath)) { _, successKlib ->
+        moduleB.compileToKlibsViaCli(
+            extraCliArgs = listOf(
+                CLI_PARAM_LIBRARIES, moduleAKlibPath,
+                CLI_PARAM_FRIENDS, moduleAKlibPath,
+            )
+        ) { _, successKlib ->
             successKlib.assertNoKlibLoaderIssues()
             successKlib.assertNoFriendIssues()
         }
 
         // Existing friend that is not passed via `-library`.
-        moduleB.compileToKlibsViaCli(extraCliArgs = listOf("-friend-modules", moduleAKlibPath)) { _, successKlib ->
+        moduleB.compileToKlibsViaCli(
+            extraCliArgs = listOf(
+                CLI_PARAM_FRIENDS, moduleAKlibPath,
+            )
+        ) { _, successKlib ->
             successKlib.assertNoKlibLoaderIssues()
             successKlib.assertUnexpectedFriends(moduleAKlibPath)
         }
@@ -148,13 +173,22 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         val nonExistentKlibPath = "non-existent-klib.klib"
 
         // Non-existing friend that is also passed via `-library`.
-        moduleB.compileToKlibsViaCli(extraCliArgs = listOf("-library", nonExistentKlibPath, "-friend-modules", nonExistentKlibPath)) { _, successKlib ->
+        moduleB.compileToKlibsViaCli(
+            extraCliArgs = listOf(
+                CLI_PARAM_LIBRARIES, nonExistentKlibPath,
+                CLI_PARAM_FRIENDS, nonExistentKlibPath,
+            )
+        ) { _, successKlib ->
             successKlib.assertLibraryNotFound(nonExistentKlibPath)
             successKlib.assertNoFriendIssues()
         }
 
         // Non-existing friend that is not passed via `-library`.
-        moduleB.compileToKlibsViaCli(extraCliArgs = listOf("-friend-modules", nonExistentKlibPath)) { _, successKlib ->
+        moduleB.compileToKlibsViaCli(
+            extraCliArgs = listOf(
+                CLI_PARAM_FRIENDS, nonExistentKlibPath,
+            )
+        ) { _, successKlib ->
             successKlib.assertNoKlibLoaderIssues()
             successKlib.assertUnexpectedFriends(nonExistentKlibPath)
         }
@@ -342,7 +376,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         assertEquals(ExitCode.OK, compilationToolCall.exitCode)
 
         val toolOutput = compilationToolCall.toolOutput.lineSequence()
-            .filter { "-friend-modules" in it && " -libraries" in it }
+            .filter { CLI_PARAM_FRIENDS in it && CLI_PARAM_LIBRARIES in it }
             .toList()
 
         assertEquals(0, toolOutput.size)
@@ -353,10 +387,18 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         assertEquals(ExitCode.OK, compilationToolCall.exitCode)
 
         val toolOutput = compilationToolCall.toolOutput.lineSequence()
-            .filter { " -friend-modules" in it && " -library" in it }
+            .filter { CLI_PARAM_FRIENDS in it && CLI_PARAM_LIBRARIES in it }
             .toList()
 
         assertEquals(1, toolOutput.size)
         assertTrue(": $friendPath" in toolOutput[0])
+    }
+
+    companion object {
+        private val CLI_PARAM_LIBRARIES: String = K2NativeCompilerArguments::libraries.cliArgument
+        private val CLI_PARAM_FRIENDS: String = K2NativeCompilerArguments::friendModules.cliArgument
+
+        @Suppress("TestFunctionName")
+        private fun CLI_ARG_INCLUDES(path: String): String = K2NativeCompilerArguments::includes.cliArgument(path)
     }
 }
