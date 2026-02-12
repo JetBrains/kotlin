@@ -56,6 +56,7 @@ dependencies {
     dokkaPlugin(project(":plugins:dokka-samples-transformer-plugin"))
     dokkaPlugin(project(":plugins:dokka-version-filter-plugin"))
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:$dokka_version")
+    dokkaPlugin("org.jetbrains.dokka:kotlin-playground-samples-plugin:$dokka_version")
 }
 
 fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
