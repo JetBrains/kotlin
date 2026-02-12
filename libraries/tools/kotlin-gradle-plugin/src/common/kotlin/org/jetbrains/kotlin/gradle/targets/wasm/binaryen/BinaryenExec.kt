@@ -34,7 +34,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:NormalizeLineEndings
-    @get:SkipWhenEmpty
+    @get:IgnoreEmptyDirectories
     abstract val inputFiles: ConfigurableFileCollection
 
     @Internal
