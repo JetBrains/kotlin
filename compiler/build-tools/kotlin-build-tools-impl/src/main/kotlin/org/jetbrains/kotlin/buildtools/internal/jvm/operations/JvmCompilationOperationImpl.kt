@@ -159,7 +159,7 @@ internal class JvmCompilationOperationImpl private constructor(
     }
 
     override fun executeCancellableImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
-        val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER] ?: DefaultCompilerMessageRenderer
+        val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
         val kotlinLogger = logger ?: DefaultKotlinLogger
         val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer)
 
@@ -526,7 +526,7 @@ internal class JvmCompilationOperationImpl private constructor(
 
         val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", false)
 
-        val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer?> = Option("COMPILER_MESSAGE_RENDERER", default = DefaultCompilerMessageRenderer)
+        val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> = Option("COMPILER_MESSAGE_RENDERER", default = DefaultCompilerMessageRenderer)
     }
 }
 
