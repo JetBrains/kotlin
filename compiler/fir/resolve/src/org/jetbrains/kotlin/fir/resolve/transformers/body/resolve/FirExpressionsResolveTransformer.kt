@@ -102,7 +102,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode,
     ): FirExpression = whileAnalysing(session, qualifiedAccessExpression) {
-        transformQualifiedAccessExpression(qualifiedAccessExpression, data, isUsedAsReceiver = false, isUsedAsGetClassReceiver = false)
+        transformQualifiedAccessExpression(
+            qualifiedAccessExpression, data,
+            isUsedAsReceiver = false,
+            isUsedAsGetClassReceiver = false,
+            isUsedForContextSensitiveAlternative = false,
+        )
     }
 
     private fun transformQualifiedAccessExpression(
@@ -110,6 +115,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         data: ResolutionMode,
         isUsedAsReceiver: Boolean,
         isUsedAsGetClassReceiver: Boolean,
+        isUsedForContextSensitiveAlternative: Boolean,
     ): FirExpression {
         if (qualifiedAccessExpression.hasResolvedType && qualifiedAccessExpression.calleeReference !is FirSimpleNamedReference) {
             return qualifiedAccessExpression
@@ -202,7 +208,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     },
                     data,
                 ).let { resolved ->
-                    handleContextSensitiveResolution(resolved, qualifiedAccessExpression, data)
+                    handleContextSensitiveResolution(resolved, qualifiedAccessExpression, isUsedForContextSensitiveAlternative, data)
                 }
 
                 fun FirExpression.alsoRecordLookup() = also {
@@ -232,8 +238,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     private fun handleContextSensitiveResolution(
         resolvedPropertyAccess: FirExpression, // Likely either FirPropertyAccessExpression or FirResolvedQualifier
         expressionBeforeResolution: FirQualifiedAccessExpression,
+        isForContextSensitiveAlternative: Boolean,
         mode: ResolutionMode,
     ): FirExpression {
+        if (isForContextSensitiveAlternative) return resolvedPropertyAccess
+
         runContextSensitiveResolutionIfNeeded(resolvedPropertyAccess, mode)?.let { return it }
 
         when {
@@ -292,7 +301,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
 
         val resolvedAlternative =
-            transformQualifiedAccessExpression(simpleNameAlternative, mode)
+            transformQualifiedAccessExpression(
+                simpleNameAlternative, mode,
+                isUsedAsReceiver = false,
+                isUsedAsGetClassReceiver = false,
+                isUsedForContextSensitiveAlternative = true,
+            )
 
         // the simple name has been resolved to something different from erroneous expression => we can't run CSR
         if (resolvedAlternative !is FirPropertyAccessExpression || !resolvedAlternative.shouldBeResolvedInContextSensitiveMode()) return
@@ -390,7 +404,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     ): FirExpression {
         return when (this) {
             is FirPropertyAccessExpression -> transformQualifiedAccessExpression(
-                this, resolutionMode, isUsedAsReceiver = true, isUsedAsGetClassReceiver = isUsedAsGetClassReceiver
+                this, resolutionMode,
+                isUsedAsReceiver = true,
+                isUsedAsGetClassReceiver,
+                isUsedForContextSensitiveAlternative = false,
             )
             else -> transformSingle(this@FirExpressionsResolveTransformer, resolutionMode)
         }.let {

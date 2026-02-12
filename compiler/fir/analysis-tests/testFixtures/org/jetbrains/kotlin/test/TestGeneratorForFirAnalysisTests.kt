@@ -151,6 +151,12 @@ fun main(args: Array<String>) {
             }
         }
 
+        testGroup(testRoot, "compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType") {
+            testClass<AbstractPhasedJvmDiagnosticPsiWithContextSensitiveEnabledTest> {
+                model("ideHint")
+            }
+        }
+
         testGroup(testRoot, testDataRoot = "compiler/tests-spec/testData") {
             testClass<AbstractFirPsiDiagnosticTestSpec> {
                 model(
