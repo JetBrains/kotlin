@@ -71,11 +71,13 @@ class JvmInlineCallableReferenceToLambdaPhase(
     override fun visitValueParameter(declaration: IrValueParameter, data: IrDeclarationParent?): IrStatement {
         if (declaration.isInlineParameter()) {
             when (val defaultExpression = declaration.defaultValue?.expression) {
-                is IrCallableReference<*> -> { defaultExpression.origin = JvmLoweredStatementOrigin.DEFAULT_VALUE_OF_INLINABLE_PARAMETER }
+                is IrCallableReference<*> -> {
+                    defaultExpression.origin = JvmLoweredStatementOrigin.CALLABLE_REFERENCE_AS_INLINABLE_DEFAULT_VALUE
+                }
                 is IrBlock if (defaultExpression.origin.isReferenceAdapter || defaultExpression.isSuspendLambdaBlock) ->
                     defaultExpression.apply {
                         val reference = statements.last() as IrFunctionReference
-                        reference.origin = JvmLoweredStatementOrigin.DEFAULT_VALUE_OF_INLINABLE_PARAMETER
+                        reference.origin = JvmLoweredStatementOrigin.SUSPEND_LAMBDA_AS_INLINABLE_DEFAULT_VALUE
                     }
             }
         }
