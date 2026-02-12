@@ -1,2 +1,60 @@
 KtForExpression(363,409): 'for (i in Container<String>("hello")) {'
-  null
+  KaCallResolutionSuccess:
+    call = KaForLoopCall:
+      hasNextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = Container<String>("hello")
+          isSafeNavigation = false
+          type = f.MyIterator<kotlin.String>
+        signature = KaFunctionSignature:
+          receiverType = f.MyIterator<kotlin.String>
+          returnType = kotlin.Boolean
+          symbol = f/hasNext(<extension receiver>: f.MyIterator<T>): kotlin.Boolean
+          valueParameters = []
+          contextParameters = []
+          callableId = f/hasNext
+        typeArgumentsMapping = {
+          T -> (kotlin.String)
+        }
+        valueArgumentMapping = {}
+      iteratorCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = Container<String>("hello")
+          isSafeNavigation = false
+          type = f.Container<kotlin.String>
+        signature = KaFunctionSignature:
+          receiverType = f.Container<kotlin.String>
+          returnType = f.MyIterator<kotlin.String>
+          symbol = f/iterator(<extension receiver>: f.Container<T>): f.MyIterator<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = f/iterator
+        typeArgumentsMapping = {
+          T -> (kotlin.String)
+        }
+        valueArgumentMapping = {}
+      nextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = Container<String>("hello")
+          isSafeNavigation = false
+          type = f.MyIterator<kotlin.String>
+        signature = KaFunctionSignature:
+          receiverType = f.MyIterator<kotlin.String>
+          returnType = kotlin.String
+          symbol = f/next(<extension receiver>: f.MyIterator<T>): T
+          valueParameters = []
+          contextParameters = []
+          callableId = f/next
+        typeArgumentsMapping = {
+          T -> (kotlin.String)
+        }
+        valueArgumentMapping = {}

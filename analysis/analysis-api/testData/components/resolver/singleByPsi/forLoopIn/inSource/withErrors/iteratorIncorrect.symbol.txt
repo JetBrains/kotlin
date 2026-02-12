@@ -1,2 +1,7 @@
 KtForExpression(23,37): 'for(i in f) {}'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /iterator(<extension receiver>: kotlin.Int): kotlin.Any
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun Int.iterator(): Any>

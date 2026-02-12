@@ -20,7 +20,12 @@ KtBlockExpression(23,56): '{'
   null
 
 KtForExpression(29,54): 'for (i in 1..<5) {'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/ranges/IntProgression.iterator(<dispatch receiver>: kotlin.ranges.IntProgression): kotlin.collections.IntIterator,
+      kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean,
+      kotlin/collections/IntIterator.next(<dispatch receiver>: kotlin.collections.IntIterator): kotlin.Int
+    ]
 
 KtParameter(34,35): 'i'
   null

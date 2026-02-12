@@ -749,6 +749,34 @@ public interface KaResolver : KaSessionComponent {
     public fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>?
 
     /**
+     * Resolves the given [KtForExpression] to a [KaForLoopCall] representing the desugared `for` loop.
+     *
+     * A `for` loop desugars into three operator calls:
+     * - `iterator()` on the loop range expression
+     * - `hasNext()` on the iterator
+     * - `next()` on the iterator
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * for (item in list) {
+     *     println(item)
+     * }
+     * ```
+     *
+     * Calling `resolveCall()` on the [KtForExpression] returns a [KaForLoopCall] containing the three
+     * desugared operator calls if resolution succeeds; otherwise, it returns `null`
+     * (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on `for` loops
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtForExpression.resolveCall(): KaForLoopCall?
+
+    /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
      * for the call corresponding to the given [KtResolvableCall].
      *
@@ -1766,6 +1794,41 @@ public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionS
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? {
+    return with(session) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtForExpression] to a [KaForLoopCall] representing the desugared `for` loop.
+ *
+ * A `for` loop desugars into three operator calls:
+ * - `iterator()` on the loop range expression
+ * - `hasNext()` on the iterator
+ * - `next()` on the iterator
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * for (item in list) {
+ *     println(item)
+ * }
+ * ```
+ *
+ * Calling `resolveCall()` on the [KtForExpression] returns a [KaForLoopCall] containing the three
+ * desugared operator calls if resolution succeeds; otherwise, it returns `null`
+ * (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on `for` loops
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtForExpression.resolveCall(): KaForLoopCall? {
     return with(session) {
         resolveCall()
     }

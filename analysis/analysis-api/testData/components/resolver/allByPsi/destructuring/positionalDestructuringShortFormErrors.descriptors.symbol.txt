@@ -272,7 +272,12 @@ KtBlockExpression(412,523): '{'
   null
 
 KtForExpression(418,456): 'for ([first, second: String,] in x) {}'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>,
+      kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean,
+      kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+    ]
 
 KtParameter(423,447): '[first, second: String,]'
   null
@@ -308,7 +313,12 @@ KtBlockExpression(454,456): '{}'
   null
 
 KtForExpression(461,487): 'for ([first: Int] in x) {}'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>,
+      kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean,
+      kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+    ]
 
 KtParameter(466,478): '[first: Int]'
   null

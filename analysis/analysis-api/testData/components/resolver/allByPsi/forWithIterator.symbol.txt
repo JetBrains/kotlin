@@ -240,7 +240,12 @@ KtBlockExpression(281,330): '{'
   null
 
 KtForExpression(287,328): 'for (i in IntProgression(1, 10)) {'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>,
+      kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean,
+      kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+    ]
 
 KtParameter(292,293): 'i'
   null

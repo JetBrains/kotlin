@@ -1,2 +1,23 @@
 KtForExpression(23,37): 'for(i in f) {}'
-  null
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = f
+          isSafeNavigation = false
+          type = Foo
+        signature = KaFunctionSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Any
+          symbol = /iterator(<extension receiver>: kotlin.Int): kotlin.Any
+          valueParameters = []
+          contextParameters = []
+          callableId = /iterator
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun Int.iterator(): Any>

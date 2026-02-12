@@ -1,2 +1,22 @@
 KtForExpression(23,37): 'for(i in f) {}'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = f
+        isSafeNavigation = false
+        type = Iterator
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Boolean
+        symbol = /hasNext(<extension receiver>: kotlin.Int): kotlin.Boolean
+        valueParameters = []
+        contextParameters = []
+        callableId = /hasNext
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun Int.hasNext(): Boolean>
+    isInBestCandidates = true

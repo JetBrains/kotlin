@@ -1,2 +1,7 @@
 KtForExpression(363,409): 'for (i in Container<String>("hello")) {'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      f/iterator(<extension receiver>: f.Container<T>): f.MyIterator<T>,
+      f/hasNext(<extension receiver>: f.MyIterator<T>): kotlin.Boolean,
+      f/next(<extension receiver>: f.MyIterator<T>): T
+    ]

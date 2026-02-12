@@ -1,2 +1,7 @@
 KtForExpression(15,33): 'for (i in 1..2) {}'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/ranges/IntProgression.iterator(<dispatch receiver>: kotlin.ranges.IntProgression): kotlin.collections.IntIterator,
+      kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean,
+      kotlin/collections/IntIterator.next(<dispatch receiver>: kotlin.collections.IntIterator): kotlin.Int
+    ]

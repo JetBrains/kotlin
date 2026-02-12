@@ -113,7 +113,12 @@ KtLabelReferenceExpression(108,114): 'myFor@'
   null
 
 KtForExpression(115,161): 'for (i in 0..1) {'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/ranges/IntProgression.iterator(<dispatch receiver>: kotlin.ranges.IntProgression): kotlin.collections.IntIterator,
+      kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean,
+      kotlin/collections/IntIterator.next(<dispatch receiver>: kotlin.collections.IntIterator): kotlin.Int
+    ]
 
 KtParameter(120,121): 'i'
   null

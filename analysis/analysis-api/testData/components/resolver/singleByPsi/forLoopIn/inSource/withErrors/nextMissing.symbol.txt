@@ -1,2 +1,4 @@
 KtForExpression(23,37): 'for(i in f) {}'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>

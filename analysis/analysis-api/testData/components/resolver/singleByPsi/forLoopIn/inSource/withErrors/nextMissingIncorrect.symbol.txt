@@ -1,2 +1,15 @@
 KtForExpression(23,37): 'for(i in f) {}'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /next(<extension receiver>: kotlin.Int): kotlin.Any,
+      /next(<extension receiver>: kotlin.String): kotlin.Any
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun Int.next(): Any:
+      Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun Int.next(): Any
+
+    fun String.next(): Any:
+      Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun String.next(): Any>

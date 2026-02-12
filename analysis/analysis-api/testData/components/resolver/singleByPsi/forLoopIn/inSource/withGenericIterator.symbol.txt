@@ -1,2 +1,7 @@
 KtForExpression(306,355): 'for (i in Progression<String>("a", "z")) {'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      f/iterator(<extension receiver>: f.Progression<T>): kotlin.collections.Iterator<T>,
+      kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean,
+      kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+    ]

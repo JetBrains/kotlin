@@ -406,7 +406,53 @@ KtBlockExpression(436,704): '{'
   null
 
 KtForExpression(442,480): 'for ((val first, val second,) in x) {}'
-  null
+  KaCallResolutionSuccess:
+    call = KaForLoopCall:
+      hasNextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.hasNext
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      iteratorCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+          type = kotlin.collections.List<Tuple>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.Iterator<Tuple>
+          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/List.iterator
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      nextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Tuple
+          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.next
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
 
 KtParameter(447,471): '(val first, val second,)'
   null
@@ -447,7 +493,53 @@ KtBlockExpression(478,480): '{}'
   null
 
 KtForExpression(485,510): 'for ((val first) in x) {}'
-  null
+  KaCallResolutionSuccess:
+    call = KaForLoopCall:
+      hasNextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.hasNext
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      iteratorCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+          type = kotlin.collections.List<Tuple>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.Iterator<Tuple>
+          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/List.iterator
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      nextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Tuple
+          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.next
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
 
 KtParameter(490,501): '(val first)'
   null
@@ -485,7 +577,53 @@ KtBlockExpression(508,510): '{}'
   null
 
 KtForExpression(515,548): 'for ((val first: String) in x) {}'
-  null
+  KaCallResolutionSuccess:
+    call = KaForLoopCall:
+      hasNextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.hasNext
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      iteratorCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+          type = kotlin.collections.List<Tuple>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.Iterator<Tuple>
+          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/List.iterator
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      nextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Tuple
+          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.next
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
 
 KtParameter(520,539): '(val first: String)'
   null
@@ -532,7 +670,53 @@ KtBlockExpression(546,548): '{}'
   null
 
 KtForExpression(553,583): 'for ((val aa = first) in x) {}'
-  null
+  KaCallResolutionSuccess:
+    call = KaForLoopCall:
+      hasNextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.hasNext
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      iteratorCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+          type = kotlin.collections.List<Tuple>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.Iterator<Tuple>
+          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/List.iterator
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      nextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Tuple
+          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.next
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
 
 KtParameter(558,574): '(val aa = first)'
   null
@@ -573,7 +757,53 @@ KtBlockExpression(581,583): '{}'
   null
 
 KtForExpression(588,626): 'for ((val aa: String = first) in x) {}'
-  null
+  KaCallResolutionSuccess:
+    call = KaForLoopCall:
+      hasNextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.hasNext
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      iteratorCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+          type = kotlin.collections.List<Tuple>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.Iterator<Tuple>
+          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/List.iterator
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      nextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Tuple
+          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.next
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
 
 KtParameter(593,617): '(val aa: String = first)'
   null
@@ -623,7 +853,53 @@ KtBlockExpression(624,626): '{}'
   null
 
 KtForExpression(631,660): 'for ((val _ = first) in x) {}'
-  null
+  KaCallResolutionSuccess:
+    call = KaForLoopCall:
+      hasNextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.hasNext
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      iteratorCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+          type = kotlin.collections.List<Tuple>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.Iterator<Tuple>
+          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/List.iterator
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      nextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Tuple
+          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.next
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
 
 KtParameter(636,651): '(val _ = first)'
   null
@@ -664,7 +940,53 @@ KtBlockExpression(658,660): '{}'
   null
 
 KtForExpression(665,702): 'for ((val _: String = first) in x) {}'
-  null
+  KaCallResolutionSuccess:
+    call = KaForLoopCall:
+      hasNextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.hasNext
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      iteratorCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+          type = kotlin.collections.List<Tuple>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.Iterator<Tuple>
+          symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/List.iterator
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      nextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Tuple
+          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.next
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
 
 KtParameter(670,693): '(val _: String = first)'
   null

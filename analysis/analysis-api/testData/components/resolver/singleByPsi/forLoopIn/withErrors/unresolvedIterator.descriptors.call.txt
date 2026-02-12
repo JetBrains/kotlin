@@ -1,0 +1,2 @@
+KtForExpression(15,32): 'for (x in Y()) {}'
+  null

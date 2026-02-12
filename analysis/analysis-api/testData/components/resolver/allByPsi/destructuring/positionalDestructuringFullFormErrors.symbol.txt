@@ -285,7 +285,12 @@ KtBlockExpression(416,543): '{'
   null
 
 KtForExpression(422,468): 'for ([val first, val second: String,] in x) {}'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>,
+      kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean,
+      kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+    ]
 
 KtParameter(427,459): '[val first, val second: String,]'
   null
@@ -327,7 +332,12 @@ KtBlockExpression(466,468): '{}'
   null
 
 KtForExpression(473,503): 'for ([val first: Int] in x) {}'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>,
+      kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean,
+      kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+    ]
 
 KtParameter(478,494): '[val first: Int]'
   null
@@ -363,7 +373,9 @@ KtBlockExpression(501,503): '{}'
   null
 
 KtForExpression(508,541): 'for ([val first: String] in y) {}'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>
 
 KtParameter(513,532): '[val first: String]'
   null

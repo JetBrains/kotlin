@@ -1,2 +1,58 @@
 KtForExpression(23,37): 'for(i in f) {}'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = f
+        isSafeNavigation = false
+        type = Iterator
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Any
+        symbol = /next(<extension receiver>: kotlin.Int): kotlin.Any
+        valueParameters = []
+        contextParameters = []
+        callableId = /next
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun Int.next(): Any:
+      Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun Int.next(): Any
+
+    fun String.next(): Any:
+      Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun String.next(): Any>
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = f
+        isSafeNavigation = false
+        type = Iterator
+      signature = KaFunctionSignature:
+        receiverType = kotlin.String
+        returnType = kotlin.Any
+        symbol = /next(<extension receiver>: kotlin.String): kotlin.Any
+        valueParameters = []
+        contextParameters = []
+        callableId = /next
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+
+    fun Int.next(): Any:
+      Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun Int.next(): Any
+
+    fun String.next(): Any:
+      Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun String.next(): Any>
+    isInBestCandidates = true

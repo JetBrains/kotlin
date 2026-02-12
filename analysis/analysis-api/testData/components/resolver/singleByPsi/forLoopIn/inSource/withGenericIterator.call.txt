@@ -1,2 +1,56 @@
 KtForExpression(306,355): 'for (i in Progression<String>("a", "z")) {'
-  null
+  KaCallResolutionSuccess:
+    call = KaForLoopCall:
+      hasNextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Progression<String>("a", "z")
+          isSafeNavigation = false
+          type = kotlin.collections.Iterator<kotlin.String>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = kotlin/collections/Iterator.hasNext(<dispatch receiver>: kotlin.collections.Iterator<T>): kotlin.Boolean
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.hasNext
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      iteratorCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = Progression<String>("a", "z")
+          isSafeNavigation = false
+          type = f.Progression<kotlin.String>
+        signature = KaFunctionSignature:
+          receiverType = f.Progression<kotlin.String>
+          returnType = kotlin.collections.Iterator<kotlin.String>
+          symbol = f/iterator(<extension receiver>: f.Progression<T>): kotlin.collections.Iterator<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = f/iterator
+        typeArgumentsMapping = {
+          T -> (kotlin.String)
+        }
+        valueArgumentMapping = {}
+      nextCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Progression<String>("a", "z")
+          isSafeNavigation = false
+          type = kotlin.collections.Iterator<kotlin.String>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.String
+          symbol = kotlin/collections/Iterator.next(<dispatch receiver>: kotlin.collections.Iterator<T>): T
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/collections/Iterator.next
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
