@@ -239,7 +239,7 @@ private val KClass<*>.declaredDescriptorKCallableMembers: Collection<DescriptorK
 
 private fun List<KTypeParameter>.substitutedWith(arguments: List<KTypeParameter>): KTypeSubstitutor? {
     if (size != arguments.size) return null
-    if (arguments.isEmpty() || isEmpty()) return KTypeSubstitutor.EMPTY
+    if (isEmpty()) return KTypeSubstitutor.EMPTY
     val substitutionMap = zip(arguments).associate { (x, y) -> Pair(x, KTypeProjection.invariant(y.createType())) }
     return KTypeSubstitutor(substitutionMap)
 }
