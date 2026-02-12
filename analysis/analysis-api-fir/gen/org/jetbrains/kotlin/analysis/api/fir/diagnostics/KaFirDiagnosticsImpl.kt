@@ -3756,16 +3756,6 @@ internal class PropertyFieldDeclarationMissingInitializerImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtBackingField>(firDiagnostic, token), KaFirDiagnostic.PropertyFieldDeclarationMissingInitializer
 
-internal class LateinitPropertyFieldDeclarationWithInitializerImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtBackingField>(firDiagnostic, token), KaFirDiagnostic.LateinitPropertyFieldDeclarationWithInitializer
-
-internal class LateinitFieldInValPropertyImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtBackingField>(firDiagnostic, token), KaFirDiagnostic.LateinitFieldInValProperty
-
 internal class LateinitNullableBackingFieldImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

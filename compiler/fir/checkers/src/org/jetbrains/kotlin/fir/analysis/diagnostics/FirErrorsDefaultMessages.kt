@@ -491,13 +491,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KCLASS_WITH_NULLA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LABEL_NAME_CLASH
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_FIELD_IN_VAL_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_NULLABLE_BACKING_FIELD
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_PROPERTY_WITHOUT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKED_IN_PLACE_LAMBDA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LESS_VISIBLE_TYPE_ACCESS_IN_INLINE
@@ -2888,14 +2886,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER,
             "Property backing field declaration must have an initializer."
-        )
-        map.put(
-            LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER,
-            "'lateinit' backing field cannot have an initializer."
-        )
-        map.put(
-            LATEINIT_FIELD_IN_VAL_PROPERTY,
-            "Only mutable properties can have a mutable backing field. Consider changing 'val' to 'var'."
         )
         map.put(
             LATEINIT_NULLABLE_BACKING_FIELD,
