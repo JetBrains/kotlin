@@ -147,7 +147,7 @@ abstract class WasmAbstractInvalidationTest(
             val (stdlibModule, stdlibModuleFragments) = moduleToLoadedFragments.first { it.first.moduleName == "<kotlin>" }
             val stdlibBuildIns = mutableListOf<IdSignature>()
             stdlibModuleFragments.forEach { fragment ->
-                fragment.mainFragment.builtinIdSignatures?.let {
+                fragment.mainFragment.serviceData.builtinIdSignatures?.let {
                     stdlibBuildIns.addIfNotNull(it.registerModuleDescriptor)
                     stdlibBuildIns.addIfNotNull(it.createString)
                     stdlibBuildIns.addIfNotNull(it.tryGetAssociatedObject)
@@ -179,30 +179,30 @@ abstract class WasmAbstractInvalidationTest(
                 val currentModuleImports = mutableSetOf<WasmModuleDependencyImport>()
 
                 dependencies.forEach { (dependencyModule, dependencyFragments) ->
-                    dependencyFragments.mapTo(currentModuleFragments) { fragment ->
-                        val dependencyFragment = fragment.dependencyFragment
-                        WasmCompiledFileFragment(
-                            fragmentTag = dependencyFragment.fragmentTag,
-                            definedGcTypes = dependencyFragment.definedGcTypes,
-                            definedRttiSuperType = dependencyFragment.definedRttiSuperType,
-                            definedVTableGcTypes = dependencyFragment.definedVTableGcTypes,
-                            definedFunctionTypes = dependencyFragment.definedFunctionTypes,
-                            builtinIdSignatures = dependencyFragment.builtinIdSignatures,
-                        ).apply {
-                            definedFunctions.putAll(dependencyFragment.definedFunctions.filter { it.key in currentReferences.referencedFunction })
-                            definedGlobalVTables.putAll(dependencyFragment.definedGlobalVTables.filter { it.key in currentReferences.referencedGlobalVTable })
-                            definedGlobalClassITables.putAll(dependencyFragment.definedGlobalClassITables.filter { it.key in currentReferences.referencedGlobalClassITable })
-                            definedRttiGlobal.putAll(dependencyFragment.definedRttiGlobal.filter { it.key in currentReferences.referencedRttiGlobal })
-
-                            if (definedFunctions.any() || definedGlobalVTables.any() || definedGlobalClassITables.any() || definedRttiGlobal.any()) {
-                                val dependencyImport = WasmModuleDependencyImport(
-                                    name = dependencyModule.moduleName,
-                                    fileName = dependencyModule.externalModuleName ?: encodeModuleName(dependencyModule.moduleName)
-                                )
-                                currentModuleImports.add(dependencyImport)
-                            }
-                        }
-                    }
+//                    dependencyFragments.mapTo(currentModuleFragments) { fragment ->
+//                        val dependencyFragment = fragment.dependencyFragment
+//                        WasmCompiledFileFragment(
+//                            fragmentTag = dependencyFragment.fragmentTag,
+//                            definedGcTypes = dependencyFragment.definedGcTypes,
+//                            definedRttiSuperType = dependencyFragment.definedRttiSuperType,
+//                            definedVTableGcTypes = dependencyFragment.definedVTableGcTypes,
+//                            definedFunctionTypes = dependencyFragment.definedFunctionTypes,
+//                            builtinIdSignatures = dependencyFragment.builtinIdSignatures,
+//                        ).apply {
+//                            definedFunctions.putAll(dependencyFragment.definedFunctions.filter { it.key in currentReferences.referencedFunction })
+//                            definedGlobalVTables.putAll(dependencyFragment.definedGlobalVTables.filter { it.key in currentReferences.referencedGlobalVTable })
+//                            definedGlobalClassITables.putAll(dependencyFragment.definedGlobalClassITables.filter { it.key in currentReferences.referencedGlobalClassITable })
+//                            definedRttiGlobal.putAll(dependencyFragment.definedRttiGlobal.filter { it.key in currentReferences.referencedRttiGlobal })
+//
+//                            if (definedFunctions.any() || definedGlobalVTables.any() || definedGlobalClassITables.any() || definedRttiGlobal.any()) {
+//                                val dependencyImport = WasmModuleDependencyImport(
+//                                    name = dependencyModule.moduleName,
+//                                    fileName = dependencyModule.externalModuleName ?: encodeModuleName(dependencyModule.moduleName)
+//                                )
+//                                currentModuleImports.add(dependencyImport)
+//                            }
+//                        }
+//                    }
                 }
 
                 currentFragments.mapTo(currentModuleFragments) { it.mainFragment }

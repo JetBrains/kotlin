@@ -14,24 +14,25 @@ import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import org.jetbrains.kotlin.wasm.ir.*
+
+fun interface HeapTypeGetter {
+    fun referenceHeapType(klass: IrClass): WasmType
+}
 
 class WasmTypeTransformer(
     val backendContext: WasmBackendContext,
-    val wasmFileCodegenContext: WasmFileCodegenContext,
+    val typeCodegenContext: WasmTypeCodegenContext,
 ) {
     private val builtIns: IrBuiltIns = backendContext.irBuiltIns
     private val symbols = backendContext.wasmSymbols
 
-    fun IrType.toWasmResultType(): WasmType? =
-        when (this) {
-            builtIns.unitType,
-            builtIns.nothingType ->
-                null
+    fun IrType.hasNoWasmResultType(): Boolean =
+        this == builtIns.unitType || this == builtIns.nothingType
 
-            else ->
-                toWasmValueType()
-        }
+    fun IrType.toWasmResultType(): WasmType? =
+        hasNoWasmResultType().ifFalse { toWasmValueType() }
 
     fun IrType.toWasmBlockResultType(): WasmType? =
         when (this) {
@@ -47,7 +48,7 @@ class WasmTypeTransformer(
         }
 
     private fun IrType.toWasmGcRefType(): WasmType =
-        WasmRefNullType(wasmFileCodegenContext.referenceHeapType(getRuntimeClass(backendContext.irBuiltIns).symbol))
+        WasmRefNullType(typeCodegenContext.referenceHeapType(getRuntimeClass(backendContext.irBuiltIns).symbol))
 
     fun IrType.toBoxedInlineClassType(): WasmType =
         toWasmGcRefType()

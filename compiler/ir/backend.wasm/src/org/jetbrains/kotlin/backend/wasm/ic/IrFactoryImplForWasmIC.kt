@@ -17,12 +17,10 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.irAttribute
 import java.io.File
-import java.util.*
 
 open class WasmICContext(
     protected val allowIncompleteImplementations: Boolean,
     protected val skipLocalNames: Boolean = false,
-    private val safeFragmentTags: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
 ) : PlatformDependentICContext {
@@ -39,7 +37,6 @@ open class WasmICContext(
             irBuiltIns = irBuiltIns,
             configuration = configuration,
             allowIncompleteImplementations = allowIncompleteImplementations,
-            safeFragmentTags = safeFragmentTags,
             skipCommentInstructions = skipCommentInstructions,
             skipLocations = skipLocations,
         )
@@ -60,11 +57,9 @@ open class WasmICContext(
 class WasmICContextForTesting(
     allowIncompleteImplementations: Boolean,
     skipLocalNames: Boolean = false,
-    safeFragmentTags: Boolean = false,
 ) : WasmICContext(
     allowIncompleteImplementations,
     skipLocalNames,
-    safeFragmentTags,
     skipCommentInstructions = false,
     skipLocations = false
 ) {

@@ -204,11 +204,11 @@ private fun compileSingleModuleToWasmIr(
         referencedTypes?.addFunctionTypeToReferenced(functionSymbol)
     }
 
-    val mainModuleFileFragment = codeGenerator.generateModuleAsSingleFileFragmentWithModuleExport(
-        irModuleFragment = mainModuleFragment,
-        referencedDeclarations = referencedDeclarations,
-        referencedTypes = referencedTypes,
-    )
+//    val mainModuleFileFragment = codeGenerator.generateModuleAsSingleFileFragmentWithModuleExport(
+//        irModuleFragment = mainModuleFragment,
+//        referencedDeclarations = referencedDeclarations,
+//        referencedTypes = referencedTypes,
+//    )
 
     // This signature needed to dynamically load module services
     if (!stdlibIsMainModule) {
@@ -223,27 +223,27 @@ private fun compileSingleModuleToWasmIr(
         }
     }
 
-    val dependencyResolutionMap = parseDependencyResolutionMap(configuration)
-    val dependencyModules = loweredIr.loweredIr.filterNot { it == mainModuleFragment }
-    dependencyModules.mapTo(wasmCompiledFileFragments) { irFragment ->
-        val dependencyName = irFragment.name.asString()
-
-        val (wasmFragment, isImported) =
-            codeGenerator.generateModuleAsSingleFileFragmentWithModuleImport(irFragment, dependencyName, referencedDeclarations, referencedTypes)
-
-        if (isImported) {
-            dependencyImports.add(
-                WasmModuleDependencyImport(
-                    dependencyName,
-                    dependencyResolutionMap[dependencyName]
-                        ?: irFragment.outputFileName
-                )
-            )
-        }
-
-        wasmFragment
-    }
-    wasmCompiledFileFragments.add(mainModuleFileFragment)
+//    val dependencyResolutionMap = parseDependencyResolutionMap(configuration)
+//    val dependencyModules = loweredIr.loweredIr.filterNot { it == mainModuleFragment }
+//    dependencyModules.mapTo(wasmCompiledFileFragments) { irFragment ->
+//        val dependencyName = irFragment.name.asString()
+//
+//        val (wasmFragment, isImported) =
+//            codeGenerator.generateModuleAsSingleFileFragmentWithModuleImport(irFragment, dependencyName, referencedDeclarations, referencedTypes)
+//
+//        if (isImported) {
+//            dependencyImports.add(
+//                WasmModuleDependencyImport(
+//                    dependencyName,
+//                    dependencyResolutionMap[dependencyName]
+//                        ?: irFragment.outputFileName
+//                )
+//            )
+//        }
+//
+//        wasmFragment
+//    }
+//    wasmCompiledFileFragments.add(mainModuleFileFragment)
 
     val stdlibModuleNameForImport =
         loweredIr.loweredIr.first().name.asString().takeIf { !stdlibIsMainModule }

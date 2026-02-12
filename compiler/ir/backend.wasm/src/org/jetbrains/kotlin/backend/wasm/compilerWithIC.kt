@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.ModuleReferencedDeclarations
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmFileCodegenContextWithAllImport
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmFileCodegenContextWithExport
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.compileIrFile
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -30,7 +29,6 @@ open class WasmCompilerWithIC(
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
     private val allowIncompleteImplementations: Boolean,
-    private val safeFragmentTags: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
 ) : IrCompilerICInterface {
@@ -62,48 +60,47 @@ open class WasmCompilerWithIC(
     }
 
     private fun compileIrFile(irFile: IrFile): WasmIrProgramFragments {
-        val safeFragmentTags = if (safeFragmentTags) "${irFile.module.name.asString()}${irFile.path}" else null
-
-        val referencedDeclaration = ModuleReferencedDeclarations()
-        val mainFragment = compileIrFile(
-            irFile,
-            context,
-            wasmModuleMetadataCache,
-            allowIncompleteImplementations,
-            safeFragmentTags,
-            skipCommentInstructions = skipCommentInstructions,
-            skipLocations = skipLocations,
-            {
-                WasmFileCodegenContextWithExport(
-                    wasmFileFragment = it,
-                    idSignatureRetriever = idSignatureRetriever,
-                    moduleReferencedDeclarations = referencedDeclaration
-                )
-            }
-        )
-
-        val dependencyFragment = compileIrFile(
-            irFile,
-            context,
-            wasmModuleMetadataCache,
-            allowIncompleteImplementations,
-            safeFragmentTags,
-            skipCommentInstructions = skipCommentInstructions,
-            skipLocations = skipLocations,
-            {
-                WasmFileCodegenContextWithAllImport(
-                    wasmFileFragment = it,
-                    idSignatureRetriever = idSignatureRetriever,
-                    moduleName = irFile.module.name.asString(),
-                )
-            }
-        )
-
-        return WasmIrProgramFragmentsMultimodule(
-            mainFragment = mainFragment,
-            mainFragmentReferences = referencedDeclaration,
-            dependencyFragment = dependencyFragment
-        )
+//        val referencedDeclaration = ModuleReferencedDeclarations()
+//        val mainFragment = compileIrFile(
+//            irFile,
+//            context,
+//            wasmModuleMetadataCache,
+//            allowIncompleteImplementations,
+//            skipCommentInstructions = skipCommentInstructions,
+//            skipLocations = skipLocations,
+//            {
+//                error()
+////                WasmFileCodegenContextWithExport(
+////                    wasmFileFragment = it,
+////                    idSignatureRetriever = idSignatureRetriever,
+////                    moduleReferencedDeclarations = referencedDeclaration
+////                )
+//            }
+//        )
+//
+//        val dependencyFragment = compileIrFile(
+//            irFile,
+//            context,
+//            wasmModuleMetadataCache,
+//            allowIncompleteImplementations,
+//            safeFragmentTags,
+//            skipCommentInstructions = skipCommentInstructions,
+//            skipLocations = skipLocations,
+//            {
+//                WasmFileCodegenContextWithAllImport(
+//                    wasmFileFragment = it,
+//                    idSignatureRetriever = idSignatureRetriever,
+//                    moduleName = irFile.module.name.asString(),
+//                )
+//            }
+//        )
+//
+//        return WasmIrProgramFragmentsMultimodule(
+//            mainFragment = mainFragment,
+//            mainFragmentReferences = referencedDeclaration,
+//            dependencyFragment = dependencyFragment
+//        )
+        error("")
     }
 
     override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
@@ -125,13 +122,11 @@ class WasmCompilerWithICForTesting(
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
     allowIncompleteImplementations: Boolean,
-    safeFragmentTags: Boolean = false,
 ) : WasmCompilerWithIC(
     mainModule,
     irBuiltIns,
     configuration,
     allowIncompleteImplementations,
-    safeFragmentTags,
     skipCommentInstructions = false,
     skipLocations = false,
 ) {

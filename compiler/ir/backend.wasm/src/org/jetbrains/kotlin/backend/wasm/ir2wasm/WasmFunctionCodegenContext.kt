@@ -35,7 +35,7 @@ class WasmFunctionCodegenContext(
     val irFunction: IrFunction?,
     private val wasmFunction: WasmFunction.Defined,
     private val backendContext: WasmBackendContext,
-    private val wasmFileCodegenContext: WasmFileCodegenContext,
+    private val typeCodegenContext: WasmTypeCodegenContext,
     private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
     private val functionFileEntry: IrFileEntry,
 ) {
@@ -92,7 +92,7 @@ class WasmFunctionCodegenContext(
     private val SyntheticLocalType.wasmType
         get() = when (this) {
             SyntheticLocalType.IS_INTERFACE_PARAMETER ->
-                WasmRefNullType(wasmFileCodegenContext.referenceHeapType(backendContext.irBuiltIns.anyClass))
+                WasmRefNullType(typeCodegenContext.referenceHeapType(backendContext.irBuiltIns.anyClass))
             SyntheticLocalType.IS_INTERFACE_ANY_ARRAY ->
                 WasmRefNullType(Synthetics.HeapTypes.wasmAnyArrayType)
             SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32
