@@ -2204,6 +2204,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/syntaxError_psi.args");
     }
 
+    @TestMetadata("unknownFriendLibraries.args")
+    public void testUnknownFriendLibraries() {
+      runTest("compiler/testData/cli/js/unknownFriendLibraries.args");
+    }
+
     @TestMetadata("warningsSuppressionDisablesErrors_Js.args")
     public void testWarningsSuppressionDisablesErrors_Js() {
       runTest("compiler/testData/cli/js/warningsSuppressionDisablesErrors_Js.args");
