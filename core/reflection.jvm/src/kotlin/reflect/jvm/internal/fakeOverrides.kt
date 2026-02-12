@@ -27,7 +27,7 @@ internal fun getAllMembers(kClass: KClassImpl<*>): Collection<ReflectKCallable<*
     val doNeedToFilterOutStatics =
         fakeOverrideMembers.containsInheritedStatics && kClass.classKind != ClassKind.ENUM_CLASS && isKotlin
     val doNeedToShrinkMembers = fakeOverrideMembers.containsPackagePrivate || doNeedToFilterOutStatics
-    val membersMutable = when (doNeedToShrinkMembers) {
+    val members = when (doNeedToShrinkMembers) {
         true -> fakeOverrideMembers.members.filterNotTo(
             newHashMapWithExpectedSize(
                 // We expect that all non-transitive operations below (like filtering out statics or adding privates)
@@ -39,9 +39,9 @@ internal fun getAllMembers(kClass: KClassImpl<*>): Collection<ReflectKCallable<*
             doNeedToFilterOutStatics && member.isStatic ||
                     member.isPackagePrivate && member.originalContainer.jClass.`package` != kClass.java.`package`
         }
-        false -> HashMap(fakeOverrideMembers.members)
+        false -> fakeOverrideMembers.members
     }
-    return membersMutable.values + kClass.declaredReflectKCallableMembers.filter { isNonTransitiveMember(kClass, it) }
+    return members.values + kClass.declaredReflectKCallableMembers.filter { isNonTransitiveMember(kClass, it) }
 }
 
 internal fun starProjectionInTopLevelTypeIsNotPossible(containerForDebug: Any): Nothing =
