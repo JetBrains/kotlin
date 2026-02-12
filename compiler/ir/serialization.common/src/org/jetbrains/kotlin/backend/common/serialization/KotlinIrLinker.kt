@@ -57,6 +57,8 @@ abstract class KotlinIrLinker(
      */
     val modulesWithReachableTopLevels = linkedSetOf<IrModuleDeserializer>()
 
+    val explicitlyExportedRootsByModule = mutableMapOf<IdSignature, MutableList<Name>>()
+
     protected val deserializersForModules = linkedMapOf<String, IrModuleDeserializer>()
 
     abstract val fakeOverrideBuilder: IrLinkerFakeOverrideProvider
@@ -204,6 +206,11 @@ abstract class KotlinIrLinker(
                 maybeWrapWithBuiltInAndInit(moduleFragment.descriptor, currentModuleDeserializer)
         }
         deserializersForModules.values.forEach { it.init() }
+
+        val clashes = explicitlyExportedRootsByModule.filter { it.value.count() > 1 }
+        if (clashes.isNotEmpty()) {
+            ExplicitlyExportedDeclarationClashes(clashes.toList()).raiseIssue(messageCollector)
+        }
     }
 
     fun clear() {

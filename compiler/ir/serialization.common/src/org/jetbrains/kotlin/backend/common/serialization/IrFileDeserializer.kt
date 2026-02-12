@@ -148,6 +148,7 @@ class FileDeserializationState(
             val sig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
             assert(!sig.isPackageSignature())
             addIdSignature(sig.topLevelSignature())
+            linker.explicitlyExportedRootsByModule.getOrPut(sig) { mutableListOf() }.add(moduleDeserializer.moduleFragment.name)
         }
     }
 

@@ -162,6 +162,15 @@ class NoDeserializerForModule(moduleName: Name, idSignature: IdSignature?) : Kot
     }
 }
 
+class ExplicitlyExportedDeclarationClashes(clashes: List<Pair<IdSignature, List<Name>>>) : KotlinIrLinkerIssue() {
+    override val errorMessage = buildString {
+        appendLine("Found clashing explicitly exported declarations across modules:")
+        clashes.forEach { (idSignature, moduleNames) ->
+            appendLine("Declaration ${idSignature.render()} is present in multiple modules: ${moduleNames.joinToString { it.asString() }}.")
+        }
+    }
+}
+
 class SymbolTypeMismatch(
     private val cause: IrSymbolTypeMismatchException,
     private val allModuleDeserializers: Collection<IrModuleDeserializer>,
