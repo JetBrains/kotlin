@@ -125,8 +125,8 @@ internal open class KotlinJsIrLinkConfig(
                         parameters.enhancedFreeCompilerArgs.set(task.enhancedFreeCompilerArgs)
                         parameters.classpath.from(
                             compilation.configurations.runtimeDependencyConfiguration!!.incoming.artifactView {
-                                it.componentFilter {
-                                    it is ModuleComponentIdentifier
+                                it.componentFilter { id ->
+                                    id is ModuleComponentIdentifier
                                 }
                             }.files
                         )
@@ -135,8 +135,10 @@ internal open class KotlinJsIrLinkConfig(
                                 splitKotlinDaemonArgs(kotlinDaemonJvmArgs)
                             })
                         }
-                        parameters.compilerExecutionStrategy.convention(propertiesProvider.kotlinCompilerExecutionStrategy).finalizeValueOnRead()
-                        parameters.useDaemonFallbackStrategy.convention(propertiesProvider.kotlinDaemonUseFallbackStrategy).finalizeValueOnRead()
+                        parameters.compilerExecutionStrategy.convention(propertiesProvider.kotlinCompilerExecutionStrategy)
+                            .finalizeValueOnRead()
+                        parameters.useDaemonFallbackStrategy.convention(propertiesProvider.kotlinDaemonUseFallbackStrategy)
+                            .finalizeValueOnRead()
 
                         BinaryenPlugin.apply(project)
                         parameters.binaryenExec.set(project.extensions.findByType(BinaryenEnvSpec::class.java).executable)
