@@ -57,7 +57,7 @@ public struct _KotlinTypedFlow<Element>: AsyncSequence {
     }
 
     /// Returns the underlying type-erased flow.
-    public var untyped: any _KotlinFlow {
+    public var wrapped: any _KotlinFlow {
         _flow
     }
 
