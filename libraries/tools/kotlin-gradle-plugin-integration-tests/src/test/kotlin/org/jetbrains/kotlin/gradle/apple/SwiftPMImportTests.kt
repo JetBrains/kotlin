@@ -113,7 +113,7 @@ class SwiftPMImportTests : KGPBaseTest() {
             val consumerWithDependencyHasSwiftPMDependencies = consumerWithDependency.providerBuildScriptReturn {
                 project.prepareKotlinIdeaImportTask.map {
                     project.ignoreAccessViolations {
-                        (project.kotlinExtension as KotlinMultiplatformExtension).hasSwiftPMDependencies
+                        (project.kotlinExtension as KotlinMultiplatformExtension).swiftPMImportIdeContext.hasSwiftPMDependencies
                     }
                 }
             }.buildAndReturn(
@@ -125,7 +125,7 @@ class SwiftPMImportTests : KGPBaseTest() {
             val consumerWithoutDependencyHasSwiftPMDependencies = consumerWithoutDependency.providerBuildScriptReturn {
                 project.prepareKotlinIdeaImportTask.map {
                     project.ignoreAccessViolations {
-                        (project.kotlinExtension as KotlinMultiplatformExtension).hasSwiftPMDependencies
+                        (project.kotlinExtension as KotlinMultiplatformExtension).swiftPMImportIdeContext.hasSwiftPMDependencies
                     }
                 }
             }.buildAndReturn(

@@ -2035,3 +2035,9 @@ internal abstract class CheckCocoaPodsHasNoSwiftPMDependencies : DefaultTask() {
         }
     }
 }
+
+internal fun Project.swiftPMImportIdeContext() = SwiftPMImportIdeContext(
+    project.hasDirectOrTransitiveSwiftPMDependencies().get(),
+    ("${project.path}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}").replace("::", ":"),
+    SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+)

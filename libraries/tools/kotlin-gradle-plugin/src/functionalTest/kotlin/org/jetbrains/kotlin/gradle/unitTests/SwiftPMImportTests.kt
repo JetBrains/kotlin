@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.IntegrateLinkagePackageIntoXcodeProject
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportIdeContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMDependenciesExtension
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -15,28 +18,52 @@ import kotlin.test.assertEquals
 
 class SwiftPMImportTests {
     @Test
-    fun `hasSwiftPMDependencies - project without SwiftPM dependencies`() {
+    fun `swiftPMImportIdeContext - project without SwiftPM dependencies`() {
         assertEquals(
-            false,
+            SwiftPMImportIdeContext(
+                hasSwiftPMDependencies = false,
+                integrateLinkagePackageTaskPath = ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}",
+                magicPackageName = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+            ),
             buildProjectWithMPP {
                 kotlin {
                     iosArm64()
                 }
-            }.multiplatformExtension.hasSwiftPMDependencies
+            }.multiplatformExtension.swiftPMImportIdeContext
+        )
+    }
+
+    @Test
+    fun `integrateLinkagePackageTaskPath - for subproject`() {
+        val root = buildProject()
+        assertEquals(
+            ":foo:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}",
+            buildProjectWithMPP(projectBuilder = {
+                withParent(root)
+                withName("foo")
+            }) {
+                kotlin {
+                    iosArm64()
+                }
+            }.multiplatformExtension.swiftPMImportIdeContext.integrateLinkagePackageTaskPath
         )
     }
 
     // The rest of this suite has to be implemented as an integration test because interproject SwiftPM dependencies work by serializing using a task
     @Test
-    fun `hasSwiftPMDependencies - project with direct SwiftPM dependency`() {
+    fun `swiftPMImportIdeContext - project with direct SwiftPM dependency`() {
         assertEquals(
-            true,
+            SwiftPMImportIdeContext(
+                hasSwiftPMDependencies = true,
+                integrateLinkagePackageTaskPath = ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}",
+                magicPackageName = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+            ),
             buildProjectWithMPP {
                 kotlin {
                     iosArm64()
                     swiftPMDependenciesExtension().`package`(url = "foo", version = "1.0.0", products = listOf("bar"))
                 }
-            }.multiplatformExtension.hasSwiftPMDependencies
+            }.multiplatformExtension.swiftPMImportIdeContext
         )
     }
 }
