@@ -7794,8 +7794,14 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.\n`profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.\nIf it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.\nExample: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>",
-                                    "valueInVersions": []
+                                    "current": "Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.\n`profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.\nIf it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath. \nIndividual parameter values are separated by the system path separator.\nExample (Unix/Linux): -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>\nExample (Windows): -Xprofile=<PATH_TO_ASYNC_PROFILER>\\async-profiler\\build\\libasyncProfiler.so;event=cpu,interval=1ms,threads,start;<SNAPSHOT_DIR_PATH>",
+                                    "valueInVersions": [
+                                        {
+                                            "minReleaseVersion": "1.0.0",
+                                            "maxReleaseVersion": "2.3.20",
+                                            "value": "Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.\n`profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.\nIf it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.\nExample: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>"
+                                        }
+                                    ]
                                 },
                                 "delimiter": null,
                                 "argumentType": {

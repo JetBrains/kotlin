@@ -570,8 +570,10 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     /**
      * Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
      * `profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.
-     * If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.
-     * Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>
+     * If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath. 
+     * Individual parameter values are separated by the system path separator.
+     * Example (Unix/Linux): -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>
+     * Example (Windows): -Xprofile=<PATH_TO_ASYNC_PROFILER>\async-profiler\build\libasyncProfiler.so;event=cpu,interval=1ms,threads,start;<SNAPSHOT_DIR_PATH>
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
