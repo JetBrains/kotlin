@@ -3,6 +3,7 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
@@ -56,6 +57,15 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
     freeCompilerArgs.add("-Xcontext-parameters")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
+
+    if (this is KotlinJvmCompilerOptions) {
+        // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
+        // But this produces a warning
+        // "The argument ... is redundant for the current language version ..."
+        // in the bootstrap test and fails because of -Werror.
+        // To work around it, we suppress the warning.
+        freeCompilerArgs.add("-Xwarning-level=REDUNDANT_CLI_ARG:disabled")
+    }
 }
 
 fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
@@ -116,6 +126,12 @@ kotlin {
                             listOfNotNull(
                                 "-Xallow-kotlin-package",
                                 "-Xsuppress-missing-builtins-error",
+                                // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
+                                // But this produces a warning
+                                // "The argument ... is redundant for the current language version ..."
+                                // in the bootstrap test and fails because of -Werror.
+                                // To work around it, we suppress the warning.
+                                "-Xwarning-level=REDUNDANT_CLI_ARG:disabled",
                                 diagnosticNamesArg
                             )
                         )
