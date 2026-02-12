@@ -1,5 +1,5 @@
 // LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization -IrCrossModuleInlinerBeforeKlibSerialization
-// LANGUAGE: +ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs +ContextReceivers
+// LANGUAGE: +ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
 // IGNORE_FIR_DIAGNOSTICS
 // DIAGNOSTICS: -NOTHING_TO_INLINE -CONTEXT_RECEIVERS_DEPRECATED -CONTEXT_CLASS_OR_CONSTRUCTOR -CAST_NEVER_SUCCEEDS
 // RENDER_ALL_DIAGNOSTICS_FULL_TEXT
@@ -19,16 +19,11 @@ private enum class EC {
     EE
 }
 
-context(Int)
-private class WithContext
-
 private open class Generic<T>
 
 private fun makeA(): A = A()
 
 private fun makeNested(): A.Nested = A.Nested()
-
-private fun makeWithContext(): WithContext = with(42) { WithContext() }
 
 private inline fun privateInline(): Any = makeA()
 
@@ -61,8 +56,6 @@ internal inline fun internalInline() {
     privateInlineAC()
     privateInlineEC()
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!><!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Local : <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR, PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>A<!>><!>() {}<!>
-    <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>val withContext = <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!><!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>makeWithContext<!>()<!><!>
-    <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>withContext<!>.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>toString<!>()
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>null as <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>A<!><!>
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>null as <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>A.Nested<!><!>
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!><!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>A<!>::class<!>
