@@ -135,7 +135,7 @@ class SwiftPMImportTests : KGPBaseTest() {
             )
 
             assertEquals(true, consumerWithDependencyHasSwiftPMDependencies)
-            assertEquals(true, consumerWithoutDependencyHasSwiftPMDependencies)
+            assertEquals(false, consumerWithoutDependencyHasSwiftPMDependencies)
         }
     }
 
