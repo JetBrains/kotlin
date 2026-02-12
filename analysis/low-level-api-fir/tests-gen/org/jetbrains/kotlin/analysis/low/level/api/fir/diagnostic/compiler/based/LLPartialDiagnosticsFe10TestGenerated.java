@@ -48395,6 +48395,100 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/versionOverload")
+    @TestDataPath("$PROJECT_ROOT")
+    public class VersionOverload {
+      @Test
+      @TestMetadata("abstractMember.kt")
+      public void testAbstractMember() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/abstractMember.kt");
+      }
+
+      @Test
+      public void testAllFilesPresentInVersionOverload() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/versionOverload"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("defaultNewerParam.kt")
+      public void testDefaultNewerParam() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/defaultNewerParam.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineDefaultLambdaCapture.kt")
+      public void testInlineDefaultLambdaCapture() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/inlineDefaultLambdaCapture.kt");
+      }
+
+      @Test
+      @TestMetadata("interfaceMember.kt")
+      public void testInterfaceMember() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/interfaceMember.kt");
+      }
+
+      @Test
+      @TestMetadata("locals.kt")
+      public void testLocals() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/locals.kt");
+      }
+
+      @Test
+      @TestMetadata("nonAscendingVersion.kt")
+      public void testNonAscendingVersion() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/nonAscendingVersion.kt");
+      }
+
+      @Test
+      @TestMetadata("nonOptionalParameter.kt")
+      public void testNonOptionalParameter() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/nonOptionalParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("openMember.kt")
+      public void testOpenMember() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/openMember.kt");
+      }
+
+      @Test
+      @TestMetadata("optInRequred.kt")
+      public void testOptInRequred() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/optInRequred.kt");
+      }
+
+      @Test
+      @TestMetadata("optionalBeforeNonOptional.kt")
+      public void testOptionalBeforeNonOptional() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/optionalBeforeNonOptional.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideMember.kt")
+      public void testOverrideMember() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/overrideMember.kt");
+      }
+
+      @Test
+      @TestMetadata("propertySetterParameter.kt")
+      public void testPropertySetterParameter() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/propertySetterParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("tooComplexDefault.kt")
+      public void testTooComplexDefault() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/tooComplexDefault.kt");
+      }
+
+      @Test
+      @TestMetadata("vararg.kt")
+      public void testVararg() {
+        runTest("compiler/testData/diagnostics/tests/versionOverload/vararg.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/visibility")
     @TestDataPath("$PROJECT_ROOT")
     public class Visibility {
