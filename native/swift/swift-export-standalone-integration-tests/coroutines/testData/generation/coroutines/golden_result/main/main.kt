@@ -5,15 +5,15 @@ import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import kotlinx.coroutines.*
 
-@ExportedBridge("__root___demo")
-public fun __root___demo(): kotlin.native.internal.NativePtr {
-    val _result = demo()
+@ExportedBridge("__root___produce_flow")
+public fun __root___produce_flow(): kotlin.native.internal.NativePtr {
+    val _result = produce_flow()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___demo_ft_produce")
-public fun __root___demo_ft_produce(): kotlin.native.internal.NativePtr {
-    val _result = demo_ft_produce()
+@ExportedBridge("__root___produce_function")
+public fun __root___produce_function(): kotlin.native.internal.NativePtr {
+    val _result = produce_function()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -48,8 +48,8 @@ public fun __root___produce_function_typealias(continuation: kotlin.native.inter
     }.alsoCancel(__cancellation)
 }
 
-@ExportedBridge("__root___produce_suspend_function_typealias")
-public fun __root___produce_suspend_function_typealias(continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___produce_suspend_function")
+public fun __root___produce_suspend_function(continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Unit>(continuation);
         { arg0: kotlin.coroutines.SuspendFunction1<Double, Int> ->
@@ -67,7 +67,7 @@ public fun __root___produce_suspend_function_typealias(continuation: kotlin.nati
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
     CoroutineScope(__cancellation + Dispatchers.Default).launch(start = CoroutineStart.UNDISPATCHED) {
         try {
-            val _result = produce_suspend_function_typealias()
+            val _result = produce_suspend_function()
             __continuation(_result)
         } catch (error: CancellationException) {
             __cancellation.cancel()

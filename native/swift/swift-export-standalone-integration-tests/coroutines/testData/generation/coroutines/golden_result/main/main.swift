@@ -5,12 +5,12 @@ import KotlinRuntimeSupport
 import KotlinxCoroutinesCore
 
 public typealias AliasedFunctionType = (Swift.Float) -> Swift.Int32
-public func demo() -> any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___demo()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow
+public func produce_flow() -> any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow {
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___produce_flow()) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.Flow
 }
-public func demo_ft_produce() -> (Swift.Int32) async throws -> Swift.Int32 {
+public func produce_function() -> (Swift.Int32) async throws -> Swift.Int32 {
     return {
-        let pointerToBlock = __root___demo_ft_produce()
+        let pointerToBlock = __root___produce_function()
         return { _1 in try await {
         try Task.checkCancellation()
         var cancellation: KotlinCoroutineSupport.KotlinTask! = nil
@@ -68,7 +68,7 @@ public func produce_function_typealias() async throws -> main.AliasedFunctionTyp
         }
     }()
 }
-public func produce_suspend_function_typealias() async throws -> (Swift.Double) async throws -> Swift.Int32 {
+public func produce_suspend_function() async throws -> (Swift.Double) async throws -> Swift.Int32 {
     try await {
         try Task.checkCancellation()
         var cancellation: KotlinCoroutineSupport.KotlinTask! = nil
@@ -81,7 +81,7 @@ public func produce_suspend_function_typealias() async throws -> (Swift.Double) 
                     }
                     cancellation = KotlinCoroutineSupport.KotlinTask(currentTask!)
 
-                    let _: () = __root___produce_suspend_function_typealias({
+                    let _: () = __root___produce_suspend_function({
                         let originalBlock = continuation
                         return { arg0 in return { originalBlock({
                         let pointerToBlock = arg0
