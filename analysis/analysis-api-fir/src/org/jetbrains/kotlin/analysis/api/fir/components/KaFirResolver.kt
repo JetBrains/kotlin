@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findStringPlusSymbol
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
@@ -180,9 +181,20 @@ internal class KaFirResolver(
         }
     }
 
+    /**
+     * For destructuring declaration entries, [getOrBuildFir] returns [FirProperty] (a declaration).
+     * The actual resolution target is in [FirProperty.initializer] (e.g., [FirComponentCall] or [FirErrorExpression]).
+     */
+    private fun KtElement.getOrBuildFirWithAdjustments(): FirElement? {
+        return when (val fir = getOrBuildFir(resolutionFacade)) {
+            is FirProperty if this is KtDestructuringDeclarationEntry -> fir.initializer
+            else -> fir
+        }
+    }
+
     private fun resolveSymbol(psi: KtElement): KaSymbolResolutionAttempt? {
-        val originalFir = psi.getOrBuildFir(resolutionFacade) ?: return null
-        return when (val unwrappedFir = originalFir.unwrapSafeCall()) {
+        return when (val unwrappedFir = psi.getOrBuildFirWithAdjustments()?.unwrapSafeCall()) {
+            is FirDiagnosticHolder -> unwrappedFir.toKaSymbolResolutionError(psi)
             is FirResolvable -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
             is FirCollectionLiteral -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
             is FirVariableAssignment -> unwrappedFir.calleeReference?.toKaSymbolResolutionAttempt(psi)
@@ -282,17 +294,18 @@ internal class KaFirResolver(
 
     private fun FirReference.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt? {
         if (this is FirDiagnosticHolder) {
-            val kaDiagnostic = createKaDiagnostic(psi)
-            val candidateSymbols = diagnostic.getCandidateSymbols().map(firSymbolBuilder::buildSymbol)
-            return KaBaseSymbolResolutionError(
-                backingDiagnostic = kaDiagnostic,
-                backingCandidateSymbols = candidateSymbols,
-            )
+            return toKaSymbolResolutionError(psi)
         }
 
         val symbol = symbol?.buildSymbol(firSymbolBuilder) ?: return null
         return KaBaseSymbolResolutionSuccess(backingSymbol = symbol)
     }
+
+    private fun FirDiagnosticHolder.toKaSymbolResolutionError(psi: KtElement): KaSymbolResolutionError =
+        KaBaseSymbolResolutionError(
+            backingDiagnostic = createKaDiagnostic(psi),
+            backingCandidateSymbols = diagnostic.getCandidateSymbols().map(firSymbolBuilder::buildSymbol),
+        )
 
     private fun FirCollectionLiteral.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt = with(analysisSession) {
         val resolvedType = resolvedType as? ConeClassLikeType
@@ -379,7 +392,7 @@ internal class KaFirResolver(
             ?: psi.getConstructorDelegationCallForDelegationReferenceExpression()
             ?: psi
 
-        return when (val fir = psiToResolve.getOrBuildFir(analysisSession.resolutionFacade)) {
+        return when (val fir = psiToResolve.getOrBuildFirWithAdjustments()) {
             null -> emptyList()
             is FirDiagnosticHolder -> fir.onError(psiToResolve)
             else -> {

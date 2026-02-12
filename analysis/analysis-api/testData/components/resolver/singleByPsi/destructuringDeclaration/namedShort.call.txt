@@ -1,2 +1,19 @@
 KtDestructuringDeclarationEntry(179,188): 'val prop2'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val prop2
+        isSafeNavigation = false
+        type = foo.MyDataClass
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop2
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop2: kotlin.String
+        contextParameters = []
+        callableId = foo/MyDataClass.prop2
+      typeArgumentsMapping = {}

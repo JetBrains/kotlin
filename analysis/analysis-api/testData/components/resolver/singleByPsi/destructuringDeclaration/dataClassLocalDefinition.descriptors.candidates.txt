@@ -1,0 +1,2 @@
+KtDestructuringDeclarationEntry(147,152): 'prop2'
+  NO_CANDIDATES

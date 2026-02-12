@@ -1,2 +1,5 @@
 KtDestructuringDeclarationEntry(102,112): 'localProp2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/MyDataClass.component2(<dispatch receiver>: foo.MyDataClass): kotlin.String
+    ]

@@ -128,10 +128,16 @@ KtDestructuringDeclaration(229,265): '[val first, var second: String,] = x'
   null
 
 KtDestructuringDeclarationEntry(230,239): 'val first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(241,259): 'var second: String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
+    ]
 
 KtTypeReference(253,259): 'String'
   null
@@ -164,7 +170,10 @@ KtDestructuringDeclaration(284,304): '[var first: Int] = x'
   null
 
 KtDestructuringDeclarationEntry(285,299): 'var first: Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtTypeReference(296,299): 'Int'
   null
@@ -197,7 +206,9 @@ KtDestructuringDeclaration(323,338): '[val first] = y'
   null
 
 KtDestructuringDeclarationEntry(324,333): 'val first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
 
 KtNameReferenceExpression(337,338): 'y'
   null
@@ -221,7 +232,9 @@ KtDestructuringDeclaration(357,368): '[val first]'
   null
 
 KtDestructuringDeclarationEntry(358,367): 'val first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
 
 KtNamedFunction(374,543): 'fun loop(x: List<Tuple>, y: NonDataTuple) {'
   null
@@ -281,10 +294,16 @@ KtDestructuringDeclaration(427,459): '[val first, val second: String,]'
   null
 
 KtDestructuringDeclarationEntry(428,437): 'val first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(439,457): 'val second: String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
+    ]
 
 KtTypeReference(451,457): 'String'
   null
@@ -317,7 +336,10 @@ KtDestructuringDeclaration(478,494): '[val first: Int]'
   null
 
 KtDestructuringDeclarationEntry(479,493): 'val first: Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtTypeReference(490,493): 'Int'
   null
@@ -350,7 +372,9 @@ KtDestructuringDeclaration(513,532): '[val first: String]'
   null
 
 KtDestructuringDeclarationEntry(514,531): 'val first: String'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
 
 KtTypeReference(525,531): 'String'
   null
@@ -494,10 +518,16 @@ KtDestructuringDeclaration(648,680): '[val first, val second: String,]'
   null
 
 KtDestructuringDeclarationEntry(649,658): 'val first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(660,678): 'val second: String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
+    ]
 
 KtTypeReference(672,678): 'String'
   null
@@ -539,7 +569,10 @@ KtDestructuringDeclaration(696,712): '[val first: Int]'
   null
 
 KtDestructuringDeclarationEntry(697,711): 'val first: Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtTypeReference(708,711): 'Int'
   null
@@ -581,7 +614,9 @@ KtDestructuringDeclaration(728,739): '[val first]'
   null
 
 KtDestructuringDeclarationEntry(729,738): 'val first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
 
 KtBlockExpression(743,743): ''
   null

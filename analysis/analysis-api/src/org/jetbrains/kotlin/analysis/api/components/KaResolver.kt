@@ -387,6 +387,33 @@ public interface KaResolver : KaSessionComponent {
     public fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol?
 
     /**
+     * Resolves the callable symbol targeted by the given [KtDestructuringDeclarationEntry].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * data class Point(val x: Int, val y: Int)
+     *
+     * fun test(p: Point) {
+     *     val (x, y) = p
+     * //       ^ resolves to `component1`
+     * //          ^ resolves to `component2`
+     * }
+     * ```
+     *
+     * Calling `resolveSymbol()` on a [KtDestructuringDeclarationEntry] returns the [KaCallableSymbol] of the corresponding
+     * `componentN` function (for positional destructuring) or the accessed property (for name-based destructuring)
+     * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on destructuring declaration entries
+     *
+     * @see tryResolveSymbols
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol?
+
+    /**
      * Attempts to resolve the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -693,6 +720,33 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>?
+
+    /**
+     * Resolves the given [KtDestructuringDeclarationEntry] to a call representing the `componentN` invocation
+     * (for positional destructuring) or the property access (for name-based destructuring).
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * data class Point(val x: Int, val y: Int)
+     *
+     * fun test(p: Point) {
+     *     val (x, y) = p
+     * //       ^ resolves to a call of `component1`
+     * //          ^ resolves to a call of `component2`
+     * }
+     * ```
+     *
+     * Returns the corresponding [KaSingleCall] if resolution succeeds; otherwise, it returns `null`
+     * (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on destructuring declaration entries
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>?
 
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
@@ -1258,6 +1312,40 @@ public fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol? {
 }
 
 /**
+ * Resolves the callable symbol targeted by the given [KtDestructuringDeclarationEntry].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * data class Point(val x: Int, val y: Int)
+ *
+ * fun test(p: Point) {
+ *     val (x, y) = p
+ * //       ^ resolves to `component1`
+ * //          ^ resolves to `component2`
+ * }
+ * ```
+ *
+ * Calling `resolveSymbol()` on a [KtDestructuringDeclarationEntry] returns the [KaCallableSymbol] of the corresponding
+ * `componentN` function (for positional destructuring) or the accessed property (for name-based destructuring)
+ * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on destructuring declaration entries
+ *
+ * @see tryResolveSymbols
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol? {
+    return with(session) {
+        resolveSymbol()
+    }
+}
+
+/**
  * Attempts to resolve the call for the given [KtResolvableCall].
  *
  * ### Usage Example:
@@ -1644,6 +1732,40 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedCo
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
+    return with(session) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtDestructuringDeclarationEntry] to a call representing the `componentN` invocation
+ * (for positional destructuring) or the property access (for name-based destructuring).
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * data class Point(val x: Int, val y: Int)
+ *
+ * fun test(p: Point) {
+ *     val (x, y) = p
+ * //       ^ resolves to a call of `component1`
+ * //          ^ resolves to a call of `component2`
+ * }
+ * ```
+ *
+ * Returns the corresponding [KaSingleCall] if resolution succeeds; otherwise, it returns `null`
+ * (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on destructuring declaration entries
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? {
     return with(session) {
         resolveCall()
     }

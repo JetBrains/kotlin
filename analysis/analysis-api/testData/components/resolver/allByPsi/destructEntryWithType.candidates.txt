@@ -131,7 +131,25 @@ KtDestructuringDeclaration(148,249): 'val (left: @Anno(0 + constant) List<@Anno(
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(153,234): 'left: @Anno(0 + constant) List<@Anno(1 + constant) List<@Anno(2 + constant) Int>>'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = left: @Anno(0 + constant) List<@Anno(1 + constant) List<@Anno(2 + constant) Int>>
+        isSafeNavigation = false
+        type = util.MyPair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.List<kotlin.collections.List<kotlin.Int>>
+        symbol = util/MyPair.component1(<dispatch receiver>: util.MyPair): kotlin.collections.List<kotlin.collections.List<kotlin.Int>>
+        valueParameters = []
+        contextParameters = []
+        callableId = util/MyPair.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeReference(159,234): '@Anno(0 + constant) List<@Anno(1 + constant) List<@Anno(2 + constant) Int>>'
   NO_CANDIDATES
@@ -1832,7 +1850,25 @@ KtNameReferenceExpression(229,232): 'Int'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(236,241): 'right'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = right
+        isSafeNavigation = false
+        type = util.MyPair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = util/MyPair.component2(<dispatch receiver>: util.MyPair): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = util/MyPair.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtNameReferenceExpression(245,249): 'pair'
   KaApplicableCallCandidateInfo:

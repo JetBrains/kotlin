@@ -128,10 +128,46 @@ KtDestructuringDeclaration(229,261): 'val [first, second: String,] = x'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(234,239): 'first'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(241,255): 'second: String'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = second: String
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeReference(249,255): 'String'
   NO_CANDIDATES
@@ -179,7 +215,25 @@ KtDestructuringDeclaration(280,300): 'var [first: Int] = x'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(285,295): 'first: Int'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = first: Int
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeReference(292,295): 'Int'
   NO_CANDIDATES
@@ -326,10 +380,46 @@ KtDestructuringDeclaration(423,447): '[first, second: String,]'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(424,429): 'first'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(431,445): 'second: String'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = second: String
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeReference(439,445): 'String'
   NO_CANDIDATES
@@ -377,7 +467,25 @@ KtDestructuringDeclaration(466,478): '[first: Int]'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(467,477): 'first: Int'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = first: Int
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeReference(474,477): 'Int'
   NO_CANDIDATES
@@ -643,10 +751,46 @@ KtDestructuringDeclaration(628,652): '[first, second: String,]'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(629,634): 'first'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(636,650): 'second: String'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = second: String
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeReference(644,650): 'String'
   NO_CANDIDATES
@@ -747,7 +891,25 @@ KtDestructuringDeclaration(668,680): '[first: Int]'
   NO_CANDIDATES
 
 KtDestructuringDeclarationEntry(669,679): 'first: Int'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = first: Int
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtTypeReference(676,679): 'Int'
   NO_CANDIDATES

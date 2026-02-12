@@ -80,10 +80,15 @@ KtDestructuringDeclaration(183,203): 'val (a, second,) = x'
   null
 
 KtDestructuringDeclarationEntry(188,189): 'a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(191,197): 'second'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second'.>
 
 KtNameReferenceExpression(202,203): 'x'
   null
@@ -107,7 +112,9 @@ KtDestructuringDeclaration(222,237): 'var (first) = x'
   null
 
 KtDestructuringDeclarationEntry(227,232): 'first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtNameReferenceExpression(236,237): 'x'
   null
@@ -131,7 +138,9 @@ KtDestructuringDeclaration(256,279): 'val (first: String) = x'
   null
 
 KtDestructuringDeclarationEntry(261,274): 'first: String'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtTypeReference(268,274): 'String'
   null
@@ -164,7 +173,9 @@ KtDestructuringDeclaration(298,309): 'val (first)'
   null
 
 KtDestructuringDeclarationEntry(303,308): 'first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtIfExpression(316,357): 'if (true) { val (a: Int, b: String) = x }'
   null
@@ -185,7 +196,10 @@ KtDestructuringDeclaration(328,355): 'val (a: Int, b: String) = x'
   null
 
 KtDestructuringDeclarationEntry(333,339): 'a: Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.String
+    ]
 
 KtTypeReference(336,339): 'Int'
   null
@@ -197,7 +211,10 @@ KtNameReferenceExpression(336,339): 'Int'
   null
 
 KtDestructuringDeclarationEntry(341,350): 'b: String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: kotlin.Int
+    ]
 
 KtTypeReference(344,350): 'String'
   null
@@ -230,7 +247,10 @@ KtDestructuringDeclaration(374,418): 'val (first: Int = a, second: String = b) =
   null
 
 KtDestructuringDeclarationEntry(379,393): 'first: Int = a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.String
+    ]
 
 KtTypeReference(386,389): 'Int'
   null
@@ -245,7 +265,10 @@ KtNameReferenceExpression(392,393): 'a'
   null
 
 KtDestructuringDeclarationEntry(395,413): 'second: String = b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: kotlin.Int
+    ]
 
 KtTypeReference(403,409): 'String'
   null
@@ -281,7 +304,9 @@ KtDestructuringDeclaration(437,448): 'val (_) = x'
   null
 
 KtDestructuringDeclarationEntry(442,443): '_'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
 KtNameReferenceExpression(447,448): 'x'
   null
@@ -305,7 +330,9 @@ KtDestructuringDeclaration(467,486): 'val (_: String) = x'
   null
 
 KtDestructuringDeclarationEntry(472,481): '_: String'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
 KtTypeReference(475,481): 'String'
   null
@@ -338,7 +365,9 @@ KtDestructuringDeclaration(521,541): 'val (aa = first) = x'
   null
 
 KtDestructuringDeclarationEntry(526,536): 'aa = first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtNameReferenceExpression(531,536): 'first'
   null
@@ -365,7 +394,9 @@ KtDestructuringDeclaration(560,588): 'val (aa: String = first) = x'
   null
 
 KtDestructuringDeclarationEntry(565,583): 'aa: String = first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtTypeReference(569,575): 'String'
   null
@@ -401,7 +432,9 @@ KtDestructuringDeclaration(607,622): 'val (a = first)'
   null
 
 KtDestructuringDeclarationEntry(612,621): 'a = first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtNameReferenceExpression(616,621): 'first'
   null
@@ -425,7 +458,10 @@ KtDestructuringDeclaration(641,685): 'val (first: Int = a, second: String = b) =
   null
 
 KtDestructuringDeclarationEntry(646,660): 'first: Int = a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.String
+    ]
 
 KtTypeReference(653,656): 'Int'
   null
@@ -440,7 +476,10 @@ KtNameReferenceExpression(659,660): 'a'
   null
 
 KtDestructuringDeclarationEntry(662,680): 'second: String = b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: kotlin.Int
+    ]
 
 KtTypeReference(670,676): 'String'
   null
@@ -503,10 +542,14 @@ KtDestructuringDeclaration(727,743): '(first, second,)'
   null
 
 KtDestructuringDeclarationEntry(728,733): 'first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtDestructuringDeclarationEntry(735,741): 'second'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second'.>
 
 KtContainerNode(747,748): 'x'
   null
@@ -530,7 +573,9 @@ KtDestructuringDeclaration(762,769): '(first)'
   null
 
 KtDestructuringDeclarationEntry(763,768): 'first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtContainerNode(773,774): 'x'
   null
@@ -554,7 +599,9 @@ KtDestructuringDeclaration(788,803): '(first: String)'
   null
 
 KtDestructuringDeclarationEntry(789,802): 'first: String'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtTypeReference(796,802): 'String'
   null
@@ -587,7 +634,10 @@ KtDestructuringDeclaration(822,841): '(a: Int, b: String)'
   null
 
 KtDestructuringDeclarationEntry(823,829): 'a: Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.String
+    ]
 
 KtTypeReference(826,829): 'Int'
   null
@@ -599,7 +649,10 @@ KtNameReferenceExpression(826,829): 'Int'
   null
 
 KtDestructuringDeclarationEntry(831,840): 'b: String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: kotlin.Int
+    ]
 
 KtTypeReference(834,840): 'String'
   null
@@ -632,7 +685,9 @@ KtDestructuringDeclaration(860,863): '(_)'
   null
 
 KtDestructuringDeclarationEntry(861,862): '_'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
 KtContainerNode(867,868): 'x'
   null
@@ -656,7 +711,9 @@ KtDestructuringDeclaration(882,893): '(_: String)'
   null
 
 KtDestructuringDeclarationEntry(883,892): '_: String'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
 KtTypeReference(886,892): 'String'
   null
@@ -689,7 +746,9 @@ KtDestructuringDeclaration(929,941): '(aa = first)'
   null
 
 KtDestructuringDeclarationEntry(930,940): 'aa = first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtNameReferenceExpression(935,940): 'first'
   null
@@ -716,7 +775,9 @@ KtDestructuringDeclaration(960,980): '(aa: String = first)'
   null
 
 KtDestructuringDeclarationEntry(961,979): 'aa: String = first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtTypeReference(965,971): 'String'
   null
@@ -752,7 +813,10 @@ KtDestructuringDeclaration(999,1035): '(first: Int = a, second: String = b)'
   null
 
 KtDestructuringDeclarationEntry(1000,1014): 'first: Int = a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.String
+    ]
 
 KtTypeReference(1007,1010): 'Int'
   null
@@ -767,7 +831,10 @@ KtNameReferenceExpression(1013,1014): 'a'
   null
 
 KtDestructuringDeclarationEntry(1016,1034): 'second: String = b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: kotlin.Int
+    ]
 
 KtTypeReference(1024,1030): 'String'
   null
@@ -872,10 +939,14 @@ KtDestructuringDeclaration(1109,1125): '(first, second,)'
   null
 
 KtDestructuringDeclarationEntry(1110,1115): 'first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtDestructuringDeclarationEntry(1117,1123): 'second'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'second'.>
 
 KtBlockExpression(1129,1129): ''
   null
@@ -908,7 +979,9 @@ KtDestructuringDeclaration(1141,1148): '(first)'
   null
 
 KtDestructuringDeclarationEntry(1142,1147): 'first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtBlockExpression(1152,1152): ''
   null
@@ -941,7 +1014,9 @@ KtDestructuringDeclaration(1164,1179): '(first: String)'
   null
 
 KtDestructuringDeclarationEntry(1165,1178): 'first: String'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtTypeReference(1172,1178): 'String'
   null
@@ -983,7 +1058,10 @@ KtDestructuringDeclaration(1195,1214): '(a: Int, b: String)'
   null
 
 KtDestructuringDeclarationEntry(1196,1202): 'a: Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.String
+    ]
 
 KtTypeReference(1199,1202): 'Int'
   null
@@ -995,7 +1073,10 @@ KtNameReferenceExpression(1199,1202): 'Int'
   null
 
 KtDestructuringDeclarationEntry(1204,1213): 'b: String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: kotlin.Int
+    ]
 
 KtTypeReference(1207,1213): 'String'
   null
@@ -1037,7 +1118,9 @@ KtDestructuringDeclaration(1230,1233): '(_)'
   null
 
 KtDestructuringDeclarationEntry(1231,1232): '_'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
 KtBlockExpression(1237,1237): ''
   null
@@ -1070,7 +1153,9 @@ KtDestructuringDeclaration(1249,1260): '(_: String)'
   null
 
 KtDestructuringDeclarationEntry(1250,1259): '_: String'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING: Underscore in name-based destructuring without renaming is forbidden.>
 
 KtTypeReference(1253,1259): 'String'
   null
@@ -1112,7 +1197,9 @@ KtDestructuringDeclaration(1293,1305): '(aa = first)'
   null
 
 KtDestructuringDeclarationEntry(1294,1304): 'aa = first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtNameReferenceExpression(1299,1304): 'first'
   null
@@ -1148,7 +1235,9 @@ KtDestructuringDeclaration(1321,1341): '(aa: String = first)'
   null
 
 KtDestructuringDeclarationEntry(1322,1340): 'aa: String = first'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtTypeReference(1326,1332): 'String'
   null
@@ -1193,7 +1282,10 @@ KtDestructuringDeclaration(1357,1393): '(first: Int = a, second: String = b)'
   null
 
 KtDestructuringDeclarationEntry(1358,1372): 'first: Int = a'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val a: kotlin.String
+    ]
 
 KtTypeReference(1365,1368): 'Int'
   null
@@ -1208,7 +1300,10 @@ KtNameReferenceExpression(1371,1372): 'a'
   null
 
 KtDestructuringDeclarationEntry(1374,1392): 'second: String = b'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val b: kotlin.Int
+    ]
 
 KtTypeReference(1382,1388): 'String'
   null

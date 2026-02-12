@@ -70,6 +70,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     final override fun KtLabelReferenceExpression.resolveSymbol(): KaDeclarationSymbol? = resolveSymbolSafe()
     final override fun KtReturnExpression.resolveSymbol(): KaFunctionSymbol? = resolveSymbolSafe()
     final override fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol? = resolveSymbolSafe()
+    final override fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe()
 
     final override fun KtReference.resolveToSymbol(): KaSymbol? = withPsiValidityAssertion(element) {
         return resolveToSymbols().singleOrNull()
@@ -140,6 +141,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     final override fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? = resolveSingleCallSafe()
     final override fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall? = resolveSingleCallSafe()
     final override fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? = resolveSingleCallSafe()
+    final override fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? = resolveCallSafe()
 
     final override fun KtElement.resolveToCall(): KaCallInfo? = withPsiValidityAssertion {
         when (val attempt = tryResolveCallImpl()) {
@@ -234,6 +236,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
         is KtCollectionLiteralExpression -> true
         is KtConstructorDelegationReferenceExpression -> true
         is KtEnumEntrySuperclassReferenceExpression -> true
+        is KtDestructuringDeclarationEntry -> true
         else -> false
     }
 

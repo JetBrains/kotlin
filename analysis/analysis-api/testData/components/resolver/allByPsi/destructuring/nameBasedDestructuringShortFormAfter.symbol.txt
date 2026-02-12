@@ -80,10 +80,16 @@ KtDestructuringDeclaration(170,194): 'val (first, second,) = x'
   null
 
 KtDestructuringDeclarationEntry(175,180): 'first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(182,188): 'second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val second: kotlin.Int
+    ]
 
 KtNameReferenceExpression(193,194): 'x'
   null
@@ -107,10 +113,16 @@ KtDestructuringDeclaration(213,237): 'val (second, first,) = x'
   null
 
 KtDestructuringDeclarationEntry(218,224): 'second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val second: kotlin.Int
+    ]
 
 KtDestructuringDeclarationEntry(226,231): 'first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtNameReferenceExpression(236,237): 'x'
   null
@@ -134,7 +146,10 @@ KtDestructuringDeclaration(256,271): 'var (first) = x'
   null
 
 KtDestructuringDeclarationEntry(261,266): 'first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtNameReferenceExpression(270,271): 'x'
   null
@@ -158,7 +173,10 @@ KtDestructuringDeclaration(290,313): 'val (first: String) = x'
   null
 
 KtDestructuringDeclarationEntry(295,308): 'first: String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtTypeReference(302,308): 'String'
   null
@@ -191,7 +209,10 @@ KtDestructuringDeclaration(348,368): 'val (aa = first) = x'
   null
 
 KtDestructuringDeclarationEntry(353,363): 'aa = first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtNameReferenceExpression(358,363): 'first'
   null
@@ -218,7 +239,10 @@ KtDestructuringDeclaration(387,415): 'val (aa: String = first) = x'
   null
 
 KtDestructuringDeclarationEntry(392,410): 'aa: String = first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtTypeReference(396,402): 'String'
   null
@@ -254,7 +278,10 @@ KtDestructuringDeclaration(434,453): 'val (_ = first) = x'
   null
 
 KtDestructuringDeclarationEntry(439,448): '_ = first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtNameReferenceExpression(443,448): 'first'
   null
@@ -281,7 +308,10 @@ KtDestructuringDeclaration(472,499): 'val (_: String = first) = x'
   null
 
 KtDestructuringDeclarationEntry(477,494): '_: String = first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtTypeReference(480,486): 'String'
   null
@@ -344,10 +374,16 @@ KtDestructuringDeclaration(541,557): '(first, second,)'
   null
 
 KtDestructuringDeclarationEntry(542,547): 'first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(549,555): 'second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val second: kotlin.Int
+    ]
 
 KtContainerNode(561,562): 'x'
   null
@@ -371,10 +407,16 @@ KtDestructuringDeclaration(576,592): '(second, first,)'
   null
 
 KtDestructuringDeclarationEntry(577,583): 'second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val second: kotlin.Int
+    ]
 
 KtDestructuringDeclarationEntry(585,590): 'first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtContainerNode(596,597): 'x'
   null
@@ -398,7 +440,10 @@ KtDestructuringDeclaration(611,618): '(first)'
   null
 
 KtDestructuringDeclarationEntry(612,617): 'first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtContainerNode(622,623): 'x'
   null
@@ -422,7 +467,10 @@ KtDestructuringDeclaration(637,652): '(first: String)'
   null
 
 KtDestructuringDeclarationEntry(638,651): 'first: String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtTypeReference(645,651): 'String'
   null
@@ -455,7 +503,10 @@ KtDestructuringDeclaration(688,700): '(aa = first)'
   null
 
 KtDestructuringDeclarationEntry(689,699): 'aa = first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtNameReferenceExpression(694,699): 'first'
   null
@@ -482,7 +533,10 @@ KtDestructuringDeclaration(719,739): '(aa: String = first)'
   null
 
 KtDestructuringDeclarationEntry(720,738): 'aa: String = first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtTypeReference(724,730): 'String'
   null
@@ -518,7 +572,10 @@ KtDestructuringDeclaration(758,769): '(_ = first)'
   null
 
 KtDestructuringDeclarationEntry(759,768): '_ = first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtNameReferenceExpression(763,768): 'first'
   null
@@ -545,7 +602,10 @@ KtDestructuringDeclaration(788,807): '(_: String = first)'
   null
 
 KtDestructuringDeclarationEntry(789,806): '_: String = first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtTypeReference(792,798): 'String'
   null
@@ -650,10 +710,16 @@ KtDestructuringDeclaration(881,897): '(first, second,)'
   null
 
 KtDestructuringDeclarationEntry(882,887): 'first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(889,895): 'second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val second: kotlin.Int
+    ]
 
 KtBlockExpression(901,901): ''
   null
@@ -686,10 +752,16 @@ KtDestructuringDeclaration(913,929): '(second, first,)'
   null
 
 KtDestructuringDeclarationEntry(914,920): 'second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val second: kotlin.Int
+    ]
 
 KtDestructuringDeclarationEntry(922,927): 'first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtBlockExpression(933,933): ''
   null
@@ -722,7 +794,10 @@ KtDestructuringDeclaration(945,952): '(first)'
   null
 
 KtDestructuringDeclarationEntry(946,951): 'first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtBlockExpression(956,956): ''
   null
@@ -755,7 +830,10 @@ KtDestructuringDeclaration(968,983): '(first: String)'
   null
 
 KtDestructuringDeclarationEntry(969,982): 'first: String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtTypeReference(976,982): 'String'
   null
@@ -797,7 +875,10 @@ KtDestructuringDeclaration(1016,1028): '(aa = first)'
   null
 
 KtDestructuringDeclarationEntry(1017,1027): 'aa = first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtNameReferenceExpression(1022,1027): 'first'
   null
@@ -833,7 +914,10 @@ KtDestructuringDeclaration(1044,1064): '(aa: String = first)'
   null
 
 KtDestructuringDeclarationEntry(1045,1063): 'aa: String = first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtTypeReference(1049,1055): 'String'
   null
@@ -878,7 +962,10 @@ KtDestructuringDeclaration(1080,1091): '(_ = first)'
   null
 
 KtDestructuringDeclarationEntry(1081,1090): '_ = first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtNameReferenceExpression(1085,1090): 'first'
   null
@@ -914,7 +1001,10 @@ KtDestructuringDeclaration(1107,1126): '(_: String = first)'
   null
 
 KtDestructuringDeclarationEntry(1108,1125): '_: String = first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val first: kotlin.String
+    ]
 
 KtTypeReference(1111,1117): 'String'
   null

@@ -1415,7 +1415,7 @@ public class org/jetbrains/kotlin/psi/KtDestructuringDeclaration : org/jetbrains
 	public fun isVar ()Z
 }
 
-public class org/jetbrains/kotlin/psi/KtDestructuringDeclarationEntry : org/jetbrains/kotlin/psi/KtVariableDeclaration {
+public class org/jetbrains/kotlin/psi/KtDestructuringDeclarationEntry : org/jetbrains/kotlin/psi/KtVariableDeclaration, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getColon ()Lcom/intellij/psi/PsiElement;

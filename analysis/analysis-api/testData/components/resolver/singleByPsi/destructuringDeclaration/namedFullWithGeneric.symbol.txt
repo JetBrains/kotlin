@@ -1,2 +1,5 @@
 KtDestructuringDeclarationEntry(137,146): 'val prop2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop2: T
+    ]

@@ -1,2 +1,19 @@
 KtDestructuringDeclarationEntry(162,163): 'b'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = b
+        isSafeNavigation = false
+        type = a.MyPair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = a/MyPair.component2(<dispatch receiver>: a.MyPair): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = a/MyPair.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

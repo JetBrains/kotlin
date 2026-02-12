@@ -80,10 +80,44 @@ KtDestructuringDeclaration(131,159): '(val first, var second,) = x'
   null
 
 KtDestructuringDeclarationEntry(132,141): 'val first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtDestructuringDeclarationEntry(143,153): 'var second'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = var second
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = second
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val second: kotlin.Int
+        contextParameters = []
+        callableId = /Tuple.second
+      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(158,159): 'x'
   KaSuccessCallInfo:
@@ -121,7 +155,24 @@ KtDestructuringDeclaration(178,193): '(var first) = x'
   null
 
 KtDestructuringDeclarationEntry(179,188): 'var first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = var first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(192,193): 'x'
   KaSuccessCallInfo:
@@ -159,7 +210,24 @@ KtDestructuringDeclaration(212,235): '(val first: String) = x'
   null
 
 KtDestructuringDeclarationEntry(213,230): 'val first: String'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first: String
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtTypeReference(224,230): 'String'
   null
@@ -206,7 +274,24 @@ KtDestructuringDeclaration(254,274): '(val aa = first) = x'
   null
 
 KtDestructuringDeclarationEntry(255,269): 'val aa = first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val aa = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(264,269): 'first'
   null
@@ -247,7 +332,24 @@ KtDestructuringDeclaration(293,321): '(val aa: String = first) = x'
   null
 
 KtDestructuringDeclarationEntry(294,316): 'val aa: String = first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val aa: String = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtTypeReference(302,308): 'String'
   null
@@ -297,7 +399,24 @@ KtDestructuringDeclaration(340,359): '(val _ = first) = x'
   null
 
 KtDestructuringDeclarationEntry(341,354): 'val _ = first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val _ = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(349,354): 'first'
   null
@@ -338,7 +457,24 @@ KtDestructuringDeclaration(378,405): '(val _: String = first) = x'
   null
 
 KtDestructuringDeclarationEntry(379,400): 'val _: String = first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val _: String = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtTypeReference(386,392): 'String'
   null
@@ -415,10 +551,44 @@ KtDestructuringDeclaration(447,471): '(val first, val second,)'
   null
 
 KtDestructuringDeclarationEntry(448,457): 'val first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtDestructuringDeclarationEntry(459,469): 'val second'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val second
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = second
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val second: kotlin.Int
+        contextParameters = []
+        callableId = /Tuple.second
+      typeArgumentsMapping = {}
 
 KtContainerNode(475,476): 'x'
   null
@@ -456,7 +626,24 @@ KtDestructuringDeclaration(490,501): '(val first)'
   null
 
 KtDestructuringDeclarationEntry(491,500): 'val first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtContainerNode(505,506): 'x'
   null
@@ -494,7 +681,24 @@ KtDestructuringDeclaration(520,539): '(val first: String)'
   null
 
 KtDestructuringDeclarationEntry(521,538): 'val first: String'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first: String
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtTypeReference(532,538): 'String'
   null
@@ -541,7 +745,24 @@ KtDestructuringDeclaration(558,574): '(val aa = first)'
   null
 
 KtDestructuringDeclarationEntry(559,573): 'val aa = first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val aa = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(568,573): 'first'
   null
@@ -582,7 +803,24 @@ KtDestructuringDeclaration(593,617): '(val aa: String = first)'
   null
 
 KtDestructuringDeclarationEntry(594,616): 'val aa: String = first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val aa: String = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtTypeReference(602,608): 'String'
   null
@@ -632,7 +870,24 @@ KtDestructuringDeclaration(636,651): '(val _ = first)'
   null
 
 KtDestructuringDeclarationEntry(637,650): 'val _ = first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val _ = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(645,650): 'first'
   null
@@ -673,7 +928,24 @@ KtDestructuringDeclaration(670,693): '(val _: String = first)'
   null
 
 KtDestructuringDeclarationEntry(671,692): 'val _: String = first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val _: String = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtTypeReference(678,684): 'String'
   null
@@ -849,10 +1121,44 @@ KtDestructuringDeclaration(767,791): '(val first, val second,)'
   null
 
 KtDestructuringDeclarationEntry(768,777): 'val first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtDestructuringDeclarationEntry(779,789): 'val second'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val second
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = second
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val second: kotlin.Int
+        contextParameters = []
+        callableId = /Tuple.second
+      typeArgumentsMapping = {}
 
 KtBlockExpression(795,795): ''
   null
@@ -942,7 +1248,24 @@ KtDestructuringDeclaration(807,818): '(val first)'
   null
 
 KtDestructuringDeclarationEntry(808,817): 'val first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtBlockExpression(822,822): ''
   null
@@ -1032,7 +1355,24 @@ KtDestructuringDeclaration(834,853): '(val first: String)'
   null
 
 KtDestructuringDeclarationEntry(835,852): 'val first: String'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first: String
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtTypeReference(846,852): 'String'
   null
@@ -1131,7 +1471,24 @@ KtDestructuringDeclaration(869,885): '(val aa = first)'
   null
 
 KtDestructuringDeclarationEntry(870,884): 'val aa = first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val aa = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(879,884): 'first'
   null
@@ -1224,7 +1581,24 @@ KtDestructuringDeclaration(901,925): '(val aa: String = first)'
   null
 
 KtDestructuringDeclarationEntry(902,924): 'val aa: String = first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val aa: String = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtTypeReference(910,916): 'String'
   null
@@ -1326,7 +1700,24 @@ KtDestructuringDeclaration(941,956): '(val _ = first)'
   null
 
 KtDestructuringDeclarationEntry(942,955): 'val _ = first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val _ = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(950,955): 'first'
   null
@@ -1419,7 +1810,24 @@ KtDestructuringDeclaration(972,995): '(val _: String = first)'
   null
 
 KtDestructuringDeclarationEntry(973,994): 'val _: String = first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val _: String = first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = first
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val first: kotlin.String
+        contextParameters = []
+        callableId = /Tuple.first
+      typeArgumentsMapping = {}
 
 KtTypeReference(980,986): 'String'
   null

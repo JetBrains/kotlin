@@ -1,2 +1,19 @@
 KtDestructuringDeclarationEntry(102,112): 'localProp2'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = localProp2
+        isSafeNavigation = false
+        type = foo.MyDataClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = foo/MyDataClass.component2(<dispatch receiver>: foo.MyDataClass): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = foo/MyDataClass.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}

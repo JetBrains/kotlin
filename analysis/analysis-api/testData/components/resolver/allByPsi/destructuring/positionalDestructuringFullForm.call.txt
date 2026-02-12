@@ -83,10 +83,44 @@ KtDestructuringDeclaration(135,163): '[val first, var second,] = x'
   null
 
 KtDestructuringDeclarationEntry(136,145): 'val first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtDestructuringDeclarationEntry(147,157): 'var second'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = var second
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(162,163): 'x'
   KaSuccessCallInfo:
@@ -124,7 +158,24 @@ KtDestructuringDeclaration(182,197): '[var first] = x'
   null
 
 KtDestructuringDeclarationEntry(183,192): 'var first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = var first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(196,197): 'x'
   KaSuccessCallInfo:
@@ -162,7 +213,24 @@ KtDestructuringDeclaration(216,239): '[val first: String] = x'
   null
 
 KtDestructuringDeclarationEntry(217,234): 'val first: String'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first: String
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(228,234): 'String'
   null
@@ -236,10 +304,44 @@ KtDestructuringDeclaration(281,305): '[val first, val second,]'
   null
 
 KtDestructuringDeclarationEntry(282,291): 'val first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtDestructuringDeclarationEntry(293,303): 'val second'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val second
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtContainerNode(309,310): 'x'
   null
@@ -277,7 +379,24 @@ KtDestructuringDeclaration(324,335): '[val first]'
   null
 
 KtDestructuringDeclarationEntry(325,334): 'val first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtContainerNode(339,340): 'x'
   null
@@ -315,7 +434,24 @@ KtDestructuringDeclaration(354,373): '[val first: String]'
   null
 
 KtDestructuringDeclarationEntry(355,372): 'val first: String'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first: String
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(366,372): 'String'
   null
@@ -488,10 +624,44 @@ KtDestructuringDeclaration(447,471): '[val first, val second,]'
   null
 
 KtDestructuringDeclarationEntry(448,457): 'val first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtDestructuringDeclarationEntry(459,469): 'val second'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val second
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtBlockExpression(475,475): ''
   null
@@ -581,7 +751,24 @@ KtDestructuringDeclaration(487,498): '[val first]'
   null
 
 KtDestructuringDeclarationEntry(488,497): 'val first'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtBlockExpression(502,502): ''
   null
@@ -671,7 +858,24 @@ KtDestructuringDeclaration(514,533): '[val first: String]'
   null
 
 KtDestructuringDeclarationEntry(515,532): 'val first: String'
-  null
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = val first: String
+        isSafeNavigation = false
+        type = Tuple
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = /Tuple.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtTypeReference(526,532): 'String'
   null

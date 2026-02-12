@@ -83,10 +83,16 @@ KtDestructuringDeclaration(135,163): '[val first, var second,] = x'
   null
 
 KtDestructuringDeclarationEntry(136,145): 'val first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(147,157): 'var second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
+    ]
 
 KtNameReferenceExpression(162,163): 'x'
   null
@@ -110,7 +116,10 @@ KtDestructuringDeclaration(182,197): '[var first] = x'
   null
 
 KtDestructuringDeclarationEntry(183,192): 'var first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtNameReferenceExpression(196,197): 'x'
   null
@@ -134,7 +143,10 @@ KtDestructuringDeclaration(216,239): '[val first: String] = x'
   null
 
 KtDestructuringDeclarationEntry(217,234): 'val first: String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtTypeReference(228,234): 'String'
   null
@@ -194,10 +206,16 @@ KtDestructuringDeclaration(281,305): '[val first, val second,]'
   null
 
 KtDestructuringDeclarationEntry(282,291): 'val first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(293,303): 'val second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
+    ]
 
 KtContainerNode(309,310): 'x'
   null
@@ -221,7 +239,10 @@ KtDestructuringDeclaration(324,335): '[val first]'
   null
 
 KtDestructuringDeclarationEntry(325,334): 'val first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtContainerNode(339,340): 'x'
   null
@@ -245,7 +266,10 @@ KtDestructuringDeclaration(354,373): '[val first: String]'
   null
 
 KtDestructuringDeclarationEntry(355,372): 'val first: String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtTypeReference(366,372): 'String'
   null
@@ -347,10 +371,16 @@ KtDestructuringDeclaration(447,471): '[val first, val second,]'
   null
 
 KtDestructuringDeclarationEntry(448,457): 'val first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtDestructuringDeclarationEntry(459,469): 'val second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component2(<dispatch receiver>: Tuple): kotlin.Int
+    ]
 
 KtBlockExpression(475,475): ''
   null
@@ -383,7 +413,10 @@ KtDestructuringDeclaration(487,498): '[val first]'
   null
 
 KtDestructuringDeclarationEntry(488,497): 'val first'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtBlockExpression(502,502): ''
   null
@@ -416,7 +449,10 @@ KtDestructuringDeclaration(514,533): '[val first: String]'
   null
 
 KtDestructuringDeclarationEntry(515,532): 'val first: String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Tuple.component1(<dispatch receiver>: Tuple): kotlin.String
+    ]
 
 KtTypeReference(526,532): 'String'
   null

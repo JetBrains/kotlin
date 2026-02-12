@@ -961,7 +961,25 @@ KtNameReferenceExpression(392,396): 'prop'
     isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(404,422): '@Anno("a $prop") a'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = @Anno("a $prop") a
+        isSafeNavigation = false
+        type = util.Pair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+        symbol = util/Pair.component1(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+        valueParameters = []
+        contextParameters = []
+        callableId = util/Pair.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDeclarationModifierList(404,420): '@Anno("a $prop")'
   NO_CANDIDATES
@@ -1077,7 +1095,25 @@ KtNameReferenceExpression(414,418): 'prop'
     isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(424,442): '@Anno("b $prop") b'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = @Anno("b $prop") b
+        isSafeNavigation = false
+        type = util.Pair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+        symbol = util/Pair.component2(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+        valueParameters = []
+        contextParameters = []
+        callableId = util/Pair.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDeclarationModifierList(424,440): '@Anno("b $prop")'
   NO_CANDIDATES
@@ -1420,7 +1456,25 @@ KtNameReferenceExpression(480,484): 'prop'
     isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(492,510): '@Anno("c $prop") c'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = @Anno("c $prop") c
+        isSafeNavigation = false
+        type = util.Pair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+        symbol = util/Pair.component1(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|) [evaluated = String(a type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|) [evaluated = String(a nested type s)])  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|) [evaluated = String(a nested nested type s)])  kotlin.String>>?
+        valueParameters = []
+        contextParameters = []
+        callableId = util/Pair.component1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDeclarationModifierList(492,508): '@Anno("c $prop")'
   NO_CANDIDATES
@@ -1536,7 +1590,25 @@ KtNameReferenceExpression(502,506): 'prop'
     isInBestCandidates = true
 
 KtDestructuringDeclarationEntry(512,530): '@Anno("d $prop") d'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = @Anno("d $prop") d
+        isSafeNavigation = false
+        type = util.Pair
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+        symbol = util/Pair.component2(<dispatch receiver>: util.Pair): @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|) [evaluated = String(b type s)])  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|) [evaluated = String(b nested type s)])  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|) [evaluated = String(b nested nested type s)])  kotlin.Int>>?
+        valueParameters = []
+        contextParameters = []
+        callableId = util/Pair.component2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtDeclarationModifierList(512,528): '@Anno("d $prop")'
   NO_CANDIDATES
