@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
@@ -63,7 +62,6 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         buildResolveAndCheckFir: (FirSession, List<F>, BaseDiagnosticsCollector) -> SingleModuleFrontendOutput,
     ): AllModulesFrontendOutput {
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
-        val diagnosticsReporter = DiagnosticsCollectorImpl()
 
         // FIR
         val mainModuleName = Name.special("<${config.moduleId}>")
@@ -99,14 +97,14 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         )
 
         val outputs = sessionsWithSources.map { (session, sources) ->
-            buildResolveAndCheckFir(session, sources, diagnosticsReporter).also {
+            buildResolveAndCheckFir(session, sources, configuration.diagnosticsCollector).also {
                 if (config.configuration.konanPrintFiles) {
                     it.fir.forEach { file -> println(file.render()) }
                 }
             }
         }
 
-        outputs.runPlatformCheckers(diagnosticsReporter)
+        outputs.runPlatformCheckers(configuration.diagnosticsCollector)
         return AllModulesFrontendOutput(outputs)
     }
 
