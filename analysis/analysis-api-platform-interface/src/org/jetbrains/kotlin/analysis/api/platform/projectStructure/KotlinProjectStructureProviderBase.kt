@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
@@ -46,7 +47,15 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
     @OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
     private fun computeDefaultDanglingFileResolutionMode(file: KtFile): KaDanglingFileResolutionMode {
         if (autoDanglingResolutionMode) {
-            return KaDanglingFileResolutionModeProvider.calculateMode(file)
+            file.calculatedDanglingFileResolutionMode?.let { return it }
+
+            val calculatedMode = KaDanglingFileResolutionModeProvider.calculateMode(file)
+
+            if (file.isPhysical && file.copyOrigin != null) {
+                file.calculatedDanglingFileResolutionMode = calculatedMode
+            }
+
+            return calculatedMode
         }
 
         if (!file.isPhysical && !file.viewProvider.isEventSystemEnabled && file.copyOrigin != null) {
@@ -57,7 +66,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
     }
 
     private val autoDanglingResolutionMode by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        Registry.`is`("kotlin.analysis.autoDanglingResolutionMode", false)
+        Registry.`is`("kotlin.analysis.autoDanglingResolutionMode", true)
     }
 
     @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
@@ -98,4 +107,24 @@ public var KtCodeFragment.forcedSpecialModule: KaDanglingFileModule?
     get() = explicitModule as? KaDanglingFileModule
     set(value) {
         explicitModule = value
+    }
+
+private val DANGLING_FILE_RESOLUTION_MODE: Key<KaDanglingFileResolutionMode?> =
+    Key.create<KaDanglingFileResolutionMode>("DANGLING_FILE_RESOLUTION_MODE")
+
+/**
+ * Stores [KaDanglingFileResolutionMode] calculated by [KaDanglingFileResolutionModeProvider] for [this].
+ *
+ * This caching is only supported for physical dangling files with non-null [copyOrigin].
+ */
+@KaImplementationDetail
+public var KtFile.calculatedDanglingFileResolutionMode: KaDanglingFileResolutionMode?
+    get() = getUserData(DANGLING_FILE_RESOLUTION_MODE)
+    set(value) {
+        require(this.isDangling) { "Only dangling files can have KaDanglingFileResolutionMode" }
+        @OptIn(KaExperimentalApi::class)
+        require(this.copyOrigin != null) { "Only dangling files with non-null `copyOrigin` can have KaDanglingFileResolutionMode" }
+        require(this.isPhysical) { "Only physical dangling files can have cached KaDanglingFileResolutionMode" }
+
+        putUserData(DANGLING_FILE_RESOLUTION_MODE, value)
     }

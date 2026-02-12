@@ -20,7 +20,11 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.KaElementModifica
 import org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationLocality
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishModuleOutOfBlockModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.calculatedDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
+import org.jetbrains.kotlin.analysis.api.projectStructure.isDangling
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
@@ -328,7 +332,26 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
 
         // We should check outdated modifications before to avoid cache dropping (e.g., KaModule cache)
         dropOutdatedModifications(module)
+        dropCachedData(element)
         module.publishModuleOutOfBlockModificationEvent()
+    }
+
+    private fun dropCachedData(element: PsiElement) {
+        val file = element.containingFile as? KtFile ?: return
+        if (file.isDangling && file.isPhysical && file.copyOrigin != null) {
+            when (file.calculatedDanglingFileResolutionMode) {
+                KaDanglingFileResolutionMode.IGNORE_SELF -> {
+                    file.calculatedDanglingFileResolutionMode = KaDanglingFileResolutionMode.PREFER_SELF
+                }
+                KaDanglingFileResolutionMode.PREFER_SELF -> {
+                    // If the mode was already PREFER_SELF, another OOBM could potentially modify the dangling file
+                    // to be the same as the original one.
+                    // So the mode can be recalculated
+                    file.calculatedDanglingFileResolutionMode = null
+                }
+                else -> {}
+            }
+        }
     }
 
     /**
