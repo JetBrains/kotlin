@@ -124,11 +124,14 @@ internal open class KotlinJsIrLinkConfig(
                         )
                         parameters.enhancedFreeCompilerArgs.set(task.enhancedFreeCompilerArgs)
                         parameters.classpath.from(
-                            compilation.configurations.runtimeDependencyConfiguration!!.incoming.artifactView {
-                                it.componentFilter { id ->
-                                    id is ModuleComponentIdentifier
+                            compilation.configurations.runtimeDependencyConfiguration
+                                ?.incoming
+                                ?.artifactView {
+                                    it.componentFilter { id ->
+                                        id is ModuleComponentIdentifier
+                                    }
                                 }
-                            }.files
+                                ?.files ?: error("JS or Wasm compilation should contain runtime configuration")
                         )
                         propertiesProvider.kotlinDaemonJvmArgs?.let { kotlinDaemonJvmArgs ->
                             parameters.kotlinDaemonJvmArguments.set(providers.provider {
