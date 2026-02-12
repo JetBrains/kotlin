@@ -217,12 +217,12 @@ FILE: [ResolvedTo(IMPORTS)] util.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] MyClass.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|example/MyInterface| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+        public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -246,12 +246,12 @@ FILE: [ResolvedTo(IMPORTS)] util.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] MyClass.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|example/MyInterface| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(CONTRACTS)] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+        public open override [ResolvedTo(CONTRACTS)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -275,12 +275,12 @@ FILE: [ResolvedTo(IMPORTS)] util.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] MyClass.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|example/MyInterface| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -304,12 +304,12 @@ FILE: [ResolvedTo(IMPORTS)] util.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] MyClass.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|example/MyInterface| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -333,12 +333,12 @@ FILE: [ResolvedTo(IMPORTS)] util.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] MyClass.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|example/MyInterface| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -362,12 +362,12 @@ FILE: [ResolvedTo(IMPORTS)] util.kt
     }
 
 FILE: [ResolvedTo(IMPORTS)] MyClass.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|example/MyInterface| {
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(BODY_RESOLVE)] fun close(): R|kotlin/Unit| {
+        public open override [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| {
         }
 
     }
@@ -378,12 +378,12 @@ FILE: [ResolvedTo(IMPORTS)] util.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] MyClass.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|example/MyInterface| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|example/MyClass| {
+    public final [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] class MyClass : R|example/MyInterface| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass, ExpectForActualAttributeKey={}] constructor(): R|example/MyClass| {
             super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(BODY_RESOLVE)] fun close(): R|kotlin/Unit| {
+        public open override [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] fun close(): R|kotlin/Unit| {
         }
 
     }
