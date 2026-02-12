@@ -4462,18 +4462,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER) { firDiagnostic ->
-        LateinitPropertyFieldDeclarationWithInitializerImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.LATEINIT_FIELD_IN_VAL_PROPERTY) { firDiagnostic ->
-        LateinitFieldInValPropertyImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.LATEINIT_NULLABLE_BACKING_FIELD) { firDiagnostic ->
         LateinitNullableBackingFieldImpl(
             firDiagnostic as KtPsiDiagnostic,
