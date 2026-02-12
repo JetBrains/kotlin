@@ -52,14 +52,14 @@ var KtFile.analysisContext: PsiElement? by UserDataProperty(Key.create("ANALYSIS
 private val REPL_SNIPPET_KEY = Key.create<Boolean>("REPL_SNIPPET")
 
 /**
- * Determines if a [KtScript] should be parsed as a REPL snippet.
+ * Determines whether a [KtScript] should be parsed as a REPL snippet or not.
  */
 @KtExperimentalApi
 val KtScript.isReplSnippet: Boolean
     get() = this.getUserData(REPL_SNIPPET_KEY) == true
 
 /**
- * Markes the [KtScript] as a REPL snippet, so it is parsed by the compiler accordingly.
+ * Marks the [KtScript] as a REPL snippet, so it is parsed by the compiler accordingly.
  */
 @KtNonPublicApi
 fun KtScript.markAsReplSnippet() {
