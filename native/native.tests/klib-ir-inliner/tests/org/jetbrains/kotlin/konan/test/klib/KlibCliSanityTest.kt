@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.utils.patchManifestAsMap
 import org.jetbrains.kotlin.test.utils.patchManifestToBumpAbiVersion
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.fail
@@ -41,7 +41,9 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             addRegularModule("d") { dependsOn("b", "c", "a") }
         }
 
-        modules.compileToKlibsViaCli()
+        modules.compileToKlibsViaCli { _, successKlib ->
+            successKlib.assertNoKlibLoaderIssues()
+        }
     }
 
     @Test
@@ -53,7 +55,9 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             addRegularModule("d") { dependsOn("b", "c", "a") }
         }
 
-        modules.compileToKlibsViaCli(produceUnpackedKlibs = false)
+        modules.compileToKlibsViaCli(produceUnpackedKlibs = false) { _, successKlib ->
+            successKlib.assertNoKlibLoaderIssues()
+        }
     }
 
     @Test
@@ -83,7 +87,9 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             addRegularModule("b") {
                 sourceFileAddend("fun foo() = a.a(0)") // call a real function from "a"
             }
-        }.compileToKlibsViaCli(extraCliArgs = listOf("-library", moduleAKlibRelativePath))
+        }.compileToKlibsViaCli(extraCliArgs = listOf("-library", moduleAKlibRelativePath)) { _, successKlib ->
+            successKlib.assertNoKlibLoaderIssues()
+        }
     }
 
     @Test
@@ -98,12 +104,55 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             modules.modules[0].sourceFile.parentFile.resolve("non-existent-klib").absolutePath,
             modules.modules[0].sourceFile.parentFile.resolve("non-existent-klib.klib").absolutePath,
         ).forEach { libraryPath ->
-            //                     extraCliArgs = listOf("-library", libraryPath, "-friend-modules", libraryPath)
             modules.compileToKlibsViaCli(extraCliArgs = listOf("-library", libraryPath)) { _, successKlib ->
-                val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
-                assertEquals(ExitCode.OK, compilationToolCall.exitCode)
-                assertTrue("KLIB loader: Library not found: $libraryPath" in compilationToolCall.toolOutput)
+                successKlib.assertLibraryNotFound(libraryPath)
             }
+
+            modules.compileToKlibsViaCli(extraCliArgs = listOf("-library", libraryPath, "-friend-modules", libraryPath)) { _, successKlib ->
+                successKlib.assertLibraryNotFound(libraryPath)
+            }
+
+            modules.compileToKlibsViaCli(extraCliArgs = listOf("-library", libraryPath, "-Xinclude=$libraryPath")) { _, successKlib ->
+                successKlib.assertLibraryNotFound(libraryPath)
+            }
+        }
+    }
+
+    @Test
+    fun `Compiler warns on unexpected friend KLIB passed via CLI arguments`() {
+        var moduleAKlibPath: String? = null
+
+        newSourceModules {
+            addRegularModule("a")
+        }.compileToKlibsViaCli { _, successKlib ->
+            moduleAKlibPath = successKlib.resultingArtifact.klibFile.path
+        }
+        checkNotNull(moduleAKlibPath)
+
+        val moduleB = newSourceModules {
+            addRegularModule("b")
+        }
+
+        // Existing friend that is also passed via `-library`.
+        moduleB.compileToKlibsViaCli(extraCliArgs = listOf("-library", moduleAKlibPath, "-friend-modules", moduleAKlibPath)) { _, successKlib ->
+            successKlib.assertNoKlibLoaderIssues()
+        }
+
+        // Existing friend that is not passed via `-library`.
+        moduleB.compileToKlibsViaCli(extraCliArgs = listOf("-friend-modules", moduleAKlibPath)) { _, successKlib ->
+            successKlib.assertNoKlibLoaderIssues()
+        }
+
+        val nonExistentKlibPath = "non-existent-klib.klib"
+
+        // Non-existing friend that is also passed via `-library`.
+        moduleB.compileToKlibsViaCli(extraCliArgs = listOf("-library", nonExistentKlibPath, "-friend-modules", nonExistentKlibPath)) { _, successKlib ->
+            successKlib.assertLibraryNotFound(nonExistentKlibPath)
+        }
+
+        // Non-existing friend that is not passed via `-library`.
+        moduleB.compileToKlibsViaCli(extraCliArgs = listOf("-friend-modules", nonExistentKlibPath)) { _, successKlib ->
+            successKlib.assertNoKlibLoaderIssues()
         }
     }
 
@@ -137,11 +186,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             when (module.name) {
                 "a" -> aKlib = successKlib.resultingArtifact
                 "b" -> aKlib!!.klibFile.delete() // remove transitive dependency `a`, so subsequent compilation of `c` would miss it.
-                "c" -> {
-                    val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
-                    assertEquals(ExitCode.OK, compilationToolCall.exitCode)
-                    assertFalse("KLIB loader: " in compilationToolCall.toolOutput)
-                }
+                "c" -> successKlib.assertNoKlibLoaderIssues()
             }
         }
     }
@@ -165,11 +210,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
                     // In other words: unlike the previous test, don't compile-and-remove "a" at all,
                     // but just patch the manifest to mention it as if it existed.
                 }
-                "c" -> {
-                    val compilationToolCall = successKlib.loggedData as LoggedData.CompilationToolCall
-                    assertEquals(ExitCode.OK, compilationToolCall.exitCode)
-                    assertFalse("KLIB loader: " in compilationToolCall.toolOutput)
-                }
+                "c" -> successKlib.assertNoKlibLoaderIssues()
             }
         }
     }
@@ -182,7 +223,9 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         }
 
         // Control compilation -- should finish successfully.
-        modules.compileToKlibsViaCli()
+        modules.compileToKlibsViaCli { _, successKlib ->
+            successKlib.assertNoKlibLoaderIssues()
+        }
 
         // Compilation with patched manifest -- should fail.
         try {
@@ -221,6 +264,8 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             addRegularModule("a")
             addRegularModule("b") { dependsOn("a") }
         }.compileToKlibsViaCli { module, successKlib ->
+            successKlib.assertNoKlibLoaderIssues()
+
             if (module.name == "a") {
                 patchManifestAsMap(JUnit5Assertions, successKlib.resultingArtifact.klibFile) { properties ->
                     properties[KLIB_PROPERTY_IR_PROVIDER] = irProviderName
@@ -260,6 +305,31 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
                 if (noStdlib) this += listOf("-nostdlib", "-l", stdlibPath)
                 if (noDefaultLibs) this += listOf("-no-default-libs", "-l", posixPath)
             }
-        )
+        ) { _, successKlib ->
+            successKlib.assertNoKlibLoaderIssues()
+        }
+    }
+
+    private fun TestCompilationResult.Success<out KLIB>.assertNoKlibLoaderIssues() {
+        val compilationToolCall = loggedData as LoggedData.CompilationToolCall
+        assertEquals(ExitCode.OK, compilationToolCall.exitCode)
+
+        val toolOutput = compilationToolCall.toolOutput.lineSequence()
+            .filter { "KLIB loader:" in it }
+            .toList()
+
+        assertEquals(0, toolOutput.size)
+    }
+
+    private fun TestCompilationResult.Success<out KLIB>.assertLibraryNotFound(libraryPath: String) {
+        val compilationToolCall = loggedData as LoggedData.CompilationToolCall
+        assertEquals(ExitCode.OK, compilationToolCall.exitCode)
+
+        val toolOutput = compilationToolCall.toolOutput.lineSequence()
+            .filter { "KLIB loader:" in it }
+            .toList()
+
+        assertEquals(1, toolOutput.size)
+        assertTrue("KLIB loader: Library not found: $libraryPath" in toolOutput[0])
     }
 }
