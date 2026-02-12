@@ -96,6 +96,11 @@ public expect fun atan(x: Double): Double
  * to the rectangular coordinates `(x, y)` by computing the arc tangent of the value [y] / [x];
  * the returned value is an angle in the range from `-PI` to `PI` radians.
  *
+ * In other words, this function returns an angle in radians between the positive x-axis and
+ * a ray from the origin (`(0, 0)`) to the point `(x, y)` confined to the interval `(-π, π]`.
+ *
+ * The `r` component (the distance) of the polar coordinates `(r, theta)` could be calculated as `hypot(x, y)`.
+ *
  * Special cases:
  *   - `atan2(0.0, 0.0)` is `0.0`
  *   - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
@@ -106,6 +111,9 @@ public expect fun atan(x: Double): Double
  *   - `atan2(+Inf, x)` is `PI/2` for finite `x`
  *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
+ *
+ * @see hypot function.
+ * @sample samples.math.MathSamples.Doubles.atan2
  */
 @SinceKotlin("1.2")
 public expect fun atan2(y: Double, x: Double): Double
@@ -639,6 +647,11 @@ public expect fun atan(x: Float): Float
  * to the rectangular coordinates `(x, y)` by computing the arc tangent of the value [y] / [x];
  * the returned value is an angle in the range from `-PI` to `PI` radians.
  *
+ * In other words, this function returns an angle in radians between the positive x-axis and
+ * a ray from the origin (`(0, 0)`) to the point `(x, y)` confined to the interval `(-π, π]`.
+ *
+ * The `r` component (the distance) of the polar coordinates `(r, theta)` could be calculated as `hypot(x, y)`.
+ *
  * Special cases:
  *   - `atan2(0.0, 0.0)` is `0.0`
  *   - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
@@ -646,9 +659,12 @@ public expect fun atan(x: Float): Float
  *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for `-Inf < y < 0`
  *   - `atan2(y, -Inf)` is `PI` for `0 < y < +Inf` and `-PI` for `-Inf < y < 0`
  *   - `atan2(y, 0.0)` is `PI/2` for `y > 0` and `-PI/2` for `y < 0`
- *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
+ *   - `atan2(+Inf, x)` is `PI/2` for finite `x`
  *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
+ *
+ * @see hypot function.
+ * @sample samples.math.MathSamples.Floats.atan2
  */
 @SinceKotlin("1.2")
 public expect fun atan2(y: Float, x: Float): Float

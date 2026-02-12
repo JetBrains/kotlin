@@ -440,6 +440,31 @@ class MathSamples {
             // special cases
             assertPrints(atan(Double.NaN), "NaN")
         }
+
+        @Sample
+        fun atan2() {
+            val epsilon = 1e-10
+            fun Double.toDegrees(): Double = this * 180.0 / PI
+
+            assertPrints(atan2(y = 0.0, x = 0.0), "0.0")
+
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            assertTrue((atan2(y = 1.0, x = 0.0) - PI / 2).absoluteValue < epsilon)
+            assertPrints(atan2(y = 1.0, x = 0.0).toDegrees(), "90.0")
+
+            assertTrue((atan2(y = 0.0, x = -1.0) - PI).absoluteValue < epsilon)
+            assertPrints(atan2(y = 0.0, x = -1.0).toDegrees(), "180.0")
+
+            assertTrue((atan2(y = -1.0, x = 0.0) - (-PI / 2)).absoluteValue < epsilon)
+            assertPrints(atan2(y = -1.0, x = 0.0).toDegrees(), "-90.0")
+
+            // special cases (some of them)
+            assertPrints(atan2(y = Double.NaN, x = 0.5), "NaN")
+            assertPrints(atan2(y = 0.5, x = Double.NaN), "NaN")
+            assertPrints(atan2(y = -0.0, x = 100500.0), "-0.0")
+            assertPrints(atan2(y = 0.0, x = Double.POSITIVE_INFINITY), "0.0")
+            assertPrints(atan2(y = Double.POSITIVE_INFINITY, x = 100500.0).toDegrees(), "90.0")
+        }
     }
 
     class Floats {
@@ -871,6 +896,31 @@ class MathSamples {
 
             // special cases
             assertPrints(atan(Float.NaN), "NaN")
+        }
+
+        @Sample
+        fun atan2() {
+            val epsilon = 1e-6f
+            fun Float.toDegrees(): Float = this * 180.0f / PI.toFloat()
+
+            assertPrints(atan2(y = 0.0f, x = 0.0f), "0.0")
+
+            // Results may not be exact, so we're only checking that they are within epsilon from the expected value
+            assertTrue((atan2(y = 1.0f, x = 0.0f) - PI.toFloat() / 2).absoluteValue < epsilon)
+            assertPrints(atan2(y = 1.0f, x = 0.0f).toDegrees(), "90.0")
+
+            assertTrue((atan2(y = 0.0f, x = -1.0f) - PI.toFloat()).absoluteValue < epsilon)
+            assertPrints(atan2(y = 0.0f, x = -1.0f).toDegrees(), "180.0")
+
+            assertTrue((atan2(y = -1.0f, x = 0.0f) - (-PI.toFloat() / 2)).absoluteValue < epsilon)
+            assertPrints(atan2(y = -1.0f, x = 0.0f).toDegrees(), "-90.0")
+
+            // special cases (some of them)
+            assertPrints(atan2(y = Float.NaN, x = 0.5f), "NaN")
+            assertPrints(atan2(y = 0.5f, x = Float.NaN), "NaN")
+            assertPrints(atan2(y = -0.0f, x = 100500.0f), "-0.0")
+            assertPrints(atan2(y = 0.0f, x = Float.POSITIVE_INFINITY), "0.0")
+            assertPrints(atan2(y = Float.POSITIVE_INFINITY, x = 100500.0f).toDegrees(), "90.0")
         }
     }
 
