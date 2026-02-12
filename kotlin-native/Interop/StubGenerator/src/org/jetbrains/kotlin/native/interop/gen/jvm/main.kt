@@ -599,11 +599,14 @@ internal fun buildNativeLibrary(
         "#define $it \"$it\""
     }
 
+    val temporaryFilesDir = arguments.tempDir?.let { File(it) }
+
     val compilation = CompilationImpl(
             includes = headerFiles.map { IncludeInfo(it, null) },
             additionalPreambleLines = def.defHeaderLines + predefinedMacrosRedefinitions,
             compilerArgs = defaultCompilerArgs(language) + compilerOpts + tool.platformCompilerOpts,
-            language = language
+            language = language,
+            temporaryFilesDir = temporaryFilesDir
     )
 
     val headerFilter: NativeLibraryHeaderFilter
@@ -648,6 +651,7 @@ internal fun buildNativeLibrary(
             headerFilter = headerFilter,
             objCClassesIncludingCategories = objCClassesIncludingCategories,
             allowIncludingObjCCategoriesFromDefFile = def.config.allowIncludingObjCCategoriesFromDefFile,
+            temporaryFilesDir = temporaryFilesDir,
     )
 }
 
