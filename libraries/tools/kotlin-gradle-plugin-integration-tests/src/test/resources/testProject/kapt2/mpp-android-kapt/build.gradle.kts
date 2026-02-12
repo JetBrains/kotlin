@@ -3,5 +3,5 @@ plugins {
     id("com.android.library").apply(false)
     kotlin("android").apply(false)
     kotlin("multiplatform").apply(false)
-    id("com.google.dagger.hilt.android") version "2.47" apply false
+    id("com.google.dagger.hilt.android") version "2.59.1" apply false
 }

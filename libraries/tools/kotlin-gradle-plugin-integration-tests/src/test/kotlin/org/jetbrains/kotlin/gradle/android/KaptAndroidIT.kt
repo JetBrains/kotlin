@@ -10,7 +10,7 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.Kapt3BaseIT
+import org.jetbrains.kotlin.gradle.KaptBaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.junit.jupiter.api.DisplayName
@@ -18,9 +18,9 @@ import java.io.File
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 
-@DisplayName("android with kapt3 tests")
+@DisplayName("Android with kapt tests")
 @AndroidGradlePluginTests
-open class Kapt3AndroidIT : Kapt3BaseIT() {
+class KaptAndroidIT : KaptBaseIT() {
     @DisplayName("KT-15001")
     @GradleAndroidTest
     fun testKt15001(

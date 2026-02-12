@@ -21,7 +21,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
     companion object {
         private val EXAMPLE_ANNOTATION_REGEX = "@(field:)?example.ExampleAnnotation".toRegex()
         const val PROJECT_NAME = "kaptIncrementalCompilationProject"
-        const val KAPT3_STUBS_PATH = "build/tmp/kapt3/stubs/main"
+        const val KAPT_STUBS_PATH = "build/tmp/kapt3/stubs/main"
     }
 
     private val annotatedElements =
@@ -30,7 +30,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         incremental = true,
         kaptOptions = BuildOptions.KaptOptions(incrementalKapt = true)
-    ).copyEnsuringK1()
+    )
 
     protected open fun KGPBaseTest.kaptProject(
         gradleVersion: GradleVersion,
@@ -289,7 +289,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
     open fun testRemoveAllKotlinSources(gradleVersion: GradleVersion) {
         kaptProject(gradleVersion) {
             build("assemble") {
-                assertFileInProjectExists("$KAPT3_STUBS_PATH/bar/UseBKt.java")
+                assertFileInProjectExists("$KAPT_STUBS_PATH/bar/UseBKt.java")
             }
 
             with(projectPath) {
@@ -304,11 +304,11 @@ open class KaptIncrementalIT : KGPBaseTest() {
             }
 
             build("assemble") {
-                // Make sure all generated stubs are removed (except for NonExistentClass).
+                // Make sure all generated stubs are removed
                 assertEquals(
-                    listOf(projectPath.resolve("$KAPT3_STUBS_PATH/error/NonExistentClass.java").toRealPath().toString()),
+                    emptyList(),
                     projectPath
-                        .resolve(KAPT3_STUBS_PATH)
+                        .resolve(KAPT_STUBS_PATH)
                         .toFile()
                         .walk()
                         .filter { it.extension == "java" }

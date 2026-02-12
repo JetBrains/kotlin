@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.gradle.android
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.Kapt3BaseIT
+import org.jetbrains.kotlin.gradle.KaptBaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
-@DisplayName("android with kapt3 external dependencies tests")
+@DisplayName("Android with kapt external dependencies tests")
 @AndroidGradlePluginTests
-open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
+open class KaptAndroidExternalIT : KaptBaseIT() {
 
     @DisplayName("kapt works with dagger")
     @GradleAndroidTest

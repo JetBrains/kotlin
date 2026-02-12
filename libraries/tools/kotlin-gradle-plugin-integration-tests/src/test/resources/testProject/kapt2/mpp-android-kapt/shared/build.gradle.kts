@@ -18,14 +18,18 @@ kotlin {
     sourceSets {
         val androidMain by getting {
             dependencies {
-                implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
-                implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-                implementation("com.google.dagger:hilt-android:2.51.1")
+                implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
+                implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
+                implementation("com.google.dagger:hilt-android:2.59.1")
                 configurations.getByName("kapt").dependencies.add(
-                    org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency(
-                        "com.google.dagger",
-                        "hilt-compiler",
-                        "2.52"
+                    project.dependencies.create(
+                        "com.google.dagger:hilt-compiler:2.59.1"
+                    )
+                )
+                val kotlin_version: String by project.extra
+                configurations.getByName("kapt").dependencies.add(
+                    project.dependencies.create(
+                        "org.jetbrains.kotlin:kotlin-metadata-jvm:$kotlin_version"
                     )
                 )
             }

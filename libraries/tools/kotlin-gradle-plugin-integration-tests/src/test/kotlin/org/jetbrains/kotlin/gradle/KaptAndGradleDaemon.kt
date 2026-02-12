@@ -13,7 +13,7 @@ import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Kapt caching inside Gradle daemon")
 @DaemonsGradlePluginTests
-class Kapt3AndGradleDaemon : KGPDaemonsBaseTest() {
+class KaptAndGradleDaemon : KGPDaemonsBaseTest() {
 
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
         .copy(

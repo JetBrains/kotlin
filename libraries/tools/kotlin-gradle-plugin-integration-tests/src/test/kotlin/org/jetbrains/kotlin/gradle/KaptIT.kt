@@ -22,8 +22,6 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.gradle.android.Kapt4AndroidExternalIT
-import org.jetbrains.kotlin.gradle.android.Kapt4AndroidIT
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
@@ -46,7 +44,7 @@ import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import org.jetbrains.kotlin.gradle.testbase.project as testBaseProject
 
-abstract class Kapt3BaseIT : KGPBaseTest() {
+abstract class KaptBaseIT : KGPBaseTest() {
 
     companion object {
         private const val KAPT_SUCCESSFUL_MESSAGE = "Annotation processing complete, errors: 0"
@@ -55,7 +53,7 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
         .copy(
             kaptOptions = this.kaptOptions(),
-        ).copyEnsuringK1()
+        )
 
     protected open fun kaptOptions(): BuildOptions.KaptOptions = BuildOptions.KaptOptions(
         verbose = true,
@@ -72,28 +70,16 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
         }
     }
 
-    /**
-     * The default value is defined in [org.jetbrains.kotlin.gradle.testbase.project]
-     */
-    private fun Kapt3BaseIT.calculateGradleDaemonMemoryLimitInMb() = when (this) {
-        /*
-         * Kapt4 Android projects may require bigger Gradle heap size.
-         * This number was chosen as (default * 1.5)
-         */
-        is Kapt4AndroidExternalIT, is Kapt4AndroidIT -> 1536
-        else -> null // use the default limit
-    }
-
     // All Kapt projects require around 2.5g of heap size for Kotlin daemon
     @OptIn(EnvironmentalVariablesOverride::class)
-    protected fun Kapt3BaseIT.project(
+    protected fun KaptBaseIT.project(
         projectName: String,
         gradleVersion: GradleVersion,
         buildOptions: BuildOptions = defaultBuildOptions,
         enableBuildScan: Boolean = false,
         addHeapDumpOptions: Boolean = true,
         enableGradleDebug: EnableGradleDebug = EnableGradleDebug.AUTO,
-        enableGradleDaemonMemoryLimitInMb: Int? = calculateGradleDaemonMemoryLimitInMb(),
+        enableGradleDaemonMemoryLimitInMb: Int? = null,
         enableKotlinDaemonMemoryLimitInMb: Int? = 2512,
         projectPathAdditionalSuffix: String = "",
         buildJdk: File? = null,
@@ -130,8 +116,8 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
  *
  * then override and disable the test here via `@Disabled`.
  */
-@DisplayName("Kapt 3 with classloaders cache")
-open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
+@DisplayName("Kapt with classloaders cache")
+class KaptClassLoadersCacheIT : KaptIT() {
     override fun kaptOptions(): BuildOptions.KaptOptions = super.kaptOptions().copy(
         classLoadersCacheSize = 10,
         includeCompileClasspath = false
@@ -198,9 +184,9 @@ open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     }
 }
 
-@DisplayName("Kapt 3 base checks")
+@DisplayName("Kapt base checks")
 @OtherGradlePluginTests
-open class Kapt3IT : Kapt3BaseIT() {
+open class KaptIT : KaptBaseIT() {
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
     fun testKaptSkipped(gradleVersion: GradleVersion) {
@@ -1245,6 +1231,19 @@ open class Kapt3IT : Kapt3BaseIT() {
             )
             build("assemble") {
                 assertTasksSkipped(":kaptGenerateStubsKotlin")
+            }
+        }
+
+    }
+
+    @DisplayName("KT-61879: K2 KAPT works with proguarded compiler jars and enum class")
+    @GradleTest
+    fun testEnumClass(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            javaSourcesDir().resolve("test.kt").appendText("\nenum class TestEnum")
+            build("build") {
+                assertKaptSuccessful()
+                assertFileExists(kotlinClassesDir().resolve("example/TestEnum.class"))
             }
         }
     }

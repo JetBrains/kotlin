@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.Kapt3BaseIT
+import org.jetbrains.kotlin.gradle.KaptBaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.junit.jupiter.api.DisplayName
@@ -16,9 +16,9 @@ import kotlin.io.path.appendText
 import kotlin.io.path.relativeTo
 import kotlin.io.path.writeText
 
-@DisplayName("android with kapt3 incremental build tests")
+@DisplayName("Android with kapt incremental build tests")
 @AndroidGradlePluginTests
-open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
+open class KaptAndroidIncrementalIT : KaptBaseIT() {
     @DisplayName("stubs generation is incremental on changes in android variant java sources")
     @GradleAndroidTest
     fun generateStubsTaskShouldRunIncrementallyOnChangesInAndroidVariantJavaSources(
