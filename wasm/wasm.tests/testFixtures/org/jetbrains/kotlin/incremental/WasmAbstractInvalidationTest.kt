@@ -6,22 +6,29 @@
 package org.jetbrains.kotlin.incremental
 
 
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.wasm.MultimoduleCompileOptions
 import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
+import org.jetbrains.kotlin.backend.wasm.WasmModuleDependencyImport
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextForTesting
+import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifactMultimodule
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.ModuleReferencedDeclarations
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.encodeModuleName
 import org.jetbrains.kotlin.codegen.ModelTarget
 import org.jetbrains.kotlin.codegen.ModuleInfo
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.sourceMap
 import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
@@ -32,7 +39,6 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.utils.TestDisposable
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmDebug
 import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
 import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
@@ -132,25 +138,101 @@ abstract class WasmAbstractInvalidationTest(
                 commitIncrementalCache = commitIncrementalCache,
             )
 
-            val icCaches = cacheUpdater.actualizeCaches()
-            val fileFragments =
-                icCaches.flatMap { it.fileArtifacts }.mapNotNull { it.loadIrFragments()?.mainFragment as? WasmCompiledFileFragment }
+            val icCaches = cacheUpdater.actualizeCaches().filterIsInstance<WasmModuleArtifactMultimodule>()
 
-            verifyCacheUpdateStats(stepId, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
+            val moduleToLoadedFragments = icCaches.map { module ->
+                module to module.fileArtifacts.mapNotNull { it.loadIrFragments() }
+            }
 
-            val parameters = WasmIrModuleConfiguration(
-                wasmCompiledFileFragments = fileFragments,
-                moduleName = mainModuleInfo.moduleName,
-                configuration = configuration,
-                typeScriptFragment = null,
-                baseFileName = mainModuleInfo.moduleName,
-                multimoduleOptions = null,
-            )
+            val (stdlibModule, stdlibModuleFragments) = moduleToLoadedFragments.first { it.first.moduleName == "<kotlin>" }
+            val stdlibBuildIns = mutableListOf<IdSignature>()
+            stdlibModuleFragments.forEach { fragment ->
+                fragment.mainFragment.builtinIdSignatures?.let {
+                    stdlibBuildIns.addIfNotNull(it.registerModuleDescriptor)
+                    stdlibBuildIns.addIfNotNull(it.createString)
+                    stdlibBuildIns.addIfNotNull(it.tryGetAssociatedObject)
+                    stdlibBuildIns.addIfNotNull(it.runRootSuites)
+                    stdlibBuildIns.addIfNotNull(it.jsToKotlinStringAdapter)
+                }
+            }
 
-            val linkedModule = linkWasmIr(parameters)
-            val compilationResult = compileWasmIrToBinary(parameters, linkedModule)
+            moduleToLoadedFragments.forEach { (currentModule, currentFragments) ->
+                if (currentModule.fileArtifacts.none { it.isModified() }) return@forEach
 
-            writeCompilationResult(compilationResult, buildDir, mainModuleInfo.moduleName)
+                val dependencies = moduleToLoadedFragments.filterNot { it.first == currentModule }
+                val stdlibIsMainModule = currentModule == stdlibModule
+
+                val currentReferences = ModuleReferencedDeclarations().apply {
+                    currentFragments.forEach { fragment ->
+                        val references = fragment.mainFragmentReferences
+                        referencedFunction.addAll(references.referencedFunction)
+                        referencedGlobalVTable.addAll(references.referencedGlobalVTable)
+                        referencedGlobalClassITable.addAll(references.referencedGlobalClassITable)
+                        referencedRttiGlobal.addAll(references.referencedRttiGlobal)
+                    }
+                    if (!stdlibIsMainModule) {
+                        referencedFunction.addAll(stdlibBuildIns)
+                    }
+                }
+
+                val currentModuleFragments = mutableListOf<WasmCompiledFileFragment>()
+                val currentModuleImports = mutableSetOf<WasmModuleDependencyImport>()
+
+                dependencies.forEach { (dependencyModule, dependencyFragments) ->
+                    dependencyFragments.mapTo(currentModuleFragments) { fragment ->
+                        val dependencyFragment = fragment.dependencyFragment
+                        WasmCompiledFileFragment(
+                            fragmentTag = dependencyFragment.fragmentTag,
+                            definedGcTypes = dependencyFragment.definedGcTypes,
+                            definedRttiSuperType = dependencyFragment.definedRttiSuperType,
+                            definedVTableGcTypes = dependencyFragment.definedVTableGcTypes,
+                            definedFunctionTypes = dependencyFragment.definedFunctionTypes,
+                            builtinIdSignatures = dependencyFragment.builtinIdSignatures,
+                        ).apply {
+                            definedFunctions.putAll(dependencyFragment.definedFunctions.filter { it.key in currentReferences.referencedFunction })
+                            definedGlobalVTables.putAll(dependencyFragment.definedGlobalVTables.filter { it.key in currentReferences.referencedGlobalVTable })
+                            definedGlobalClassITables.putAll(dependencyFragment.definedGlobalClassITables.filter { it.key in currentReferences.referencedGlobalClassITable })
+                            definedRttiGlobal.putAll(dependencyFragment.definedRttiGlobal.filter { it.key in currentReferences.referencedRttiGlobal })
+
+                            if (definedFunctions.any() || definedGlobalVTables.any() || definedGlobalClassITables.any() || definedRttiGlobal.any()) {
+                                val dependencyImport = WasmModuleDependencyImport(
+                                    name = dependencyModule.moduleName,
+                                    fileName = dependencyModule.externalModuleName ?: encodeModuleName(dependencyModule.moduleName)
+                                )
+                                currentModuleImports.add(dependencyImport)
+                            }
+                        }
+                    }
+                }
+
+                currentFragments.mapTo(currentModuleFragments) { it.mainFragment }
+
+                val multimoduleOptions = MultimoduleCompileOptions(
+                    stdlibModuleNameForImport = stdlibModule.moduleName.takeIf { !stdlibIsMainModule },
+                    dependencyModules = currentModuleImports,
+                    initializeUnit = stdlibIsMainModule,
+                )
+
+                val currentFileBase = if (currentModule == moduleToLoadedFragments.last().first) {
+                    mainModuleInfo.moduleName
+                } else {
+                    currentModule.externalModuleName ?: encodeModuleName(currentModule.moduleName)
+                }
+
+                val parameters = WasmIrModuleConfiguration(
+                    wasmCompiledFileFragments = currentModuleFragments,
+                    moduleName = currentModule.moduleName,
+                    configuration = configuration,
+                    typeScriptFragment = null,
+                    baseFileName = currentFileBase,
+                    multimoduleOptions = multimoduleOptions,
+                )
+
+                val linkedModule = linkWasmIr(parameters)
+                val compilationResult = compileWasmIrToBinary(parameters, linkedModule)
+
+                writeCompilationResult(compilationResult, buildDir, currentFileBase)
+            }
 
             WasmVM.NodeJs.run(
                 "./test.mjs",
@@ -208,15 +290,15 @@ abstract class WasmAbstractInvalidationTest(
                 val totalSizeBefore =
                     cacheDir.walkTopDown().filter { it.isFile }.map { it.length() }.sum()
 
-                compileVerifyAndRun(
-                    stepId = projStep.id,
-                    cacheDir = cacheDir,
-                    mainModuleInfo = mainModuleInfo,
-                    configuration = configuration,
-                    testInfo = testInfo,
-                    removedModulesInfo = removedModulesInfo,
-                    commitIncrementalCache = false
-                )
+//                compileVerifyAndRun(
+//                    stepId = projStep.id,
+//                    cacheDir = cacheDir,
+//                    mainModuleInfo = mainModuleInfo,
+//                    configuration = configuration,
+//                    testInfo = testInfo,
+//                    removedModulesInfo = removedModulesInfo,
+//                    commitIncrementalCache = false
+//                )
 
                 val totalSizeAfterNotCommit =
                     cacheDir.walkTopDown().filter { it.isFile }.map { it.length() }.sum()

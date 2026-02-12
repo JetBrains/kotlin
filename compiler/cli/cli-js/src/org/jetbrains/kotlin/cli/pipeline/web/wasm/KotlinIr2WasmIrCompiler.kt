@@ -29,13 +29,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.config.*
 import java.net.URLEncoder
 
+fun encodeModuleName(moduleName: String): String = moduleName
+    .replace("<", "_")
+    .replace(">", "_")
+    .replace(":", "_")
+    .replace(" ", "_")
+    .let { URLEncoder.encode(it, "UTF-8") }
+
 private val IrModuleFragment.outputFileName
-    get() = kotlinLibrary?.jsOutputName ?: (name.asString()
-        .replace("<", "_")
-        .replace(">", "_")
-        .replace(":", "_")
-        .replace(" ", "_")
-        .let { URLEncoder.encode(it, "UTF-8") })
+    get() = kotlinLibrary?.jsOutputName ?: encodeModuleName(name.asString())
 
 abstract class WasmCompilerBase(val configuration: CompilerConfiguration) {
     abstract val irFactory: IrFactoryImplForWasmIC

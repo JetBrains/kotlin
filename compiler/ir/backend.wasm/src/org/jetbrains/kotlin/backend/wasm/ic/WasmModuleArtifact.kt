@@ -12,6 +12,31 @@ import java.io.File
 
 internal inline fun <T> File.ifExists(f: File.() -> T): T? = if (exists()) f() else null
 
+class WasmSrcFileArtifactMultimodule(
+    private val fragments: WasmIrProgramFragmentsMultimodule?,
+    private val astArtifact: File? = null,
+    private val skipLocalNames: Boolean = false,
+) : SrcFileArtifact() {
+    override fun loadIrFragments(): WasmIrProgramFragmentsMultimodule? {
+        if (fragments != null) {
+            return fragments
+        }
+        return astArtifact?.ifExists {
+            inputStream().use {
+                with(WasmDeserializer(inputStream = it, skipLocalNames = skipLocalNames)) {
+                    WasmIrProgramFragmentsMultimodule(
+                        deserialize(),
+                        deserializeModuleReferencedDeclarations(),
+                        deserialize(),
+                    )
+                }
+            }
+        }
+    }
+
+    override fun isModified() = fragments != null
+}
+
 class WasmSrcFileArtifact(
     private val fragments: WasmIrProgramFragments?,
     private val astArtifact: File? = null,
@@ -37,4 +62,10 @@ class WasmSrcFileArtifact(
 
 class WasmModuleArtifact(
     override val fileArtifacts: List<WasmSrcFileArtifact>,
+) : ModuleArtifact()
+
+class WasmModuleArtifactMultimodule(
+    override val fileArtifacts: List<WasmSrcFileArtifactMultimodule>,
+    val moduleName: String,
+    val externalModuleName: String?,
 ) : ModuleArtifact()

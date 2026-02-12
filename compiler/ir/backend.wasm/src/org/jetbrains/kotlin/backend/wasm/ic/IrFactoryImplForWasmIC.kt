@@ -45,7 +45,7 @@ open class WasmICContext(
         )
 
     override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =
-        WasmSrcFileArtifact(fragments as? WasmIrProgramFragments, astArtifact, skipLocalNames)
+        WasmSrcFileArtifactMultimodule(fragments as? WasmIrProgramFragmentsMultimodule, astArtifact, skipLocalNames)
 
     override fun createModuleArtifact(
         moduleName: String,
@@ -54,7 +54,7 @@ open class WasmICContext(
         forceRebuildJs: Boolean,
         externalModuleName: String?,
     ): ModuleArtifact =
-        WasmModuleArtifact(fileArtifacts.map { it as WasmSrcFileArtifact })
+        WasmModuleArtifactMultimodule(fileArtifacts.map { it as WasmSrcFileArtifactMultimodule }, moduleName, externalModuleName)
 }
 
 class WasmICContextForTesting(

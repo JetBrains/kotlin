@@ -49,6 +49,16 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
 
     fun deserialize(): WasmCompiledFileFragment = deserializeCompiledFileFragment()
 
+    fun deserializeModuleReferencedDeclarations(): ModuleReferencedDeclarations = ModuleReferencedDeclarations(
+        referencedFunction = deserializeSignatureSet(),
+        referencedGlobalVTable = deserializeSignatureSet(),
+        referencedGlobalClassITable = deserializeSignatureSet(),
+        referencedRttiGlobal = deserializeSignatureSet(),
+    )
+
+    private fun deserializeSignatureSet() =
+        deserializeSet(::deserializeIdSignature)
+
     private fun deserializeFunction() =
         deserializeNamedModuleField { name ->
             val type = FunctionHeapTypeSymbol(deserializeIdSignature())

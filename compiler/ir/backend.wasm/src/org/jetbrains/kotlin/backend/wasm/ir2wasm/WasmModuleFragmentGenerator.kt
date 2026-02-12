@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-class ModuleReferencedDeclarations {
-    val referencedFunction = mutableSetOf<IdSignature>()
-    val referencedGlobalVTable = mutableSetOf<IdSignature>()
-    val referencedGlobalClassITable = mutableSetOf<IdSignature>()
-    val referencedRttiGlobal = mutableSetOf<IdSignature>()
-}
+class ModuleReferencedDeclarations(
+    val referencedFunction: MutableSet<IdSignature> = mutableSetOf(),
+    val referencedGlobalVTable: MutableSet<IdSignature> = mutableSetOf(),
+    val referencedGlobalClassITable: MutableSet<IdSignature> = mutableSetOf(),
+    val referencedRttiGlobal: MutableSet<IdSignature> = mutableSetOf(),
+)
 
 class WasmModuleFragmentGenerator(
     private val backendContext: WasmBackendContext,
@@ -86,15 +86,15 @@ class WasmModuleFragmentGenerator(
 internal fun compileIrFile(
     irFile: IrFile,
     backendContext: WasmBackendContext,
-    idSignatureRetriever: IdSignatureRetriever,
     wasmModuleMetadataCache: WasmModuleMetadataCache,
     allowIncompleteImplementations: Boolean,
     fragmentTag: String?,
     skipCommentInstructions: Boolean,
     skipLocations: Boolean,
+    makeFragmentContext: (WasmCompiledFileFragment) -> WasmFileCodegenContext
 ): WasmCompiledFileFragment {
     val wasmFileFragment = WasmCompiledFileFragment(fragmentTag)
-    val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
+    val wasmFileCodegenContext = makeFragmentContext(wasmFileFragment)
     val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
     compileIrFile(
         irFile,

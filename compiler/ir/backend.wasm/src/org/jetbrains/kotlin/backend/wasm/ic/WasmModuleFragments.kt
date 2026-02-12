@@ -5,13 +5,28 @@
 
 package org.jetbrains.kotlin.backend.wasm.ic
 
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.ModuleReferencedDeclarations
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
 import org.jetbrains.kotlin.backend.wasm.serialization.WasmSerializer
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICModule
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import java.io.OutputStream
 
-class WasmIrProgramFragments(
+class WasmIrProgramFragmentsMultimodule(
+    mainFragment: WasmCompiledFileFragment,
+    val mainFragmentReferences: ModuleReferencedDeclarations,
+    val dependencyFragment: WasmCompiledFileFragment,
+) : WasmIrProgramFragments(mainFragment) {
+    override fun serialize(stream: OutputStream) {
+        with(WasmSerializer(stream)) {
+            serialize(mainFragment)
+            serialize(mainFragmentReferences)
+            serialize(dependencyFragment)
+        }
+    }
+}
+
+open class WasmIrProgramFragments(
     override val mainFragment: WasmCompiledFileFragment,
 ) : IrICProgramFragments() {
 

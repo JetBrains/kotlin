@@ -39,8 +39,22 @@ class BuiltinIdSignatures(
     val registerModuleDescriptor: IdSignature?,
 )
 
+class WasmCompiledDeclarationsFileFragment(
+    val definedFunctions: MutableMap<IdSignature, WasmFunction> = mutableMapOf(),
+    val definedGlobalFields: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
+    val definedGlobalVTables: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
+    val definedGlobalClassITables: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
+    val definedRttiGlobal: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
+    val definedRttiSuperType: MutableMap<IdSignature, IdSignature?> = mutableMapOf(),
+    val definedGcTypes: MutableMap<IdSignature, WasmTypeDeclaration> = mutableMapOf(),
+    val definedVTableGcTypes: MutableMap<IdSignature, WasmStructDeclaration> = mutableMapOf(),
+    val definedFunctionTypes: MutableMap<IdSignature, WasmFunctionType> = mutableMapOf(),
+)
+
 class WasmCompiledFileFragment(
     val fragmentTag: String?,
+
+    val declarations: WasmCompiledDeclarationsFileFragment = WasmCompiledDeclarationsFileFragment(),
 
     val definedFunctions: MutableMap<IdSignature, WasmFunction> = mutableMapOf(),
     val definedGlobalFields: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),

@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragments
+import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsMultimodule
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.ModuleReferencedDeclarations
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmFileCodegenContextWithAllImport
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmFileCodegenContextWithExport
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.compileIrFile
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
@@ -58,17 +62,47 @@ open class WasmCompilerWithIC(
     }
 
     private fun compileIrFile(irFile: IrFile): WasmIrProgramFragments {
-        return WasmIrProgramFragments(
-            compileIrFile(
-                irFile,
-                context,
-                idSignatureRetriever,
-                wasmModuleMetadataCache,
-                allowIncompleteImplementations,
-                if (safeFragmentTags) "${irFile.module.name.asString()}${irFile.path}" else null,
-                skipCommentInstructions = skipCommentInstructions,
-                skipLocations = skipLocations,
-            )
+        val safeFragmentTags = if (safeFragmentTags) "${irFile.module.name.asString()}${irFile.path}" else null
+
+        val referencedDeclaration = ModuleReferencedDeclarations()
+        val mainFragment = compileIrFile(
+            irFile,
+            context,
+            wasmModuleMetadataCache,
+            allowIncompleteImplementations,
+            safeFragmentTags,
+            skipCommentInstructions = skipCommentInstructions,
+            skipLocations = skipLocations,
+            {
+                WasmFileCodegenContextWithExport(
+                    wasmFileFragment = it,
+                    idSignatureRetriever = idSignatureRetriever,
+                    moduleReferencedDeclarations = referencedDeclaration
+                )
+            }
+        )
+
+        val dependencyFragment = compileIrFile(
+            irFile,
+            context,
+            wasmModuleMetadataCache,
+            allowIncompleteImplementations,
+            safeFragmentTags,
+            skipCommentInstructions = skipCommentInstructions,
+            skipLocations = skipLocations,
+            {
+                WasmFileCodegenContextWithAllImport(
+                    wasmFileFragment = it,
+                    idSignatureRetriever = idSignatureRetriever,
+                    moduleName = irFile.module.name.asString(),
+                )
+            }
+        )
+
+        return WasmIrProgramFragmentsMultimodule(
+            mainFragment = mainFragment,
+            mainFragmentReferences = referencedDeclaration,
+            dependencyFragment = dependencyFragment
         )
     }
 

@@ -82,6 +82,13 @@ class WasmSerializer(outputStream: OutputStream) {
         }
     }
 
+    fun serialize(declarations: ModuleReferencedDeclarations) {
+        serializeSet(declarations.referencedFunction, ::serializeIdSignature)
+        serializeSet(declarations.referencedGlobalVTable, ::serializeIdSignature)
+        serializeSet(declarations.referencedGlobalClassITable, ::serializeIdSignature)
+        serializeSet(declarations.referencedRttiGlobal, ::serializeIdSignature)
+    }
+
     private fun serializeWasmFunction(func: WasmFunction) =
         serializeNamedModuleField(func) {
             serializeIdSignature((func.type as FunctionHeapTypeSymbol).type)
