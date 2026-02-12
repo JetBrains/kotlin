@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import java.lang.ref.SoftReference
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
@@ -43,7 +44,7 @@ internal abstract class DescriptorKCallable<out R>(
         if (isBound) computeParameters(includeReceivers = false) else allParameters
     }
 
-    override val parameters: List<KParameter> get() = _parameters()
+    final override val parameters: List<KParameter> get() = _parameters()
 
     private fun computeParameters(includeReceivers: Boolean): List<KParameter> {
         val descriptor = descriptor
@@ -106,22 +107,22 @@ internal abstract class DescriptorKCallable<out R>(
 
     private val _returnType = ReflectProperties.lazySoft {
         val type = computeReturnType()
-        overriddenStorage.typeSubstitutor.substitute(type).type
+        overriddenStorage.getTypeSubstitutor(typeParameters).substitute(type).type
             ?: starProjectionInTopLevelTypeIsNotPossible(containerForDebug = name)
     }
 
-    override val returnType: KType
+    final override val returnType: KType
         get() = _returnType()
 
     private val _typeParameters = ReflectProperties.lazySoft {
-        descriptor.typeParameters.map { descriptor ->
-            KTypeParameterImpl(this, descriptor)
-        }.onEach { typeParameter ->
-            typeParameter.upperBounds = typeParameter.upperBounds.map {
-                overriddenStorage.typeSubstitutor.substitute(it).type
-                    ?: starProjectionInTopLevelTypeIsNotPossible(containerForDebug = container)
+        val typeParametersWithNotYetSubstitutedUpperBounds = descriptor.typeParameters.map { descriptor -> KTypeParameterImpl(this, descriptor) }
+        val substitutor = overriddenStorage.getTypeSubstitutor(typeParametersWithNotYetSubstitutedUpperBounds)
+        for (typeParameter in typeParametersWithNotYetSubstitutedUpperBounds) {
+            typeParameter.upperBounds = typeParameter.upperBounds.map { type ->
+                substitutor.substitute(type).type ?: starProjectionInTopLevelTypeIsNotPossible(containerForDebug = container)
             }
         }
+        typeParametersWithNotYetSubstitutedUpperBounds
     }
 
     override val typeParameters: List<KTypeParameter>
@@ -148,9 +149,10 @@ internal abstract class DescriptorKCallable<out R>(
 
 internal data class KCallableOverriddenStorage(
     val instanceReceiverParameter: ReceiverParameterDescriptor?,
-    val typeSubstitutor: KTypeSubstitutor,
+    private val classTypeParametersSubstitutor: KTypeSubstitutor,
     val modality: Modality?,
     val originalContainerIfFakeOverride: KDeclarationContainerImpl?,
+    private val originalCallableTypeParameters: List<KTypeParameter>,
 
     val forceIsExternal: Boolean,
     val forceIsOperator: Boolean,
@@ -163,6 +165,7 @@ internal data class KCallableOverriddenStorage(
             KTypeSubstitutor.EMPTY,
             null,
             originalContainerIfFakeOverride = null,
+            originalCallableTypeParameters = emptyList(),
             forceIsExternal = false,
             forceIsOperator = false,
             forceIsInfix = false,
@@ -171,4 +174,21 @@ internal data class KCallableOverriddenStorage(
     }
 
     val isFakeOverride: Boolean get() = originalContainerIfFakeOverride != null
+
+    fun withChainedClassTypeParametersSubstitutor(substitutor: KTypeSubstitutor): KCallableOverriddenStorage =
+        copy(classTypeParametersSubstitutor = classTypeParametersSubstitutor.chainedWith(substitutor))
+
+    private var combinedTypeSubstitutorCache = SoftReference<KTypeSubstitutor?>(null)
+
+    /**
+     * The caching logic inside assumes that the caller always passes the same [callableTypeParameters]
+     */
+    fun getTypeSubstitutor(callableTypeParameters: List<KTypeParameter>): KTypeSubstitutor {
+        combinedTypeSubstitutorCache.get()?.let { return it }
+        val result = originalCallableTypeParameters.substitutedWith(callableTypeParameters)
+            ?.sumWith(classTypeParametersSubstitutor)
+            ?: classTypeParametersSubstitutor
+        combinedTypeSubstitutorCache = SoftReference(result)
+        return result
+    }
 }

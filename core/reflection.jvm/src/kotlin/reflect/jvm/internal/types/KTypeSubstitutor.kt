@@ -82,6 +82,14 @@ internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KT
         return KTypeSubstitutor(map)
     }
 
+    fun sumWith(other: KTypeSubstitutor): KTypeSubstitutor {
+        // Optimizations
+        if (this.substitution.isEmpty()) return other
+        if (other.substitution.isEmpty()) return this
+
+        return KTypeSubstitutor(substitution + other.substitution)
+    }
+
     // TODO (KT-77700): also keep annotations of 'other'
     private fun KType.withNullabilityOf(other: KType): KType {
         val thiz = this as RigidTypeMarker

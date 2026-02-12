@@ -130,11 +130,13 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMemb
         containsInheritedStatics = containsInheritedStatics || supertypeMembers.containsInheritedStatics
         containsPackagePrivate = containsPackagePrivate || supertypeMembers.containsPackagePrivate
         for ((_, notSubstitutedMember) in supertypeMembers.members) {
-            val overriddenStorage = notSubstitutedMember.overriddenStorage.copy(
-                instanceReceiverParameter = if (notSubstitutedMember.isStatic) null else thisReceiver,
-                typeSubstitutor = notSubstitutedMember.overriddenStorage.typeSubstitutor.chainedWith(substitutor),
-                originalContainerIfFakeOverride = notSubstitutedMember.originalContainer,
-            )
+            val overriddenStorage = notSubstitutedMember.overriddenStorage
+                .withChainedClassTypeParametersSubstitutor(substitutor)
+                .copy(
+                    instanceReceiverParameter = if (notSubstitutedMember.isStatic) null else thisReceiver,
+                    originalContainerIfFakeOverride = notSubstitutedMember.originalContainer,
+                    originalCallableTypeParameters = notSubstitutedMember.typeParameters,
+                )
             val member = notSubstitutedMember.shallowCopy(notSubstitutedMember.container, overriddenStorage)
             val kotlinSignature = member.toEquatableCallableSignature(EqualityMode.KotlinSignature)
             if (declaredKotlinMembers.contains(kotlinSignature)) continue
@@ -237,7 +239,7 @@ internal val Class<*>.isKotlin: Boolean
 private val KClass<*>.declaredDescriptorKCallableMembers: Collection<DescriptorKCallable<*>>
     get() = declaredMembers as Collection<DescriptorKCallable<*>>
 
-private fun List<KTypeParameter>.substitutedWith(arguments: List<KTypeParameter>): KTypeSubstitutor? {
+internal fun List<KTypeParameter>.substitutedWith(arguments: List<KTypeParameter>): KTypeSubstitutor? {
     if (size != arguments.size) return null
     if (isEmpty()) return KTypeSubstitutor.EMPTY
     val substitutionMap = zip(arguments).associate { (x, y) -> Pair(x, KTypeProjection.invariant(y.createType())) }
