@@ -74,7 +74,8 @@ open class AbstractCustomJsCompilerFirstStageTest(val testDataRoot: String = "co
 
         commonConfigurationForJsBackendSecondStageTest(
             pathToTestDir = testDataRoot,
-            testGroupOutputDirPrefix = "customJsCompilerFirstStageTest/",
+            testGroupOutputDirPrefix = this@AbstractCustomJsCompilerFirstStageTest::class.java.simpleName +
+                    customJsCompilerSettings.defaultLanguageVersion,
             backendFacades = JsBackendFacades.WithRecompilation
         )
 
