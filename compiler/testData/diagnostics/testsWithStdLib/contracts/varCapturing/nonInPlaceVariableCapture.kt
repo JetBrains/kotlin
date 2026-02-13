@@ -73,13 +73,14 @@ class WithMemberFunctions {
     var person = MutablePerson("Bob")
 
     fun testMemberCapture() {
-        val personAlice = MutablePerson("Alice")
+        var personAlice = MutablePerson("Alice")
 
         barRegular {
             baz(memberVar)
             println(person)
             baz(personAlice.age)
         }
+        personAlice = MutablePerson("Bob")
     }
 }
 
@@ -112,10 +113,13 @@ fun foo() {
         baz(y)
     }
 
-    val person = MutablePerson("Alice")
+    var person = MutablePerson("Alice")
 
     barRegular {
         baz(person.name)
+    }
+    if (person.name != x) {
+        person = MutablePerson()
     }
 
     barRegular {
@@ -135,20 +139,24 @@ fun foo() {
         println(localObj.mutableField)
     }
 
-    val localObjVal = MutableObject()
+    var localObjVal : MutableObject? = MutableObject()
     barRegular {
-        println(localObjVal.mutableField)
+        println(localObjVal?.mutableField)
+    }
+    localObjVal = null
+
+    var root : RootObject? = RootObject()
+    barRegular {
+        baz(root?.next!!.next!!.theProblematicVar)
+        root = null
     }
 
-    barRegular {
-        val root = RootObject()
-        baz(root.next!!.next!!.theProblematicVar)
-    }
 
-
-    val root = RootObject()
+    var root2 = RootObject()
+    val root3 = RootObject()
     barRegular {
-        baz(root.next!!.next!!.theProblematicVar)
+        baz(root2.next!!.next!!.theProblematicVar)
+        root2 = root3
     }
 
     var count = false

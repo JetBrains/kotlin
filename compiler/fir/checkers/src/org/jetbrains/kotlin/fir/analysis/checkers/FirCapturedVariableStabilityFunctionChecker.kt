@@ -118,8 +118,7 @@ class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableC
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: CapturedVariableCheckerData,
     ) {
-        val variableSymbol = qualifiedAccessExpression.calleeReference.toResolvedVariableSymbol() ?: return
-        checkCapturedVariable(variableSymbol, data, qualifiedAccessExpression.source)
+        qualifiedAccessExpression.checkExpressionCapturedVariable(data)
     }
 
     // -------------------------
@@ -215,6 +214,21 @@ class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableC
         }
     }
 
+    private fun FirExpression.checkExpressionCapturedVariable(data: CapturedVariableCheckerData) {
+        if (this is FirQualifiedAccessExpression) {
+            val symbol = this.calleeReference.toResolvedVariableSymbol() ?: return
+            checkCapturedVariable(symbol, data, this.source)
+            val receiver = this.explicitReceiver?.unwrapErrorExpression()?.unwrapArgument()
+            receiver?.checkExpressionCapturedVariable(data)
+        }
+        if (this is FirCheckNotNullCall) {
+            this.argument.checkExpressionCapturedVariable(data)
+        }
+        if (this is FirSafeCallExpression) {
+            this.receiver.checkExpressionCapturedVariable(data)
+        }
+    }
+
     @OptIn(SymbolInternals::class)
     private fun checkCapturedVariable(variableSymbol: FirVariableSymbol<*>, data: CapturedVariableCheckerData, source: KtSourceElement?) {
         if (data.propertiesStack.isEmpty()) return
@@ -233,7 +247,6 @@ class FirFunctionDeepVisitorWithData : FirDefaultVisitor<Unit, CapturedVariableC
             )
         )
     }
-
 }
 
 class IEReporter(
