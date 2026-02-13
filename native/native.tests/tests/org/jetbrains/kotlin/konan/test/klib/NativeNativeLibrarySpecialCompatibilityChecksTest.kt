@@ -11,14 +11,12 @@ import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
-import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.klib.compatibility.CompilerInvocationContext
 import org.jetbrains.kotlin.klib.compatibility.LibrarySpecialCompatibilityChecksTest
 import org.jetbrains.kotlin.klib.compatibility.StdlibSpecialCompatibilityChecksTest
-import org.jetbrains.kotlin.klib.compatibility.TestVersion
-import org.jetbrains.kotlin.klib.compatibility.WarningStatus
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
@@ -42,62 +40,26 @@ abstract class NativeLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompa
 
     override val platformDisplayName = "Kotlin/Native"
 
-    override fun compileDummyLibrary(
-        libraryVersion: TestVersion?,
-        compilerVersion: TestVersion?,
-        expectedWarningStatus: WarningStatus,
-        exportKlibToOlderAbiVersion: Boolean,
-    ) {
-        compileDummyLibrary(libraryVersion, compilerVersion, isZipped = false, expectedWarningStatus, exportKlibToOlderAbiVersion)
-        compileDummyLibrary(libraryVersion, compilerVersion, isZipped = true, expectedWarningStatus, exportKlibToOlderAbiVersion)
-    }
-
-    private fun compileDummyLibrary(
-        libraryVersion: TestVersion?,
-        compilerVersion: TestVersion?,
-        isZipped: Boolean,
-        expectedWarningStatus: WarningStatus,
-        exportKlibToOlderAbiVersion: Boolean,
-    ) {
-        val sourcesDir = createDir("sources")
-        val outputDir = createDir("build")
-
-        val sourceFile = sourcesDir.resolve("file.kt").apply { writeText("fun foo() = 42\n") }
-        val moduleName = testName
-
-        val messageCollector = MessageCollectorImpl()
-
-        withCustomCompilerVersion(compilerVersion) {
-            val fakeLibrary = if (isZipped)
-                createFakeZippedLibraryWithSpecificVersion(libraryVersion)
-            else
-                createFakeUnzippedLibraryWithSpecificVersion(libraryVersion)
-
-            val expectedExitCode = if (expectedWarningStatus == WarningStatus.NO_WARNINGS) ExitCode.OK else ExitCode.COMPILATION_ERROR
-            runNativeCompiler(messageCollector, expectedExitCode) {
-                this.freeArgs = listOf(sourceFile.absolutePath)
-                this.libraries = (additionalLibraries() + fakeLibrary.absolutePath).toTypedArray()
-                this.outputName = outputDir.resolve(moduleName).absolutePath
-                this.moduleName = moduleName
-                this.produce = "library"
-                this.nostdlib = true
-                this.kotlinHome = nativeHome.absolutePath
-                if (exportKlibToOlderAbiVersion) {
-                    this.languageVersion = "${LanguageVersion.LATEST_STABLE.major}.${LanguageVersion.LATEST_STABLE.minor - 1}"
-                    this.internalArguments = listOf(
-                        ManualLanguageFeatureSetting(
-                            LanguageFeature.ExportKlibToOlderAbiVersion,
-                            LanguageFeature.State.ENABLED,
-                            "-XXLanguage:+ExportKlibToOlderAbiVersion"
-                        )
+    override fun runCompiler(context: CompilerInvocationContext) {
+        runNativeCompiler(context.messageCollector, context.expectedExitCode) {
+            this.freeArgs = listOf(context.sourceFile.absolutePath)
+            this.libraries = (context.additionalLibraries + context.fakeLibraryPath).toTypedArray()
+            this.outputName = context.outputDir.resolve(context.moduleName).absolutePath
+            this.moduleName = context.moduleName
+            this.produce = "library"
+            this.nostdlib = true
+            this.kotlinHome = nativeHome.absolutePath
+            if (context.exportKlibToOlderAbiVersion) {
+                this.languageVersion = "${LanguageVersion.LATEST_STABLE.major}.${LanguageVersion.LATEST_STABLE.minor - 1}"
+                this.internalArguments = listOf(
+                    ManualLanguageFeatureSetting(
+                        LanguageFeature.ExportKlibToOlderAbiVersion,
+                        LanguageFeature.State.ENABLED,
+                        "-XXLanguage:+ExportKlibToOlderAbiVersion"
                     )
-                }
+                )
             }
         }
-
-        val klibAbiCompatibilityLevel =
-            if (exportKlibToOlderAbiVersion) KlibAbiCompatibilityLevel.LATEST_STABLE.previous()!! else KlibAbiCompatibilityLevel.LATEST_STABLE
-        messageCollector.checkMessage(expectedWarningStatus, libraryVersion, compilerVersion, klibAbiCompatibilityLevel)
     }
 
     override val patchedLibraryPostfix: String = "native"

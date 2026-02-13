@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.klib.compatibility
 import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_LIBRARY_VERSION
 import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_MANIFEST_FILE
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -24,6 +25,17 @@ import java.io.File
 import java.util.*
 import java.util.jar.Manifest
 import org.jetbrains.kotlin.konan.file.File as KFile
+
+data class CompilerInvocationContext(
+    val sourceFile: File,
+    val outputDir: File,
+    val moduleName: String,
+    val fakeLibraryPath: String,
+    val additionalLibraries: List<String>,
+    val exportKlibToOlderAbiVersion: Boolean,
+    val messageCollector: MessageCollectorImpl,
+    val expectedExitCode: ExitCode,
+)
 
 @Execution(ExecutionMode.SAME_THREAD)
 abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
@@ -122,6 +134,59 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
 
     protected abstract val originalLibraryPath: String
     protected open fun additionalLibraries(): List<String> = listOf()
+
+    protected abstract fun runCompiler(context: CompilerInvocationContext)
+
+    override fun compileDummyLibrary(
+        libraryVersion: TestVersion?,
+        compilerVersion: TestVersion?,
+        expectedWarningStatus: WarningStatus,
+        exportKlibToOlderAbiVersion: Boolean,
+    ) {
+        compileDummyLibrary(libraryVersion, compilerVersion, isZipped = false, expectedWarningStatus, exportKlibToOlderAbiVersion)
+        compileDummyLibrary(libraryVersion, compilerVersion, isZipped = true, expectedWarningStatus, exportKlibToOlderAbiVersion)
+    }
+
+    private fun compileDummyLibrary(
+        libraryVersion: TestVersion?,
+        compilerVersion: TestVersion?,
+        isZipped: Boolean,
+        expectedWarningStatus: WarningStatus,
+        exportKlibToOlderAbiVersion: Boolean,
+    ) {
+        val sourcesDir = createDir("sources")
+        val outputDir = createDir("build")
+
+        val sourceFile = sourcesDir.resolve("file.kt").apply { writeText("fun foo() = 42\n") }
+        val moduleName = testName
+
+        val messageCollector = MessageCollectorImpl()
+
+        withCustomCompilerVersion(compilerVersion) {
+            val fakeLibrary = if (isZipped)
+                createFakeZippedLibraryWithSpecificVersion(libraryVersion)
+            else
+                createFakeUnzippedLibraryWithSpecificVersion(libraryVersion)
+
+            val expectedExitCode = if (expectedWarningStatus == WarningStatus.NO_WARNINGS) ExitCode.OK else ExitCode.COMPILATION_ERROR
+
+            val context = CompilerInvocationContext(
+                sourceFile = sourceFile,
+                outputDir = outputDir,
+                moduleName = moduleName,
+                fakeLibraryPath = fakeLibrary.absolutePath,
+                additionalLibraries = additionalLibraries(),
+                exportKlibToOlderAbiVersion = exportKlibToOlderAbiVersion,
+                messageCollector = messageCollector,
+                expectedExitCode = expectedExitCode,
+            )
+            runCompiler(context)
+        }
+
+        val klibAbiCompatibilityLevel =
+            if (exportKlibToOlderAbiVersion) KlibAbiCompatibilityLevel.LATEST_STABLE.previous()!! else KlibAbiCompatibilityLevel.LATEST_STABLE
+        messageCollector.checkMessage(expectedWarningStatus, libraryVersion, compilerVersion, klibAbiCompatibilityLevel)
+    }
 
     protected fun createDir(name: String): File = tmpdir.resolve(name).apply { mkdirs() }
     protected fun createFile(name: String): File = tmpdir.resolve(name).apply { parentFile.mkdirs() }
