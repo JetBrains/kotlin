@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
 
 abstract class FirSession @PrivateSessionConstructor constructor(
     val kind: Kind
-) : ComponentArrayOwner<FirSessionComponent, FirSessionComponent>() {
+) : ComponentArrayOwner<FirSessionComponent, FirSessionComponent>(), SessionHolder {
     companion object : ConeTypeRegistry<FirSessionComponent, FirSessionComponent>() {
         inline fun <reified T : FirSessionComponent> sessionComponentAccessor(): ArrayMapAccessor<FirSessionComponent, FirSessionComponent, T> {
             return generateAccessor(T::class)
@@ -38,6 +38,9 @@ abstract class FirSession @PrivateSessionConstructor constructor(
     }
 
     open val builtinTypes: BuiltinTypes = BuiltinTypes()
+
+    override val session: FirSession
+        get() = this
 
     final override val typeRegistry: TypeRegistry<FirSessionComponent, FirSessionComponent> = Companion
 
