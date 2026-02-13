@@ -16,9 +16,9 @@ import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.ContentDRILink
 import org.jetbrains.dokka.pages.MemberPageNode
 import utils.OnlyDescriptors
+import utils.OnlyNewKDocResolution
 import utils.OnlySymbols
 import utils.text
-import utils.withExperimentalKDocResolution
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -613,8 +613,8 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("KEEP #389: New KDoc resolution")
-    fun `fully qualified link should lead to function`() = withExperimentalKDocResolution {
+    @OnlyNewKDocResolution("KEEP #389: New KDoc resolution")
+    fun `fully qualified link should lead to function`() {
         // for the test case, there is the only one link candidate in K1 and K2
         testInline(
             """
@@ -796,8 +796,8 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("KEEP #389: New KDoc resolution")
-    fun `short link should lead to function`() = withExperimentalKDocResolution {
+    @OnlyNewKDocResolution("KEEP #389: New KDoc resolution")
+    fun `short link should lead to function`() {
         testInline(
             """
             |/src/main/kotlin/Testing.kt
