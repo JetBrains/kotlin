@@ -23,7 +23,7 @@ class __JsNameTest private constructor() {
     @get:JsName("testName2")
     val withGetter2: String get() = "name2"
 
-    var withSetter1: String
+    <!MUST_BE_INITIALIZED!>var withSetter1: String<!>
         @JsName("getWithSetter1")
         get() = "name1"
         @JsName("setWithSetter1")
@@ -67,16 +67,16 @@ class __JsNameTest private constructor() {
 @JsName("TestInterface")
 interface __TestInterface {
     val withGetter1: String
-        @JsName("testName1") get()
+        @JsName("testName1") get()<!SYNTAX!><!>
 
     @get:JsName("testName2")
     val withGetter2: String
 
     var withSetter1: String
         @JsName("getWithSetter1")
-        get()
+        get()<!SYNTAX!><!>
         @JsName("setWithSetter1")
-        set(value)
+        set(value)<!SYNTAX!><!>
 
     @get:JsName("getWithSetter2")
     @set:JsName("setWithSetter2")
@@ -95,7 +95,7 @@ interface __TestInterface {
     companion object {
         @JsName("create")
         fun __create(): __JsNameTest {
-            return __JsNameTest()
+            return <!INVISIBLE_REFERENCE!>__JsNameTest<!>()
         }
 
         @JsName("createChild")
@@ -105,5 +105,5 @@ interface __TestInterface {
     }
 
     @JsName("NestedJsName")
-    class __NestJsNameTest(@JsName("value") val __value: Int)
+    class <!WRONG_EXPORTED_DECLARATION!>__NestJsNameTest(@JsName("value") val __value: Int)<!>
 }

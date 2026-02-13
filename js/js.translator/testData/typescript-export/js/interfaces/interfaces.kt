@@ -81,7 +81,7 @@ interface InterfaceWithCompanion {
 // KT-82128
 @JsExport
 interface InterfaceWithNamedCompanion {
-    companion object Named {
+    companion <!NAMED_COMPANION_IN_EXPORTED_INTERFACE!>object Named<!> {
         fun companionFunction(): String = "FUNCTION"
 
         @JsStatic
@@ -93,7 +93,7 @@ interface InterfaceWithNamedCompanion {
 @JsExport
 sealed interface SomeSealedInterface {
     val x: String
-    data class SomeNestedImpl(override val x: String) : SomeSealedInterface
+    data class <!WRONG_EXPORTED_DECLARATION!>SomeNestedImpl(override val x: String)<!> : SomeSealedInterface
 }
 
 // KT-64708

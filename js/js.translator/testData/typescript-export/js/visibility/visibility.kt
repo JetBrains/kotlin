@@ -9,22 +9,22 @@
 // MODULE: JS_TESTS
 // FILE: visibility.kt
 
-@JsExport
+<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
 internal val internalVal = 10
-@JsExport
+<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
 internal fun internalFun() = 10
-@JsExport
+<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
 internal class internalClass
-@JsExport
+<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
 internal external interface internalInterface
 
-@JsExport
+<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
 private val privateVal = 10
-@JsExport
+<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
 private fun privateFun() = 10
-@JsExport
+<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
 private class privateClass
-@JsExport
+<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
 private external interface privateInterface
 
 @JsExport

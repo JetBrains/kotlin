@@ -32,7 +32,7 @@ abstract class AbstractClassWithProtected {
     protected abstract fun protectedAbstractFun(): Int
     protected abstract val protectedAbstractVal: Int
 
-    class N : AbstractClassWithProtected {
+    class N : <!SUPERTYPE_NOT_INITIALIZED!>AbstractClassWithProtected<!> {
         override fun protectedAbstractFun(): Int = 42
         override val protectedAbstractVal: Int
             get() = 42
@@ -40,12 +40,12 @@ abstract class AbstractClassWithProtected {
 }
 
 @JsExport
-abstract class AbstractInheritorOfAbstractClass : AbstractClassWithProtected {
+abstract class AbstractInheritorOfAbstractClass : <!SUPERTYPE_NOT_INITIALIZED!>AbstractClassWithProtected<!> {
     override fun protectedAbstractFun(): Int = 42
 }
 
 @JsExport
-class InheritorOfAbstractClass : AbstractInheritorOfAbstractClass {
+class InheritorOfAbstractClass : <!SUPERTYPE_NOT_INITIALIZED!>AbstractInheritorOfAbstractClass<!> {
     override val protectedAbstractVal: Int
         get() = 42
 }

@@ -37,16 +37,26 @@ internal class JsExportSourcePreprocessor(
         val result = lines.joinToString("\n") { line ->
             when {
                 isWholeFile && line.startsWith("// FILE") ->
-                    "$line\n@file:JsExport"
+                    "$line\n/*JsExportSourcePreprocessor-file*/@file:JsExport"
                 isWholeFile && JS_EXPORT_REGEX.containsMatchIn(line) && !JS_EXPORT_DEFAULT_REGEX.containsMatchIn(line) ->
-                    line.replace(JS_EXPORT_REGEX, "")
+                    line.replace(JS_EXPORT_REGEX, "/*JsExportSourcePreprocessor|@JsExport*/")
                 !isWholeFile && JS_EXPORT_IGNORE_REGEX.containsMatchIn(line) ->
-                    line.replace(JS_EXPORT_IGNORE_REGEX, "")
+                    line.replace(JS_EXPORT_IGNORE_REGEX, "/*JsExportSourcePreprocessor|@JsExport.Ignore*/")
                 else -> line
             }
         }
         return result
     }
 
-    override fun revert(file: TestFile, actualContent: String): String = file.originalContent.trim() + "\n"
+    override fun revert(file: TestFile, actualContent: String): String {
+        if (DISABLE_JS_EXPORT_SOURCE_PREPROCESSOR in file.directives
+            || DISABLE_JS_EXPORT_SOURCE_PREPROCESSOR in testServices.moduleStructure.allDirectives
+        ) {
+            return actualContent
+        }
+        return actualContent
+            .replace("/*JsExportSourcePreprocessor|@JsExport*/", "@JsExport")
+            .replace("/*JsExportSourcePreprocessor|@JsExport.Ignore*/", "@JsExport.Ignore")
+            .replace("\n/*JsExportSourcePreprocessor-file*/@file:JsExport", "")
+    }
 }

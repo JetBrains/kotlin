@@ -38,7 +38,7 @@ external interface ExternalInterface
 fun zzz(x: Int = 10) {}
 // FILE: file2.kt
 
-@file:JsExport
+<!REPEATED_ANNOTATION!>@file:JsExport<!>
 
 package foo
 

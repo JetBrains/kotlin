@@ -12,7 +12,7 @@ package qualified
 external interface CompileError
 // FILE: notQualified.kt
 
-@JsExport.Ignore
+<!WRONG_ANNOTATION_TARGET!>@<!SYNTAX!><!>JsExport.Ignore<!>
 package notQualified
 
 @JsExport.Ignore
@@ -100,7 +100,7 @@ val console: Console
 val error: CompileError
     get() = js("{}")
 
-@JsExport.Ignore
+<!WRONG_ANNOTATION_TARGET!>@JsExport.Ignore<!>
 typealias NotExportedTypeAlias = NonExportedGenericInterface<NonExportedType>
 
 @JsExport
