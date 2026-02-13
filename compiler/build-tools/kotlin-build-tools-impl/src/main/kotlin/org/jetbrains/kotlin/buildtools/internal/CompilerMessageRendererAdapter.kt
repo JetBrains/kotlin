@@ -34,14 +34,18 @@ internal class CompilerMessageRendererAdapter(private val compilerMessageRendere
 
     private fun CompilerMessageSeverity.asCompilerMessageRendererSeverity(): CompilerMessageRenderer.Severity =
         when (this) {
-            CompilerMessageSeverity.INFO -> CompilerMessageRenderer.Severity.INFO
-            CompilerMessageSeverity.WARNING -> CompilerMessageRenderer.Severity.WARNING
-            CompilerMessageSeverity.ERROR -> CompilerMessageRenderer.Severity.ERROR
-            CompilerMessageSeverity.STRONG_WARNING -> CompilerMessageRenderer.Severity.STRONG_WARNING
-            CompilerMessageSeverity.EXCEPTION -> CompilerMessageRenderer.Severity.EXCEPTION
-            CompilerMessageSeverity.FIXED_WARNING -> CompilerMessageRenderer.Severity.FIXED_WARNING
-            CompilerMessageSeverity.LOGGING -> CompilerMessageRenderer.Severity.LOGGING
-            CompilerMessageSeverity.OUTPUT -> CompilerMessageRenderer.Severity.OUTPUT
+            CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.FIXED_WARNING -> {
+                CompilerMessageRenderer.Severity.WARNING
+            }
+            CompilerMessageSeverity.ERROR, CompilerMessageSeverity.EXCEPTION -> {
+                CompilerMessageRenderer.Severity.ERROR
+            }
+            CompilerMessageSeverity.LOGGING, CompilerMessageSeverity.OUTPUT -> {
+                CompilerMessageRenderer.Severity.DEBUG
+            }
+            CompilerMessageSeverity.INFO -> {
+                CompilerMessageRenderer.Severity.INFO
+            }
         }
 
     private fun CompilerMessageSourceLocation.asCompilerMessageRendererSourceLocation() =
