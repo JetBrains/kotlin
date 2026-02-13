@@ -5,11 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.api.Project
 import org.gradle.api.initialization.resolve.RepositoriesMode
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.internal.DefaultGradleRunner
+import org.gradle.tooling.GradleConnector
+import org.gradle.tooling.events.ProgressEvent
+import org.gradle.tooling.provider.model.ToolingModelBuilder
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.gradle.report.BuildReportType
@@ -18,6 +24,7 @@ import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
 import java.io.InputStream
@@ -81,7 +88,7 @@ fun KGPBaseTest.project(
         .create()
         .withProjectDir(projectPath.toFile())
         .withTestKitDir(testKitDir.toAbsolutePath().toFile())
-        .withGradleDistribution(URI("https://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip"))
+        .withGradleDistribution(gradleDistributionUri(gradleVersion))
 
     val testProject = TestProject(
         gradleRunner = gradleRunner,
@@ -108,6 +115,8 @@ fun KGPBaseTest.project(
     result.getOrThrow()
     return testProject
 }
+
+private fun gradleDistributionUri(gradleVersion: GradleVersion) = URI("https://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip")
 
 /**
  * Create a new test project with configuring single native target.
@@ -305,6 +314,88 @@ private fun TestProject.buildWithAction(
 
 fun getGradleUserHome(): File {
     return testKitDir.toAbsolutePath().toFile().normalize().absoluteFile
+}
+
+
+private class KotlinTestModelBuilder<T>(
+    val name: String,
+    val builder: (Project) -> T,
+) : ToolingModelBuilder {
+    override fun canBuild(modelName: String): Boolean = modelName == name
+
+    override fun buildAll(modelName: String, project: Project): Any? = builder(project)
+}
+
+inline fun <reified T> TestProject.buildModel(
+    vararg tasks: String,
+    enableGradleDebug: EnableGradleDebug = this.enableGradleDebug,
+    kotlinDaemonDebugPort: Int? = this.kotlinDaemonDebugPort,
+    enableBuildCacheDebug: Boolean = false,
+    enableBuildScan: Boolean = this.enableBuildScan,
+    enableOfflineMode: Boolean = this.enableOfflineMode,
+    enableGradleDaemonMemoryLimitInMb: Int? = this.enableGradleDaemonMemoryLimitInMb,
+    enableKotlinDaemonMemoryLimitInMb: Int? = this.enableKotlinDaemonMemoryLimitInMb,
+    buildOptions: BuildOptions = this.buildOptions,
+    environmentVariables: EnvironmentalVariables = this.environmentVariables,
+    noinline progressListener: ((ProgressEvent) -> Unit)? = null,
+    noinline builder: (Project) -> T
+) = buildModel(
+    tasks = tasks, modelClass = T::class.java, enableGradleDebug, kotlinDaemonDebugPort, enableBuildCacheDebug, enableBuildScan,
+    enableOfflineMode, enableGradleDaemonMemoryLimitInMb, enableKotlinDaemonMemoryLimitInMb, buildOptions, environmentVariables,
+    progressListener, builder,
+)
+
+fun <T> TestProject.buildModel(
+    vararg tasks: String,
+    modelClass: Class<T>,
+    enableGradleDebug: EnableGradleDebug = this.enableGradleDebug,
+    kotlinDaemonDebugPort: Int? = this.kotlinDaemonDebugPort,
+    enableBuildCacheDebug: Boolean = false,
+    enableBuildScan: Boolean = this.enableBuildScan,
+    enableOfflineMode: Boolean = this.enableOfflineMode,
+    enableGradleDaemonMemoryLimitInMb: Int? = this.enableGradleDaemonMemoryLimitInMb,
+    enableKotlinDaemonMemoryLimitInMb: Int? = this.enableKotlinDaemonMemoryLimitInMb,
+    buildOptions: BuildOptions = this.buildOptions,
+    environmentVariables: EnvironmentalVariables = this.environmentVariables,
+    progressListener: ((ProgressEvent) -> Unit)? = null,
+    builder: (Project) -> T
+): T {
+    val buildParams = commonBuildSetup(
+        buildArguments = emptyList(), // it is actually task names, but for build model they passed separately
+        buildOptions = buildOptions,
+        enableBuildCacheDebug = enableBuildCacheDebug,
+        enableBuildScan = enableBuildScan,
+        enableOfflineMode = enableOfflineMode,
+        enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
+        enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
+        connectSubprocessVMToDebugger = enableGradleDebug.toBooleanFlag(),
+        gradleVersion = gradleVersion,
+        kotlinDaemonDebugPort = kotlinDaemonDebugPort
+    )
+
+    val connector = GradleConnector.newConnector()
+        .forProjectDirectory(gradleRunner.projectDir)
+        .useDistribution(gradleDistributionUri(gradleVersion))
+
+    buildScriptInjection {
+        val registry = project.serviceOf<ToolingModelBuilderRegistry>()
+        val builder = KotlinTestModelBuilder(modelClass.name, builder)
+        registry.register(builder)
+    }
+
+    try {
+        val connection = connector.connect()
+        val modelBuilder = connection.model(modelClass)
+        val model = modelBuilder
+            .applyIf(progressListener != null) { addProgressListener(progressListener) }
+            .forTasks(tasks.toList())
+            .withArguments(buildParams)
+            .setEnvironmentVariables(environmentVariables.environmentalVariables)
+            .get()
+        return model
+    } finally {
+        connector.disconnect()
+    }
 }
 
 private fun validateDebuggingSocketIsListeningForTestsWithEnv(

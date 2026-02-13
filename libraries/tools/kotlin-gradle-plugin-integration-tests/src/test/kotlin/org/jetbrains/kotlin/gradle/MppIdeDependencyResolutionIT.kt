@@ -1078,6 +1078,80 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @GradleAndroidTest
+    @DisplayName("KT-82090 jvm+android commonMain dependency with Project Isolation")
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_813)
+    fun `KT-82090 jvm+android commonMain dependency with Project Isolation`(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        val producer = project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location,
+        ) {
+            plugins {
+                kotlin("multiplatform")
+                id("com.android.library")
+            }
+
+            buildScriptInjection {
+                applyDefaultAndroidLibraryConfiguration()
+
+                project.applyMultiplatform {
+                    jvm()
+                    @Suppress("DEPRECATION")
+                    androidTarget()
+
+                    sourceSets.commonMain.get().compileSource("interface Producer")
+                }
+            }
+        }
+
+        val consumer = project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location,
+        ) {
+            include(producer, "producer")
+
+            plugins {
+                kotlin("multiplatform")
+                id("com.android.library")
+            }
+
+            buildScriptInjection {
+                applyDefaultAndroidLibraryConfiguration()
+
+                project.applyMultiplatform {
+                    jvm()
+                    @Suppress("DEPRECATION")
+                    androidTarget()
+
+                    sourceSets.getByName("commonMain").dependencies {
+                        api(project(":producer"))
+                    }
+
+                    sourceSets.commonMain.get().compileSource("class Consumer : Producer")
+                }
+            }
+        }
+
+        val dependencies = consumer.resolveIdeDependenciesAsModel(
+            sourceSets = setOf("commonMain"),
+            buildOptions = consumer.buildOptions.enableIsolatedProjects()
+        )
+
+        dependencies["commonMain"].assertMatches(
+            kotlinStdlibDependencies,
+            jetbrainsAnnotationDependencies,
+            regularSourceDependency(":producer/commonMain"),
+        )
+    }
+
     private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
         this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
             it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution
