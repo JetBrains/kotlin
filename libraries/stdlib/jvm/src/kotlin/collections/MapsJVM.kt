@@ -74,7 +74,7 @@ internal fun <K, V> build(builder: MutableMap<K, V>): Map<K, V> {
  * @sample samples.collections.Maps.Usage.getOrElseIfMissing
  */
 @ExperimentalStdlibApi
-@SinceKotlin("2.3")
+@SinceKotlin("2.4")
 @kotlin.internal.InlineOnly
 public inline fun <K, V> ConcurrentMap<K, V>.getOrElseIfMissing(key: K, defaultValue: () -> V): V {
     contract {
@@ -141,7 +141,7 @@ public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -
  * @sample samples.collections.Maps.Usage.getOrPutIfNull
  */
 @ExperimentalStdlibApi
-@SinceKotlin("2.3")
+@SinceKotlin("2.4")
 @kotlin.internal.InlineOnly
 public inline fun <K, V> ConcurrentMap<K, V>.getOrPutIfNull(key: K, crossinline defaultValue: () -> V): V {
     contract {
@@ -171,7 +171,7 @@ public inline fun <K, V> ConcurrentMap<K, V>.getOrPutIfNull(key: K, crossinline 
  *
  * @sample samples.collections.Maps.Usage.getOrPutIfMissing
  */
-@SinceKotlin("2.3")
+@SinceKotlin("2.4")
 @kotlin.internal.InlineOnly
 @ExperimentalStdlibApi
 public inline fun <K, V> ConcurrentMap<K, V>.getOrPutIfMissing(key: K, crossinline defaultValue: () -> V): V {
@@ -206,13 +206,13 @@ public inline fun <K, V> ConcurrentMap<K, V>.getOrPutIfMissing(key: K, crossinli
 }
 
 @PublishedApi
-@SinceKotlin("2.3")
+@SinceKotlin("2.4")
 @ExperimentalStdlibApi
 internal fun <K, V> Map<K, V>.getOrDefaultImpl(key: K, default: V): V? =
     IMPLEMENTATIONS.getOrDefault(this, key, default)
 
 @PublishedApi
-@SinceKotlin("2.3")
+@SinceKotlin("2.4")
 @ExperimentalStdlibApi
 internal fun <K, V> ConcurrentMap<K, V>.getOrPutIfNullImpl(key: K, newValue: V): V =
     if (newValue != null) {
