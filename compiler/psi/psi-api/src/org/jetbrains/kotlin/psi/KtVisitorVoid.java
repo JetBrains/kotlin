@@ -139,7 +139,7 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     }
 
     /**
-     * Must not be overriden at the same time as {@link #visitContextParameterList(KtContextParameterList)}.
+     * Must not be overridden at the same time as {@link #visitContextParameterList(KtContextParameterList)}.
      *
      * @see KtVisitor#visitContextReceiverList(KtContextReceiverList, Object)
      */
