@@ -181,6 +181,7 @@ val cleanUserHomeKonanDir by tasks.registering(Delete::class) {
     onlyIf("Build is running on TeamCity") { isTeamCityBuild.get() }
 
     val userHomeKonanDir = Paths.get("${System.getProperty("user.home")}/.konan")
+    inputs.dir(userHomeKonanDir)
     delete(userHomeKonanDir)
 
     doLast {
@@ -585,12 +586,21 @@ tasks.withType<Test>().configureEach {
 
 excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath()
 
+tasks.register("runFunctionalTests") {
+    dependsOn(":kotlin-gradle-plugin:functionalTest", cleanUserHomeKonanDir)
+}
+
+tasks.register("runIntegrationTests") {
+    dependsOn(cleanUserHomeKonanDir, "kgpAllParallelTests")
+    mustRunAfter("runFunctionalTests")
+}
+
 tasks.register<Sync>("collectKoverIcReports") {
     group = KGP_TEST_TASKS_GROUP
     description = "Collect Kover .ic reports from integration and functional tests into a single directory"
 
-    dependsOn(":kotlin-gradle-plugin:functionalTest")
-    dependsOn("kgpAllParallelTests")
+    dependsOn("runFunctionalTests")
+    dependsOn("runIntegrationTests")
 
     val integrationTestReportsDir = layout.buildDirectory.dir("kover/testkit")
     val functionalTestReportsDir = project(":kotlin-gradle-plugin").layout.buildDirectory.dir("kover/bin-reports")
