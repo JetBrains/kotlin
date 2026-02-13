@@ -74,6 +74,36 @@ public fun CharSequence.minWith(comparator: Comparator<in Char>): Char? {
 }
 
 /**
+ * Returns the product of all values produced by [selector] function applied to each character in the char sequence.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.productOf(selector: (Char) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each character in the char sequence.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.productOf(selector: (Char) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
  * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
  */
 @SinceKotlin("1.4")

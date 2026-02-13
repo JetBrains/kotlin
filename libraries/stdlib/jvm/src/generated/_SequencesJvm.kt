@@ -135,6 +135,40 @@ public fun <T> Sequence<T>.minWith(comparator: Comparator<in T>): T? {
 }
 
 /**
+ * Returns the product of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.productOf(selector: (T) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("productOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.productOf(selector: (T) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
  * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
  *
  * The operation is _terminal_.

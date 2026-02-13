@@ -8977,6 +8977,350 @@ public inline fun UShortArray.onEachIndexed(action: (index: Int, UShort) -> Unit
 }
 
 /**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfDouble")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.productOf(selector: (UInt) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfDouble")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.productOf(selector: (ULong) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfDouble")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.productOf(selector: (UByte) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfDouble")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.productOf(selector: (UShort) -> Double): Double {
+    var product: Double = 1.toDouble()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfInt")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.productOf(selector: (UInt) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfInt")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.productOf(selector: (ULong) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfInt")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.productOf(selector: (UByte) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfInt")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.productOf(selector: (UShort) -> Int): Int {
+    var product: Int = 1.toInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfLong")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.productOf(selector: (UInt) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfLong")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.productOf(selector: (ULong) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfLong")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.productOf(selector: (UByte) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfLong")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.productOf(selector: (UShort) -> Long): Long {
+    var product: Long = 1.toLong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfUInt")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.productOf(selector: (UInt) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfUInt")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.productOf(selector: (ULong) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfUInt")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.productOf(selector: (UByte) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfUInt")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.productOf(selector: (UShort) -> UInt): UInt {
+    var product: UInt = 1.toUInt()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfULong")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.productOf(selector: (UInt) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfULong")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.productOf(selector: (ULong) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfULong")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.productOf(selector: (UByte) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfULong")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.productOf(selector: (UShort) -> ULong): ULong {
+    var product: ULong = 1.toULong()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
  * Accumulates value starting with the first element and applying [operation] from left to right
  * to current accumulator value and each element.
  * 
@@ -11174,6 +11518,94 @@ public inline fun <V> UShortArray.zip(other: UShortArray, transform: (a: UShort,
         list.add(transform(this[i], other[i]))
     }
     return list
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+public fun Array<out UInt>.product(): UInt {
+    var product: UInt = 1u
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfULong")
+public fun Array<out ULong>.product(): ULong {
+    var product: ULong = 1uL
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfUByte")
+public fun Array<out UByte>.product(): UInt {
+    var product: UInt = 1u
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@kotlin.jvm.JvmName("productOfUShort")
+public fun Array<out UShort>.product(): UInt {
+    var product: UInt = 1u
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.product(): UInt {
+    return storage.product().toUInt()
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.product(): ULong {
+    return storage.product().toULong()
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.product(): UInt {
+    return productOf { it.toUInt() }
+}
+
+/**
+ * Returns the product of all elements in the array.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.product(): UInt {
+    return productOf { it.toUInt() }
 }
 
 /**
