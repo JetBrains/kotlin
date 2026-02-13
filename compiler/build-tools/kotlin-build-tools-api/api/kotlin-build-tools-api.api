@@ -62,13 +62,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerMess
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity : java/lang/Enum {
+	public static final field DEBUG Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
 	public static final field ERROR Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
-	public static final field EXCEPTION Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
-	public static final field FIXED_WARNING Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
 	public static final field INFO Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
-	public static final field LOGGING Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
-	public static final field OUTPUT Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
-	public static final field STRONG_WARNING Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
 	public static final field WARNING Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/CompilerMessageRenderer$Severity;
