@@ -230,8 +230,14 @@ fun TestProject.addPublishedProjectToRepositories(
 fun TestProject.include(
     subproject: TestProject,
     name: String,
+    useSymlink: Boolean = true,
 ) {
-    Files.createSymbolicLink(projectPath.resolve(name), subproject.projectPath)
+    val targetPath = projectPath.resolve(name)
+    if (useSymlink) {
+        Files.createSymbolicLink(targetPath, subproject.projectPath)
+    } else {
+        subproject.projectPath.toFile().copyRecursively(targetPath.toFile())
+    }
     settingsBuildScriptInjection {
         settings.include(":${name}")
     }

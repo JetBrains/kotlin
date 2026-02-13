@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.launch
@@ -71,6 +73,7 @@ import org.jetbrains.kotlin.gradle.utils.emitListItems
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -80,6 +83,7 @@ import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
+import java.nio.file.Paths
 import kotlin.io.readLines
 import kotlin.text.startsWith
 
@@ -186,17 +190,14 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     ) {
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.localPackages.addAll(
-            transitiveLocalSwiftPMDependencies.map {
-                it.map { it.path }
+            transitiveLocalSwiftPMDependencies.map { deps ->
+                deps.map { dep -> dep.absolutePath }
             }
         )
     }
 
     val syntheticImportProjectGenerationTaskForCinteropsAndLdDump = project.locateOrRegisterTask<GenerateSyntheticLinkageImportProject>(
-        lowerCamelCaseName(
-            GenerateSyntheticLinkageImportProject.TASK_NAME,
-            "forCinteropsAndLdDump",
-        ),
+        GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName,
     ) {
         it.configureWithExtension(swiftPMImportExtension)
         it.dependencyIdentifierToImportedSwiftPMDependencies.set(transitiveSwiftPMDependenciesMap)
@@ -216,9 +217,9 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
         it.dependsOn(syntheticImportProjectGenerationTaskForCinteropsAndLdDump)
         it.localPackageManifests.from(
-            transitiveLocalSwiftPMDependencies.map {
-                it.map {
-                    it.path.resolve("Package.swift")
+            transitiveLocalSwiftPMDependencies.map { deps ->
+                deps.map { dep ->
+                    dep.absolutePath.resolve("Package.swift")
                 }
             }
         )
@@ -287,7 +288,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 }.get()
 
                 task.processOptions.environment.put(
-                     if (task is KotlinNativeSimulatorTest) "SIMCTL_CHILD_DYLD_FALLBACK_FRAMEWORK_PATH" else "DYLD_FALLBACK_FRAMEWORK_PATH",
+                    if (task is KotlinNativeSimulatorTest) "SIMCTL_CHILD_DYLD_FALLBACK_FRAMEWORK_PATH" else "DYLD_FALLBACK_FRAMEWORK_PATH",
                     syntheticImportProjectGenerationTaskForCinteropsAndLdDump.flatMap {
                         // Fight eager CC provider: fetch dump path eagerly, but read the file only when the task has executed
                         it.outputs.files.elements
@@ -340,16 +341,44 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             it.architectures.add(target.konanTarget.appleArchitecture)
         }
 
-        swiftPMImportExtension.spmDependencies.all { swiftPMDependency ->
+        swiftPMImportExtension.spmDependencies.all spmDependency@{ swiftPMDependency ->
             kotlinPropertiesProvider.enableCInteropCommonizationSetByExternalPlugin = true
             when (swiftPMDependency) {
                 is SwiftPMDependency.Local -> {
+                    val resolvedPath = swiftPMDependency.absolutePath
+                    val originalPath = project.projectDir.toPath().relativize(resolvedPath.toPath()).toString()
+
+                    // Validate at configuration time for direct dependencies using diagnostics
+                    if (!resolvedPath.exists()) {
+                        project.reportDiagnostic(
+                            KotlinToolingDiagnostics.SwiftPMLocalPackageDirectoryNotFound(
+                                resolvedPath.absolutePath,
+                                originalPath
+                            )
+                        )
+                        return@spmDependency
+                    }
+
+                    if (!resolvedPath.resolve("Package.swift").exists()) {
+                        project.reportDiagnostic(
+                            KotlinToolingDiagnostics.SwiftPMLocalPackageMissingManifest(resolvedPath)
+                        )
+                        return@spmDependency
+                    }
+
+                    if (swiftPMDependency.packageName.isBlank()) {
+                        project.reportDiagnostic(
+                            KotlinToolingDiagnostics.SwiftPMLocalPackageInvalidName(originalPath)
+                        )
+                        return@spmDependency
+                    }
+
                     computeLocalPackageDependencyInputFiles.configure {
-                        it.localPackages.add(swiftPMDependency.path)
+                        it.localPackages.add(resolvedPath)
                     }
                     fetchSyntheticImportProjectPackages.configure {
                         it.localPackageManifests.from(
-                            swiftPMDependency.path.resolve("Package.swift")
+                            resolvedPath.resolve("Package.swift")
                         )
                     }
                 }
@@ -469,6 +498,9 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
     abstract val dependencyIdentifierToImportedSwiftPMDependencies: MapProperty<String, SwiftPMImport>
 
     @get:Internal
+    val projectDirectory = project.layout.projectDirectory
+
+    @get:Internal
     val syntheticImportProjectRoot: DirectoryProperty = project.objects.directoryProperty().convention(
         project.layout.buildDirectory.dir("kotlin/swiftImport")
     )
@@ -524,7 +556,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
 
     override fun parallelWork() = generateSwiftPMSyntheticImportProjectAndFetchPackages()
     fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
-        val packageRoot = syntheticImportProjectRoot.get().asFile
+        val packageRoot = syntheticImportProjectRoot.get().asFile.normalizedAbsoluteFile()
         val initialDigest = if (failOnNonIdempotentChanges.get()) {
             val sha = MessageDigest.getInstance("SHA-256")
             projectRootTrackedFiles.files.sorted().forEach {
@@ -615,7 +647,9 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
                         }
                     }
                     is SwiftPMDependency.Local -> {
-                        appendLine("  path: \"${importedPackage.path.path}\",")
+                        val absolutePath = importedPackage.absolutePath
+                        val relativePath = absolutePath.normalizedAbsoluteFile().relativeTo(packageRoot)
+                        appendLine("  path: \"${relativePath.path}\",")
                     }
                 }
                 if (importedPackage.traits.isNotEmpty()) {
@@ -742,6 +776,11 @@ internal abstract class GenerateSyntheticLinkageImportProject : ParallelTask() {
         const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = "_internal_linkage_SwiftPMImport"
         const val SUBPACKAGES = "subpackages"
         const val MANIFEST_NAME = "Package.swift"
+
+        val syntheticImportProjectGenerationTaskName = lowerCamelCaseName(
+            TASK_NAME,
+            "forCinteropsAndLdDump",
+        )
 
         // FIXME: Maybe tests against CI RECOMMENDED_ version to keep up to date?
         const val IOS_DEPLOYMENT_VERSION_DEFAULT = "15.0"
@@ -972,6 +1011,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Parall
 
     @get:Input
     abstract val xcodebuildPlatform: Property<String>
+
     @get:Input
     abstract val xcodebuildSdk: Property<String>
 
@@ -990,6 +1030,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Parall
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val filesToTrackFromLocalPackages: RegularFileProperty
+
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     protected val localPackageSources get() = filesToTrackFromLocalPackages.map { it.asFile.readLines().filter { it.isNotEmpty() }.map { File(it) } }
@@ -1017,7 +1058,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Parall
     abstract val syntheticImportProjectRoot: DirectoryProperty
 
     @get:Internal
-    val syntheticImportDd = project.layout.buildDirectory.dir("kotlin/swiftImportDd")
+    val syntheticImportDd = layout.buildDirectory.dir("kotlin/swiftImportDd")
 
     @get:Inject
     protected abstract val execOps: ExecOperations
@@ -1030,10 +1071,11 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Parall
         project.group.toString(),
         if (project.path == ":") project.name else project.path.drop(1)
     ).filter {
-        !it.isEmpty()
+        it.isNotEmpty()
     }.joinToString(".") {
         it.replace(Regex("[^a-zA-Z0-9_.]"), ".")
-    }
+    }.replace(Regex("\\.{2,}"), ".")  // Replace multiple consecutive dots with single dot
+     .trim('.')  // Remove leading/trailing dots
 
     override fun parallelWork() = generateDefFiles()
     fun generateDefFiles() {
@@ -1654,7 +1696,10 @@ internal abstract class IntegrateLinkagePackageIntoXcodeProject : ParallelTask()
 internal const val PROJECT_FILE_PATH_ENV = "PROJECT_FILE_PATH"
 internal fun Project.callingProjectPathProvider(): Provider<String> {
     val xcodeProjectPathForKmpIJPlugin = swiftPMDependenciesExtension().xcodeProjectPathForKmpIJPlugin
-    val envProjectPath = project.providers.environmentVariable(PROJECT_FILE_PATH_ENV)
+    // Resolve PROJECT_FILE_PATH symlinks (xcodebuild input) to match Gradle's canonicalized project dir;
+    // this avoids /var -> /private/var mismatches in relative path computation on macOS.
+    // FIXME: Replace Provider<String> with Provider<File> to avoid string-based normalization (KT-84304).
+    val envProjectPath = project.providers.environmentVariable(PROJECT_FILE_PATH_ENV).map { Paths.get(it).toRealPath().toString() }
 
     return envProjectPath.orElse(
         xcodeProjectPathForKmpIJPlugin.map {
@@ -1812,6 +1857,9 @@ internal abstract class SerializeSwiftPMDependenciesMetadata : ParallelTask() {
     @get:Input
     abstract val tvosDeploymentVersion: Property<String>
 
+    @get:Internal
+    val projectDirectory = project.layout.projectDirectory
+
     @get:OutputFile
     val serializationFile: Provider<RegularFile> = project.layout.buildDirectory.file("kotlin/importedSpmModules")
 
@@ -1827,6 +1875,7 @@ internal abstract class SerializeSwiftPMDependenciesMetadata : ParallelTask() {
         val spmDependencies = importedSpmModules.get()
             // get rid of Google set
             .map { it }.toSet()
+        val resolvedDependencies = spmDependencies
         serializationFile.get().asFile.outputStream().use { file ->
             ObjectOutputStream(file).use { objects ->
                 objects.writeObject(
@@ -1835,7 +1884,7 @@ internal abstract class SerializeSwiftPMDependenciesMetadata : ParallelTask() {
                         macosDeploymentVersion = macosDeploymentVersion.orNull,
                         watchosDeploymentVersion = watchosDeploymentVersion.orNull,
                         tvosDeploymentVersion = tvosDeploymentVersion.orNull,
-                        dependencies = spmDependencies,
+                        dependencies = resolvedDependencies,
                     )
                 )
             }
