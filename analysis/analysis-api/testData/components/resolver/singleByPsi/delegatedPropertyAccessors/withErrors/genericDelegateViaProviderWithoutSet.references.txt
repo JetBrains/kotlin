@@ -1,0 +1,7 @@
+KtPropertyDelegate(429,465): 'by ProvideDelegateHolder("provided")'
+  KtPropertyDelegationMethodsReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in myPack) operator fun <T> myPack.ProvideDelegateHolder.provideDelegate(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): myPack.GenericDelegate<T>
+      1: (in myPack.GenericDelegate) operator fun getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T

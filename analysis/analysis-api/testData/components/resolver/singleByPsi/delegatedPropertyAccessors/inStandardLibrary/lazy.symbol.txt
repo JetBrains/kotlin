@@ -1,2 +1,2 @@
-KtProperty(0,37): '// WITH_STDLIB'
+KtPropertyDelegate(26,37): 'by lazy {1}'
   null

@@ -1,0 +1,7 @@
+KtPropertyDelegate(361,389): 'by NonGenericHolder("world")'
+  KtPropertyDelegationMethodsReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in myPack) operator fun <T> myPack.NonGenericHolder.getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
+      1: (in myPack) operator fun <T> myPack.NonGenericHolder.setValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: T)

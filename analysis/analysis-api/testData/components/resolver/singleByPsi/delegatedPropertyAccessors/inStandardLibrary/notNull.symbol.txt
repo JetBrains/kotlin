@@ -1,2 +1,2 @@
-KtProperty(51,84): 'var x: Int by Delegates.notNull()'
+KtPropertyDelegate(62,84): 'by Delegates.notNull()'
   null

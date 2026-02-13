@@ -1,2 +1,2 @@
-KtProperty(149,196): 'val x: Int by Bar().provideDelegate(null, null)'
+KtPropertyDelegate(160,196): 'by Bar().provideDelegate(null, null)'
   NO_CANDIDATES

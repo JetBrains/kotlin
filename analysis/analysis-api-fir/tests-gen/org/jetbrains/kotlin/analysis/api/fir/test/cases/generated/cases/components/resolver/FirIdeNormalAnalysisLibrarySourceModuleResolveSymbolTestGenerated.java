@@ -2581,6 +2581,24 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveSymbolTestGenerated e
       }
 
       @Test
+      @TestMetadata("genericDelegate.kt")
+      public void testGenericDelegate() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/genericDelegate.kt");
+      }
+
+      @Test
+      @TestMetadata("genericDelegateReadOnly.kt")
+      public void testGenericDelegateReadOnly() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/genericDelegateReadOnly.kt");
+      }
+
+      @Test
+      @TestMetadata("genericDelegateViaProvider.kt")
+      public void testGenericDelegateViaProvider() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/genericDelegateViaProvider.kt");
+      }
+
+      @Test
       @TestMetadata("getExtension.kt")
       public void testGetExtension() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/getExtension.kt");
@@ -2602,6 +2620,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveSymbolTestGenerated e
       @TestMetadata("getOneFakeOverride.kt")
       public void testGetOneFakeOverride() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/getOneFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("importedFromObject.kt")
+      public void testImportedFromObject() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/importedFromObject.kt");
+      }
+
+      @Test
+      @TestMetadata("nonGenericDelegate.kt")
+      public void testNonGenericDelegate() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/nonGenericDelegate.kt");
       }
 
       @Test

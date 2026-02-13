@@ -1,2 +1,2 @@
-KtProperty(0,20): 'var x : Int by Baz()'
+KtPropertyDelegate(12,20): 'by Baz()'
   NO_CANDIDATES

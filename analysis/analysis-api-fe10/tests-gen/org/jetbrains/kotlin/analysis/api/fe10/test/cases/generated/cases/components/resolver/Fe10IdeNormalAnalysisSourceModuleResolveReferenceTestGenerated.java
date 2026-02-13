@@ -2649,6 +2649,24 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exte
       }
 
       @Test
+      @TestMetadata("genericDelegate.kt")
+      public void testGenericDelegate() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/genericDelegate.kt");
+      }
+
+      @Test
+      @TestMetadata("genericDelegateReadOnly.kt")
+      public void testGenericDelegateReadOnly() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/genericDelegateReadOnly.kt");
+      }
+
+      @Test
+      @TestMetadata("genericDelegateViaProvider.kt")
+      public void testGenericDelegateViaProvider() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/genericDelegateViaProvider.kt");
+      }
+
+      @Test
       @TestMetadata("getExtension.kt")
       public void testGetExtension() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/getExtension.kt");
@@ -2670,6 +2688,18 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exte
       @TestMetadata("getOneFakeOverride.kt")
       public void testGetOneFakeOverride() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/getOneFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("importedFromObject.kt")
+      public void testImportedFromObject() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/importedFromObject.kt");
+      }
+
+      @Test
+      @TestMetadata("nonGenericDelegate.kt")
+      public void testNonGenericDelegate() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/inSource/nonGenericDelegate.kt");
       }
 
       @Test
@@ -2714,6 +2744,48 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceTestGenerated exte
       @Test
       public void testAllFilesPresentInWithErrors() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/withErrors"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
+      }
+
+      @Test
+      @TestMetadata("genericDelegateIncorrentGet.kt")
+      public void testGenericDelegateIncorrentGet() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/withErrors/genericDelegateIncorrentGet.kt");
+      }
+
+      @Test
+      @TestMetadata("genericDelegateViaProviderWithoutAccessors.kt")
+      public void testGenericDelegateViaProviderWithoutAccessors() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/withErrors/genericDelegateViaProviderWithoutAccessors.kt");
+      }
+
+      @Test
+      @TestMetadata("genericDelegateViaProviderWithoutGet.kt")
+      public void testGenericDelegateViaProviderWithoutGet() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/withErrors/genericDelegateViaProviderWithoutGet.kt");
+      }
+
+      @Test
+      @TestMetadata("genericDelegateViaProviderWithoutSet.kt")
+      public void testGenericDelegateViaProviderWithoutSet() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/withErrors/genericDelegateViaProviderWithoutSet.kt");
+      }
+
+      @Test
+      @TestMetadata("genericDelegateViaUnrelatedProvider.kt")
+      public void testGenericDelegateViaUnrelatedProvider() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/withErrors/genericDelegateViaUnrelatedProvider.kt");
+      }
+
+      @Test
+      @TestMetadata("genericDelegateWithoutGetter.kt")
+      public void testGenericDelegateWithoutGetter() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/withErrors/genericDelegateWithoutGetter.kt");
+      }
+
+      @Test
+      @TestMetadata("genericDelegateWithoutSetter.kt")
+      public void testGenericDelegateWithoutSetter() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/delegatedPropertyAccessors/withErrors/genericDelegateWithoutSetter.kt");
       }
 
       @Test

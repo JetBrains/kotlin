@@ -1,0 +1,2 @@
+KtPropertyDelegate(361,389): 'by NonGenericHolder("world")'
+  NO_CANDIDATES

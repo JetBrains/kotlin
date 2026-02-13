@@ -1,2 +1,2 @@
-KtProperty(0,19): 'val x: Int by Foo()'
+KtPropertyDelegate(11,19): 'by Foo()'
   null

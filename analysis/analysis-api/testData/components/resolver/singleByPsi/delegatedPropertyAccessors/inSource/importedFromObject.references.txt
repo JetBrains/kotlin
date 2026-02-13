@@ -1,0 +1,7 @@
+KtPropertyDelegate(181,199): 'by Holder("hello")'
+  KtPropertyDelegationMethodsReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in dependency.MyDelegateOperators) operator fun dependency.Holder.getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String
+      1: (in dependency.MyDelegateOperators) operator fun dependency.Holder.setValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.String)

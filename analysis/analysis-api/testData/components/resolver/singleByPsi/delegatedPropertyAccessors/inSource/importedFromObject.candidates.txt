@@ -1,0 +1,2 @@
+KtPropertyDelegate(181,199): 'by Holder("hello")'
+  NO_CANDIDATES

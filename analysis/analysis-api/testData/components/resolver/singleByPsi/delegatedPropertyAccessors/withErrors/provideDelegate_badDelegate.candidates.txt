@@ -1,2 +1,2 @@
-KtProperty(114,135): 'val foo: Int by Bar()'
+KtPropertyDelegate(127,135): 'by Bar()'
   NO_CANDIDATES
