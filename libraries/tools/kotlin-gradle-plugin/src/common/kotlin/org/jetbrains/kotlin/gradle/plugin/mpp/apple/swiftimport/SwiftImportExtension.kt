@@ -1,11 +1,13 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import org.gradle.api.DomainObjectSet
+import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Remote.Repository
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Remote.Version
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
 import java.io.File
 import java.io.Serializable
 import javax.inject.Inject
@@ -127,16 +129,36 @@ abstract class SwiftImportExtension @Inject constructor(
         )
     }
 
+    /**
+     * Adds a local SwiftPM package dependency using a Gradle [Directory].
+     *
+     * @param directory The directory containing the SwiftPM package (must contain Package.swift)
+     * @param products List of SwiftPM product names to import
+     * @param packageName Optional package name (inferred from directory name if not specified)
+     * @param importedModules List of modules to import (defaults to products list)
+     * @param traits SwiftPM traits to enable
+     *
+     * Example:
+     * ```
+     * localPackage(
+     *     directory = layout.projectDirectory.dir("../MySwiftPackage"),
+     *     products = listOf("MySwiftPackage"),
+     * )
+     * ```
+     */
     fun localPackage(
-        path: File,
+        directory: Directory,
         products: List<String>,
+        packageName: String = inferLocalPackageName(directory),
         importedModules: List<String> = products,
         traits: Set<String> = setOf(),
     ) {
+        val absolutePath = directory.asFile.normalizedAbsoluteFile()
+
         spmDependencies.add(
             SwiftPMDependency.Local(
-                path = path,
-                packageName = path.name,
+                absolutePath = absolutePath,
+                packageName = packageName,
                 products = products.map { SwiftPMDependency.Product(it) },
                 cinteropClangModules = importedModules.map {
                     SwiftPMDependency.CinteropClangModule(it)
@@ -146,19 +168,31 @@ abstract class SwiftImportExtension @Inject constructor(
         )
     }
 
+    /**
+     * Adds a local SwiftPM package dependency using a Gradle [Directory] with advanced product configuration.
+     *
+     * @param directory The directory containing the SwiftPM package (must contain Package.swift)
+     * @param products List of SwiftPM products with platform constraints
+     * @param packageName Optional package name (inferred from directory name if not specified)
+     * @param importedModules List of modules to import
+     * @param traits SwiftPM traits to enable
+     */
     fun localPackage(
-        path: File,
+        directory: Directory,
         products: List<SwiftPMDependency.Product>,
+        packageName: String = inferLocalPackageName(directory),
         importedModules: List<String> = products.filter {
             it.platformConstraints == null && it.cinteropClangModules.isEmpty()
         }.map { it.name },
         traits: Set<String> = setOf(),
         @Suppress("unused", "UNUSED_PARAMETER") javaOverloadsArePain: Boolean = true,
     ) {
+        val absolutePath = directory.asFile.normalizedAbsoluteFile()
+
         spmDependencies.add(
             SwiftPMDependency.Local(
-                path = path,
-                packageName = path.name,
+                absolutePath = absolutePath,
+                packageName = packageName,
                 products = products,
                 cinteropClangModules = importedModules.map {
                     SwiftPMDependency.CinteropClangModule(it)
@@ -174,6 +208,11 @@ abstract class SwiftImportExtension @Inject constructor(
 
     // FIXME: check if this is actually correct
     private fun inferPackageName(url: String) = url.split("/").last().split(".git").first()
+
+    private fun inferLocalPackageName(directory: Directory): String {
+        return directory.asFile.toPath().toAbsolutePath().normalize().fileName?.toString()
+            ?: directory.asFile.name
+    }
 
     companion object {
         const val EXTENSION_NAME = "swiftPMDependencies"
@@ -248,8 +287,13 @@ sealed class SwiftPMDependency(
         }
     }
 
+    /**
+     * A local SwiftPM package dependency.
+     *
+     * @property absolutePath Absolute path to the SwiftPM package directory
+     */
     class Local internal constructor(
-        val path: File,
+        val absolutePath: File,
         products: List<Product>,
         cinteropClangModules: List<CinteropClangModule>,
         packageName: String,

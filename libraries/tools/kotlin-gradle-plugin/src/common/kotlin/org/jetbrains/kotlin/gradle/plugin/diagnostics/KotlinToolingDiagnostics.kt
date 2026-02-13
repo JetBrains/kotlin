@@ -1950,6 +1950,59 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object SwiftExportArtifactResolution : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(component: String, artifacts: List<String>) = build(severity = if (artifacts.isEmpty()) WARNING else ERROR) {
+            title("Swift Export Artifact Resolution Error")
+                .description {
+                    if (artifacts.isEmpty()) {
+                        "Component $component doesn't have suitable artifacts"
+                    } else {
+                        "Component $component has too many artifacts: $artifacts"
+                    }
+                }
+                .solution {
+                    "Please check the component and ensure it has the correct artifacts."
+                }
+        }
+    }
+
+    object SwiftPMLocalPackageDirectoryNotFound : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(resolvedPath: String, originalPath: String) = build {
+            title("Local SwiftPM Package Directory Not Found")
+                .description {
+                    "Local SwiftPM package directory does not exist: $resolvedPath\n" +
+                    "Path was resolved from: layout.projectDirectory.dir(\"$originalPath\")"
+                }
+                .solutions {
+                    listOf(
+                        "Verify the path '$originalPath' is correct relative to the project directory",
+                        "Create the SwiftPM package directory at: $resolvedPath"
+                    )
+                }
+        }
+    }
+
+    object SwiftPMLocalPackageMissingManifest : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(resolvedPath: File) = build {
+            title("Local SwiftPM Package Missing Package.swift")
+                .description { "Local SwiftPM package is missing Package.swift manifest: ${resolvedPath.absolutePath}" }
+                .solutions {
+                    listOf(
+                        "Create a Package.swift file in: ${resolvedPath.absolutePath}",
+                        "Initialize a new SwiftPM package using 'swift package init'"
+                    )
+                }
+        }
+    }
+
+    object SwiftPMLocalPackageInvalidName : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(originalPath: String) = build {
+            title("Cannot Infer SwiftPM Package Name")
+                .description { "Cannot infer package name from path '$originalPath'" }
+                .solution { "Provide an explicit packageName parameter in the localPackage() call" }
+        }
+    }
+
     object IcFirMisconfigurationLV : ToolingDiagnosticFactory(
         predefinedSeverity = FATAL,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration
