@@ -669,13 +669,7 @@ open class PsiRawFirBuilder(
             propertyReturnType: FirTypeRef,
             annotationsFromProperty: List<FirAnnotationCall>,
         ): FirBackingField {
-            val defaultVisibility = this?.getVisibility()
-            val componentVisibility = if (defaultVisibility != null && defaultVisibility != Visibilities.Unknown) {
-                defaultVisibility
-            } else {
-                Visibilities.Private
-            }
-            val status = obtainPropertyComponentStatus(componentVisibility, this, property)
+            val status = obtainPropertyComponentStatus(Visibilities.Private, this, property)
             val backingFieldInitializer = this?.toInitializerExpression()
             val returnType = this?.typeReference.toFirOrImplicitType()
             val source = this?.toFirSourceElement()
