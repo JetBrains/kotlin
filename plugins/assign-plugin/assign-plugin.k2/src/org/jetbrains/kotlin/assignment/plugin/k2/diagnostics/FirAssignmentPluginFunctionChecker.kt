@@ -33,6 +33,7 @@ object FirAssignmentPluginFunctionChecker : FirSimpleFunctionChecker(MppCheckerK
         } else {
             declaration.dispatchReceiverType?.toRegularClassSymbol()
         }
+        if (receiverClassSymbol == null) return
         if (!context.session.annotationMatchingService.isAnnotated(receiverClassSymbol)) return
         if (!declaration.returnTypeRef.coneType.isUnit) {
             reporter.reportOn(declaration.source, DECLARATION_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT)

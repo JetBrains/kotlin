@@ -19,6 +19,7 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesImplementation(libs.junit.jupiter.api)
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
 
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(toolsJar())
@@ -49,5 +50,7 @@ projectTests {
     withMockJdkAnnotationsJar()
     withTestJar()
 
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        workingDir = rootDir
+    }
 }

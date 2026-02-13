@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.assignment.plugin
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLBlackBoxTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLDiagnosticsTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLReversedBlackBoxTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLReversedDiagnosticsTest
 import org.jetbrains.kotlin.assignment.plugin.AssignmentDirectives.ENABLE_ASSIGNMENT
 import org.jetbrains.kotlin.assignment.plugin.k2.FirAssignmentPluginExtensionRegistrar
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -46,6 +50,24 @@ abstract class AbstractFirPsiAssignmentPluginDiagnosticTest : AbstractFirPsiDiag
     }
 }
 
+abstract class AbstractLLAssignDiagnosticsTest : AbstractLLDiagnosticsTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configurePlugin()
+        builder.configureDiagnostics()
+        builder.configurationForClassicAndFirTestsAlongside()
+    }
+}
+
+abstract class AbstractLLReversedAssignDiagnosticsTest : AbstractLLReversedDiagnosticsTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configurePlugin()
+        builder.configureDiagnostics()
+        builder.configurationForClassicAndFirTestsAlongside()
+    }
+}
+
 // ------------------------ codegen ------------------------
 
 open class AbstractIrBlackBoxCodegenTestAssignmentPlugin : AbstractIrBlackBoxCodegenTest() {
@@ -56,6 +78,20 @@ open class AbstractIrBlackBoxCodegenTestAssignmentPlugin : AbstractIrBlackBoxCod
 }
 
 open class AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin : AbstractFirLightTreeBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configurePlugin()
+    }
+}
+
+abstract class AbstractLLAssignBlackBoxTest : AbstractLLBlackBoxTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configurePlugin()
+    }
+}
+
+abstract class AbstractLLReversedAssignBlackBoxTest : AbstractLLReversedBlackBoxTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurePlugin()
@@ -91,10 +127,10 @@ class AssignmentPluginEnvironmentConfigurator(testServices: TestServices) : Envi
     @OptIn(InternalNonStableExtensionPoints::class)
     override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
         module: TestModule,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
     ) {
         if (ENABLE_ASSIGNMENT !in module.directives) return
-        AssignResolutionAltererExtension.Companion.registerExtension(CliAssignPluginResolutionAltererExtension(TEST_ANNOTATIONS))
+        AssignResolutionAltererExtension.registerExtension(CliAssignPluginResolutionAltererExtension(TEST_ANNOTATIONS))
         StorageComponentContainerContributor.registerExtension(AssignmentComponentContainerContributor(TEST_ANNOTATIONS))
         FirExtensionRegistrar.registerExtension(FirAssignmentPluginExtensionRegistrar(TEST_ANNOTATIONS))
     }
