@@ -24,30 +24,10 @@ public interface CompilerMessageRenderer {
      * The severity level of a compiler message.
      */
     public enum class Severity {
-
-        EXCEPTION,
         ERROR,
-
-        /**
-         * A warning that is not discarded when compilation errors occur.
-         * Used for configuration-related problems rather than code diagnostics.
-         */
-        STRONG_WARNING,
-
-        /**
-         * A warning set by `-Xwarning-level=NAME:warning`.
-         * Not suppressed by `-nowarn` and does not cause compilation failure with `-Werror`.
-         */
-        FIXED_WARNING,
-
         WARNING,
         INFO,
-        LOGGING,
-
-        /**
-         * Source-to-output file mapping (e.g., `A.kt -> A.class`). Used for incremental compilation.
-         */
-        OUTPUT;
+        DEBUG
     }
 
     /**
