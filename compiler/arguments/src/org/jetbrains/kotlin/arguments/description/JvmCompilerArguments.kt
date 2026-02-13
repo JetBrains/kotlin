@@ -256,6 +256,7 @@ The default value is 1.""".asReleaseDependent()
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xadd-modules"
         compilerName = "additionalJavaModules"
@@ -263,6 +264,7 @@ The default value is 1.""".asReleaseDependent()
             "Root modules to resolve in addition to the initial modules, or all modules on the module path if <module> is ALL-MODULE-PATH.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<module[,]>".asReleaseDependent()
+        argumentType = StringListType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,
