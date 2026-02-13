@@ -800,6 +800,13 @@ class BodyGenerator(
             return
         }
 
+        if (call.symbol == wasmSymbols.wasmCallableReferenceId) {
+            val fqName = (call.arguments[0] as? IrConst)?.value as? String
+                ?: error("wasmCallableReferenceId intrinsic requires a constant string argument")
+            body.buildConstI32Symbol(wasmFileCodegenContext.referenceCallableReferenceId(fqName), location)
+            return
+        }
+
         // Some intrinsics are a special case because we want to remove them completely, including their arguments.
         if (backendContext.configuration.get(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS) != true) {
             if (call.symbol == wasmSymbols.rangeCheck) {

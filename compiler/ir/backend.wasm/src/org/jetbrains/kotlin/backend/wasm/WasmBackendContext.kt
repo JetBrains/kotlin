@@ -113,13 +113,6 @@ class WasmBackendContext(
 
     override val inlineClassesUtils = WasmInlineClassesUtils(wasmSymbols)
 
-    // Counter for generating unique IDs for callable references (used for reflection)
-    private var nextCallableReferenceId = 0
-    val callableReferenceIds = mutableMapOf<String, Int>()
-
-    fun getOrCreateCallableReferenceId(fqName: String): Int =
-        callableReferenceIds.getOrPut(fqName) { nextCallableReferenceId++ }
-
     //
     // Unit test support, mostly borrowed from the JS implementation
     //

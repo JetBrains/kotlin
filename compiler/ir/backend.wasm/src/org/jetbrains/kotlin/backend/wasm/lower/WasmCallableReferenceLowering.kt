@@ -238,8 +238,10 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                         reference.getArity().toIrConst(context.irBuiltIns.intType)
                     }
                     "id" -> {
-                        backendContext.getOrCreateCallableReferenceId(reference.getFqName(backendContext))
-                            .toIrConst(context.irBuiltIns.intType)
+                        // Use an intrinsic that will be resolved at link time for IC stability
+                        irCall(backendContext.wasmSymbols.wasmCallableReferenceId).apply {
+                            arguments[0] = irString(reference.getFqName(backendContext))
+                        }
                     }
                     "receiver" -> {
                         // Use the temporary variable if provided, otherwise null

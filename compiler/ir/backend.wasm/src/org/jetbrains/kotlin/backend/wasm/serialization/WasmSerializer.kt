@@ -65,6 +65,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeGlobalLiterals(globalLiterals)
             serializeMap(globalLiteralsId, ::serializeString, ::serializeIntSymbol)
             serializeMap(stringLiteralId, ::serializeString, ::serializeIntSymbol)
+            serializeMap(callableReferenceIds, ::serializeString, ::serializeIntSymbol)
 
             serializeConstantArrayDataSegmentId(constantArrayDataSegmentId)
             serializeSet(wasmReferencedFunctions, ::serializeIdSignature)

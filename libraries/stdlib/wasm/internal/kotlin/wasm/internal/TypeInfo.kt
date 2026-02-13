@@ -84,6 +84,11 @@ internal fun <T> wasmIsInterface(obj: Any): Boolean =
 internal fun <T> wasmTypeId(): Long =
     implementedAsIntrinsic
 
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+internal fun wasmCallableReferenceId(fqName: String): Int =
+    implementedAsIntrinsic
+
 @ExcludedFromCodegen
 internal fun <T> wasmGetTypeRtti(): kotlin.wasm.internal.reftypes.structref =
     implementedAsIntrinsic

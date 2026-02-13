@@ -56,6 +56,7 @@ class WasmCompiledFileFragment(
     val globalLiterals: MutableSet<LiteralGlobalSymbol> = mutableSetOf(),
     val globalLiteralsId: MutableMap<String, WasmSymbol<Int>> = mutableMapOf(),
     val stringLiteralId: MutableMap<String, WasmSymbol<Int>> = mutableMapOf(),
+    val callableReferenceIds: MutableMap<String, WasmSymbol<Int>> = mutableMapOf(),
 
     val constantArrayDataSegmentId: MutableMap<Pair<List<Long>, WasmType>, WasmSymbol<Int>> = mutableMapOf(),
     val jsFuns: MutableMap<IdSignature, JsCodeSnippet> = mutableMapOf(),
@@ -230,6 +231,7 @@ class WasmCompiledModuleFragment(
         val stringPoolSizeWithGlobals = bindGlobalLiterals(definedDeclarations, stringPoolSize)
 
         bindConstantArrayDataSegmentIds(data)
+        bindCallableReferenceIds()
 
         val exports = mutableListOf<WasmExport<*>>()
         wasmCompiledFileFragments.flatMapTo(exports) { it.exports }
@@ -1024,6 +1026,16 @@ class WasmCompiledModuleFragment(
                 }
                 val constData = ConstantDataIntegerArray(constantArraySegment.first, integerSize)
                 data.add(WasmData(WasmDataMode.Passive, constData.toBytes()))
+            }
+        }
+    }
+
+    private fun bindCallableReferenceIds() {
+        val visitedFqNames = mutableMapOf<String, Int>()
+        wasmCompiledFileFragments.forEach { fragment ->
+            for ((fqName, symbol) in fragment.callableReferenceIds.entries) {
+                val id = visitedFqNames.getOrPut(fqName) { visitedFqNames.size }
+                symbol.bind(id)
             }
         }
     }

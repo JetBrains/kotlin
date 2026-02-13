@@ -185,6 +185,7 @@ class BackendWasmSymbols(
     val runRootSuites = CallableIds.runRootSuites.functionSymbolOrNull()
 
     val wasmTypeId = CallableIds.wasmTypeId.functionSymbol()
+    val wasmCallableReferenceId = CallableIds.wasmCallableReferenceId.functionSymbol()
     val wasmGetTypeRtti = CallableIds.wasmGetTypeRtti.functionSymbol()
     val wasmGetRttiSupportedInterfaces = CallableIds.wasmGetRttiSupportedInterfaces.functionSymbol()
     val wasmGetRttiIntField = CallableIds.wasmGetRttiIntField.functionSymbol()
@@ -450,6 +451,7 @@ private object CallableIds {
     val unboxIntrinsic = "unboxIntrinsic".wasmCallableId
     val getWasmAbiVersion = "getWasmAbiVersion".wasmCallableId
     val wasmTypeId = "wasmTypeId".wasmCallableId
+    val wasmCallableReferenceId = "wasmCallableReferenceId".wasmCallableId
     val wasmGetTypeRtti = "wasmGetTypeRtti".wasmCallableId
     val wasmGetRttiSupportedInterfaces = "wasmGetRttiSupportedInterfaces".wasmCallableId
     val wasmGetRttiIntField = "wasmGetRttiIntField".wasmCallableId

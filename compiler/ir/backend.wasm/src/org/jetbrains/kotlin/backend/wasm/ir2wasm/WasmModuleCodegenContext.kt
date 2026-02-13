@@ -154,6 +154,9 @@ open class WasmFileCodegenContext(
     fun referenceStringLiteralId(string: String): WasmSymbol<Int> =
         wasmFileFragment.stringLiteralId.getOrPut(string) { WasmSymbol() }
 
+    fun referenceCallableReferenceId(fqName: String): WasmSymbol<Int> =
+        wasmFileFragment.callableReferenceIds.getOrPut(fqName) { WasmSymbol() }
+
     fun referenceHeapType(irClass: IrClassSymbol): GcHeapTypeSymbol =
         GcHeapTypeSymbol(irClass.getReferenceKey())
 
