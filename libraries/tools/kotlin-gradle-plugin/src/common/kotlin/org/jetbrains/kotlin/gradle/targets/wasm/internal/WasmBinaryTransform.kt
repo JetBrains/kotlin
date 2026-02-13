@@ -74,9 +74,6 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
         @get:Internal
         abstract val buildDir: Property<File>
 
-        @get:Internal
-        internal abstract val libraryFilterCacheService: Property<LibraryFilterCachingService>
-
         @get:Input
         internal abstract val enhancedFreeCompilerArgs: ListProperty<String>
 
@@ -226,13 +223,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
     }
 
     private fun isKotlinLibrary(file: File): Boolean {
-        return parameters.libraryFilterCacheService.get().getOrCompute(
-            LibraryFilterCachingService.LibraryFilterCacheKey(
-                file
-            )
-        ) {
-            KlibLoader { libraryPaths(it.absolutePath) }.load().librariesStdlibFirst.isNotEmpty()
-        }
+        return KlibLoader { libraryPaths(file.absolutePath) }.load().librariesStdlibFirst.isNotEmpty()
     }
 
     private companion object {
