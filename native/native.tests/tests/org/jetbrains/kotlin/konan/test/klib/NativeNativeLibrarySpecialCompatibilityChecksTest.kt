@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import org.jetbrains.kotlin.backend.konan.serialization.KonanLibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.cli.bc.K2Native
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -17,10 +18,14 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.test.klib.compatibility.CompilerInvocationContext
 import org.jetbrains.kotlin.test.klib.compatibility.LibrarySpecialCompatibilityChecksTest
 import org.jetbrains.kotlin.test.klib.compatibility.StdlibSpecialCompatibilityChecksTest
+import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.test.assertNotNull
 import kotlin.test.fail
 
 abstract class NativeLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
@@ -63,6 +68,19 @@ abstract class NativeLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompa
     }
 
     override val patchedLibraryPostfix: String = "native"
+
+    @Test
+    fun `getCompilerVersionFromKonanProperties returns non-null for real native stdlib from distribution`() {
+        val result = KlibLoader { libraryPaths(nativeStdlibPath) }.load()
+        result.reportLoadingProblemsIfAny { _, message -> fail(message) }
+        val stdlibLibrary = result.librariesStdlibFirst.single()
+
+        val version = KonanLibrarySpecialCompatibilityChecker.getCompilerVersionFromKonanProperties(stdlibLibrary)
+
+        assertNotNull(version) {
+            "getCompilerVersionFromKonanProperties() should return a non-null version for the real K/N stdlib at $nativeStdlibPath"
+        }
+    }
 }
 
 private fun runNativeCompiler(
