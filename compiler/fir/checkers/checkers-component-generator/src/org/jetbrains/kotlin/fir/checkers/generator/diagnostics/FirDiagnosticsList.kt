@@ -132,6 +132,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNRESOLVED_REFERENCE by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<String>("reference")
             parameter<String?>("operator")
+            parameter<String?>("receiverTypeMessage")
         }
         val UNRESOLVED_REFERENCE_WRONG_RECEIVER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<Symbol>>("candidates")
