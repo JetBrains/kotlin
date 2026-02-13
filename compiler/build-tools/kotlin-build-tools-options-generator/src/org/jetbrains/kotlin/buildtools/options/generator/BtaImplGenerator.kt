@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.PathType
+import org.jetbrains.kotlin.arguments.dsl.types.StringListType
 import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
 import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -397,6 +398,12 @@ internal class BtaImplGenerator(
                     )
                 )
             }
+            argument.valueType.origin is StringListType -> {
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M()",
+                    MemberName(KOTLIN_COLLECTIONS, "toTypedArray")
+                )
+            }
             else -> add("")
         }
     }.build()
@@ -464,6 +471,12 @@ internal class BtaImplGenerator(
                         simpleName = "to${argument.name.replaceFirstChar { it.uppercase() }}",
                         isExtension = true
                     )
+                )
+            }
+            argument.valueType.origin is StringListType -> {
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M()",
+                    MemberName(KOTLIN_COLLECTIONS, "toList")
                 )
             }
             else -> add("")
