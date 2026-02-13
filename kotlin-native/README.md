@@ -8,7 +8,7 @@ virtual machines are not desirable or possible (such as iOS),
 or where a developer is willing to produce a reasonably sized self-contained program
 without the need to ship an additional execution runtime.
 
-## Using published Kotlin/Native versions 
+## Using published Kotlin/Native versions
 
 The most complete experience with Kotlin/Native can be achieved by using
 [Gradle](https://kotlinlang.org/docs/native-gradle.html),
