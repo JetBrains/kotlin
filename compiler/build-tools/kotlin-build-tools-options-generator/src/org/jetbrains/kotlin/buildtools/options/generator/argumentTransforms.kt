@@ -69,8 +69,11 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("expression")
             drop("include-runtime") // we're only considering building into directories for now (not jars)
             drop("Xbuild-file")
+
+            // until 2.5.0
             compat("Xprofile")
             compat("jdk-home")
+            compat("Xadd-modules")
         }
         with(removedJvmCompilerArguments) {
             drop("Xuse-javac")

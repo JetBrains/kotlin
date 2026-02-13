@@ -152,6 +152,14 @@ internal class KotlinBelow240Wrapper(
                     Path(stringValue) as V
                 }
 
+                JvmCompilerArguments.X_ADD_MODULES -> {
+                    @Suppress("SENSELESS_COMPARISON")
+                    if (delegate[key] == null) return emptyList<String>() as V
+
+                    val arrayValue = delegate[key] as Array<String>
+                    arrayValue.toList() as V
+                }
+
                 else -> delegate[key]
             }
         }
@@ -175,6 +183,14 @@ internal class KotlinBelow240Wrapper(
                     val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
 
                     delegate[stringKey] = stringValue
+                }
+
+                JvmCompilerArguments.X_ADD_MODULES -> {
+                    val listValue = value as List<String>?
+                    val arrayValue = listValue?.toTypedArray()
+                    val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
+
+                    delegate[arrayKey] = arrayValue
                 }
 
                 else -> delegate[key] = value
