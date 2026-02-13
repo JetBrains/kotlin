@@ -67,7 +67,21 @@ tasks.register<TestDataManagerModuleTask>(manageTestDataTaskName) {
     workingDir = testTask.workingDir
     jvmArgs = testTask.jvmArgs
     jvmArgumentProviders += testTask.jvmArgumentProviders
-    systemProperties = testTask.systemProperties
+
+    /**
+     * This disables `KotlinSecurityManager` in the Test Data Manager.
+     * Currently, the policy file is only generated in 'test' tasks (see `test-inputs-check.gradle.kts`), so the policy will be non-existent
+     * until the corresponding test task runs. However, the following properties are still carried on from the 'test' task – unless they're
+     * filtered, the Test Data Manager process will crash:
+     *
+     * ```
+     * -Djava.security.manager=org.jetbrains.kotlin.security.KotlinSecurityManager
+     * -Djava.security.policy=some/subproject/path/build/permissions-for-test.policy
+     * ```
+     *
+     * Also see KT-84278.
+     * */
+    systemProperties = testTask.systemProperties.filterKeys { !it.startsWith("java.security.") }
 
     // Forward idea.active to enable IDE integration in TestDataManagerRunner
     if (project.providers.systemProperty("idea.active").isPresent) {
