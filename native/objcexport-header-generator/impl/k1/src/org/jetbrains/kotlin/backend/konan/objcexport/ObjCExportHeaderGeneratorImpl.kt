@@ -16,7 +16,16 @@ internal class ObjCExportHeaderGeneratorImpl(
     objcExportBlockExplicitParameterNames: Boolean,
     override val shouldExportKDoc: Boolean,
     private val additionalImports: List<String>,
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, objcExportBlockExplicitParameterNames, problemCollector) {
+    threadsCount: Int,
+) : ObjCExportHeaderGenerator(
+    moduleDescriptors,
+    mapper,
+    namer,
+    objcGenerics,
+    objcExportBlockExplicitParameterNames,
+    problemCollector,
+    threadsCount
+) {
     override fun getAdditionalImports(): List<String> =
         additionalImports
 }
