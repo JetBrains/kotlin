@@ -190,19 +190,18 @@ abstract class InventNamesForLocalClasses(private val shouldIncludeVariableName:
         }
 
         override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: NameBuilder) {
-            val internalName = localFunctionNames[expression.reflectionTargetSymbol ?: expression.invokeFunction.symbol]
-                ?: data.appendName(null).buildAndSanitize()
-            putLocalClassName(expression, internalName)
+            val newData = data.appendName(null)
+            putLocalClassName(expression, newData.buildAndSanitize())
 
-            expression.acceptChildren(this, data)
+            expression.boundValues.forEach { it.accept(this, newData) }
+            expression.invokeFunction.acceptChildren(this, newData)
         }
 
         override fun visitRichPropertyReference(expression: IrRichPropertyReference, data: NameBuilder) {
-            val internalName = localFunctionNames[expression.reflectionTargetSymbol ?: expression.getterFunction.symbol]
-                ?: data.appendName(null).buildAndSanitize()
-            putLocalClassName(expression, internalName)
+            val newData = data.appendName(null)
+            putLocalClassName(expression, newData.buildAndSanitize())
 
-            expression.acceptChildren(this, data)
+            expression.acceptChildren(this, newData)
         }
 
         override fun visitFunctionExpression(expression: IrFunctionExpression, data: NameBuilder) {
