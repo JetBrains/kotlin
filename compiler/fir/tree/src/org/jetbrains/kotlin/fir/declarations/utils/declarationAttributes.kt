@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
@@ -140,12 +139,6 @@ fun FirProperty.getExplicitBackingField(): FirBackingField? {
         null
     }
 }
-
-val FirProperty.canNarrowDownGetterType: Boolean
-    get() = backingField != null && getter is FirDefaultPropertyGetter
-
-val FirPropertySymbol.canNarrowDownGetterType: Boolean
-    get() = fir.canNarrowDownGetterType
 
 val FirProperty.isDelegatedProperty: Boolean
     @OptIn(FirImplementationDetail::class)
