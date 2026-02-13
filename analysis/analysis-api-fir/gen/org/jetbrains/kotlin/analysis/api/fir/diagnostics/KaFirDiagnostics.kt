@@ -4643,6 +4643,20 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = VersionOverloadsTooComplexExpression::class
     }
 
+    interface PossibleDeadlock : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PossibleDeadlock::class
+        val dependency: KaSymbol
+    }
+
+    interface UninitializedAccess : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UninitializedAccess::class
+        val accessedProperty: KaVariableSymbol
+    }
+
+    interface UninitializedProperty : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UninitializedProperty::class
+    }
+
     interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverrideCannotBeStatic::class
     }

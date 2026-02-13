@@ -44805,6 +44805,58 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/staticInitialization")
+    @TestDataPath("$PROJECT_ROOT")
+    public class StaticInitialization {
+      @Test
+      public void testAllFilesPresentInStaticInitialization() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/staticInitialization"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("cyclicAccess.kt")
+      public void testCyclicAccess() {
+        runTest("compiler/testData/diagnostics/tests/staticInitialization/cyclicAccess.kt");
+      }
+
+      @Test
+      @TestMetadata("getterCycle.kt")
+      public void testGetterCycle() {
+        runTest("compiler/testData/diagnostics/tests/staticInitialization/getterCycle.kt");
+      }
+
+      @Test
+      @TestMetadata("noDependency.kt")
+      public void testNoDependency() {
+        runTest("compiler/testData/diagnostics/tests/staticInitialization/noDependency.kt");
+      }
+
+      @Test
+      @TestMetadata("possibleUninitializedAccess.kt")
+      public void testPossibleUninitializedAccess() {
+        runTest("compiler/testData/diagnostics/tests/staticInitialization/possibleUninitializedAccess.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelCyclicDependency.kt")
+      public void testTopLevelCyclicDependency() {
+        runTest("compiler/testData/diagnostics/tests/staticInitialization/topLevelCyclicDependency.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelInitializedDependency.kt")
+      public void testTopLevelInitializedDependency() {
+        runTest("compiler/testData/diagnostics/tests/staticInitialization/topLevelInitializedDependency.kt");
+      }
+
+      @Test
+      @TestMetadata("topLevelUninitializedDependency.kt")
+      public void testTopLevelUninitializedDependency() {
+        runTest("compiler/testData/diagnostics/tests/staticInitialization/topLevelUninitializedDependency.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/substitutions")
     @TestDataPath("$PROJECT_ROOT")
     public class Substitutions {
@@ -55289,6 +55341,28 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("withChangesToNull.kt")
       public void testWithChangesToNull() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/smartcasts/withChangesToNull.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/staticInitialization")
+    @TestDataPath("$PROJECT_ROOT")
+    public class StaticInitialization {
+      @Test
+      public void testAllFilesPresentInStaticInitialization() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/staticInitialization"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+      }
+
+      @Test
+      @TestMetadata("initializerBlockUninitializedAccess.kt")
+      public void testInitializerBlockUninitializedAccess() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/staticInitialization/initializerBlockUninitializedAccess.kt");
+      }
+
+      @Test
+      @TestMetadata("initializerBlockUninitializedQualifier.kt")
+      public void testInitializerBlockUninitializedQualifier() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/staticInitialization/initializerBlockUninitializedQualifier.kt");
       }
     }
 

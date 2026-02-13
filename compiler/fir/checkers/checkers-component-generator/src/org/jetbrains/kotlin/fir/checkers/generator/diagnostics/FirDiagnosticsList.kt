@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.descriptors.RelationToType
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeprecationInfo
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -2350,6 +2352,16 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("sourceOfHighestVersion")
         }
         val VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION by error<PsiElement>()
+    }
+
+    val STATIC_INITIALIZATION by object : DiagnosticGroup("Static Initialization") {
+        val POSSIBLE_DEADLOCK by warning<PsiElement> {
+            parameter<FirBasedSymbol<*>>("dependency")
+        }
+        val UNINITIALIZED_ACCESS by warning<PsiElement> {
+            parameter<FirPropertySymbol>("accessedProperty")
+        }
+        val UNINITIALIZED_PROPERTY by warning<PsiElement>()
     }
 }
 

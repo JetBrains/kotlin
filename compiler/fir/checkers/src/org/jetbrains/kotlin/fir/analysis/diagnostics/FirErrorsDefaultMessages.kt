@@ -666,6 +666,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLACEHOLDER_PROJECTION_IN_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POSSIBLE_DEADLOCK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NULLABLE_RETURN_TYPE_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRE_RELEASE_CLASS
@@ -815,9 +816,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNDERSCORE_IS_RES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNEXPECTED_SAFE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_ACCESS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_ENUM_COMPANION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNAMED_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNAMED_VAR_PROPERTY
@@ -3837,6 +3840,20 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION,
             "Not supported in combination with '@IntroducedAt'."
+        )
+        map.put(
+            POSSIBLE_DEADLOCK,
+            "Possible deadlock: the initialization of this declaration depends on ''{0}'' which may incur a deadlock when these entities are initialized on different threads at the same time.",
+            SYMBOL,
+        )
+        map.put(
+            UNINITIALIZED_ACCESS,
+            "Uninitialized access: depending on the order of initialization of the enclosing entity, the access to ''{0}'' may happen before its initialization.",
+            SYMBOL,
+        )
+        map.put(
+            UNINITIALIZED_PROPERTY,
+            "Uninitialized property: depending on the order of initialization of the enclosing entity, the property may be accessed uninitialized.",
         )
     }
 }

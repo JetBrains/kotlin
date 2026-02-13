@@ -1,0 +1,7 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+<!UNINITIALIZED_PROPERTY!>val a = <!UNINITIALIZED_ACCESS("val b: Any")!>A.b<!><!>
+
+object A {
+    <!UNINITIALIZED_PROPERTY!>val b: Any = <!UNINITIALIZED_ACCESS("val a: Any")!>a<!><!>
+}
