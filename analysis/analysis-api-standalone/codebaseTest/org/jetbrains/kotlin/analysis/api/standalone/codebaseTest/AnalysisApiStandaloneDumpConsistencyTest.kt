@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder
+package org.jetbrains.kotlin.analysis.api.standalone.codebaseTest
 
 import org.jetbrains.kotlin.AbstractSurfaceDumpConsistencyTest
 import org.junit.jupiter.api.Test

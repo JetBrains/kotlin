@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.testImplementation
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
@@ -61,6 +62,11 @@ sourceSets {
         generatedTestDir()
     }
     "testFixtures" { projectDefault() }
+    "codebaseTest" {
+        java.srcDirs("codebaseTest")
+        compileClasspath += configurations["testCompileClasspath"]
+        runtimeClasspath += configurations["testRuntimeClasspath"]
+    }
 }
 
 projectTests {
@@ -73,6 +79,13 @@ projectTests {
             // Ensure golden tests run first
             mustRunAfter(":analysis:analysis-api-fir:test")
         }
+    }
+
+    testTask(taskName = "testCodebase", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+        group = "verification"
+
+        classpath += sourceSets.getByName("codebaseTest").runtimeClasspath
+        testClassesDirs = sourceSets.getByName("codebaseTest").output.classesDirs
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.api.standalone.fir.test.TestGeneratorKt")
@@ -95,6 +108,10 @@ projectTests {
     testData(project.isolated, "testData")
     testData(project(":analysis:analysis-api").isolated, "testData")
     testData(project(":analysis:low-level-api-fir").isolated, "testData/resolveToFirSymbolPsiClass")
+}
+
+tasks.named("check") {
+    dependsOn("testCodebase")
 }
 
 testsJar()

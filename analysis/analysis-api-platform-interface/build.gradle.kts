@@ -50,13 +50,27 @@ kotlin {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" { none() }
+    "codebaseTest" {
+        java.srcDirs("codebaseTest")
+        compileClasspath += configurations["testCompileClasspath"]
+        runtimeClasspath += configurations["testRuntimeClasspath"]
+    }
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask(taskName = "testCodebase", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+        group = "verification"
+
+        classpath += sourceSets.getByName("codebaseTest").runtimeClasspath
+        testClassesDirs = sourceSets.getByName("codebaseTest").output.classesDirs
+    }
 
     testData(project.isolated, "src")
     testData(project.isolated, "api")
     testData(project.isolated, "api-unstable")
+}
+
+tasks.named("check") {
+    dependsOn("testCodebase")
 }
