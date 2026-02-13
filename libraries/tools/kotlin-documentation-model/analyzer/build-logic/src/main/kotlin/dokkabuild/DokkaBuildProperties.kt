@@ -8,7 +8,6 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import java.io.File
 import javax.inject.Inject
 
@@ -86,6 +85,11 @@ abstract class DokkaBuildProperties @Inject constructor(
     /** Allows running integration tests with a custom Dokka version */
     val integrationTestDokkaVersionOverride: Provider<String> =
         dokkaProperty("integration_test.dokkaVersionOverride") { it }
+
+    /** Control whether integration tests should use the `org.jetbrains.dokka.analysis.enableExperimentalKDocResolution` flag. */
+    val integrationTestEnableExperimentalKDocResolution: Provider<Boolean> =
+        dokkaProperty("integration_test.enableExperimentalKDocResolution", String::toBoolean)
+            .orElse(false)
 
     val androidSdkDir: Provider<File> =
         providers

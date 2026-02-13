@@ -21,13 +21,6 @@ internal fun withSinceKotlin(block: () -> Unit): Unit =
 internal fun withAllowKotlinPackage(block: () -> Unit): Unit =
     DokkaBaseInternalConfiguration.withProperty("org.jetbrains.dokka.analysis.allowKotlinPackage", "true", block)
 
-/**
- * This property works only for K2
- * Enable experimental KDoc resolution
- */
-internal fun withExperimentalKDocResolution(block: () -> Unit): Unit =
-    DokkaBaseInternalConfiguration.withProperty("org.jetbrains.dokka.analysis.enableExperimentalKDocResolution", "true", block)
-
 internal fun DokkaBaseInternalConfiguration.withProperty(propertyName: String, value: String, block: () -> Unit) {
     setProperty(propertyName, value)
     try {
