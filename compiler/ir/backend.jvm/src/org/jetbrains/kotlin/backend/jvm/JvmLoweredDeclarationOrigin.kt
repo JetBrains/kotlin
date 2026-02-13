@@ -49,8 +49,7 @@ object JvmLoweredDeclarationOrigin {
     val SUSPEND_LAMBDA by IrDeclarationOriginImpl.Regular
     val FOR_INLINE_STATE_MACHINE_TEMPLATE by IrDeclarationOriginImpl.Regular
     val FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE by IrDeclarationOriginImpl.Regular
-    val INVOKE_OF_SUSPEND_LAMBDA_AS_INLINABLE_DEFAULT_VALUE by IrDeclarationOriginImpl.Regular
-    val INVOKE_OF_CALLABLE_REFERENCE_AS_INLINABLE_DEFAULT_VALUE by IrDeclarationOriginImpl.Regular
+    val INVOKE_OF_INLINE_SUSPEND_PARAM_DEFAULT_VALUE by IrDeclarationOriginImpl.Regular
     val CONTINUATION_CLASS_RESULT_FIELD by IrDeclarationOriginImpl.Synthetic
     val SUSPEND_LAMBDA_PARAMETER by IrDeclarationOriginImpl.Regular
     val COMPANION_PROPERTY_BACKING_FIELD by IrDeclarationOriginImpl.Regular

@@ -478,11 +478,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 isOperator = superFunction.isOperator
                 isSuspend = superFunction.isSuspend
             }.apply {
-                when (irFunctionReference.origin) {
-                    JvmLoweredStatementOrigin.CALLABLE_REFERENCE_AS_INLINABLE_DEFAULT_VALUE ->
-                        origin = JvmLoweredDeclarationOrigin.INVOKE_OF_CALLABLE_REFERENCE_AS_INLINABLE_DEFAULT_VALUE
-                    JvmLoweredStatementOrigin.SUSPEND_LAMBDA_AS_INLINABLE_DEFAULT_VALUE ->
-                        origin = JvmLoweredDeclarationOrigin.INVOKE_OF_SUSPEND_LAMBDA_AS_INLINABLE_DEFAULT_VALUE
+                if (irFunctionReference.origin == JvmLoweredStatementOrigin.INLINE_SUSPEND_PARAM_DEFAULT_VALUE) {
+                    origin = JvmLoweredDeclarationOrigin.INVOKE_OF_INLINE_SUSPEND_PARAM_DEFAULT_VALUE
                 }
                 annotations = invokeFunction.annotations
                 metadata = functionReferenceClass.metadata

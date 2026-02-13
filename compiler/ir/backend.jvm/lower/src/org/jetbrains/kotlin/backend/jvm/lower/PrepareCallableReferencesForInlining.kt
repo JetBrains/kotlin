@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.invokeFunction
 import org.jetbrains.kotlin.ir.util.isInlineParameter
+import org.jetbrains.kotlin.ir.util.isInlineSuspendParameter
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrSelf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -64,16 +64,10 @@ class PrepareCallableReferencesForInlining(val context: JvmBackendContext) : Fil
     }
 
     override fun visitValueParameterNew(declaration: IrValueParameter): IrStatement {
-        if (declaration.isInlineParameter()) {
+        if (declaration.isInlineSuspendParameter()) {
             val defaultValue = declaration.defaultValue?.expression
-            if (defaultValue is IrRichCallableReference<*>) {
-                if (defaultValue.origin != IrStatementOrigin.LAMBDA) {
-                    defaultValue.origin = JvmLoweredStatementOrigin.CALLABLE_REFERENCE_AS_INLINABLE_DEFAULT_VALUE
-                } else {
-                    if (defaultValue.invokeFunction.isSuspend) {
-                        defaultValue.origin = JvmLoweredStatementOrigin.SUSPEND_LAMBDA_AS_INLINABLE_DEFAULT_VALUE
-                    }
-                }
+            if (defaultValue is IrRichFunctionReference) {
+                defaultValue.origin = JvmLoweredStatementOrigin.INLINE_SUSPEND_PARAM_DEFAULT_VALUE
             }
         }
         return super.visitValueParameterNew(declaration)

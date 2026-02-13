@@ -47,10 +47,6 @@ fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {
     return this.inlinedFunctionSymbol != null
 }
 
-fun IrInlinedFunctionBlock.isLambdaInlining(): Boolean {
-    return !isFunctionInlining()
-}
-
 val IrContainerExpression.innerInlinedBlockOrThis: IrContainerExpression
     get() = (this as? IrReturnableBlock)?.statements?.singleOrNull() as? IrInlinedFunctionBlock ?: this
 
@@ -62,13 +58,16 @@ fun IrValueParameter.isInlineParameter() =
             && type.isInlinableParameterType()
             && parent.isInlineFunction()
 
+fun IrValueParameter.isInlineSuspendParameter() =
+    kind == IrParameterKind.Regular
+            && !isNoinline
+            && !type.isNullable() && type.isSuspendFunction()
+            && parent.isInlineFunction()
+
 private fun IrDeclarationParent.isInlineFunction(): Boolean {
     if (this !is IrFunction) return false
     return this.isInline || this.isInlineArrayConstructor()
 }
-
-fun IrExpression.isAdaptedFunctionReference() =
-    this is IrBlock && this.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
 
 fun IrExpression.isLambdaBlock() =
     this is IrBlock && this.origin == IrStatementOrigin.LAMBDA

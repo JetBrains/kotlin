@@ -17,6 +17,5 @@ object JvmLoweredStatementOrigin {
 
     val WHEN_AS_TYPE_SWITCH by IrStatementOriginImpl
 
-    val SUSPEND_LAMBDA_AS_INLINABLE_DEFAULT_VALUE by IrStatementOriginImpl
-    val CALLABLE_REFERENCE_AS_INLINABLE_DEFAULT_VALUE by IrStatementOriginImpl
+    val INLINE_SUSPEND_PARAM_DEFAULT_VALUE by IrStatementOriginImpl
 }
