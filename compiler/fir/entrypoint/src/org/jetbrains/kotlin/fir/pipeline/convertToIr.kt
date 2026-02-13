@@ -528,10 +528,7 @@ private class Fir2IrPipeline(
                 }
                 .applyIf(
                     // On JVM we may sometimes generate non-private fields (KT-71243), and we allow plugins to do so too.
-                    validateForKlibSerialization &&
-                            // FIXME(KT-71243): Currently the ExplicitBackingFields feature de-facto allows specifying
-                            //  non-private visibilities for fields.
-                            !fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)
+                    validateForKlibSerialization
                 ) {
                     withCheckers(IrFieldVisibilityChecker)
                 }
