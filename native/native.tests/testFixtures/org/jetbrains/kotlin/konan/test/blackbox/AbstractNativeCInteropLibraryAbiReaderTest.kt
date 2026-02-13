@@ -55,7 +55,7 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
                     "-XXLanguage:+ExportKlibToOlderAbiVersion",
                     "-language-version",
                     abiLevel.toString(),
-                    "-Xskip-compatibility-checks"
+                    "-Xskip-library-special-compatibility-checks"
                 )
             )
         } ?: TestCompilerArgs.EMPTY
