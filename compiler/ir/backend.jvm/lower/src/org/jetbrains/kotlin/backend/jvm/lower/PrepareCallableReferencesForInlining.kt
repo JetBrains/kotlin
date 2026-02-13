@@ -104,10 +104,9 @@ fun IrRichPropertyReference.convertToRichFunctionReference(context: LoweringCont
         reflectionTargetSymbol = null,
         overriddenFunctionSymbol = overriddenClass.functions.single { it.name == OperatorNameConventions.INVOKE }.symbol,
         invokeFunction = getterFunction,
-        captures = emptyList(),
+        captures = boundValues,
         origin = IrStatementOrigin.LAMBDA,
     ).also {
-        it.boundValues += boundValues
         it.attributeOwnerId = attributeOwnerId
     }
 }
