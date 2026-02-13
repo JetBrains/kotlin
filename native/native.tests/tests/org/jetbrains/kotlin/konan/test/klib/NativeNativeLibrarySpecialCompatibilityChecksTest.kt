@@ -74,13 +74,14 @@ abstract class NativeLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompa
                 createFakeUnzippedLibraryWithSpecificVersion(libraryVersion)
 
             val expectedExitCode = if (expectedWarningStatus == WarningStatus.NO_WARNINGS) ExitCode.OK else ExitCode.COMPILATION_ERROR
-            runNativeCompiler(nativeHome.absolutePath, messageCollector, expectedExitCode) {
+            runNativeCompiler(messageCollector, expectedExitCode) {
                 this.freeArgs = listOf(sourceFile.absolutePath)
                 this.libraries = (additionalLibraries() + fakeLibrary.absolutePath).toTypedArray()
                 this.outputName = outputDir.resolve(moduleName).absolutePath
                 this.moduleName = moduleName
                 this.produce = "library"
                 this.nostdlib = true
+                this.kotlinHome = nativeHome.absolutePath
                 if (exportKlibToOlderAbiVersion) {
                     this.languageVersion = "${LanguageVersion.LATEST_STABLE.major}.${LanguageVersion.LATEST_STABLE.minor - 1}"
                     this.internalArguments = listOf(
@@ -103,34 +104,23 @@ abstract class NativeLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompa
 }
 
 private fun runNativeCompiler(
-    nativeHome: String,
     messageCollector: MessageCollectorImpl = MessageCollectorImpl(),
     expectedExitCode: ExitCode = ExitCode.OK,
     argsBuilder: K2NativeCompilerArguments.() -> Unit,
 ) {
     val args = K2NativeCompilerArguments().apply(argsBuilder)
 
-    val oldKonanHome = System.getProperty("konan.home")
-    try {
-        System.setProperty("konan.home", nativeHome)
-        val exitCode = K2Native().exec(messageCollector, Services.EMPTY, args)
-        if (exitCode != expectedExitCode) fail(
-            buildString {
-                appendLine("Unexpected compiler exit code:")
-                appendLine("  Expected: $expectedExitCode")
-                appendLine("  Actual:   $exitCode")
-                appendLine("Command-line arguments: " + args.toArgumentStrings().joinToString(" "))
-                appendLine("Compiler output:")
-                appendLine(messageCollector.toString())
-            }
-        )
-    } finally {
-        if (oldKonanHome != null) {
-            System.setProperty("konan.home", oldKonanHome)
-        } else {
-            System.clearProperty("konan.home")
+    val exitCode = K2Native().exec(messageCollector, Services.EMPTY, args)
+    if (exitCode != expectedExitCode) fail(
+        buildString {
+            appendLine("Unexpected compiler exit code:")
+            appendLine("  Expected: $expectedExitCode")
+            appendLine("  Actual:   $exitCode")
+            appendLine("Command-line arguments: " + args.toArgumentStrings().joinToString(" "))
+            appendLine("Compiler output:")
+            appendLine(messageCollector.toString())
         }
-    }
+    )
 }
 
 @Suppress("JUnitTestCaseWithNoTests")
