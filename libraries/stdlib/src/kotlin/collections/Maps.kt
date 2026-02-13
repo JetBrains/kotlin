@@ -384,7 +384,7 @@ public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
  *
  * @sample samples.collections.Maps.Usage.getOrElseIfNull
  */
-@SinceKotlin("2.3")
+@SinceKotlin("2.4")
 @kotlin.internal.InlineOnly
 @ExperimentalStdlibApi
 public inline fun <K, V> Map<K, V>.getOrElseIfNull(key: K, defaultValue: () -> V): V {
@@ -405,7 +405,7 @@ public inline fun <K, V> Map<K, V>.getOrElseIfNull(key: K, defaultValue: () -> V
  *
  * @sample samples.collections.Maps.Usage.getOrElseIfMissing
  */
-@SinceKotlin("2.3")
+@SinceKotlin("2.4")
 @kotlin.internal.InlineOnly
 @ExperimentalStdlibApi
 public inline fun <K, V> Map<K, V>.getOrElseIfMissing(key: K, defaultValue: () -> V): V {
@@ -486,7 +486,7 @@ public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V
  *
  * @sample samples.collections.Maps.Usage.getOrPutIfNull
  */
-@SinceKotlin("2.3")
+@SinceKotlin("2.4")
 @kotlin.internal.InlineOnly
 @ExperimentalStdlibApi
 @Suppress("LEAKED_IN_PLACE_LAMBDA")
@@ -516,7 +516,7 @@ public inline fun <K, V> MutableMap<K, V>.getOrPutIfNull(key: K, crossinline def
  *
  * @sample samples.collections.Maps.Usage.getOrPutIfMissing
  */
-@SinceKotlin("2.3")
+@SinceKotlin("2.4")
 @kotlin.internal.InlineOnly
 @ExperimentalStdlibApi
 public inline fun <K, V> MutableMap<K, V>.getOrPutIfMissing(key: K, crossinline defaultValue: () -> V): V {
