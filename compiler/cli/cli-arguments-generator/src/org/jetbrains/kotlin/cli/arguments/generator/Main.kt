@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
-import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
-import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
-import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
-import org.jetbrains.kotlin.arguments.dsl.types.StringType
+import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -384,13 +381,19 @@ private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
             true -> "Boolean?"
             false -> "Boolean"
         }
+        is StringListType -> "Array<String>?"
         is StringArrayType -> "Array<String>?"
         else -> when (type.isNullable.current) {
             true -> "String?"
             false -> "String"
         }
     }
-    println("var $name: $type = ${argument.defaultValueInArgs}")
+    val defaultValue = when (argument.argumentType) {
+        is StringListType -> argument.defaultValueInArgs("arrayOf(", ")")
+        else -> argument.defaultValueInArgs()
+    }
+
+    println("var $name: $type = $defaultValue")
     generateSetter(type, argument)
 }
 
@@ -405,7 +408,7 @@ private fun SmartPrinter.generateSetter(type: String, argument: KotlinCompilerAr
         withIndent {
             println("checkFrozen()")
             if (type == "String?") {
-                println("field = if (value.isNullOrEmpty()) ${argument?.defaultValueInArgs} else value")
+                println("field = if (value.isNullOrEmpty()) ${argument?.defaultValueInArgs()} else value")
             } else {
                 println("field = value")
             }
@@ -468,11 +471,12 @@ private fun SmartPrinter.generateFreeArgsAndErrors() {
     println()
 }
 
-private val KotlinCompilerArgument.defaultValueInArgs: String
-    get() {
-        @Suppress("UNCHECKED_CAST")
-        val valueType = argumentType as KotlinArgumentValueType<Any>
-        return valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
-    }
+private fun KotlinCompilerArgument.defaultValueInArgs(prefix: CharSequence = "", postfix: CharSequence = ""): String {
+    @Suppress("UNCHECKED_CAST")
+    val valueType = argumentType as KotlinArgumentValueType<Any>
+    val defaultValue = valueType.stringRepresentation(valueType.defaultValue.current) ?: return "null"
+
+    return "$prefix$defaultValue$postfix"
+}
 
 private const val tripleQuote = "\"\"\""
