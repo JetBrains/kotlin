@@ -113,10 +113,10 @@ The only observable effect is that a custom ABI version is written to KLIB manif
         }
 
     @Argument(
-        value = "-Xskip-compatibility-checks",
-        description = "Skip library compatibility checks",
+        value = "-Xskip-library-special-compatibility-checks",
+        description = "Skip library compatibility checks for stdlib and test library.",
     )
-    var skipCompatibilityChecks: Boolean = false
+    var skipLibrarySpecialCompatibilityChecks: Boolean = false
         set(value) {
             checkFrozen()
             field = value

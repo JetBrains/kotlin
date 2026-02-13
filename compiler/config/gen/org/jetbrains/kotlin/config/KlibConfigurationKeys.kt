@@ -42,9 +42,9 @@ object KlibConfigurationKeys {
     @JvmField
     val ZIP_FILE_SYSTEM_ACCESSOR = CompilerConfigurationKey.create<ZipFileSystemAccessor>("ZIP_FILE_SYSTEM_ACCESSOR")
 
-    // Skip library compatibility checks.
+    // Skip library compatibility checks for stdlib and test library.
     @JvmField
-    val SKIP_COMPATIBILITY_CHECKS = CompilerConfigurationKey.create<Boolean>("SKIP_COMPATIBILITY_CHECKS")
+    val SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS = CompilerConfigurationKey.create<Boolean>("SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS")
 
 }
 
@@ -76,7 +76,7 @@ var CompilerConfiguration.zipFileSystemAccessor: ZipFileSystemAccessor?
     get() = get(KlibConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
     set(value) { put(KlibConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, requireNotNull(value) { "nullable values are not allowed" }) }
 
-var CompilerConfiguration.skipCompatibilityChecks: Boolean
-    get() = getBoolean(KlibConfigurationKeys.SKIP_COMPATIBILITY_CHECKS)
-    set(value) { put(KlibConfigurationKeys.SKIP_COMPATIBILITY_CHECKS, value) }
+var CompilerConfiguration.skipLibrarySpecialCompatibilityChecks: Boolean
+    get() = getBoolean(KlibConfigurationKeys.SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS)
+    set(value) { put(KlibConfigurationKeys.SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS, value) }
 

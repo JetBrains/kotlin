@@ -27,5 +27,5 @@ object KlibConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.conf
 
     val ZIP_FILE_SYSTEM_ACCESSOR by key<ZipFileSystemAccessor>("Zip file system accessor, used for klib reading.")
 
-    val SKIP_COMPATIBILITY_CHECKS by key<Boolean>("Skip library compatibility checks.")
+    val SKIP_LIBRARY_SPECIAL_COMPATIBILITY_CHECKS by key<Boolean>("Skip library compatibility checks for stdlib and test library.")
 }

@@ -9740,11 +9740,11 @@
                                 }
                             },
                             {
-                                "name": "Xskip-compatibility-checks",
+                                "name": "Xskip-library-special-compatibility-checks",
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Skip library compatibility checks",
+                                    "current": "Skip library compatibility checks for stdlib and test library.",
                                     "valueInVersions": []
                                 },
                                 "delimiter": null,

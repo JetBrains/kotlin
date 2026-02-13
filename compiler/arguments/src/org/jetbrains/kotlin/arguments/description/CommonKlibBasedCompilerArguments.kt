@@ -128,9 +128,9 @@ The only observable effect is that a custom ABI version is written to KLIB manif
     }
 
     compilerArgument {
-        name = "Xskip-compatibility-checks"
-        compilerName = "skipCompatibilityChecks"
-        description = "Skip library compatibility checks".asReleaseDependent()
+        name = "Xskip-library-special-compatibility-checks"
+        compilerName = "skipLibrarySpecialCompatibilityChecks"
+        description = "Skip library compatibility checks for stdlib and test library.".asReleaseDependent()
         argumentType = BooleanType.defaultFalse
 
         lifecycle(
