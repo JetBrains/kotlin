@@ -121,7 +121,11 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = if (kotlinBuildProperties.isTeamcityBuild) {
+    /**
+     * "versions.kotlin-native" is the version of K/N dist that will be baked into KGP and that KGP will try to resolve to run K/N
+     * compilations (including in KGP tests).
+     */
+    extra["versions.kotlin-native"] = if (kotlinBuildProperties.alignKotlinNativeVersionInTCBuilds) {
         kotlinVersion
     } else if (kotlinBuildProperties.isKotlinNativeEnabled) {
         kotlinBuildProperties.defaultSnapshotVersion
