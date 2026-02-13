@@ -70,6 +70,9 @@ Run across all modules with the plugin:
 
 # Run only golden tests (skip variant-specific tests)
 ./gradlew manageTestDataGlobally --mode=update --golden-only
+
+# Incremental update — only run variant tests for changed golden paths
+./gradlew manageTestDataGlobally --mode=update --incremental
 ```
 
 ### Module Filtering
@@ -93,12 +96,13 @@ View all options:
 ./gradlew help --task :analysis:analysis-api-fir:manageTestData
 ```
 
-| Option                 | Description                                 |
-|------------------------|---------------------------------------------|
-| `--mode`               | `check` (default) or `update`               |
-| `--test-data-path`     | Filter tests by test data file path         |
-| `--test-class-pattern` | Filter tests by class name regex            |
-| `--golden-only`        | Run only golden tests (empty variant chain) |
+| Option                 | Description                                                                    |
+|------------------------|--------------------------------------------------------------------------------|
+| `--mode`               | `check` (default) or `update`                                                  |
+| `--test-data-path`     | Filter tests by test data file path                                            |
+| `--test-class-pattern` | Filter tests by class name regex                                               |
+| `--golden-only`        | Run only golden tests (empty variant chain)                                    |
+| `--incremental`        | Only run variant tests for paths changed in first group (with `--mode=update`) |
 
 ## Execution Order
 

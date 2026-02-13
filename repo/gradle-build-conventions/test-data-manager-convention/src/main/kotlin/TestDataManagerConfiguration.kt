@@ -36,6 +36,9 @@ interface TestDataManagerConfiguration {
     /** @see TestDataManagerTask.goldenOnly */
     val goldenOnly: Property<Boolean>
 
+    /** @see TestDataManagerTask.incremental */
+    val incremental: Property<Boolean>
+
     companion object {
         const val NAME = "${testDataManagerPrefix}Configuration"
     }

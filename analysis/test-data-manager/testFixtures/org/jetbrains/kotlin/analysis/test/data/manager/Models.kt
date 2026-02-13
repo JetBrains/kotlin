@@ -12,6 +12,7 @@ internal data class DiscoveredTest(
     val uniqueId: String,
     val displayName: String,
     val variantChain: TestVariantChain,
+    val testDataPath: String? = null,
 )
 
 /**

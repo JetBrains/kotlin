@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.test.data.manager
 import org.jetbrains.kotlin.analysis.test.data.manager.TestDataManagerRunner.MAX_CONVERGENCE_PASSES
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.ManagedTestFilter
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.TestMetadataFilter
+import org.jetbrains.kotlin.analysis.test.data.manager.filters.testDataPath
 import org.jetbrains.kotlin.analysis.test.data.manager.filters.variantChain
 import org.jetbrains.kotlin.analysis.test.data.manager.listeners.FileUpdateTrackingListener
 import org.jetbrains.kotlin.analysis.test.data.manager.listeners.IjLogTestListener
@@ -17,6 +18,7 @@ import org.junit.platform.engine.discovery.DiscoverySelectors
 import org.junit.platform.launcher.*
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
 import org.junit.platform.launcher.core.LauncherFactory
+import kotlin.io.path.Path
 import kotlin.system.exitProcess
 import kotlin.time.Duration
 import kotlin.time.measureTime
@@ -97,6 +99,7 @@ internal object TestDataManagerRunner {
             val testDataPath = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_DATA_PATH)
             val testClassPattern = System.getProperty(TEST_DATA_MANAGER_OPTIONS_TEST_CLASS_PATTERN)
             val goldenOnly = System.getProperty(TEST_DATA_MANAGER_OPTIONS_GOLDEN_ONLY)?.toBooleanStrictOrNull() ?: false
+            val incremental = System.getProperty(TEST_DATA_MANAGER_OPTIONS_INCREMENTAL)?.toBooleanStrictOrNull() ?: false
             val mode = TestDataManagerMode.currentModeOrNull
 
             println("Starting test data manager...")
@@ -104,6 +107,7 @@ internal object TestDataManagerRunner {
             println("  testDataPath: ${testDataPath ?: "NOT SET"}")
             println("  testClassPattern: ${testClassPattern ?: "NOT SET"}")
             println("  goldenOnly: $goldenOnly")
+            println("  incremental: $incremental")
 
             if (mode == null) {
                 System.err.println("WARNING: Mode is not set!")
@@ -113,7 +117,7 @@ internal object TestDataManagerRunner {
 
             LauncherFactory.openSession().use { launcherSession ->
                 context(launcherSession) {
-                    discoverAndRunTests(testClassPattern, testDataPath, goldenOnly)
+                    discoverAndRunTests(testClassPattern, testDataPath, goldenOnly, incremental)
                 }
             }
 
@@ -144,6 +148,7 @@ internal object TestDataManagerRunner {
         testClassPattern: String?,
         testDataPath: String?,
         goldenOnly: Boolean = false,
+        incremental: Boolean = false,
     ) {
         val timingStats = TimingStats()
         val launcher = launcherSession.launcher
@@ -198,9 +203,45 @@ internal object TestDataManagerRunner {
         val allErrors = mutableSetOf<TestError>()
         val allFinalFailedTestIds = mutableSetOf<String>()
 
-        for (group in groupingResult.groups) {
+        val useIncremental = incremental && TestDataManagerMode.currentMode == TestDataManagerMode.UPDATE
+        if (incremental && TestDataManagerMode.currentMode != TestDataManagerMode.UPDATE) {
+            println("WARNING: --incremental is only effective with --mode=update, ignoring")
+        }
+
+        var changedTestDataPaths: Set<String> = emptySet()
+        var skippedTests = 0
+
+        for ((index, group) in groupingResult.groups.withIndex()) {
+            val isFirstGroup = index == 0
+
+            if (useIncremental && isFirstGroup) {
+                ManagedTestAssertions.trackUpdatedPaths = true
+            }
+
+            val effectiveGroup = if (useIncremental && !isFirstGroup) {
+                val filtered = group.tests.filter { test ->
+                    test.testDataPath == null || changedTestDataPaths.any { changedPath ->
+                        Path(changedPath).endsWith(test.testDataPath)
+                    }
+                }
+
+                if (filtered.isEmpty()) {
+                    println("\n  Skipping group variants: ${group.uniqueVariantChains} (${group.tests.size} tests) — no matching changes")
+                    skippedTests += group.tests.size
+                    continue
+                }
+
+                if (filtered.size < group.tests.size) {
+                    println("\n  Incremental: running ${filtered.size}/${group.tests.size} tests for variants: ${group.uniqueVariantChains}")
+                }
+
+                TestGroup(group.variantDepth, filtered)
+            } else {
+                group
+            }
+
             val groupTime = measureTime {
-                val result = runGroupWithConvergence(launcher, group)
+                val result = runGroupWithConvergence(launcher, effectiveGroup)
                 result.mismatchesByPath.forEach { (path, variantChains) ->
                     allMismatches.getOrPut(path) { mutableSetOf() }.addAll(variantChains)
                 }
@@ -209,7 +250,21 @@ internal object TestDataManagerRunner {
                 allFinalFailedTestIds.addAll(result.finalPassFailedTestIds)
             }
 
+            if (useIncremental && isFirstGroup) {
+                ManagedTestAssertions.trackUpdatedPaths = false
+                changedTestDataPaths = ManagedTestAssertions.drainUpdatedTestDataPaths()
+                if (changedTestDataPaths.isNotEmpty()) {
+                    println("  Incremental: ${changedTestDataPaths.size} test data path(s) changed in first group")
+                } else {
+                    println("  Incremental: no changes in first group, skipping all subsequent groups")
+                }
+            }
+
             timingStats.executionTime += groupTime
+        }
+
+        if (skippedTests > 0) {
+            println("  Incremental: skipped $skippedTests variant tests total")
         }
 
         // Calculate test counts based on final pass results
@@ -286,6 +341,7 @@ internal object TestDataManagerRunner {
             uniqueId = descriptor.uniqueId,
             displayName = descriptor.displayName,
             variantChain = descriptor.variantChain,
+            testDataPath = descriptor.testDataPath,
         )
     }
 

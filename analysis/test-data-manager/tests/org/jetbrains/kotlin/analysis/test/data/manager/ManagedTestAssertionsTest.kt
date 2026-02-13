@@ -29,6 +29,8 @@ class ManagedTestAssertionsTest {
     @AfterEach
     fun tearDown() {
         TestDataManagerMode.isUnderTeamCityOverride = null
+        ManagedTestAssertions.trackUpdatedPaths = false
+        ManagedTestAssertions.drainUpdatedTestDataPaths()
     }
 
     /**
@@ -485,5 +487,67 @@ class ManagedTestAssertionsTest {
                 test.pretty.txt: pretty
             """
         )
+    }
+
+    // ========== Path tracking tests ==========
+
+    @Test
+    fun `UPDATE mode - tracking records path on file create`() {
+        setupFiles()  // No expected files
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
+
+        val paths = ManagedTestAssertions.drainUpdatedTestDataPaths()
+        assertEquals(1, paths.size)
+        assertTrue(paths.single().endsWith("test.kt"))
+    }
+
+    @Test
+    fun `UPDATE mode - tracking records path on mismatch update`() {
+        setupFiles("test.txt" to "old")
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(variantChain = emptyList(), actual = "new", mode = TestDataManagerMode.UPDATE)
+
+        val paths = ManagedTestAssertions.drainUpdatedTestDataPaths()
+        assertEquals(1, paths.size)
+        assertTrue(paths.single().endsWith("test.kt"))
+    }
+
+    @Test
+    fun `UPDATE mode - tracking does not record when disabled`() {
+        setupFiles()  // No expected files
+        ManagedTestAssertions.trackUpdatedPaths = false
+
+        runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
+
+        val paths = ManagedTestAssertions.drainUpdatedTestDataPaths()
+        assertTrue(paths.isEmpty())
+    }
+
+    @Test
+    fun `UPDATE mode - tracking does not record when content matches`() {
+        setupFiles("test.txt" to "content")
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.UPDATE)
+
+        val paths = ManagedTestAssertions.drainUpdatedTestDataPaths()
+        assertTrue(paths.isEmpty())
+    }
+
+    @Test
+    fun `drainUpdatedTestDataPaths clears set after drain`() {
+        setupFiles()  // No expected files
+        ManagedTestAssertions.trackUpdatedPaths = true
+
+        runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.UPDATE)
+
+        val firstDrain = ManagedTestAssertions.drainUpdatedTestDataPaths()
+        assertEquals(1, firstDrain.size)
+
+        val secondDrain = ManagedTestAssertions.drainUpdatedTestDataPaths()
+        assertTrue(secondDrain.isEmpty())
     }
 }

@@ -52,6 +52,9 @@ When modifying test data files or running generated tests (`*Generated`) that co
 
 # Run only golden tests (useful for quick baseline updates)
 ./gradlew manageTestDataGlobally --mode=update --golden-only
+
+# Incremental update — only re-run variant tests for changed paths
+./gradlew manageTestDataGlobally --mode=update --incremental
 ```
 
 **Why use `manageTestDataGlobally`?**

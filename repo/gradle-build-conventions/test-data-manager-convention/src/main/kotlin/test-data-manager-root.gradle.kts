@@ -57,6 +57,7 @@ tasks.register<TestDataManagerGlobalTask>(manageTestDataGloballyTaskName) {
     config.testDataPath.set(testDataPath)
     config.testClassPattern.set(testClassPattern)
     config.goldenOnly.set(goldenOnly)
+    config.incremental.set(incremental)
 }
 
 // Configure task dependencies after all projects are evaluated
