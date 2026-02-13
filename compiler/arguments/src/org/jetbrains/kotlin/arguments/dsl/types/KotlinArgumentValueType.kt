@@ -213,6 +213,21 @@ object ProfileCompilerCommandType : KotlinArgumentValueType<ProfileCompilerComma
     }
 }
 
+/**
+ * A value which accepts a list of [String] type.
+ */
+@Serializable
+class StringListType(
+    override val defaultValue: ReleaseDependent<List<String>?> = ReleaseDependent(null),
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+) : KotlinArgumentValueType<List<String>> {
+
+    override fun stringRepresentation(value: List<String>?): String? {
+        if (value == null) return null
+        return value.joinToString { it.valueOrNullStringLiteral }
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 
