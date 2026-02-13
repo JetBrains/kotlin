@@ -5820,7 +5820,7 @@
                                     "removedVersion": null
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringListType",
                                     "defaultValue": {
                                         "current": null,
                                         "valueInVersions": []
