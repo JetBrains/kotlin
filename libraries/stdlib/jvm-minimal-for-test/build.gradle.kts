@@ -91,8 +91,10 @@ kotlin {
                 compileTaskProvider.configure {
                     compilerOptions {
                         moduleName = "kotlin-stdlib"
-                        languageVersion = KotlinVersion.KOTLIN_2_3
-                        apiVersion = KotlinVersion.KOTLIN_2_3
+                        // Use this to override language and API versions for stdlib compared to the version used to build the whole Kotlin
+                        // languageVersion = KotlinVersion.KOTLIN_...
+                        // apiVersion = KotlinVersion.KOTLIN_...
+
                         // providing exhaustive list of args here
                         freeCompilerArgs.set(
                             listOfNotNull(
