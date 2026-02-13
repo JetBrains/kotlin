@@ -119,6 +119,10 @@ class WasmCompiledModuleFragment(
     private val stringDataSectionIndex = WasmImmediate.DataIdx(0)
     private val stringAddressesAndLengthsIndex = WasmImmediate.DataIdx(1)
 
+    private inline fun forEachServiceData(body: (WasmCompiledServiceFileFragment) -> Unit) {
+        wasmCompiledFileFragments.forEach { body(it.serviceData) }
+    }
+
     private inline fun forEachDefinedDeclarations(body: (WasmCompiledTypesFileFragment, WasmCompiledDeclarationsFileFragment) -> Unit) {
         wasmCompiledFileFragments.forEach {
             body(it.definedTypes, it.definedDeclarations)
@@ -177,9 +181,10 @@ class WasmCompiledModuleFragment(
 
         createAssociatedObjectGetter(definedDeclarations = definedDeclarations, wasmElements = wasmElements)
 
-        val mainFunctionSymbols = wasmCompiledFileFragments.flatMap { fragment ->
-            fragment.serviceData.mainFunctionWrappers.map { signature ->
-                fragment.definedDeclarations.definedFunctions[signature]
+        val mainFunctionSymbols = mutableListOf<WasmFunction>()
+        forEachServiceData {
+            it.mainFunctionWrappers.mapTo(mainFunctionSymbols) { signature ->
+                definedDeclarations.functions[signature]
                     ?: compilationException("Cannot find symbol for main wrapper", type = null)
             }
         }
@@ -271,7 +276,9 @@ class WasmCompiledModuleFragment(
         bindConstantArrayDataSegmentIds(data)
 
         val exports = mutableListOf<WasmExport<*>>()
-        wasmCompiledFileFragments.flatMapTo(exports) { it.serviceData.exports }
+        forEachServiceData {
+            exports.addAll(it.exports)
+        }
 
         val memories = createAndExportMemory(exports, multimoduleOptions?.stdlibModuleNameForImport)
         val (importedMemories, definedMemories) = memories.partition { it.importPair != null }
@@ -509,9 +516,10 @@ class WasmCompiledModuleFragment(
 
         val rttiGlobals = mutableMapOf<IdSignature, WasmGlobal>()
         val rttiSuperTypes = mutableMapOf<IdSignature, IdSignature?>()
-        wasmCompiledFileFragments.forEach { fragment ->
-            rttiGlobals.putAll(fragment.definedDeclarations.definedRttiGlobal)
-            rttiSuperTypes.putAll(fragment.definedDeclarations.definedRttiSuperType)
+
+        forEachDefinedDeclarations { _, declarations ->
+            rttiGlobals.putAll(declarations.definedRttiGlobal)
+            rttiSuperTypes.putAll(declarations.definedRttiSuperType)
         }
 
         fun wasmRttiGlobalOrderKey(superType: IdSignature?): Int =
@@ -603,8 +611,8 @@ class WasmCompiledModuleFragment(
 
         associatedObjectGetter.instructions.clear()
         with(WasmExpressionBuilder(associatedObjectGetter.instructions)) {
-            wasmCompiledFileFragments.forEach { fragment ->
-                for ((klassId, associatedObjectsInstanceGetters) in fragment.serviceData.classAssociatedObjectsInstanceGetters) {
+            forEachServiceData { serviceData ->
+                for ((klassId, associatedObjectsInstanceGetters) in serviceData.classAssociatedObjectsInstanceGetters) {
                     buildGetLocal(classIdLocal, serviceCodeLocation)
                     buildConstI64(klassId, serviceCodeLocation)
                     buildInstr(WasmOp.I64_EQ, serviceCodeLocation)
@@ -649,8 +657,8 @@ class WasmCompiledModuleFragment(
 
         val startUnitTestsFunction = WasmFunction.Defined("startUnitTests", Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType)
         with(WasmExpressionBuilder(startUnitTestsFunction.instructions)) {
-            wasmCompiledFileFragments.forEach { fragment ->
-                fragment.serviceData.testFunctionDeclarators.forEach { declarator ->
+            forEachServiceData { serviceData ->
+                serviceData.testFunctionDeclarators.forEach { declarator ->
                     buildCall(declarator, serviceCodeLocation)
                 }
             }
@@ -673,14 +681,14 @@ class WasmCompiledModuleFragment(
             )
             buildSetGlobal(Synthetics.Globals.addressesAndLengthsGlobal, serviceCodeLocation)
 
-            wasmCompiledFileFragments.forEach { fragment ->
-                fragment.serviceData.objectInstanceFieldInitializers.forEach { objectInitializer ->
+            forEachServiceData { serviceData ->
+                serviceData.objectInstanceFieldInitializers.forEach { objectInitializer ->
                     buildCall(objectInitializer, serviceCodeLocation)
                 }
             }
 
-            wasmCompiledFileFragments.forEach { fragment ->
-                fragment.serviceData.nonConstantFieldInitializers.forEach { nonConstantInitializer ->
+            forEachServiceData { serviceData ->
+                serviceData.nonConstantFieldInitializers.forEach { nonConstantInitializer ->
                     buildCall(nonConstantInitializer, serviceCodeLocation)
                 }
             }
@@ -954,9 +962,9 @@ class WasmCompiledModuleFragment(
         var literalCounter = stringPoolSize
         val literalGlobalIdMap = mutableMapOf<String, Int>()
 
-        wasmCompiledFileFragments.forEach { fragment ->
+        forEachServiceData { serviceData ->
             var globalCounter = 0
-            for (symbol in fragment.serviceData.globalLiterals) {
+            for (symbol in serviceData.globalLiterals) {
                 definedDeclarations.globalLiteralGlobals.computeIfAbsent(symbol.value) { string ->
                     WasmGlobal(
                         name = "string_${globalCounter++}",
@@ -967,7 +975,7 @@ class WasmCompiledModuleFragment(
                     )
                 }
             }
-            for ((stringValue, literalIdSymbol) in fragment.serviceData.globalLiteralsId) {
+            for ((stringValue, literalIdSymbol) in serviceData.globalLiteralsId) {
                 var stringId = literalGlobalIdMap[stringValue]
                 if (stringId == null) {
                     stringId = literalCounter
@@ -985,8 +993,8 @@ class WasmCompiledModuleFragment(
         var stringDataSectionStart = 0
         val visitedStrings = mutableMapOf<String, Int>()
         val addressesAndLengths = mutableListOf<Long>()
-        wasmCompiledFileFragments.forEach { fragment ->
-            for ((string, literalIdSymbol) in fragment.serviceData.stringLiteralId.entries) {
+        forEachServiceData { serviceData ->
+            for ((string, literalIdSymbol) in serviceData.stringLiteralId.entries) {
                 val visitedStringId = visitedStrings[string]
                 val stringId: Int
                 if (visitedStringId == null) {
@@ -1012,8 +1020,8 @@ class WasmCompiledModuleFragment(
     }
 
     private fun bindConstantArrayDataSegmentIds(data: MutableList<WasmData>) {
-        wasmCompiledFileFragments.forEach { fragment ->
-            fragment.serviceData.constantArrayDataSegmentId.entries.forEach { (constantArraySegment, symbol) ->
+        forEachServiceData { serviceData ->
+            serviceData.constantArrayDataSegmentId.entries.forEach { (constantArraySegment, symbol) ->
                 symbol.bind(data.size)
                 val integerSize = when (constantArraySegment.second) {
                     WasmI8 -> BYTE_SIZE_BYTES
@@ -1030,8 +1038,8 @@ class WasmCompiledModuleFragment(
 
     private fun bindUniqueJsFunNames() {
         val jsCodeCounter = mutableMapOf<String, Int>()
-        wasmCompiledFileFragments.forEach { fragment ->
-            fragment.serviceData.jsFuns.forEach { jsCodeSnippet ->
+        forEachServiceData { serviceData ->
+            serviceData.jsFuns.forEach { jsCodeSnippet ->
                 val jsFunName = jsCodeSnippet.value.importName.owner
                 val counterValue = jsCodeCounter.getOrPut(jsFunName, defaultValue = { 0 })
                 jsCodeCounter[jsFunName] = counterValue + 1
@@ -1044,8 +1052,8 @@ class WasmCompiledModuleFragment(
 
     private fun rebindEquivalentFunctions(allDefinedFunctions: MutableMap<IdSignature, WasmFunction>) {
         val equivalentFunctions = mutableMapOf<String, WasmFunction>()
-        wasmCompiledFileFragments.forEach { fragment ->
-            for ((signatureString, idSignature) in fragment.serviceData.equivalentFunctions) {
+        forEachServiceData { serviceData ->
+            for ((signatureString, idSignature) in serviceData.equivalentFunctions) {
                 val func = equivalentFunctions[signatureString]
                 if (func == null) {
                     // First occurrence of the adapter, register it (if not removed by DCE).
@@ -1053,10 +1061,10 @@ class WasmCompiledModuleFragment(
                 } else {
                     // Adapter already exists, remove this one and use the existing adapter.
                     allDefinedFunctions[idSignature]?.let { duplicate ->
-                        fragment.serviceData.exports.removeAll { it.field == duplicate }
+                        serviceData.exports.removeAll { it.field == duplicate }
                     }
-                    fragment.serviceData.jsFuns.remove(idSignature)
-                    fragment.serviceData.jsModuleImports.remove(idSignature)
+                    serviceData.jsFuns.remove(idSignature)
+                    serviceData.jsModuleImports.remove(idSignature)
 
                     // Rebind adapter function to the single instance
                     // There might not be any unbound references in case it's called only from JS side

@@ -38,6 +38,10 @@ class ImportsGenerator(
     fun generateClassImports(declaration: IrClass) {
         if (declaration.isInterface) return
 
+        if (declaration.name.asString().endsWith("KFunctionImpl")) {
+            println()
+        }
+
         val symbol = declaration.symbol
         val tag = typeContext.getDeclarationTag(declaration)
 
