@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2010-2015 JetBrains s.r.o.
  *
@@ -16,6 +17,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import com.google.common.cache.CacheBuilder
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
@@ -25,7 +27,6 @@ import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.search.GlobalSearchScope
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
-import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.util.PhaseSideType
 import org.jetbrains.kotlin.util.tryMeasureSideTime
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.concurrent.TimeUnit
 
 // TODO: do not inherit from CoreJavaFileManager to avoid accidental usage of its methods which do not use caches/indices
 // Currently, the only relevant usage of this class as CoreJavaFileManager is at CoreJavaDirectoryService.getPackage,
@@ -55,6 +57,12 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private lateinit var index: JvmDependenciesIndex
     private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
     private lateinit var packagePartProviders: List<PackagePartProvider>
+
+    private val childrenInPackageCache =
+        CacheBuilder.newBuilder()
+            .maximumSize(2000)
+            .expireAfterAccess(15, TimeUnit.MINUTES)
+            .build<FqName, Map<String, Set<VirtualFile>>>()
 
     /**
      * Caches the [VirtualFile]s found in [index] for the key [FqName].
@@ -110,11 +118,9 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             // Otherwise B.kt will not see the newly added field in A.
             val outerMostClassId = ClassId.topLevel(outerMostClassFqName)
             singleJavaFileRootsIndex.findJavaSourceClass(outerMostClassId)?.let { SmartList(it) }
-                ?: SmartList(
-                    index.findClasses(outerMostClassId) { dir, type ->
-                        findVirtualFileGivenPackage(dir, relativeClassName, type)
-                    }
-                ).takeIf { it.isNotEmpty() }
+                ?: childrenInPackage(classId.packageFqName)[relativeClassName.substringBefore('.')]?.let {
+                    SmartList(it).takeIf { it.isNotEmpty() }
+                }
         }?.firstOrNull { it in searchScope }
     }
 
@@ -215,16 +221,11 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                         ?.findPsiClassInVirtualFile(relativeClassName)
                 )
 
-                index.traverseDirectoriesInPackage(classId.packageFqName) { dir, rootType ->
-                    val psiClass =
-                        findVirtualFileGivenPackage(dir, relativeClassName, rootType)
-                            ?.takeIf { it in scope }
-                            ?.findPsiClassInVirtualFile(relativeClassName)
-                    if (psiClass != null) {
-                        result.add(psiClass)
+                val topLevelClassName = relativeClassName.substringBefore('.')
+                childrenInPackage(classId.packageFqName)[topLevelClassName]?.forEach { file ->
+                    if (file in scope) {
+                        file.findPsiClassInVirtualFile(relativeClassName)?.let { result.add(it) }
                     }
-                    // traverse all
-                    true
                 }
 
                 if (result.isNotEmpty()) {
@@ -263,25 +264,20 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }
     }
 
-    private fun findVirtualFileGivenPackage(
-        packageDir: VirtualFile,
-        classNameWithInnerClasses: String,
-        rootType: JavaRoot.RootType
-    ): VirtualFile? {
-        val topLevelClassName = classNameWithInnerClasses.substringBefore('.')
-
-        val vFile = when (rootType) {
-            JavaRoot.RootType.BINARY -> packageDir.findChild("$topLevelClassName.class")
-            JavaRoot.RootType.BINARY_SIG -> packageDir.findChild("$topLevelClassName.sig")
-            JavaRoot.RootType.SOURCE -> packageDir.findChild("$topLevelClassName.java")
-        } ?: return null
-
-        if (!vFile.isValid) {
-            LOG.error("Invalid child of valid parent: ${vFile.path}; ${packageDir.isValid} path=${packageDir.path}")
-            return null
+    private fun childrenInPackage(packageFqName: FqName): Map<String, Set<VirtualFile>> {
+        return childrenInPackageCache.get(packageFqName) {
+            val files = Object2ObjectOpenHashMap<String, MutableSet<VirtualFile>>()
+            index.traverseDirectoriesInPackage(packageFqName) { dir, _ ->
+                for (child in dir.children) {
+                    val extension = child.extension
+                    if (extension == "class" || extension == "java" || extension == "sig") {
+                        files.getOrPut(child.nameWithoutExtension) { ObjectOpenHashSet() }.add(child)
+                    }
+                }
+                true
+            }
+            files
         }
-
-        return vFile
     }
 
     private fun VirtualFile.findPsiClassInVirtualFile(classNameWithInnerClasses: String): PsiClass? {
@@ -291,15 +287,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> {
         val result = ObjectOpenHashSet<String>()
-        index.traverseDirectoriesInPackage(packageFqName, continueSearch = { dir, _ ->
-            for (child in dir.children) {
-                if (child.extension == "class" || child.extension == "java" || child.extension == "sig") {
-                    result.add(child.nameWithoutExtension)
-                }
-            }
-
-            true
-        })
+        result.addAll(childrenInPackage(packageFqName).keys)
 
         for (classId in singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName)) {
             assert(!classId.isNestedClass) { "ClassId of a single .java source class should not be nested: $classId" }
