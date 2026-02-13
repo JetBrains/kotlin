@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test
 
+import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibsInTestPipeline
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
@@ -26,8 +27,10 @@ import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirCliFacade
 import org.jetbrains.kotlin.test.frontend.fir.getAllNativeDependenciesPaths
+import org.jetbrains.kotlin.test.frontend.fir.getTransitivesAndFriendsPaths
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.libraryProvider
@@ -102,7 +105,30 @@ class KlibSerializerNativeCliFacade(
             packageAccessHandler = null,
             lookupTracker = LookupTracker.DO_NOTHING
         )
-        moduleDescriptor.setDependencies(dependencyPaths.map { testServices.libraryProvider.getDescriptorByPath(it) as ModuleDescriptorImpl } + moduleDescriptor)
+
+        val descriptorDependencies = buildList {
+            val klibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
+            NativeEnvironmentConfigurator.getRuntimePathsForModule(module, testServices).mapTo(this) {
+                testServices.libraryProvider.getOrCreateStdlibByPath(it) {
+                    // TODO: check safety of the approach of creating a separate storage manager per library
+                    val storageManager = LockBasedStorageManager("ModulesStructure")
+
+                    val moduleDescriptor = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+                        library,
+                        configuration.languageVersionSettings,
+                        storageManager,
+                        irModuleFragment.descriptor.builtIns,
+                        packageAccessHandler = null,
+                        lookupTracker = LookupTracker.DO_NOTHING
+                    )
+
+                    moduleDescriptor to library
+                } as ModuleDescriptorImpl
+            }
+            getTransitivesAndFriendsPaths(module, testServices).mapTo(this) { testServices.libraryProvider.getDescriptorByPath(it) as ModuleDescriptorImpl }
+            add(moduleDescriptor)
+        }
+        moduleDescriptor.setDependencies(descriptorDependencies)
 
         testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, moduleDescriptor)
         testServices.libraryProvider.setDescriptorAndLibraryByName(outputFile.path, moduleDescriptor, library)
