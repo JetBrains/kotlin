@@ -320,7 +320,74 @@ KtProperty(422,463): 'val providedDelegate by ResourceID<Int>()'
   NO_CANDIDATES
 
 KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedPropertyCall:
+      provideDelegateCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = ResourceID<Int>()
+          isSafeNavigation = false
+          type = myPack.ResourceID<kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.properties.ReadOnlyProperty<kotlin.Any?, kotlin.Int>
+          symbol = myPack/ResourceID.provideDelegate(<dispatch receiver>: myPack.ResourceID<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.properties.ReadOnlyProperty<kotlin.Any?, T>
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = myPack/ResourceID.provideDelegate
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      valueGetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = ResourceID<Int>()
+          isSafeNavigation = false
+          type = kotlin.properties.ReadOnlyProperty<kotlin.Any?, kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/properties/ReadOnlyProperty.getValue(<dispatch receiver>: kotlin.properties.ReadOnlyProperty<T, V>, thisRef: T, property: kotlin.reflect.KProperty<*>): V
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: T
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/properties/ReadOnlyProperty.getValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      valueSetterCall = null
+    isInBestCandidates = true
 
 KtCallExpression(446,463): 'ResourceID<Int>()'
   KaApplicableCallCandidate:

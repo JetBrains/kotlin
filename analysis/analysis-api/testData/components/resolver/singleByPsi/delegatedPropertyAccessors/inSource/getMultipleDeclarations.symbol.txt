@@ -1,2 +1,6 @@
 KtPropertyDelegate(12,20): 'by Baz()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Baz.getValue(<dispatch receiver>: Baz, p1: kotlin.Any?, p2: kotlin.Any?): kotlin.Int,
+      /Baz.setValue(<dispatch receiver>: Baz, p1: kotlin.Any?, p2: kotlin.Any?, p3: kotlin.Any?): kotlin.Unit
+    ]

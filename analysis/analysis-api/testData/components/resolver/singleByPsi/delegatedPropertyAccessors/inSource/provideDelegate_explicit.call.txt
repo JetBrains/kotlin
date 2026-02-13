@@ -1,2 +1,37 @@
 KtPropertyDelegate(160,196): 'by Bar().provideDelegate(null, null)'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedPropertyCall:
+      provideDelegateCall = null
+      valueGetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = Bar().provideDelegate(null, null)
+          isSafeNavigation = false
+          type = Foo
+        signature = KaFunctionSignature:
+          receiverType = Foo
+          returnType = kotlin.Int
+          symbol = /getValue(<extension receiver>: Foo, _this: kotlin.Any?, p: kotlin.Any?): kotlin.Int
+          valueParameters = [
+            KaVariableSignature:
+              name = _this
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = _this: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = p
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = p: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /getValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      valueSetterCall = null

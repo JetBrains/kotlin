@@ -777,6 +777,33 @@ public interface KaResolver : KaSessionComponent {
     public fun KtForExpression.resolveCall(): KaForLoopCall?
 
     /**
+     * Resolves the given [KtPropertyDelegate] to a [KaDelegatedPropertyCall] representing the desugared delegated property.
+     *
+     * A delegated property desugars into up to three operator calls:
+     * - `getValue()` on the delegate object
+     * - `setValue()` on the delegate object (only for `var` properties)
+     * - `provideDelegate()` on the delegate expression (if applicable)
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * val name: String by lazy { "John" }
+     * //               ^________________^
+     * ```
+     *
+     * Calling `resolveCall()` on the [KtPropertyDelegate] returns a [KaDelegatedPropertyCall] containing the
+     * desugared operator calls if resolution succeeds; otherwise, it returns `null`
+     * (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on delegated properties
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall?
+
+    /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
      * for the call corresponding to the given [KtResolvableCall].
      *
@@ -1829,6 +1856,40 @@ public fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? {
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtForExpression.resolveCall(): KaForLoopCall? {
+    return with(session) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtPropertyDelegate] to a [KaDelegatedPropertyCall] representing the desugared delegated property.
+ *
+ * A delegated property desugars into up to three operator calls:
+ * - `getValue()` on the delegate object
+ * - `setValue()` on the delegate object (only for `var` properties)
+ * - `provideDelegate()` on the delegate expression (if applicable)
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * val name: String by lazy { "John" }
+ * //               ^________________^
+ * ```
+ *
+ * Calling `resolveCall()` on the [KtPropertyDelegate] returns a [KaDelegatedPropertyCall] containing the
+ * desugared operator calls if resolution succeeds; otherwise, it returns `null`
+ * (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on delegated properties
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? {
     return with(session) {
         resolveCall()
     }

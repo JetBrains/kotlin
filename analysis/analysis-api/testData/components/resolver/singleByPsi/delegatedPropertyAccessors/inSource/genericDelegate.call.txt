@@ -1,2 +1,75 @@
 KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedPropertyCall:
+      provideDelegateCall = null
+      valueGetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = GenericDelegate<String>("hello")
+          isSafeNavigation = false
+          type = myPack.GenericDelegate<kotlin.String>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.String
+          symbol = myPack/GenericDelegate.getValue(<dispatch receiver>: myPack.GenericDelegate<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = myPack/GenericDelegate.getValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      valueSetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = GenericDelegate<String>("hello")
+          isSafeNavigation = false
+          type = myPack.GenericDelegate<kotlin.String>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = myPack/GenericDelegate.setValue(<dispatch receiver>: myPack.GenericDelegate<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, newValue: T): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = newValue
+              receiverType = null
+              returnType = kotlin.String
+              symbol = newValue: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = myPack/GenericDelegate.setValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}

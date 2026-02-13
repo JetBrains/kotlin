@@ -287,7 +287,10 @@ KtNameReferenceExpression(715,721): 'String'
   null
 
 KtPropertyDelegate(722,734): 'by lazy {""}'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/getValue(<extension receiver>: kotlin.Lazy<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
+    ]
 
 KtCallExpression(725,734): 'lazy {""}'
   KaSymbolResolutionSuccess:

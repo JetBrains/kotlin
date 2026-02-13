@@ -1,2 +1,69 @@
 KtPropertyDelegate(160,168): 'by Bar()'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedPropertyCall:
+      provideDelegateCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = Bar()
+          isSafeNavigation = false
+          type = Bar
+        signature = KaFunctionSignature:
+          receiverType = Bar
+          returnType = Foo
+          symbol = /provideDelegate(<extension receiver>: Bar, _this: kotlin.Any?, p: kotlin.Any?): Foo
+          valueParameters = [
+            KaVariableSignature:
+              name = _this
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = _this: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = p
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = p: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /provideDelegate
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      valueGetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = Bar()
+          isSafeNavigation = false
+          type = Foo
+        signature = KaFunctionSignature:
+          receiverType = Foo
+          returnType = kotlin.Int
+          symbol = /getValue(<extension receiver>: Foo, _this: kotlin.Any?, p: kotlin.Any?): kotlin.Int
+          valueParameters = [
+            KaVariableSignature:
+              name = _this
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = _this: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = p
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = p: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /getValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      valueSetterCall = null
+    isInBestCandidates = true

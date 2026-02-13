@@ -1,2 +1,4 @@
 KtPropertyDelegate(13,21): 'by Bar()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>

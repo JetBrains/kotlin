@@ -1,2 +1,7 @@
 KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      myPack/getValue(<extension receiver>: kotlin.Int, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): ERROR CLASS: Symbol not found for T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun Int.getValue(thisRef: Any?, property: KProperty<*>): ??? (Unresolved qualified name: T)>

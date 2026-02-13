@@ -1,2 +1,4 @@
 KtPropertyDelegate(502,538): 'by ProvideDelegateHolder("provided")'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>

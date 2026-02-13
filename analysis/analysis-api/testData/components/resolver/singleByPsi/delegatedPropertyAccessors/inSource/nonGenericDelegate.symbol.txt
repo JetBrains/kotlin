@@ -1,2 +1,6 @@
 KtPropertyDelegate(361,389): 'by NonGenericHolder("world")'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/getValue(<extension receiver>: myPack.NonGenericHolder, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T,
+      myPack/setValue(<extension receiver>: myPack.NonGenericHolder, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: T): kotlin.Unit
+    ]

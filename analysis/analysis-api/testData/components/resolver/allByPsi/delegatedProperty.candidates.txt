@@ -32,7 +32,81 @@ KtProperty(65,87): 'var prop by Delegate()'
   NO_CANDIDATES
 
 KtPropertyDelegate(74,87): 'by Delegate()'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedPropertyCall:
+      provideDelegateCall = null
+      valueGetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Delegate()
+          isSafeNavigation = false
+          type = myPack.Delegate
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.String
+          symbol = myPack/Delegate.getValue(<dispatch receiver>: myPack.Delegate, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = myPack/Delegate.getValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      valueSetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Delegate()
+          isSafeNavigation = false
+          type = myPack.Delegate
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = myPack/Delegate.setValue(<dispatch receiver>: myPack.Delegate, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.String
+              symbol = value: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = myPack/Delegate.setValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    isInBestCandidates = true
 
 KtCallExpression(77,87): 'Delegate()'
   KaApplicableCallCandidate:

@@ -1,2 +1,37 @@
 KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = GenericDelegate<String>("hello")
+        isSafeNavigation = false
+        type = myPack.GenericDelegate<kotlin.String>
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = ERROR CLASS: Symbol not found for T
+        symbol = myPack/getValue(<extension receiver>: kotlin.Int, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): ERROR CLASS: Symbol not found for T
+        valueParameters = [
+          KaVariableSignature:
+            name = thisRef
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = thisRef: kotlin.Any?
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = property
+            receiverType = null
+            returnType = kotlin.reflect.KProperty<*>
+            symbol = property: kotlin.reflect.KProperty<*>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = myPack/getValue
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+    fun Int.getValue(thisRef: Any?, property: KProperty<*>): ??? (Unresolved qualified name: T)>
+    isInBestCandidates = true

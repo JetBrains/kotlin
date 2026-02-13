@@ -1,2 +1,38 @@
 KtPropertyDelegate(12,20): 'by Baz()'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedPropertyCall:
+      provideDelegateCall = null
+      valueGetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Baz()
+          isSafeNavigation = false
+          type = Baz
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = /Foo.getValue(<dispatch receiver>: Foo, p1: kotlin.Any?, p2: kotlin.Any?): kotlin.Int
+          valueParameters = [
+            KaVariableSignature:
+              name = p1
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = p1: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = p2
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = p2: kotlin.Any?
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /Foo.getValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      valueSetterCall = null
+    isInBestCandidates = true

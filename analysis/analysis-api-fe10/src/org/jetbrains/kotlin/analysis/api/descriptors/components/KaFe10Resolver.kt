@@ -96,6 +96,7 @@ internal class KaFe10Resolver(
             is KtCallableReferenceExpression -> return performSymbolResolution(psi.callableReference)
             is KtWhenConditionInRange -> return performSymbolResolution(psi.operationReference)
             is KtForExpression -> return resolveForLoopSymbols(psi)
+            is KtPropertyDelegate -> return resolveDelegatedPropertySymbols(psi)
         }
 
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
@@ -196,6 +197,7 @@ internal class KaFe10Resolver(
             is KtCallableReferenceExpression -> return performCallResolution(psi.callableReference)
             is KtConstructorDelegationReferenceExpression -> return (psi.parent as? KtElement)?.let(::performCallResolution)
             is KtForExpression -> return resolveForLoopCall(psi)
+            is KtPropertyDelegate -> return resolveDelegatedPropertyCall(psi)
         }
 
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
@@ -836,6 +838,61 @@ internal class KaFe10Resolver(
         }
 
         return result
+    }
+
+    private data class Fe10DelegateResolvedCalls(
+        val bindingContext: BindingContext,
+        val getValueResolvedCall: ResolvedCall<*>,
+        val setValueResolvedCall: ResolvedCall<*>?,
+        val provideDelegateResolvedCall: ResolvedCall<*>?,
+    )
+
+    private fun extractDelegateResolvedCalls(psi: KtPropertyDelegate): Fe10DelegateResolvedCalls? {
+        val property = psi.parent as? KtProperty ?: return null
+        val bindingContext = analysisContext.analyze(property, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
+        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, property]
+                as? VariableDescriptorWithAccessors ?: return null
+
+        val getValueResolvedCall = descriptor.getter?.let {
+            bindingContext.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it)
+        } ?: return null
+
+        val setValueResolvedCall = descriptor.setter?.let {
+            bindingContext.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it)
+        }
+
+        val provideDelegateResolvedCall =
+            bindingContext.get(BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, descriptor)
+
+        return Fe10DelegateResolvedCalls(bindingContext, getValueResolvedCall, setValueResolvedCall, provideDelegateResolvedCall)
+    }
+
+    private fun resolveDelegatedPropertySymbols(psi: KtPropertyDelegate): KaSymbolResolutionAttempt? {
+        val (_, getValueResolvedCall, setValueResolvedCall, provideDelegateResolvedCall) =
+            extractDelegateResolvedCalls(psi) ?: return null
+
+        val symbols = listOfNotNull(
+            getValueResolvedCall.candidateDescriptor.toKtSymbol(analysisContext),
+            setValueResolvedCall?.candidateDescriptor?.toKtSymbol(analysisContext),
+            provideDelegateResolvedCall?.candidateDescriptor?.toKtSymbol(analysisContext),
+        )
+
+        if (symbols.isEmpty()) return null
+        return KaBaseSymbolResolutionSuccess(symbols, token)
+    }
+
+    private fun resolveDelegatedPropertyCall(psi: KtPropertyDelegate): KaCallResolutionAttempt? {
+        val (bindingContext, getValueResolvedCall, setValueResolvedCall, provideDelegateResolvedCall) =
+            extractDelegateResolvedCalls(psi) ?: return null
+
+        val valueGetterCall = getValueResolvedCall
+            .toPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>(bindingContext)?.asSimpleFunctionCall ?: return null
+        val valueSetterCall = setValueResolvedCall
+            ?.toPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>(bindingContext)?.asSimpleFunctionCall
+        val provideDelegateCall = provideDelegateResolvedCall
+            ?.toPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>(bindingContext)?.asSimpleFunctionCall
+
+        return KaBaseCallResolutionSuccess(KaBaseDelegatedPropertyCall(valueGetterCall, valueSetterCall, provideDelegateCall))
     }
 
     private data class Fe10ForLoopResolvedCalls(

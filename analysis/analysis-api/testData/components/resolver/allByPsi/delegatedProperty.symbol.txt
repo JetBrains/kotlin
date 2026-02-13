@@ -32,7 +32,11 @@ KtProperty(65,87): 'var prop by Delegate()'
   null
 
 KtPropertyDelegate(74,87): 'by Delegate()'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Delegate.getValue(<dispatch receiver>: myPack.Delegate, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String,
+      myPack/Delegate.setValue(<dispatch receiver>: myPack.Delegate, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.String): kotlin.Unit
+    ]
 
 KtCallExpression(77,87): 'Delegate()'
   KaSymbolResolutionSuccess:

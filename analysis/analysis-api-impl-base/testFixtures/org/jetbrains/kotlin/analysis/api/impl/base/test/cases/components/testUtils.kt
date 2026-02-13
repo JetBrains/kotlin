@@ -267,6 +267,12 @@ internal fun KaCall.symbols(): List<KaSymbol> = when (this) {
         nextCall.symbol,
     )
 
+    is KaDelegatedPropertyCall -> listOfNotNull(
+        valueGetterCall.symbol,
+        valueSetterCall?.symbol,
+        provideDelegateCall?.symbol,
+    )
+
     is KaCallableMemberCall<*, *> -> listOf(symbol)
 }
 

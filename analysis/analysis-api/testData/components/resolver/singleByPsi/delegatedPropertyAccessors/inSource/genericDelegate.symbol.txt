@@ -1,2 +1,6 @@
 KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/GenericDelegate.getValue(<dispatch receiver>: myPack.GenericDelegate<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T,
+      myPack/GenericDelegate.setValue(<dispatch receiver>: myPack.GenericDelegate<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, newValue: T): kotlin.Unit
+    ]

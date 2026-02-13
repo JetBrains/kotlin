@@ -1,2 +1,40 @@
 KtPropertyDelegate(26,37): 'by lazy {1}'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedPropertyCall:
+      provideDelegateCall = null
+      valueGetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = lazy {1}
+          isSafeNavigation = false
+          type = kotlin.Lazy<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.Lazy<kotlin.Int>
+          returnType = kotlin.Int
+          symbol = kotlin/getValue(<extension receiver>: kotlin.Lazy<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/getValue
+        typeArgumentsMapping = {
+          T -> (kotlin.Int)
+        }
+        valueArgumentMapping = {}
+      valueSetterCall = null
+    isInBestCandidates = true

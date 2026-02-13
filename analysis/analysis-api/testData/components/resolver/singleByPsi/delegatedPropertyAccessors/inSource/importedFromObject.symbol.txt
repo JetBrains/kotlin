@@ -1,2 +1,6 @@
 KtPropertyDelegate(181,199): 'by Holder("hello")'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      dependency/MyDelegateOperators.getValue(<extension receiver>: dependency.Holder, <dispatch receiver>: dependency.MyDelegateOperators, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String,
+      dependency/MyDelegateOperators.setValue(<extension receiver>: dependency.Holder, <dispatch receiver>: dependency.MyDelegateOperators, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.String): kotlin.Unit
+    ]

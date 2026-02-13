@@ -182,11 +182,17 @@ internal class KaFirResolver(
     }
 
     /**
-     * For destructuring declaration entries, [getOrBuildFir] returns [FirProperty] (a declaration).
-     * The actual resolution target is in [FirProperty.initializer] (e.g., [FirComponentCall] or [FirErrorExpression]).
+     * Some elements require special adjusting on psi or fir level:
+     *
+     * - For [KtDestructuringDeclarationEntry], [getOrBuildFir] returns [FirProperty] (a declaration).
+     *   The actual resolution target is in [FirProperty.initializer] (e.g., [FirComponentCall] or [FirErrorExpression]).
+     *
+     * - For [KtPropertyDelegate], [getOrBuildFir] should be called on the property to handle the type specially.
+     *   The actual resolution target is in [FirProperty.delegate] (e.g., [FirFunctionCall]), which conflicts with the regular logic.
      */
-    private fun KtElement.getOrBuildFirWithAdjustments(): FirElement? {
-        return when (val fir = getOrBuildFir(resolutionFacade)) {
+    private fun KtElement.getOrBuildFirWithAdjustments(): FirElement? = when (this) {
+        is KtPropertyDelegate -> (parent as? KtElement)?.getOrBuildFir(resolutionFacade)
+        else -> when (val fir = getOrBuildFir(resolutionFacade)) {
             is FirProperty if this is KtDestructuringDeclarationEntry -> fir.initializer
             else -> fir
         }
@@ -202,6 +208,7 @@ internal class KaFirResolver(
             is FirReference -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
             is FirReturnExpression -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
             is FirWhileLoop if psi is KtForExpression -> resolveForLoopSymbols(unwrappedFir)
+            is FirProperty if psi is KtPropertyDelegate -> resolveDelegatedPropertySymbols(unwrappedFir, psi)
             else -> null
         }
     }
@@ -568,6 +575,7 @@ internal class KaFirResolver(
             )
 
             is FirWhileLoop if psi is KtForExpression -> resolveForLoopCall(this)
+            is FirProperty if psi is KtPropertyDelegate -> resolveDelegatedPropertyCall(this, psi)
 
             else -> null
         }
@@ -1151,7 +1159,14 @@ internal class KaFirResolver(
     private fun resolveForLoopSymbols(firLoop: FirWhileLoop): KaSymbolResolutionAttempt? {
         val (iteratorCall, hasNextCall, nextCall) = extractForLoopFirCalls(firLoop) ?: return null
         val psi = firLoop.psi as? KtForExpression ?: return null
-        val calls = listOf(iteratorCall, hasNextCall, nextCall)
+        return resolveFunctionCallsAsSymbols(
+            calls = listOf(iteratorCall, hasNextCall, nextCall),
+            psi = psi,
+        )
+    }
+
+    private fun resolveFunctionCallsAsSymbols(calls: List<FirFunctionCall>, psi: KtElement): KaSymbolResolutionAttempt? {
+        if (calls.isEmpty()) return null
 
         val firstError = calls.firstNotNullOfOrNull { it.calleeReference as? FirDiagnosticHolder }
         if (firstError != null) {
@@ -1169,22 +1184,63 @@ internal class KaFirResolver(
         val (firIteratorCall, firHasNextCall, firNextCall) = extractForLoopFirCalls(firLoop) ?: return null
         val psi = firLoop.psi as? KtForExpression ?: return null
         val calls = listOf(firIteratorCall, firHasNextCall, firNextCall)
+        findErrorCall(calls, psi)?.let { return it }
 
-        for (firCall in calls) {
-            val ref = firCall.calleeReference
-            if (ref is FirDiagnosticHolder) {
-                return transformErrorReference(psi, firCall, ref, resolveFragmentOfCall = false)
-            }
-        }
-
-        val iteratorCall = buildForLoopFunctionCall(firIteratorCall) ?: return null
-        val hasNextCall = buildForLoopFunctionCall(firHasNextCall) ?: return null
-        val nextCall = buildForLoopFunctionCall(firNextCall) ?: return null
+        val iteratorCall = buildNamedFunctionCall(firIteratorCall) ?: return null
+        val hasNextCall = buildNamedFunctionCall(firHasNextCall) ?: return null
+        val nextCall = buildNamedFunctionCall(firNextCall) ?: return null
 
         return KaBaseCallResolutionSuccess(KaBaseForLoopCall(iteratorCall, hasNextCall, nextCall))
     }
 
-    private fun buildForLoopFunctionCall(firFunctionCall: FirFunctionCall): KaFunctionCall<KaNamedFunctionSymbol>? {
+    private fun extractDelegatedPropertyFirCalls(
+        firProperty: FirProperty,
+    ): Triple<FirFunctionCall?, FirFunctionCall?, FirFunctionCall?>? {
+        if (firProperty.delegate == null) return null
+
+        val getValueCall = (firProperty.getter?.body?.statements?.singleOrNull() as? FirReturnExpression)
+            ?.result as? FirFunctionCall
+        val setValueCall = (firProperty.setter?.body?.statements?.singleOrNull() as? FirReturnExpression)
+            ?.result as? FirFunctionCall
+        val provideDelegateCall = (firProperty.delegate as? FirFunctionCall)
+            ?.takeIf { it.origin == FirFunctionCallOrigin.Operator }
+
+        return Triple(getValueCall, setValueCall, provideDelegateCall)
+    }
+
+    private fun resolveDelegatedPropertySymbols(firProperty: FirProperty, psi: KtPropertyDelegate): KaSymbolResolutionAttempt? {
+        val (getValueCall, setValueCall, provideDelegateCall) = extractDelegatedPropertyFirCalls(firProperty) ?: return null
+        return resolveFunctionCallsAsSymbols(
+            calls = listOfNotNull(getValueCall, setValueCall, provideDelegateCall),
+            psi = psi,
+        )
+    }
+
+    private fun resolveDelegatedPropertyCall(firProperty: FirProperty, psi: KtPropertyDelegate): KaCallResolutionAttempt? {
+        val (firGetValueCall, firSetValueCall, firProvideDelegateCall) = extractDelegatedPropertyFirCalls(firProperty) ?: return null
+        val allCalls = listOfNotNull(firGetValueCall, firSetValueCall, firProvideDelegateCall)
+        findErrorCall(allCalls, psi)?.let { return it }
+
+        if (allCalls.isEmpty()) return null
+        val valueGetterCall = firGetValueCall?.let(::buildNamedFunctionCall) ?: return null
+        val valueSetterCall = firSetValueCall?.let(::buildNamedFunctionCall)
+        val provideDelegateCall = firProvideDelegateCall?.let(::buildNamedFunctionCall)
+
+        return KaBaseCallResolutionSuccess(KaBaseDelegatedPropertyCall(valueGetterCall, valueSetterCall, provideDelegateCall))
+    }
+
+    private fun findErrorCall(calls: List<FirFunctionCall>, psi: KtElement): KaCallResolutionAttempt? {
+        for (call in calls) {
+            val ref = call.calleeReference
+            if (ref is FirDiagnosticHolder) {
+                return transformErrorReference(psi, call, ref, resolveFragmentOfCall = false)
+            }
+        }
+
+        return null
+    }
+
+    private fun buildNamedFunctionCall(firFunctionCall: FirFunctionCall): KaFunctionCall<KaNamedFunctionSymbol>? {
         val functionSymbol = (firFunctionCall.calleeReference as? FirResolvedNamedReference)
             ?.resolvedSymbol as? FirNamedFunctionSymbol ?: return null
 

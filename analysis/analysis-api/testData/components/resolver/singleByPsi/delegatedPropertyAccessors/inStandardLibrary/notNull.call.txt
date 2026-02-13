@@ -1,2 +1,75 @@
 KtPropertyDelegate(62,84): 'by Delegates.notNull()'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedPropertyCall:
+      provideDelegateCall = null
+      valueGetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Delegates.notNull()
+          isSafeNavigation = false
+          type = kotlin.properties.ReadWriteProperty<kotlin.Any?, kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/properties/ReadWriteProperty.getValue(<dispatch receiver>: kotlin.properties.ReadWriteProperty<T, V>, thisRef: T, property: kotlin.reflect.KProperty<*>): V
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: T
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/properties/ReadWriteProperty.getValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      valueSetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Delegates.notNull()
+          isSafeNavigation = false
+          type = kotlin.properties.ReadWriteProperty<kotlin.Any?, kotlin.Int>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/properties/ReadWriteProperty.setValue(<dispatch receiver>: kotlin.properties.ReadWriteProperty<T, V>, thisRef: T, property: kotlin.reflect.KProperty<*>, value: V): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: T
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = value: V
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/properties/ReadWriteProperty.setValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}

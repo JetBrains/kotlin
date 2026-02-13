@@ -1,2 +1,80 @@
 KtPropertyDelegate(181,199): 'by Holder("hello")'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedPropertyCall:
+      provideDelegateCall = null
+      valueGetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = test/MyObject
+          type = test.MyObject
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = Holder("hello")
+          isSafeNavigation = false
+          type = dependency.Holder
+        signature = KaFunctionSignature:
+          receiverType = dependency.Holder
+          returnType = kotlin.String
+          symbol = dependency/MyDelegateOperators.getValue(<extension receiver>: dependency.Holder, <dispatch receiver>: dependency.MyDelegateOperators, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = dependency/MyDelegateOperators.getValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+      valueSetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = test/MyObject
+          type = test.MyObject
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = Holder("hello")
+          isSafeNavigation = false
+          type = dependency.Holder
+        signature = KaFunctionSignature:
+          receiverType = dependency.Holder
+          returnType = kotlin.Unit
+          symbol = dependency/MyDelegateOperators.setValue(<extension receiver>: dependency.Holder, <dispatch receiver>: dependency.MyDelegateOperators, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.String
+              symbol = value: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = dependency/MyDelegateOperators.setValue
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
+    isInBestCandidates = true

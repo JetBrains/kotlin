@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 /**
  * Represents a property delegate expression that provides the implementation for property accessors.
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
  * //               ^________________^
  * }</pre>
  */
-public class KtPropertyDelegate extends KtElementImpl {
+public class KtPropertyDelegate extends KtElementImpl implements KtResolvableCall {
     public KtPropertyDelegate(@NotNull ASTNode node) {
         super(node);
     }

@@ -410,7 +410,44 @@ KtNameReferenceExpression(574,580): 'String'
   null
 
 KtPropertyDelegate(581,593): 'by lazy {""}'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedPropertyCall:
+      provideDelegateCall = null
+      valueGetterCall = KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = lazy {""}
+          isSafeNavigation = false
+          type = kotlin.Lazy<kotlin.String>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.Lazy<kotlin.String>
+          returnType = kotlin.String
+          symbol = kotlin/getValue(<extension receiver>: kotlin.Lazy<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
+          valueParameters = [
+            KaVariableSignature:
+              name = thisRef
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = thisRef: kotlin.Any?
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = property
+              receiverType = null
+              returnType = kotlin.reflect.KProperty<*>
+              symbol = property: kotlin.reflect.KProperty<*>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/getValue
+        typeArgumentsMapping = {
+          T -> (kotlin.String)
+        }
+        valueArgumentMapping = {}
+      valueSetterCall = null
 
 KtCallExpression(584,593): 'lazy {""}'
   KaCallResolutionSuccess:

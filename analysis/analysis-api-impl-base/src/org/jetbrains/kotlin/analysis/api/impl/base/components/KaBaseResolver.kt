@@ -143,6 +143,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     final override fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? = resolveSingleCallSafe()
     final override fun KtDestructuringDeclarationEntry.resolveCall(): KaSingleCall<*, *>? = resolveCallSafe()
     final override fun KtForExpression.resolveCall(): KaForLoopCall? = resolveCallSafe()
+    final override fun KtPropertyDelegate.resolveCall(): KaDelegatedPropertyCall? = resolveCallSafe()
 
     final override fun KtElement.resolveToCall(): KaCallInfo? = withPsiValidityAssertion {
         when (val attempt = tryResolveCallImpl()) {
@@ -239,6 +240,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
         is KtEnumEntrySuperclassReferenceExpression -> true
         is KtDestructuringDeclarationEntry -> true
         is KtForExpression -> true
+        is KtPropertyDelegate -> true
         else -> false
     }
 
