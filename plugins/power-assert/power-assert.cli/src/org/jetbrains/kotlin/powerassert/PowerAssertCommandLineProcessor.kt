@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.powerassert.PowerAssertPluginNames.PLUGIN_ID
+import java.util.regex.Pattern
 
 class PowerAssertCommandLineProcessor : CommandLineProcessor {
     override val pluginId: String get() = PLUGIN_ID
@@ -36,6 +37,13 @@ class PowerAssertCommandLineProcessor : CommandLineProcessor {
             required = false, // TODO required for Kotlin/JS
             allowMultipleOccurrences = true,
         ),
+        CliOption(
+            optionName = "functionRegex",
+            valueDescription = "regex matched against a function full-qualified name. Format is '\$flagsInt:\$pattern'.",
+            description = "regex matched against the fully qualified path of function to intercept",
+            required = false, // TODO required for Kotlin/JS
+            allowMultipleOccurrences = true,
+        ),
     )
 
     override fun processOption(
@@ -45,6 +53,11 @@ class PowerAssertCommandLineProcessor : CommandLineProcessor {
     ) {
         return when (option.optionName) {
             "function" -> configuration.add(KEY_FUNCTIONS, value)
+            "functionRegex" -> {
+                val flags = value.substringBefore(':', "").toIntOrNull() ?: 0
+                val pattern = value.substringAfter(':')
+                configuration.add(KEY_FUNCTION_REGEXES, Pattern.compile(pattern, flags).toRegex())
+            }
             else -> error("Unexpected config option ${option.optionName}")
         }
     }
