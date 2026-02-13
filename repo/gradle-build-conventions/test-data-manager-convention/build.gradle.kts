@@ -31,6 +31,7 @@ kotlin {
 
 dependencies {
     compileOnly(kotlin("stdlib", embeddedKotlinVersion))
+    implementation(project(":utilities"))
 }
 
 project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {

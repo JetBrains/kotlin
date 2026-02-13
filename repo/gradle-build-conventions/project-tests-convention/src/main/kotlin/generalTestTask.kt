@@ -109,11 +109,7 @@ internal fun Project.createGeneralTestTask(
             classpath = sourceSets.getByName("test").runtimeClasspath
             testClassesDirs = sourceSets.getByName("test").output.classesDirs
         }
-        inputs.file(
-            rootProject.tasks.named("createIdeaHomeForTests")
-                .map { task -> task.outputs.files.singleFile.resolve("build.txt") })
-            .withPathSensitivity(PathSensitivity.RELATIVE).withPathSensitivity(PathSensitivity.RELATIVE)
-
+        attachIdeaHomeInput()
         muteWithDatabase()
         if (jUnitMode == JUnitMode.JUnit4) {
             jvmArgumentProviders.add {

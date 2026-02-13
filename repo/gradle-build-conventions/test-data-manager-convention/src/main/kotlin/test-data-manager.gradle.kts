@@ -50,6 +50,8 @@ tasks.register<TestDataManagerModuleTask>(manageTestDataTaskName) {
     // Copy all test task dependencies - more robust than manually listing them
     dependsOn(testTask.dependsOn)
 
+    attachIdeaHomeInput()
+
     // Inherit ordering from test task, but convert :test references to :manageTestData
     // This ensures proper ordering when running manageTestDataGlobally
     val testMustRunAfter = testTask.mustRunAfter.getDependencies(testTask)
