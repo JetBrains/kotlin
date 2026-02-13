@@ -261,7 +261,9 @@ The default value is 1.""".asReleaseDependent()
         compilerName = "additionalJavaModules"
         description =
             "Root modules to resolve in addition to the initial modules, or all modules on the module path if <module> is ALL-MODULE-PATH.".asReleaseDependent()
-        argumentType = StringArrayType.defaultNull
+        @Suppress("DEPRECATION")
+        valueType = StringArrayType.defaultNull
+        argumentType = StringListType.defaultNull
         argumentTypeDescription = "<module[,]>".asReleaseDependent()
 
         lifecycle(
