@@ -97,5 +97,3 @@ allprojects {
         )
     }
 }
-
-testsJar()
