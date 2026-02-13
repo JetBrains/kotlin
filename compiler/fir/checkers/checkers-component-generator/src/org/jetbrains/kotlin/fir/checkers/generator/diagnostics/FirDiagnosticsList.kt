@@ -1617,6 +1617,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS by error<KtExpression>(PositioningStrategy.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER) {
             parameter<String>("kind")
         }
+        val EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS_WARNING by warning<KtExpression>(PositioningStrategy.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER) {
+            parameter<String>("kind")
+        }
         val SAFE_CALLABLE_REFERENCE_CALL by error<KtExpression>()
 
         val LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL by error<PsiElement>()
