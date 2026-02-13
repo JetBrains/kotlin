@@ -47,13 +47,15 @@ testing {
             // JUnit tags for descriptors (K1) and symbols (K2) are defined with annotations in test classes.
             val onlyDescriptorTags = listOf("onlyDescriptors", "onlyDescriptorsMPP")
             val onlySymbolsTags = listOf("onlySymbols")
+            val onlyNewKdocResolutionTags = listOf("onlyNewKDocResolution")
 
             // Create a new target for _only_ running test compatible with descriptor-analysis (K1).
             val testDescriptorsTarget = targets.register("testDescriptors") {
                 testTask.configure {
-                    description = "Runs tests using descriptors-analysis (K1) (excluding tags: ${onlySymbolsTags})"
+                    val excludedTags = onlySymbolsTags + onlyNewKdocResolutionTags
+                    description = "Runs tests using descriptors-analysis (K1) (excluding tags: ${excludedTags})"
                     useJUnitPlatform {
-                        excludeTags.addAll(onlySymbolsTags)
+                        excludeTags.addAll(excludedTags)
                     }
                     // Analysis dependencies from `descriptorsTestImplementation` should precede all other dependencies
                     // in order to use the shadowed stdlib from the analysis dependencies
@@ -64,13 +66,31 @@ testing {
             // Create a new target for _only_ running test compatible with symbols-analysis (K2).
             val testSymbolsTarget = targets.register("testSymbols") {
                 testTask.configure {
-                    description = "Runs tests using symbols-analysis (K2) (excluding tags: ${onlyDescriptorTags})"
+                    val excludedTags = onlyDescriptorTags + onlyNewKdocResolutionTags
+                    description = "Runs tests using symbols-analysis (K2) (excluding tags: ${excludedTags})"
                     useJUnitPlatform {
-                        excludeTags.addAll(onlyDescriptorTags)
+                        excludeTags.addAll(excludedTags)
                     }
                     // Analysis dependencies from `symbolsTestImplementation` should precede all other dependencies
                     // in order  to use the shadowed stdlib from the analysis dependencies
                     classpath = symbolsTestImplementationResolver.incoming.files + classpath
+                }
+            }
+
+            // Create a new target for running symbols-analysis tests with enabled experimental KDoc resolution (K2).
+            val testSymbolsWithNewKDocResolutionTarget = targets.register("testSymbolsWithNewKDocResolution") {
+                testTask.configure {
+                    val excludedTags = onlyDescriptorTags
+                    description = "Runs tests using symbols-analysis and experimental KDoc resolution (K2)" +
+                            " (excluding tags: ${excludedTags})"
+                    useJUnitPlatform {
+                        excludeTags.addAll(excludedTags)
+                    }
+                    // Analysis dependencies from `symbolsTestImplementation` should precede all other dependencies
+                    // in order  to use the shadowed stdlib from the analysis dependencies
+                    classpath = symbolsTestImplementationResolver.incoming.files + classpath
+
+                    systemProperty("org.jetbrains.dokka.analysis.enableExperimentalKDocResolution", "true")
                 }
             }
 
@@ -82,6 +102,7 @@ testing {
                     onlyIf { false }
                     dependsOn(testDescriptorsTarget.map { it.testTask })
                     dependsOn(testSymbolsTarget.map { it.testTask })
+                    dependsOn(testSymbolsWithNewKDocResolutionTarget.map { it.testTask })
                 }
             }
         }

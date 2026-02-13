@@ -58,3 +58,20 @@ annotation class OnlySymbols(val reason: String = "")
 )
 @Tag("onlyDescriptorsMPP")
 annotation class OnlyDescriptorsMPP(val reason: String = "")
+
+/**
+ * Run a test only for a new KDoc resolution (with K2)
+ *
+ * After we switch to the new KDoc resolution by default, this annotation should be removed
+ */
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER
+)
+@Retention(
+    AnnotationRetention.RUNTIME
+)
+@Tag("onlyNewKDocResolution")
+annotation class OnlyNewKDocResolution(val reason: String = "")
