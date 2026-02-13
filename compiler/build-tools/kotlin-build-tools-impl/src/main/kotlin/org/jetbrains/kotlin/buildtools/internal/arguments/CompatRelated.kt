@@ -38,3 +38,20 @@ internal fun <T> applyJdkHome(
 
     return compilerArgs.jdkHome as T
 }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> K2JVMCompilerArguments.applyAdditionalJavaModules(javaModules: T?) {
+    require(javaModules is Array<*>? && javaModules?.isArrayOf<String>() == true) { "Xadd-modules must be an array of string, but was $jdkHome" }
+
+    this.additionalJavaModules = javaModules as Array<String>?
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applyAdditionalJavaModules(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is Array<*>? && currentValue?.isArrayOf<String>() == true) { "Xadd-modules must be an array of string, but was $currentValue" }
+
+    return compilerArgs.jdkHome as T
+}

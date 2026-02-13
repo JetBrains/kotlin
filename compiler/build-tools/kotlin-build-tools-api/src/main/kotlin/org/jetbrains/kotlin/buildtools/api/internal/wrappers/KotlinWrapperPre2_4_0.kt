@@ -171,6 +171,13 @@ internal class KotlinWrapperPre2_4_0(
                     Path(stringValue) as V
                 }
 
+                JvmCompilerArguments.X_ADD_MODULES -> {
+                    if (delegate[key] == null) return null as V
+
+                    val arrayValue = delegate[key] as Array<String>
+                    arrayValue.toList() as V
+                }
+
                 else -> delegate[key]
             }
         }
@@ -193,6 +200,15 @@ internal class KotlinWrapperPre2_4_0(
                     val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
 
                     delegate[stringKey] = stringValue
+                }
+
+                JvmCompilerArguments.X_ADD_MODULES -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val listValue: List<String>? = (value as? List<*>)?.takeIf { it.all { item -> item is String } } as List<String>?
+                    val arrayValue = listValue?.toTypedArray()
+                    val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
+
+                    delegate[arrayKey] = arrayValue
                 }
 
                 else -> delegate[key] = value
