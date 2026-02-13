@@ -136,7 +136,9 @@ internal class KotlinBelow240Wrapper(
         override fun <V> get(key: JvmCompilerArguments.JvmCompilerArgument<V>): V {
             return when (key) {
                 JvmCompilerArguments.X_PROFILE -> {
-                    val stringValue = delegate[key] as? String ?: return null as V
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
                     val parts = stringValue.split(File.pathSeparator)
                     require(parts.size == 3) { "Invalid async profiler settings format: $this" }
 
@@ -144,7 +146,9 @@ internal class KotlinBelow240Wrapper(
                 }
 
                 JvmCompilerArguments.JDK_HOME -> {
-                    val stringValue = delegate[key] as? String ?: return null as V
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
                     Path(stringValue) as V
                 }
 
@@ -155,7 +159,7 @@ internal class KotlinBelow240Wrapper(
         override fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V) {
             when (key) {
                 JvmCompilerArguments.X_PROFILE -> {
-                    val profileCompilerCommand = value as? ProfileCompilerCommand
+                    val profileCompilerCommand = value as ProfileCompilerCommand?
                     val stringValue =
                         profileCompilerCommand?.let { "${it.profilerPath.toFile().absolutePath}${File.pathSeparator}${it.command}${File.pathSeparator}${it.outputDir.toFile().absolutePath}" }
                     val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
@@ -165,7 +169,7 @@ internal class KotlinBelow240Wrapper(
                 }
 
                 JvmCompilerArguments.JDK_HOME -> {
-                    val pathValue = value as? Path
+                    val pathValue = value as Path?
                     val stringValue = pathValue?.toFile()?.absolutePath
                     val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
 
