@@ -28,7 +28,7 @@ object KonanLibrarySpecialCompatibilityChecker : LibrarySpecialCompatibilityChec
     override fun libraryVersion(library: KotlinLibrary): Version? =
         super.libraryVersion(library) ?: Version.parseVersion(getCompilerVersionFromKonanProperties(library))
 
-    private fun getCompilerVersionFromKonanProperties(library: KotlinLibrary): String? {
+    fun getCompilerVersionFromKonanProperties(library: KotlinLibrary): String? {
         if (!library.libraryFile.path.endsWith(KONAN_STDLIB_DIRECTORY)) return null
 
         val konanRoot = library.libraryFile.path.substringBefore(KONAN_STDLIB_DIRECTORY)
@@ -40,7 +40,9 @@ object KonanLibrarySpecialCompatibilityChecker : LibrarySpecialCompatibilityChec
         return properties.getProperty(KONAN_COMPILER_VERSION)
     }
 
-    private const val KONAN_PROPERTIES_FILE = "konan/konan.properties"
-    private const val KONAN_STDLIB_DIRECTORY = "klib/common/stdlib"
+    private val KONAN_PROPERTIES_FILE
+        get() = "konan${File.separator}konan.properties"
+    private val KONAN_STDLIB_DIRECTORY
+        get() = "klib${File.separator}common${File.separator}stdlib"
     private const val KONAN_COMPILER_VERSION = "compilerVersion"
 }
