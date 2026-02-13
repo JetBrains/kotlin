@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
 import org.jetbrains.kotlin.fir.isIntersectionOverride
@@ -184,19 +182,9 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiver: FirEx
 }
 
 private fun FirMemberDeclaration.getBackingFieldIfApplicable(): FirBackingField? {
-    val fieldOwner = when {
-        this !is FirProperty -> return null
-        else -> this.unwrapFakeOverridesAccountingForExplicitBackingFields()
-    }
-    val field = fieldOwner.getExplicitBackingField() ?: return null
-
-    // This check prevents resolving protected and
-    // public fields.
-    return when (field.visibility) {
-        Visibilities.PrivateToThis,
-        Visibilities.Private,
-        Visibilities.Internal -> field
-        else -> null
+    return when {
+        this !is FirProperty -> null
+        else -> this.unwrapFakeOverridesAccountingForExplicitBackingFields().getExplicitBackingField()
     }
 }
 
