@@ -1,0 +1,6 @@
+KtForExpression(23,37): 'for(i in f) {}'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) operator fun kotlin.Int.iterator(): kotlin.Any

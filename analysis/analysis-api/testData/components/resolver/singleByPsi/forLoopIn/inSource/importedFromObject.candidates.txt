@@ -1,0 +1,2 @@
+KtForExpression(141,160): 'for (x in Foo()) {}'
+  NO_CANDIDATES

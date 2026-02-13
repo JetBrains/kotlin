@@ -1,0 +1,2 @@
+KtForExpression(306,355): 'for (i in Progression<String>("a", "z")) {'
+  null

@@ -3064,6 +3064,24 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/allMembers.kt");
       }
 
+      @Test
+      @TestMetadata("importedFromObject.kt")
+      public void testImportedFromObject() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/importedFromObject.kt");
+      }
+
+      @Test
+      @TestMetadata("withGenericIterator.kt")
+      public void testWithGenericIterator() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/withGenericIterator.kt");
+      }
+
+      @Test
+      @TestMetadata("withGenericOperators.kt")
+      public void testWithGenericOperators() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/withGenericOperators.kt");
+      }
+
       @Nested
       @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/withErrors")
       @TestDataPath("$PROJECT_ROOT")
@@ -3074,9 +3092,45 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
         }
 
         @Test
+        @TestMetadata("hasNextAndNextMissing.kt")
+        public void testHasNextAndNextMissing() {
+          runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/withErrors/hasNextAndNextMissing.kt");
+        }
+
+        @Test
+        @TestMetadata("hasNextIncorrect.kt")
+        public void testHasNextIncorrect() {
+          runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/withErrors/hasNextIncorrect.kt");
+        }
+
+        @Test
+        @TestMetadata("hasNextMissing.kt")
+        public void testHasNextMissing() {
+          runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/withErrors/hasNextMissing.kt");
+        }
+
+        @Test
+        @TestMetadata("iteratorIncorrect.kt")
+        public void testIteratorIncorrect() {
+          runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/withErrors/iteratorIncorrect.kt");
+        }
+
+        @Test
+        @TestMetadata("iteratorMissing.kt")
+        public void testIteratorMissing() {
+          runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/withErrors/iteratorMissing.kt");
+        }
+
+        @Test
         @TestMetadata("nextMissing.kt")
         public void testNextMissing() {
           runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/withErrors/nextMissing.kt");
+        }
+
+        @Test
+        @TestMetadata("nextMissingIncorrect.kt")
+        public void testNextMissingIncorrect() {
+          runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/withErrors/nextMissingIncorrect.kt");
         }
       }
     }

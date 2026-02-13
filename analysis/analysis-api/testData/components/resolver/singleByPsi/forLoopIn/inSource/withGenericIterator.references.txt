@@ -1,0 +1,8 @@
+KtForExpression(306,355): 'for (i in Progression<String>("a", "z")) {'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in f) operator fun <T> f.Progression<T>.iterator(): kotlin.collections.Iterator<T>
+      1: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+      2: (in kotlin.collections.Iterator) operator fun next(): T

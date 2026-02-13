@@ -1,0 +1,8 @@
+KtForExpression(141,160): 'for (x in Foo()) {}'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in dependency.MyInterface) operator fun dependency.Foo.iterator(): kotlin.collections.Iterator<kotlin.Int>
+      1: (in kotlin.collections.Iterator) operator fun hasNext(): kotlin.Boolean
+      2: (in kotlin.collections.Iterator) operator fun next(): T

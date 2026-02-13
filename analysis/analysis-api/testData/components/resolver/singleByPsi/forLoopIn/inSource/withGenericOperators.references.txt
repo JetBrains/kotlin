@@ -1,0 +1,8 @@
+KtForExpression(363,409): 'for (i in Container<String>("hello")) {'
+  KtForLoopInReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      0: (in f) operator fun <T> f.Container<T>.iterator(): f.MyIterator<T>
+      1: (in f) operator fun <T> f.MyIterator<T>.hasNext(): kotlin.Boolean
+      2: (in f) operator fun <T> f.MyIterator<T>.next(): T

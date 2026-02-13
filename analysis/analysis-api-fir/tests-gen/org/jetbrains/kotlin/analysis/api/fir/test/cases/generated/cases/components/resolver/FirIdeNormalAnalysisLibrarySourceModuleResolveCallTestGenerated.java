@@ -2973,6 +2973,24 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCallTestGenerated ext
       public void testAllMembers() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/allMembers.kt");
       }
+
+      @Test
+      @TestMetadata("importedFromObject.kt")
+      public void testImportedFromObject() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/importedFromObject.kt");
+      }
+
+      @Test
+      @TestMetadata("withGenericIterator.kt")
+      public void testWithGenericIterator() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/withGenericIterator.kt");
+      }
+
+      @Test
+      @TestMetadata("withGenericOperators.kt")
+      public void testWithGenericOperators() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/forLoopIn/inSource/withGenericOperators.kt");
+      }
     }
   }
 
