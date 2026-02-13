@@ -96,12 +96,12 @@ fun IrRichPropertyReference.convertToRichFunctionReference(context: LoweringCont
     getterFunction.parameters.singleOrNull { it.name == SpecialNames.THIS }?.also {
         it.name = Name.identifier(AsmUtil.RECEIVER_PARAMETER_NAME)
     }
-    val overriddenClass = context.irBuiltIns.kFunctionN(getterFunction.parameters.size)
+    val overriddenClass = context.irBuiltIns.functionN(getterFunction.parameters.size)
     val builder = context.createIrBuilder(getterFunction.symbol).at(this)
     val referenceType = overriddenClass.typeWith(getterFunction.parameters.map { it.type } + getterFunction.returnType)
     return builder.irRichFunctionReference(
         superType = referenceType,
-        reflectionTargetSymbol = getterFunction.symbol,
+        reflectionTargetSymbol = null,
         overriddenFunctionSymbol = overriddenClass.functions.single { it.name == OperatorNameConventions.INVOKE }.symbol,
         invokeFunction = getterFunction,
         captures = emptyList(),
