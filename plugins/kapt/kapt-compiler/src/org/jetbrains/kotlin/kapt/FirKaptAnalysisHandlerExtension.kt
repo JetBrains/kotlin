@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
@@ -230,7 +229,7 @@ open class FirKaptAnalysisHandlerExtension(
 
         return KaptContextForStubGeneration(
             options, false, logger, builderFactory.compiledClasses, builderFactory.origins, generationState,
-            BindingContext.EMPTY, frontendOutput.frontendOutput.outputs.flatMap { it.fir },
+            frontendOutput.frontendOutput.outputs.flatMap { it.fir },
         )
     }
 

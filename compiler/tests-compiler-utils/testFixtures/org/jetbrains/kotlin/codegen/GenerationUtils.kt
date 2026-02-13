@@ -57,7 +57,7 @@ object GenerationUtils {
         classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST,
         trace: BindingTrace = NoScopeRecordCliBindingTrace(environment.project)
     ): GenerationState =
-        compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider, trace).first
+        compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider, trace)
 
     @JvmStatic
     @JvmOverloads
@@ -67,12 +67,12 @@ object GenerationUtils {
         classBuilderFactory: ClassBuilderFactory,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
         trace: BindingTrace = NoScopeRecordCliBindingTrace(files.first().project)
-    ): Pair<GenerationState, BindingContext> {
+    ): GenerationState {
         val project = files.first().project
         return if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            compileFilesUsingFrontendIR(project, files, configuration, classBuilderFactory, packagePartProvider) to BindingContext.EMPTY
+            compileFilesUsingFrontendIR(project, files, configuration, classBuilderFactory, packagePartProvider)
         } else {
-            compileFilesUsingStandardMode(project, files, configuration, classBuilderFactory, packagePartProvider, trace)
+            compileFilesUsingStandardMode(project, files, configuration, classBuilderFactory, packagePartProvider, trace).first
         }
     }
 
