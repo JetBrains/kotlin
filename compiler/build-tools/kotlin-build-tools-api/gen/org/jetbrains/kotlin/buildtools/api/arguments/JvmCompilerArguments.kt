@@ -9,6 +9,7 @@ import kotlin.Boolean
 import kotlin.Deprecated
 import kotlin.Int
 import kotlin.String
+import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
@@ -109,7 +110,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ADD_MODULES: JvmCompilerArgument<Array<String>?> =
+    public val X_ADD_MODULES: JvmCompilerArgument<List<String>> =
         JvmCompilerArgument("X_ADD_MODULES", KotlinReleaseVersion(1, 1, 4))
 
     /**

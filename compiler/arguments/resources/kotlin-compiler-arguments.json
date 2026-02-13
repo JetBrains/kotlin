@@ -1,5 +1,5 @@
 {
-    "schemaVersion": 5,
+    "schemaVersion": 6,
     "releases": [
         {
             "name": "1.0.0",
@@ -5717,13 +5717,13 @@
                                 },
                                 "delimiter": null,
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringListType",
                                     "defaultValue": {
                                         "current": null,
                                         "valueInVersions": []
                                     },
                                     "isNullable": {
-                                        "current": true,
+                                        "current": false,
                                         "valueInVersions": []
                                     }
                                 },
