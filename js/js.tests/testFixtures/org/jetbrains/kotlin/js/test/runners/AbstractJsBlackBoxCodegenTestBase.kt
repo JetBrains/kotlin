@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
+import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -269,7 +270,10 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
     additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null
 ) {
     configureFirHandlersStep {
-        useHandlers(::FirDiagnosticsHandler)
+        useHandlers(
+            ::FirDiagnosticsHandler,
+            ::NoFirCompilationErrorsHandler,
+        )
     }
 
     configureIrHandlersStep {
@@ -289,6 +293,7 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
 
     useAfterAnalysisCheckers(
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
+        ::FirMetaInfoDiffSuppressor,
     )
 
     enableMetaInfoHandler()

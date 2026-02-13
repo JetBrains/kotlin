@@ -97,18 +97,7 @@ abstract class AbstractLightTreeJsBoxTest : AbstractJsTest(
 abstract class AbstractJsCodegenBoxTestBase(
     pathToTestDir: String = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix: String,
-) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureFirHandlersStep {
-            commonFirHandlersForCodegenTest()
-        }
-
-        builder.useAfterAnalysisCheckers(
-            ::FirMetaInfoDiffSuppressor
-        )
-    }
-}
+) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix)
 
 abstract class AbstractJsCodegenBoxTest : AbstractJsCodegenBoxTestBase(
     testGroupOutputDirPrefix = "codegen/box/"

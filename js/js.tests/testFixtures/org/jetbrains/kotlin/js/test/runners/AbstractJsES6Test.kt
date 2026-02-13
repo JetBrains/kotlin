@@ -36,18 +36,7 @@ abstract class AbstractJsES6BoxTest : AbstractJsES6Test(
 abstract class AbstractJsES6CodegenBoxTest : AbstractJsES6Test(
     pathToTestDir = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix = "codegen/es6Box/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureFirHandlersStep {
-            commonFirHandlersForCodegenTest()
-        }
-
-        builder.useAfterAnalysisCheckers(
-            ::FirMetaInfoDiffSuppressor
-        )
-    }
-}
+)
 
 abstract class AbstractJsES6CodegenInlineTest : AbstractJsES6Test(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
