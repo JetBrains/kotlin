@@ -77,7 +77,6 @@ import org.jetbrains.kotlin.kapt.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
@@ -821,7 +820,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val name = field.name
         if (!isValidIdentifier(name)) return null
 
-        val type = getFieldType(field, origin)
+        val type = Type.getType(field.desc)
 
         if (!checkIfValidTypeName(containingClass, type)) {
             return null
@@ -1866,25 +1865,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         lineMappings.registerSignature(this, node)
         return this
     }
-
-    private fun getFieldType(field: FieldNode, origin: JvmDeclarationOrigin?): Type {
-        val fieldType = Type.getType(field.desc)
-        return when (val declaration = origin?.element) {
-            is KtProperty -> {
-                //replace anonymous type in delegate (if any)
-                val delegateType = kaptContext.bindingContext[BindingContext.EXPRESSION_TYPE_INFO, declaration.delegateExpression]?.type
-                delegateType?.let {
-                    val replaced = replaceAnonymousTypeWithSuperType(it)
-                    //not changed => not anonymous type => use type from field
-                    if (replaced != it) replaced else null
-                }?.let(::convertKotlinType) ?: fieldType
-            }
-
-            else -> fieldType
-        }
-    }
-
-    private fun convertKotlinType(type: KotlinType): Type = typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT)
 
     private fun getFileForClass(c: ClassNode): KtFile? = kaptContext.origins[c]?.element?.containingFile as? KtFile
 

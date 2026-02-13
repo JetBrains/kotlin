@@ -46,24 +46,13 @@ open class AnalysisResult protected constructor(
 
     operator fun component3() = shouldGenerateCode
 
-    val error: Throwable
-        get() = if (this is InternalError) this.exception else throw IllegalStateException("Should only be called for error analysis result")
-
-    fun isError(): Boolean = this is InternalError || this is CompilationError
+    fun isError(): Boolean = this is CompilationError
 
     fun throwIfError() {
-        when (this) {
-            is InternalError -> throw IllegalStateException("failed to analyze: $error", error)
-            is CompilationError -> throw CompilationErrorException()
-        }
+        if (this is CompilationError) throw CompilationErrorException()
     }
 
     private class CompilationError(bindingContext: BindingContext) : AnalysisResult(bindingContext, ErrorUtils.errorModule)
-
-    private class InternalError(
-        bindingContext: BindingContext,
-        val exception: Throwable
-    ) : AnalysisResult(bindingContext, ErrorUtils.errorModule)
 
     class RetryWithAdditionalRoots(
         bindingContext: BindingContext,
@@ -85,11 +74,6 @@ open class AnalysisResult protected constructor(
         @JvmStatic
         fun success(bindingContext: BindingContext, module: ModuleDescriptor, shouldGenerateCode: Boolean): AnalysisResult {
             return AnalysisResult(bindingContext, module, shouldGenerateCode)
-        }
-
-        @JvmStatic
-        fun internalError(bindingContext: BindingContext, error: Throwable): AnalysisResult {
-            return InternalError(bindingContext, error)
         }
 
         @JvmStatic

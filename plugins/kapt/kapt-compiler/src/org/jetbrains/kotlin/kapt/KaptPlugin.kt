@@ -16,41 +16,16 @@
 
 package org.jetbrains.kotlin.kapt
 
-import com.intellij.mock.MockProject
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.compiler.plugin.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
+import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
+import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
+import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.container.ComponentProvider
-import org.jetbrains.kotlin.container.StorageComponentContainer
-import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.context.ProjectContext
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.kapt.base.*
-import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.base.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.kapt.cli.KaptCliOption
 import org.jetbrains.kotlin.kapt.cli.KaptCliOption.*
 import org.jetbrains.kotlin.kapt.cli.KaptCliOption.Companion.ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
-import org.jetbrains.kotlin.kapt.util.MessageCollectorBackedKaptLogger
-import org.jetbrains.kotlin.kapt.util.ReplaceWithSupertypeAnonymousTypeTransformer
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.decodePluginOptions
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -62,7 +37,7 @@ val KAPT_OPTIONS = CompilerConfigurationKey.create<KaptOptions.Builder>("KAPT_OP
 class KaptCommandLineProcessor : CommandLineProcessor {
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 
-    override val pluginOptions: Collection<AbstractCliOption> = values().asList()
+    override val pluginOptions: Collection<AbstractCliOption> = KaptCliOption.entries
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         doOpenInternalPackagesIfRequired()
@@ -73,7 +48,7 @@ class KaptCommandLineProcessor : CommandLineProcessor {
         val kaptOptions = configuration[KAPT_OPTIONS]
             ?: KaptOptions.Builder().also { configuration.put(KAPT_OPTIONS, it) }
 
-        if (option == @Suppress("DEPRECATION") KaptCliOption.CONFIGURATION) {
+        if (option == @Suppress("DEPRECATION") CONFIGURATION) {
             configuration.applyOptionsFrom(decodePluginOptions(value), pluginOptions)
         } else {
             kaptOptions.processOption(option, value)
@@ -159,139 +134,5 @@ class KaptCommandLineProcessor : CommandLineProcessor {
         }
 
         return map
-    }
-}
-
-@Suppress("DEPRECATION_ERROR")
-class KaptComponentRegistrar : ComponentRegistrar {
-    override val supportsK2: Boolean
-        get() = true
-
-    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        val optionsBuilder = (configuration[KAPT_OPTIONS] ?: KaptOptions.Builder())
-        if (configuration.getBoolean(USE_FIR)) return
-
-        doOpenInternalPackagesIfRequired()
-        val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
-
-        optionsBuilder.apply {
-            projectBaseDir = project.basePath?.let(::File)
-            compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
-            javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
-            classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
-        }
-
-        val messageCollector = configuration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            ?: PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, optionsBuilder.flags.contains(KaptFlag.VERBOSE))
-
-        val logger = MessageCollectorBackedKaptLogger(
-            optionsBuilder.flags.contains(KaptFlag.VERBOSE),
-            optionsBuilder.flags.contains(KaptFlag.INFO_AS_WARNINGS),
-            messageCollector
-        )
-
-        if (!optionsBuilder.checkOptions(project, logger, configuration)) {
-            return
-        }
-
-        val options = optionsBuilder.build()
-
-        options.sourcesOutputDir.mkdirs()
-
-        if (options[KaptFlag.VERBOSE]) {
-            logger.info(options.logString())
-        }
-
-        val extension = ClasspathBasedKaptExtension(options, logger, configuration)
-        AnalysisHandlerExtension.registerExtension(project, extension)
-        StorageComponentContainerContributor.registerExtension(project, KaptComponentContributor(extension))
-    }
-
-    private fun KaptOptions.Builder.checkOptions(project: MockProject, logger: KaptLogger, configuration: CompilerConfiguration): Boolean {
-        fun abortAnalysis() = AnalysisHandlerExtension.registerExtension(project, AbortAnalysisHandlerExtension())
-
-        if (classesOutputDir == null) {
-            if (configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
-                logger.error("Kapt does not support specifying JAR file outputs. Please specify the classes output directory explicitly.")
-                abortAnalysis()
-                return false
-            } else {
-                classesOutputDir = configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
-            }
-        }
-
-        if (processingClasspath.isEmpty()) {
-            // Skip annotation processing if no annotation processors were provided
-            if (mode != AptMode.WITH_COMPILATION) {
-                logger.info("No annotation processors provided. Skip KAPT processing.")
-                abortAnalysis()
-            }
-            return false
-        }
-
-        if (sourcesOutputDir == null || classesOutputDir == null || stubsOutputDir == null) {
-            if (mode != AptMode.WITH_COMPILATION) {
-                val nonExistentOptionName = when {
-                    sourcesOutputDir == null -> "Sources output directory"
-                    classesOutputDir == null -> "Classes output directory"
-                    stubsOutputDir == null -> "Stubs output directory"
-                    else -> throw IllegalStateException()
-                }
-                val moduleName = configuration.get(CommonConfigurationKeys.MODULE_NAME)
-                    ?: configuration.get(JVMConfigurationKeys.MODULES).orEmpty().joinToString()
-
-                logger.warn("$nonExistentOptionName is not specified for $moduleName, skipping annotation processing")
-                abortAnalysis()
-            }
-            return false
-        }
-
-        if (!Kapt.checkJavacComponentsAccess(logger)) {
-            abortAnalysis()
-            return false
-        }
-
-        return true
-    }
-
-    class KaptComponentContributor(private val analysisExtension: PartialAnalysisHandlerExtension) : StorageComponentContainerContributor {
-        override fun registerModuleComponents(
-            container: StorageComponentContainer,
-            platform: TargetPlatform,
-            moduleDescriptor: ModuleDescriptor
-        ) {
-            if (!platform.isJvm()) return
-            container.useInstance(object : ReplaceWithSupertypeAnonymousTypeTransformer() {
-                override fun transformAnonymousType(descriptor: DeclarationDescriptorWithVisibility, type: KotlinType): KotlinType? {
-                    if (!analysisExtension.analyzePartially) return null
-                    return super.transformAnonymousType(descriptor, type)
-                }
-            })
-        }
-    }
-
-    /* This extension simply disables both code analysis and code generation.
-     * When aptOnly is true, and any of required kapt options was not passed, we just abort compilation by providing this extension.
-     * */
-    private class AbortAnalysisHandlerExtension : AnalysisHandlerExtension {
-        override fun doAnalysis(
-            project: Project,
-            module: ModuleDescriptor,
-            projectContext: ProjectContext,
-            files: Collection<KtFile>,
-            bindingTrace: BindingTrace,
-            componentProvider: ComponentProvider
-        ): AnalysisResult? {
-            return AnalysisResult.success(bindingTrace.bindingContext, module, shouldGenerateCode = false)
-        }
-
-        override fun analysisCompleted(
-            project: Project,
-            module: ModuleDescriptor,
-            bindingTrace: BindingTrace,
-            files: Collection<KtFile>
-        ): AnalysisResult? {
-            return AnalysisResult.success(bindingTrace.bindingContext, module, shouldGenerateCode = false)
-        }
     }
 }
