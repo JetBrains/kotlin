@@ -16,7 +16,10 @@
           <option value=":compiler:psi:psi-api:updateKotlinAbi" />
           <option value=":compiler:psi:psi-api:test" />
           <option value=":compiler:psi:psi-api:checkForeignClassUsage" />
+          <option value=":compiler:psi:psi-impl:test" />
+          <option value=":compiler:psi:psi-utils:test" />
           <option value=":compiler:psi:psi-utils:checkForeignClassUsage" />
+          <option value=":compiler:psi:psi-frontend-utils:test" />
           <option value=":analysis:analysis-api-platform-interface:updateKotlinAbi" />
           <option value=":analysis:analysis-api-standalone:updateKotlinAbi" />
         </list>
