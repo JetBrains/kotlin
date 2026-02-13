@@ -13,13 +13,13 @@ fun box(stepId: Int, isWasm: Boolean): String {
         9 -> "_class SuspendFunction8_"
         10 -> "_class Function9_"
         11 -> "__"
-        12 -> if (!isWasm) "class Function9_" else "class getString\$lambda_"
+        12 -> if (!isWasm) "class Function9_" else "class Function9__"
         13 -> "true_"
         14 -> "false_"
         // TODO: I would expect, that it should be SuspendFunction5_,
         //  but it seems a feature of Kotlin/JS runtime.
         // In Kotlin/JVM it also gives different strings.
-        15 -> if (!isWasm) "class Function6_" else "class getString\$slambda_"
+        15 -> if (!isWasm) "class Function6_" else "class SuspendFunction5__"
         else -> return "Unknown"
     }
 

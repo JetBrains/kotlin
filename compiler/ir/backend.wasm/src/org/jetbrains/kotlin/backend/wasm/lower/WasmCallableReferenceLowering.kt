@@ -155,6 +155,9 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources
 class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : FileLoweringPass {
     private val context = backendContext
 
+    // Per-file cache of created classes to avoid duplicates within a single file
+    private val fileLocalClassCache = mutableMapOf<CallableReferenceKey, IrClass>()
+
     companion object {
         val STATIC_FUNCTION_REFERENCE by IrDeclarationOriginImpl.Regular
     }
@@ -272,6 +275,9 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
     )
 
     override fun lower(irFile: IrFile) {
+        // Clear the per-file cache for each new file
+        fileLocalClassCache.clear()
+
         irFile.transform(object : IrTransformer<IrDeclaration?>() {
             override fun visitClass(declaration: IrClass, data: IrDeclaration?): IrStatement {
                 if (declaration.isFun || declaration.symbol.isSuspendFunction() || declaration.symbol.isKSuspendFunction()) {
@@ -299,7 +305,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                     expression.startOffset, expression.endOffset
                 )
 
-                val clazz = createOrGetFunctionReferenceClass(expression)
+                val clazz = createOrGetFunctionReferenceClass(expression, irFile)
                 val bridgedFunction = buildBridgedFunction(
                     expression,
                     irBuilder.scope.getLocalDeclarationParent(),
@@ -339,16 +345,51 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         }, null)
     }
 
+    private fun IrType.toTypeSignatureCode(): String = when {
+        this.isInt() -> "I"
+        this.isLong() -> "J"
+        this.isFloat() -> "F"
+        this.isDouble() -> "D"
+        this.isBoolean() -> "Z"
+        this.isChar() -> "C"
+        this.isByte() -> "B"
+        this.isShort() -> "S"
+        this.isUInt() -> "UI"
+        this.isULong() -> "UJ"
+        this.isUByte() -> "UB"
+        this.isUShort() -> "US"
+        this.getClass()?.isSingleFieldValueClass == true -> {
+            "V${this.classOrNull?.owner?.name?.asString()?: "0"}"
+        }
+        this.classifierOrNull is IrTypeParameterSymbol -> {
+            "T${(this.classifierOrNull as IrTypeParameterSymbol).owner.name.asString()}"
+        }
+        else -> "A" // anyNType (reference type)
+    }
+
+    // The name generated from the key is not just for debugging purposes: it must faithfully
+    // reflect the key as the linker uses this string name for cross-file deduplication.
     private fun callableReferenceKeyToName(key: CallableReferenceKey): Name {
         val arity = key.arity
         val prefix = if (key.isKReference) "K" else ""
         val suspendPrefix = if (key.isSuspend) "Suspend" else ""
-        val boundInfo = if (key.boundValueTypes.isNotEmpty()) "bound${key.boundValueTypes.size}" else ""
 
-        return Name.identifier("${prefix}${suspendPrefix}Function${arity}_${boundInfo}")
+        val superClassSuffix = when (key.superClassType) {
+            backendContext.wasmSymbols.reflectionSymbols.kFunctionImpl.defaultType -> "R"  // Reflection
+            backendContext.wasmSymbols.reflectionSymbols.kFunctionErrorImpl.defaultType -> "E"  // Error
+            else -> "" // Non-reflection (Any)
+        }
+
+        val boundInfo = if (key.boundValueTypes.isNotEmpty()) {
+            // Encode the types of bound values to avoid collisions.
+            val typeCodes = key.boundValueTypes.joinToString("") { it.toTypeSignatureCode() }
+            "bound${key.boundValueTypes.size}_$typeCodes"
+        } else ""
+
+        return Name.identifier("${prefix}${suspendPrefix}Function${arity}${superClassSuffix}_${boundInfo}")
     }
 
-    private fun createOrGetFunctionReferenceClass(functionReference: IrRichFunctionReference): IrClass {
+    private fun createOrGetFunctionReferenceClass(functionReference: IrRichFunctionReference, irFile: IrFile): IrClass {
         val superClass = getSuperClassType(functionReference)
         val arity = (functionReference.type as IrSimpleType).arguments.size - 1
         val isSuspend = functionReference.invokeFunction.isSuspend
@@ -358,11 +399,11 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         val superInterfaceType = functionReference.type.removeProjections()
         val additionalInterfaces = getAdditionalInterfaces(functionReference)
         val key = CallableReferenceKey(superClass, arity, isSuspend, isKReference, boundValueTypes)
-        backendContext.callableReferenceClasses[key]?.let {
+
+        // Check per-file cache to avoid duplicates within the same file
+        fileLocalClassCache[key]?.let {
             return it
         }
-
-        val sharedParent = backendContext.getSharedCallableReferencePackageFragment()
 
         val functionReferenceClass = backendContext.irFactory.buildClass {
             startOffset = SYNTHETIC_OFFSET
@@ -371,12 +412,12 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
             name = callableReferenceKeyToName(key)
             visibility = DescriptorVisibilities.PUBLIC
         }.apply {
-            this.parent = sharedParent
-            sharedParent.declarations += this
+            this.parent = irFile
+            irFile.declarations += this
             createThisReceiverParameter()
         }
 
-        backendContext.callableReferenceClasses[key] = functionReferenceClass
+        fileLocalClassCache[key] = functionReferenceClass
 
         functionReferenceClass.superTypes =
             listOf(superClass, superInterfaceType) memoryOptimizedPlus additionalInterfaces

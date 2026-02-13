@@ -210,6 +210,16 @@ class DeclarationGenerator(
 
         wasmFileCodegenContext.defineFunction(declaration.symbol, function)
 
+        // Register callable reference class members for deduplication at link time.
+        // Multiple files may create classes with the same signature (e.g., Function1_bound1_I),
+        // and we want all calls to resolve to a single canonical set of functions.
+        val parentClass = declaration.parentClassOrNull
+        if (parentClass != null && parentClass.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL) {
+            // Use the class name + function name as the equivalence key.
+            val equivalenceKey = "${parentClass.name.asString()}.${declaration.name.asString()}"
+            wasmFileCodegenContext.addEquivalentFunction(equivalenceKey, declaration.symbol)
+        }
+
         val nameIfExported = when {
             declaration.isExplicitlyExported() -> declaration.getJsNameOrKotlinName().identifier
             declaration.isWasmExportDeclaration() -> declaration.getWasmExportName()
@@ -389,7 +399,10 @@ class DeclarationGenerator(
 
         if (wasmFileCodegenContext.handleRTTIWithImport(symbol, superType)) return
 
-        val fqnShouldBeEmitted = backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass)
+        // For callable reference classes, do not use the FQN to ensure deterministic names across
+        // files during link-time deduplication.
+        val fqnShouldBeEmitted = (backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass) &&
+                                      klass.origin != WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL)
         val qualifier =
             if (fqnShouldBeEmitted) {
                 (klass.originalFqName ?: klass.kotlinFqName).parentOrNull()?.asString() ?: ""
@@ -568,6 +581,18 @@ class DeclarationGenerator(
                 isFinal = declaration.modality == Modality.FINAL
             )
             wasmFileCodegenContext.defineGcType(symbol, structType)
+
+            // Register callable reference class declarations for deduplication at link time.
+            // Multiple files may create classes with the same structure (e.g., Function1_bound1_I),
+            // and we want to deduplicate them to a single canonical set of definitions.
+            if (declaration.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL) {
+                val equivalenceKey = declaration.name.asString()
+                wasmFileCodegenContext.addEquivalentGcType(equivalenceKey, symbol)
+                wasmFileCodegenContext.addEquivalentVTableGcType(equivalenceKey, symbol)
+                wasmFileCodegenContext.addEquivalentRttiGlobal(equivalenceKey, symbol)
+                wasmFileCodegenContext.addEquivalentVTableGlobal(equivalenceKey, symbol)
+                wasmFileCodegenContext.addEquivalentClassITableGlobal(equivalenceKey, symbol)
+            }
         }
 
         for (member in declaration.declarations) {

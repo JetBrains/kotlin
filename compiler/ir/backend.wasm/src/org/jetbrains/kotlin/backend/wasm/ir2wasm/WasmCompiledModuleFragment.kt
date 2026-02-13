@@ -65,6 +65,11 @@ class WasmCompiledFileFragment(
     val mainFunctionWrappers: MutableList<IdSignature> = mutableListOf(),
     var testFunctionDeclarators: MutableList<IdSignature> = mutableListOf(),
     val equivalentFunctions: MutableList<Pair<String, IdSignature>> = mutableListOf(),
+    val equivalentGcTypes: MutableList<Pair<String, IdSignature>> = mutableListOf(),
+    val equivalentVTableGcTypes: MutableList<Pair<String, IdSignature>> = mutableListOf(),
+    val equivalentRttiGlobals: MutableList<Pair<String, IdSignature>> = mutableListOf(),
+    val equivalentVTableGlobals: MutableList<Pair<String, IdSignature>> = mutableListOf(),
+    val equivalentClassITableGlobals: MutableList<Pair<String, IdSignature>> = mutableListOf(),
     val jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference> = mutableSetOf(),
     val classAssociatedObjectsInstanceGetters: MutableList<ClassAssociatedObjects> = mutableListOf(),
     var builtinIdSignatures: BuiltinIdSignatures? = null,
@@ -371,8 +376,10 @@ class WasmCompiledModuleFragment(
         val heapTypeResolver: (WasmHeapType.Type) -> WasmTypeDeclaration = definedDeclarations::resolve
 
         val recursiveGroups = with(RecursiveGroupBuilder(heapTypeResolver)) {
-            addTypes(definedDeclarations.gcTypes.values)
-            addTypes(definedDeclarations.vTableGcTypes.values)
+            // Use distinct() because after rebinding equivalent declarations, multiple keys may point
+            // to the same canonical type object.
+            addTypes(definedDeclarations.gcTypes.values.distinct())
+            addTypes(definedDeclarations.vTableGcTypes.values.distinct())
             addTypes(allFunctionTypes.values.toSet())
             build()
         }
@@ -473,20 +480,22 @@ class WasmCompiledModuleFragment(
 
     private fun getGlobals(definedDeclarations: DefinedDeclarationsResolver) = mutableListOf<WasmGlobal>().apply {
         addAll(definedDeclarations.globalFields.values)
-        addAll(definedDeclarations.globalVTables.values)
-        addAll(definedDeclarations.globalClassITables.values)
+        // Use distinct() because after rebinding equivalent declarations, multiple keys may point
+        // to the same canonical global object.
+        addAll(definedDeclarations.globalVTables.values.distinct())
+        addAll(definedDeclarations.globalClassITables.values.distinct())
 
-        val rttiGlobals = mutableMapOf<IdSignature, WasmGlobal>()
+        // Use the already-deduplicated globalRTTI from definedDeclarations
+        val rttiGlobals = definedDeclarations.globalRTTI
         val rttiSuperTypes = mutableMapOf<IdSignature, IdSignature?>()
         wasmCompiledFileFragments.forEach { fragment ->
-            rttiGlobals.putAll(fragment.definedRttiGlobal)
             rttiSuperTypes.putAll(fragment.definedRttiSuperType)
         }
 
         fun wasmRttiGlobalOrderKey(superType: IdSignature?): Int =
             superType?.let { wasmRttiGlobalOrderKey(rttiSuperTypes[it]) + 1 } ?: 0
 
-        rttiGlobals.keys.sortedBy(::wasmRttiGlobalOrderKey).mapTo(this) { rttiGlobals[it]!! }
+        rttiGlobals.keys.sortedBy(::wasmRttiGlobalOrderKey).map { rttiGlobals[it]!! }.distinct().forEach { add(it) }
 
         addAll(definedDeclarations.globalLiteralGlobals.values)
     }
@@ -931,6 +940,11 @@ class WasmCompiledModuleFragment(
         }
 
         rebindEquivalentFunctions(definedDeclarations.functions)
+        rebindEquivalentDeclarations(definedDeclarations.gcTypes) { it.equivalentGcTypes }
+        rebindEquivalentDeclarations(definedDeclarations.vTableGcTypes) { it.equivalentVTableGcTypes }
+        rebindEquivalentDeclarations(definedDeclarations.globalRTTI) { it.equivalentRttiGlobals }
+        rebindEquivalentDeclarations(definedDeclarations.globalVTables) { it.equivalentVTableGlobals }
+        rebindEquivalentDeclarations(definedDeclarations.globalClassITables) { it.equivalentClassITableGlobals }
         bindUniqueJsFunNames()
 
         return definedDeclarations
@@ -1047,6 +1061,25 @@ class WasmCompiledModuleFragment(
                     // Rebind adapter function to the single instance
                     // There might not be any unbound references in case it's called only from JS side
                     allDefinedFunctions[idSignature] = func
+                }
+            }
+        }
+    }
+
+    private fun <T> rebindEquivalentDeclarations(
+        allDefinedDeclarations: MutableMap<IdSignature, T>,
+        equivalentDeclarationsSelector: (WasmCompiledFileFragment) -> List<Pair<String, IdSignature>>
+    ) {
+        val canonicalDeclarations = mutableMapOf<String, T>()
+        wasmCompiledFileFragments.forEach { fragment ->
+            for ((equivalenceKey, idSignature) in equivalentDeclarationsSelector(fragment)) {
+                val canonical = canonicalDeclarations[equivalenceKey]
+                if (canonical == null) {
+                    // First occurrence, register it as canonical (if not removed by DCE).
+                    canonicalDeclarations[equivalenceKey] = allDefinedDeclarations[idSignature] ?: continue
+                } else {
+                    // Already exists, rebind to the canonical instance.
+                    allDefinedDeclarations[idSignature] = canonical
                 }
             }
         }

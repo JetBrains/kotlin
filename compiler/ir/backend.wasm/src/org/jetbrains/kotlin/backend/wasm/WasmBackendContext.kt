@@ -113,32 +113,12 @@ class WasmBackendContext(
 
     override val inlineClassesUtils = WasmInlineClassesUtils(wasmSymbols)
 
-    val callableReferenceClasses = mutableMapOf<Any, IrClass>()
-
     // Counter for generating unique IDs for callable references (used for reflection)
     private var nextCallableReferenceId = 0
     val callableReferenceIds = mutableMapOf<String, Int>()
 
     fun getOrCreateCallableReferenceId(fqName: String): Int =
         callableReferenceIds.getOrPut(fqName) { nextCallableReferenceId++ }
-
-    private var sharedPackageFragment: IrFile? = null
-
-    fun getSharedCallableReferencePackageFragment(): IrFile {
-        if (sharedPackageFragment == null) {
-            val fqName = FqName("kotlin.wasm.internal.callableReferences")
-            val file = org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl(
-                org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl("sharedCallableReferences"),
-                org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl(),
-                fqName
-            ).apply {
-                this.module = irModuleFragment
-            }
-            irModuleFragment.files += file
-            sharedPackageFragment = file
-        }
-        return sharedPackageFragment!!
-    }
 
     //
     // Unit test support, mostly borrowed from the JS implementation
