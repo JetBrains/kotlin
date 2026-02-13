@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.NativeGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.OsCondition
 import org.junit.jupiter.api.condition.OS
+import org.gradle.api.file.ProjectLayout
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -17,6 +18,8 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadata
+import org.jetbrains.kotlin.gradle.uklibs.include
+import java.io.File
 import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.test.assertEquals
@@ -33,6 +36,7 @@ import kotlin.collections.mapOf
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
+import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
@@ -106,7 +110,7 @@ public open expect class swiftPMImport/emptyxcode/FIRAnalyticsMeta : platform/da
             }
         """.trimIndent(),
         isStatic = isStatic
-    ) {
+    ) { _ ->
         `package`(
             url = url("https://github.com/firebase/firebase-ios-sdk.git"),
             version = exact("12.5.0"),
@@ -162,7 +166,7 @@ public open expect class swiftPMImport/emptyxcode/FIRAnalyticsMeta : platform/da
             }
         """.trimIndent(),
         isStatic = isStatic
-    ) {
+    ) { _ ->
         iosDeploymentVersion.set("16.0")
         `package`(
             url = url("https://github.com/googlemaps/ios-maps-sdk.git"),
@@ -206,7 +210,7 @@ public open expect class swiftPMImport/emptyxcode/FIRAnalyticsMeta : platform/da
             }
         """.trimIndent(),
         isStatic = isStatic
-    ) {
+    ) { _ ->
         `package`(
             url = url("https://github.com/getsentry/sentry-cocoa.git"),
             version = exact("9.0.0-rc.1"), // use rc to get the fix: https://github.com/getsentry/sentry-cocoa/pull/6607
@@ -236,7 +240,8 @@ public final expect fun swiftPMImport/emptyxcode/RCPurchases.purchaseProduct(pro
 public final expect fun swiftPMImport/emptyxcode/RCPurchases.purchaseProduct(product: objcnames/classes/SKProduct, withDiscount: objcnames/classes/SKPaymentDiscount, completionBlock: kotlin/Function4<swiftPMImport/emptyxcode/RCStoreTransaction?, swiftPMImport/emptyxcode/RCCustomerInfo?, platform/Foundation/NSError?, kotlin/Boolean, kotlin/Unit>): kotlin/Unit
 @kotlinx/cinterop/ObjCMethod(encoding = "v40@0:8@16@24@?32", selector = "purchaseProduct:withPromotionalOffer:completion:", isStret = false)
 public final expect fun swiftPMImport/emptyxcode/RCPurchases.purchaseProduct(product: swiftPMImport/emptyxcode/RCStoreProduct, withPromotionalOffer: swiftPMImport/emptyxcode/RCPromotionalOffer, completion: kotlin/Function4<swiftPMImport/emptyxcode/RCStoreTransaction?, swiftPMImport/emptyxcode/RCCustomerInfo?, platform/Foundation/NSError?, kotlin/Boolean, kotlin/Unit>): kotlin/Unit
-                """.trimIndent()),
+                """.trimIndent()
+        ),
         ktSnippet = """
             import swiftPMImport.emptyxcode.configureWithAPIKey
             @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
@@ -263,7 +268,7 @@ public final expect fun swiftPMImport/emptyxcode/RCPurchases.purchaseProduct(pro
             }
         """.trimIndent(),
         isStatic = isStatic
-    ) {
+    ) { _ ->
         `package`(
             url = url("https://github.com/RevenueCat/purchases-ios-spm.git"),
             version = exact("5.49.0"),
@@ -414,7 +419,7 @@ public open expect class swiftPMImport/emptyxcode/AWSS3TransferUtilityDownloadTa
             }
         """.trimIndent(),
         isStatic = isStatic
-    ) {
+    ) { _ ->
         `package`(
             url = url("https://github.com/aws-amplify/aws-sdk-ios-spm.git"),
             version = exact("2.41.0"),
@@ -476,7 +481,7 @@ public open expect class swiftPMImport/emptyxcode/MapViewMeta : platform/UIKit/U
             }
         """.trimIndent(),
         isStatic = isStatic
-    ) {
+    ) { _ ->
         `package`(
             url = url("https://github.com/mapbox/mapbox-maps-ios.git"),
             version = exact("11.16.6"),
@@ -532,7 +537,7 @@ public final expect fun hev_socks5_tunnel_stats(tx_packets: kotlinx/cinterop/CVa
             }
         """.trimIndent(),
         isStatic = isStatic
-    ) {
+    ) { _ ->
         `package`(
             url = url("https://github.com/EbrahimTahernejad/Tun2SocksKit.git"),
             version = exact("5.14.1"),
@@ -611,7 +616,7 @@ public open expect class swiftPMImport/emptyxcode/DDLogsMeta : platform/darwin/N
             }
         """.trimIndent(),
         isStatic = isStatic
-    ) {
+    ) { _ ->
         `package`(
             url = url("https://github.com/DataDog/dd-sdk-ios.git"),
             version = exact("3.3.0"),
@@ -670,7 +675,7 @@ public open expect class swiftPMImport/emptyxcode/ADJConfigMeta : platform/darwi
             }
         """.trimIndent(),
         isStatic = isStatic
-    ) {
+    ) { _ ->
         `package`(
             url = url("https://github.com/adjust/ios_sdk.git"),
             version = exact("5.4.6"),
@@ -727,12 +732,392 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
             }
         """.trimIndent(),
         isStatic = isStatic
-    ) {
+    ) { _ ->
         `package`(
             url = url("https://github.com/openid/AppAuth-iOS.git"),
             version = exact("2.0.0"),
             products = listOf(product("AppAuth"))
         )
+    }
+
+    @DisplayName("local SwiftPM package with relative path")
+    @ParameterizedTest(name = "{displayName} with {0} and isStatic={1}")
+    @ArgumentsSource(SpmImportArgumentsProvider::class)
+    fun `local SwiftPM package with relative path`(version: GradleVersion, isStatic: Boolean) = testSwiftPackageIntegration(
+        version = version,
+        expectedCinteropAPIs = mapOf(
+            "greeting" to """
+                @kotlinx/cinterop/ObjCMethod(encoding = "@16@0:8", selector = "greeting", isStret = false)
+                public open expect fun greeting(): kotlin/String
+            """.trimIndent()
+        ),
+        ktSnippet = """
+            @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+            fun localGreeting(): String {
+                return swiftPMImport.emptyxcode.LocalHelper.greeting()
+            }
+        """.trimIndent(),
+        swiftSnippet = """
+            import SwiftUI
+            import LocalSwiftPackage
+            import Shared
+
+            @main
+            struct iOSApp: App {
+                var body: some Scene {
+                    WindowGroup {
+                        let ktGreeting = TempKt.localGreeting()
+                        let swiftGreeting = LocalHelper.greeting()
+                        if(ktGreeting != swiftGreeting) { fatalError("Greetings don't match") }
+                        Text("Match: \(ktGreeting == swiftGreeting)")
+                    }
+                }
+            }
+        """.trimIndent(),
+        isStatic = isStatic,
+        expectedPackageManifest = if (isStatic) {
+            """
+                // swift-tools-version: 5.9
+                import PackageDescription
+                let package = Package(
+                  name: "_internal_linkage_SwiftPMImport",
+                  platforms: [
+                    .iOS("15.0"),
+                  ],
+                  products: [
+                      .library(
+                          name: "_internal_linkage_SwiftPMImport",
+                          type: .none,
+                          targets: ["_internal_linkage_SwiftPMImport"]
+                      ),
+                  ],
+                  dependencies: [
+                    .package(
+                      path: "../../../localSwiftPackage",
+                    ),
+                  ],
+                  targets: [
+                    .target(
+                      name: "_internal_linkage_SwiftPMImport",
+                      dependencies: [
+                        .product(
+                          name: "LocalSwiftPackage",
+                          package: "localSwiftPackage",
+                        ),
+                      ]
+                    ),
+                  ]
+                )
+            """.trimIndent() + "\n"
+        } else null,
+        beforeBuild = {
+            // Generate local Swift package as a sibling directory (to test relative path with ../)
+            val localPackageDir = projectPath.resolve("../localSwiftPackage")
+            localPackageDir.resolve("Sources/LocalSwiftPackage").createDirectories()
+
+            localPackageDir.resolve("Package.swift").writeText(
+                """
+                // swift-tools-version: 5.9
+                import PackageDescription
+
+                let package = Package(
+                    name: "LocalSwiftPackage",
+                    platforms: [.iOS(.v15)],
+                    products: [
+                        .library(name: "LocalSwiftPackage", targets: ["LocalSwiftPackage"]),
+                    ],
+                    targets: [
+                        .target(name: "LocalSwiftPackage"),
+                    ]
+                )
+                """.trimIndent()
+            )
+
+            localPackageDir.resolve("Sources/LocalSwiftPackage/LocalSwiftPackage.swift").writeText(
+                """
+                import Foundation
+
+                @objc public class LocalHelper: NSObject {
+                    @objc public static func greeting() -> String {
+                        return "Hello from LocalSwiftPackage"
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+    ) { layout ->
+        localPackage(
+            directory = layout.projectDirectory.dir("../localSwiftPackage"),
+            products = listOf("LocalSwiftPackage"),
+        )
+    }
+
+    /**
+     * Tests multiproject setup with local SwiftPM dependency.
+     *
+     * Project structure:
+     * ```
+     * emptyxcode (root consumer)
+     * ├── iosApp/                          <- Xcode app (uses root's framework)
+     * ├── producer/
+     * │   ├── localSwiftPackage/           <- Local Swift Package
+     * │   │   ├── Package.swift
+     * │   │   └── Sources/LocalSwiftPackage/LocalSwiftPackage.swift
+     * │   └── build.gradle.kts             <- swiftPMDependencies { localPackage(...) }
+     * └── build.gradle.kts                 <- depends on :producer (commonMain)
+     *                                         framework binaries (Shared.framework)
+     * ```
+     *
+     * Dependencies:
+     * ```
+     * ┌──────────────────────────────────────────────────────────────────┐
+     * │                        Gradle Dependencies                       │
+     * │                                                                  │
+     * │   emptyxcode (root) ──────────────────────────► producer         │
+     * │       │                 (commonMain)                │            │
+     * │       │                                             │            │
+     * │       │                                             ▼            │
+     * │       │                            ┌─────────────────────────┐   │
+     * │       │                            │  SwiftPM Dependencies   │   │
+     * │       │                            │                         │   │
+     * │       │                            │  localSwiftPackage      │   │
+     * │       │                            └─────────────────────────┘   │
+     * │       │                                                          │
+     * │       ▼                                                          │
+     * │  Shared.framework                                                │
+     * │  (built by root project)                                         │
+     * └──────────────────────────────────────────────────────────────────┘
+     * ```
+     *
+     * Producer has:
+     * - Local SwiftPM dependency (localSwiftPackage)
+     * - iosMain code using swiftPMImport
+     *
+     * Root project (consumer) has:
+     * - commonMain dependency on producer
+     * - Framework binaries (Shared.framework)
+     * - iosApp uses root's framework for Xcode linkage testing
+     */
+    @DisplayName("multiproject local SwiftPM dependency with producer and consumer")
+    @ParameterizedTest(name = "{displayName} with {0} and isStatic={1}")
+    @ArgumentsSource(SpmImportArgumentsProvider::class)
+    fun `multiproject local SwiftPM dependency with producer and consumer`(
+        version: GradleVersion,
+        isStatic: Boolean,
+    ) {
+        if (!isTeamCityRun) {
+            Assumptions.assumeTrue(version >= GradleVersion.version("8.0"))
+        }
+        project("emptyxcode", version) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    listOf(iosArm64(), iosSimulatorArm64()).forEach {
+                        it.binaries.framework {
+                            baseName = "Shared"
+                            this.isStatic = isStatic
+                        }
+                    }
+
+                    sourceSets.commonMain {
+                        compileSource(
+                            """
+                                package consumer
+                                object Consumer {
+                                    fun localGreeting() = producer.localGreeting()
+                                }
+                            """.trimIndent()
+                        )
+                        dependencies {
+                            implementation(project(":producer"))
+                        }
+                    }
+                }
+            }
+
+            // Create producer project with local SwiftPM dependency
+            val producer = project("empty", version) {
+                // Create local Swift package inside producer project
+                val localPackageDir = projectPath.resolve("localSwiftPackage")
+                localPackageDir.resolve("Sources/LocalSwiftPackage").createDirectories()
+
+                localPackageDir.resolve("Package.swift").writeText(
+                    """
+                    // swift-tools-version: 5.9
+                    import PackageDescription
+                    let package = Package(
+                        name: "LocalSwiftPackage",
+                        platforms: [.iOS(.v15)],
+                        products: [
+                            .library(name: "LocalSwiftPackage", targets: ["LocalSwiftPackage"]),
+                        ],
+                        targets: [
+                            .target(name: "LocalSwiftPackage"),
+                        ]
+                    )
+                """.trimIndent()
+                )
+
+                localPackageDir.resolve("Sources/LocalSwiftPackage/LocalSwiftPackage.swift").writeText(
+                    """
+                    import Foundation
+                    @objc public class LocalHelper: NSObject {
+                        @objc public static func greeting() -> String {
+                            return "Hello from LocalSwiftPackage"
+                        }
+                    }
+                """.trimIndent()
+                )
+
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        iosSimulatorArm64()
+
+                        sourceSets.iosMain.get().compileSource(
+                            """
+                            @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                            package producer
+                            fun localGreeting(): String {
+                                return swiftPMImport.emptyxcode.producer.LocalHelper.greeting()
+                            }
+                        """.trimIndent()
+                        )
+
+                        swiftPMDependencies {
+                            localPackage(
+                                directory = project.layout.projectDirectory.dir("localSwiftPackage"),
+                                products = listOf("LocalSwiftPackage"),
+                            )
+                        }
+                    }
+                }
+            }
+
+            include(producer, "producer", useSymlink = false)
+
+            // Update the root iosApp Swift file to use the consumer's framework
+            val swiftAppFile = projectPath.resolve("iosApp/iosApp/iOSApp.swift")
+            swiftAppFile.writeText(
+                """
+                import SwiftUI
+                import LocalSwiftPackage
+                import Shared
+
+                @main
+                struct iOSApp: App {
+                    var body: some Scene {
+                        WindowGroup {
+                            let ktGreeting = Consumer.shared.localGreeting()
+                            let swiftGreeting = LocalHelper.greeting()
+                            if(ktGreeting != swiftGreeting) { fatalError("Greetings don't match") }
+                            Text("Match: \(ktGreeting == swiftGreeting)")
+                        }
+                    }
+                }
+            """.trimIndent()
+            )
+
+            // Get producer project path
+            // With useSymlink=false, the producer project is copied into the root project.
+            val producerPath = projectPath.resolve("producer")
+
+            // Verify cinterop API signatures from producer (same API as local SwiftPM test)
+            testVisibleSignatures(
+                expectedCinteropAPIs = mapOf(
+                    "greeting" to """
+                        @kotlinx/cinterop/ObjCMethod(encoding = "@16@0:8", selector = "greeting", isStret = false)
+                        public open expect fun greeting(): kotlin/String
+                    """.trimIndent()
+                ),
+                commonizerBasePath = producerPath,
+                commonizeTask = ":producer:commonizeCInterop"
+            )
+
+            // Full Kotlin linkage (both release and debug)
+            testKotlinLinkage()
+
+            // Xcode linkage
+            testXcodeLinkage(isStatic)
+
+            // Verify Package.swift in root project with exact content
+            // Uses synthetic subpackage reference for the producer dependency
+            if (isStatic) {
+                testPackageManifest(
+                    expectedContent = """
+                            // swift-tools-version: 5.9
+                            import PackageDescription
+                            let package = Package(
+                              name: "_internal_linkage_SwiftPMImport",
+                              platforms: [
+                                .iOS("15.0"),
+                              ],
+                              products: [
+                                  .library(
+                                      name: "_internal_linkage_SwiftPMImport",
+                                      type: .none,
+                                      targets: ["_internal_linkage_SwiftPMImport"]
+                                  ),
+                              ],
+                              dependencies: [
+                                .package(path: "subpackages/_producer"),
+                              ],
+                              targets: [
+                                .target(
+                                  name: "_internal_linkage_SwiftPMImport",
+                                  dependencies: [
+                                    .product(name: "_producer", package: "_producer"),
+                                  ]
+                                ),
+                              ]
+                            )
+                        """.trimIndent() + "\n"
+                )
+                // With useSymlink=false, the producer project is copied into the root project at:
+                //   projectPath/producer
+                // The local Swift package lives under:
+                //   projectPath/producer/localSwiftPackage
+                testPackageManifest(
+                    expectedContent = """
+                            // swift-tools-version: 5.9
+                            import PackageDescription
+                            let package = Package(
+                              name: "_producer",
+                              platforms: [
+                                .iOS("15.0"),
+                              ],
+                              products: [
+                                  .library(
+                                      name: "_producer",
+                                      type: .none,
+                                      targets: ["_producer"]
+                                  ),
+                              ],
+                              dependencies: [
+                                .package(
+                                  path: "../../../../producer/localSwiftPackage",
+                                ),
+                              ],
+                              targets: [
+                                .target(
+                                  name: "_producer",
+                                  dependencies: [
+                                    .product(
+                                      name: "LocalSwiftPackage",
+                                      package: "localSwiftPackage",
+                                    ),
+                                  ]
+                                ),
+                              ]
+                            )
+                        """.trimIndent() + "\n",
+                    manifestRelativePath = "iosApp/_internal_linkage_SwiftPMImport/subpackages/_producer/Package.swift"
+                )
+            }
+        }
     }
 
     private fun testSwiftPackageIntegration(
@@ -741,7 +1126,9 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
         swiftSnippet: String = "",
         ktSnippet: String = "",
         isStatic: Boolean,
-        configure: SwiftImportExtension.() -> Unit,
+        expectedPackageManifest: String? = null,
+        beforeBuild: (TestProject.() -> Unit)? = null,
+        configure: SwiftImportExtension.(ProjectLayout) -> Unit,
     ) {
         if (!isTeamCityRun) {
             Assumptions.assumeTrue(version >= GradleVersion.version("8.0"))
@@ -763,7 +1150,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                     }
 
                     swiftPMDependencies {
-                        configure()
+                        configure(project.layout)
                     }
                 }
             }
@@ -774,9 +1161,14 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
             val ktFile = kotlinSourcesDir("iosMain").createDirectories().resolve("temp.kt").createFile()
             ktFile.writeText(ktSnippet)
 
+            beforeBuild?.invoke(this)
+
             testVisibleSignatures(expectedCinteropAPIs)
             testKotlinLinkage()
             testXcodeLinkage(isStatic)
+            if (expectedPackageManifest != null) {
+                testPackageManifest(expectedPackageManifest)
+            }
         }
     }
 
@@ -802,7 +1194,7 @@ private fun TestProject.testXcodeLinkage(isStatic: Boolean) {
     build(
         "integrateLinkagePackage",
         environmentVariables = EnvironmentalVariables(
-            "XCODEPROJ_PATH" to projectPath.resolve("iosApp/iosApp.xcodeproj").absolutePathString()
+            "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj"
         )
     )
     if (!isStatic) {
@@ -815,10 +1207,12 @@ private fun TestProject.testXcodeLinkage(isStatic: Boolean) {
 
 private fun TestProject.testVisibleSignatures(
     expectedCinteropAPIs: Map<String, String>,
+    commonizerBasePath: Path = projectPath,
+    commonizeTask: String = "commonizeCInterop",
 ) {
-    build("commonizeCInterop")
+    build(commonizeTask)
 
-    val commonizerResult = projectPath.resolve("build/classes/kotlin/commonizer/swiftPMImport")
+    val commonizerResult = commonizerBasePath.resolve("build/classes/kotlin/commonizer/swiftPMImport")
         .listDirectoryEntries()
         .single { it.isDirectory() }
         .listDirectoryEntries()
@@ -843,6 +1237,20 @@ private fun TestProject.testVisibleSignatures(
         expectedCinteropAPIs.prettyPrinted,
         actualSignatures.mapValues { it.value.joinToString("\n").trimIndent() }.prettyPrinted,
     )
+}
+
+private fun TestProject.testPackageManifest(
+    expectedContent: String,
+    swiftImportBasePath: Path = projectPath,
+    manifestRelativePath: String = "iosApp/_internal_linkage_SwiftPMImport/Package.swift",
+) {
+    val packageSwift = swiftImportBasePath.resolve(manifestRelativePath)
+
+    // Verify the file exists
+    assert(packageSwift.exists()) { "Package.swift should exist at $packageSwift" }
+
+    val actualContent = packageSwift.readText()
+    assertEquals(expectedContent, actualContent, "Package.swift content mismatch")
 }
 
 internal fun KotlinMultiplatformExtension.swiftPMDependencies(configure: SwiftImportExtension.() -> Unit) {
