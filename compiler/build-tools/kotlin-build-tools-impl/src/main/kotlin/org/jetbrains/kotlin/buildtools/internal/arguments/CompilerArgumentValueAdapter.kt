@@ -122,6 +122,11 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
                 mode.stringValue as T
             }
 
+            JvmCompilerArguments.X_ADD_MODULES -> {
+                val listValue: List<String> = value as List<String>
+                listValue.toTypedArray() as T
+            }
+
             else -> value as T
         }
     }
@@ -215,6 +220,11 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
 
                 JdkRelease.entries.firstOrNull { it.stringValue == stringValue } as T
                     ?: throw CompilerArgumentsParseException("Unknown -Xjdk-release value: $stringValue")
+            }
+
+            JvmCompilerArguments.X_ADD_MODULES -> {
+                val arrayValue = value as Array<String>
+                arrayValue.toList() as T
             }
 
             else -> value as T
