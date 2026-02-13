@@ -36,8 +36,6 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-testsJar()
-
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5)
 
