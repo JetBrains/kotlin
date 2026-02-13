@@ -147,7 +147,7 @@ abstract class WasmAbstractInvalidationTest(
             val (stdlibModule, stdlibModuleFragments) = moduleToLoadedFragments.first { it.first.moduleName == "<kotlin>" }
             val stdlibBuildIns = mutableListOf<IdSignature>()
             stdlibModuleFragments.forEach { fragment ->
-                fragment.mainFragment.serviceData.builtinIdSignatures?.let {
+                fragment.mainFragment.definedDeclarations.builtinIdSignatures?.let {
                     stdlibBuildIns.addIfNotNull(it.registerModuleDescriptor)
                     stdlibBuildIns.addIfNotNull(it.createString)
                     stdlibBuildIns.addIfNotNull(it.tryGetAssociatedObject)
@@ -209,6 +209,7 @@ abstract class WasmAbstractInvalidationTest(
 
                 val multimoduleOptions = MultimoduleCompileOptions(
                     stdlibModuleNameForImport = stdlibModule.moduleName.takeIf { !stdlibIsMainModule },
+                    wasmCompiledDependencyFileFragments = error(""),
                     dependencyModules = currentModuleImports,
                     initializeUnit = stdlibIsMainModule,
                 )

@@ -48,39 +48,46 @@ class WasmSerializer(outputStream: OutputStream) {
 
     fun serialize(compiledFileFragment: WasmCompiledFileFragment) {
         with(compiledFileFragment) {
-            serializeNullable(fragmentTag, ::serializeString)
-
-            serializeDefinedFunctions(definedFunctions)
-            serializeDefinedGlobals(definedGlobalFields)
-            serializeDefinedGlobals(definedGlobalVTables)
-            serializeDefinedGlobals(definedGlobalClassITables)
-            serializeDefinedGlobals(definedRttiGlobal)
-
-            serializeMap(definedRttiSuperType, ::serializeIdSignature, ::serializeClassSuperType)
-
-            serializeDefinedTypeDeclarations(definedGcTypes)
-            serializeDefinedStructDeclarations(definedVTableGcTypes)
-            serializeDefinedFunctionTypesDeclarations(definedFunctionTypes)
-
-            serializeGlobalLiterals(globalLiterals)
-            serializeMap(globalLiteralsId, ::serializeString, ::serializeIntSymbol)
-            serializeMap(stringLiteralId, ::serializeString, ::serializeIntSymbol)
-
-            serializeConstantArrayDataSegmentId(constantArrayDataSegmentId)
-            serializeMap(jsFuns, ::serializeIdSignature, ::serializeJsCodeSnippet)
-            serializeMap(jsModuleImports, ::serializeIdSignature, ::serializeString)
-            serializeMap(jsBuiltinsPolyfills, ::serializeString, ::serializeString)
-            serializeList(exports, ::serializeWasmExport)
-            serializeList(mainFunctionWrappers, ::serializeIdSignature)
-            serializeList(testFunctionDeclarators, ::serializeIdSignature)
-            serializeList(equivalentFunctions) { serializePair(it, ::serializeString, ::serializeIdSignature) }
-            serializeSet(jsModuleAndQualifierReferences, ::serializeJsModuleAndQualifierReference)
-            serializeList(classAssociatedObjectsInstanceGetters, ::serializeClassAssociatedObjects)
-            serializeNullable(builtinIdSignatures, ::serializeBuiltinIdSignatures)
-            serializeList(objectInstanceFieldInitializers, ::serializeIdSignature)
-            serializeList(nonConstantFieldInitializers, ::serializeIdSignature)
+            serializeCompiledTypes(definedTypes)
+            serializeCompiledDeclarations(definedDeclarations)
+            serializeCompiledService(serviceData)
         }
     }
+
+    fun serializeCompiledTypes(definedTypes: WasmCompiledTypesFileFragment) = with(definedTypes) {
+        serializeDefinedTypeDeclarations(definedGcTypes)
+        serializeDefinedStructDeclarations(definedVTableGcTypes)
+        serializeDefinedFunctionTypesDeclarations(definedFunctionTypes)
+    }
+
+    fun serializeCompiledDeclarations(definedDeclarations: WasmCompiledDeclarationsFileFragment) = with(definedDeclarations) {
+        serializeDefinedFunctions(definedFunctions)
+        serializeDefinedGlobals(definedGlobalFields)
+        serializeDefinedGlobals(definedGlobalVTables)
+        serializeDefinedGlobals(definedGlobalClassITables)
+        serializeDefinedGlobals(definedRttiGlobal)
+        serializeMap(definedRttiSuperType, ::serializeIdSignature, ::serializeClassSuperType)
+        serializeNullable(builtinIdSignatures, ::serializeBuiltinIdSignatures)
+    }
+
+    fun serializeCompiledService(serviceData: WasmCompiledServiceFileFragment) = with(serviceData) {
+        serializeGlobalLiterals(globalLiterals)
+        serializeMap(globalLiteralsId, ::serializeString, ::serializeIntSymbol)
+        serializeMap(stringLiteralId, ::serializeString, ::serializeIntSymbol)
+        serializeConstantArrayDataSegmentId(constantArrayDataSegmentId)
+        serializeMap(jsFuns, ::serializeIdSignature, ::serializeJsCodeSnippet)
+        serializeMap(jsModuleImports, ::serializeIdSignature, ::serializeString)
+        serializeMap(jsBuiltinsPolyfills, ::serializeString, ::serializeString)
+        serializeList(exports, ::serializeWasmExport)
+        serializeList(mainFunctionWrappers, ::serializeIdSignature)
+        serializeList(testFunctionDeclarators, ::serializeIdSignature)
+        serializeList(equivalentFunctions) { serializePair(it, ::serializeString, ::serializeIdSignature) }
+        serializeSet(jsModuleAndQualifierReferences, ::serializeJsModuleAndQualifierReference)
+        serializeList(classAssociatedObjectsInstanceGetters, ::serializeClassAssociatedObjects)
+        serializeList(objectInstanceFieldInitializers, ::serializeIdSignature)
+        serializeList(nonConstantFieldInitializers, ::serializeIdSignature)
+    }
+
 
     fun serialize(declarations: ModuleReferencedDeclarations) {
         serializeSet(declarations.referencedFunction, ::serializeIdSignature)

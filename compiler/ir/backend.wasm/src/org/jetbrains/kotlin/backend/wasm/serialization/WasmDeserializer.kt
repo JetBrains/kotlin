@@ -606,37 +606,37 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         }
 
     private fun deserializeCompiledFileFragment() = WasmCompiledFileFragment(
-        fragmentTag = deserializeNullable(::deserializeString),
-
-        definedFunctions = deserializeDefinedFunctions(),
-
-        definedGlobalFields = deserializeGlobalFields(),
-        definedGlobalVTables = deserializeGlobalVTables(),
-        definedGlobalClassITables = deserializeGlobalClassITables(),
-        definedRttiGlobal = deserializeGlobalRtti(),
-        definedRttiSuperType = deserializeRttiSupertype(),
-
-        definedGcTypes = deserializeGcTypes(),
-        definedVTableGcTypes = deserializeVTableGcTypes(),
-        definedFunctionTypes = deserializeFunctionTypes(),
-
-        globalLiterals = deserializeGlobalLiterals(),
-        globalLiteralsId = deserializeStringLiteralId(),
-        stringLiteralId = deserializeStringLiteralId(),
-
-        constantArrayDataSegmentId = deserializeConstantArrayDataSegmentId(),
-        jsFuns = deserializeJsFuns(),
-        jsModuleImports = deserializeJsModuleImports(),
-        jsBuiltinsPolyfills = deserializeJsBuiltinsPolyfills(),
-        exports = deserializeExports(),
-        mainFunctionWrappers = deserializeMainFunctionWrappers(),
-        testFunctionDeclarators = deserializeTestFunctionDeclarators(),
-        equivalentFunctions = deserializeClosureCallExports(),
-        jsModuleAndQualifierReferences = deserializeJsModuleAndQualifierReferences(),
-        classAssociatedObjectsInstanceGetters = deserializeClassAssociatedObjectInstanceGetters(),
-        builtinIdSignatures = deserializeBuiltinIdSignatures(),
-        objectInstanceFieldInitializers = deserializeList(::deserializeIdSignature),
-        nonConstantFieldInitializers = deserializeList(::deserializeIdSignature),
+        definedTypes = WasmCompiledTypesFileFragment(
+            definedGcTypes = deserializeGcTypes(),
+            definedVTableGcTypes = deserializeVTableGcTypes(),
+            definedFunctionTypes = deserializeFunctionTypes(),
+        ),
+        definedDeclarations = WasmCompiledDeclarationsFileFragment(
+            definedFunctions = deserializeDefinedFunctions(),
+            definedGlobalFields = deserializeGlobalFields(),
+            definedGlobalVTables = deserializeGlobalVTables(),
+            definedGlobalClassITables = deserializeGlobalClassITables(),
+            definedRttiGlobal = deserializeGlobalRtti(),
+            definedRttiSuperType = deserializeRttiSupertype(),
+            builtinIdSignatures = deserializeBuiltinIdSignatures(),
+        ),
+        serviceData = WasmCompiledServiceFileFragment(
+            globalLiterals = deserializeGlobalLiterals(),
+            globalLiteralsId = deserializeStringLiteralId(),
+            stringLiteralId = deserializeStringLiteralId(),
+            constantArrayDataSegmentId = deserializeConstantArrayDataSegmentId(),
+            jsFuns = deserializeJsFuns(),
+            jsModuleImports = deserializeJsModuleImports(),
+            jsBuiltinsPolyfills = deserializeJsBuiltinsPolyfills(),
+            exports = deserializeExports(),
+            mainFunctionWrappers = deserializeMainFunctionWrappers(),
+            testFunctionDeclarators = deserializeTestFunctionDeclarators(),
+            equivalentFunctions = deserializeClosureCallExports(),
+            jsModuleAndQualifierReferences = deserializeJsModuleAndQualifierReferences(),
+            classAssociatedObjectsInstanceGetters = deserializeClassAssociatedObjectInstanceGetters(),
+            objectInstanceFieldInitializers = deserializeList(::deserializeIdSignature),
+            nonConstantFieldInitializers = deserializeList(::deserializeIdSignature),
+        ),
     )
 
 

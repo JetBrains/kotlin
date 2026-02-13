@@ -45,6 +45,9 @@ class WasmCompiledTypesFileFragment(
     val definedFunctionTypes: MutableMap<IdSignature, WasmFunctionType> = mutableMapOf(),
 )
 
+val WasmCompiledDeclarationsFileFragment.hasDeclarations: Boolean
+    get() = definedFunctions.isNotEmpty() || definedGlobalVTables.isNotEmpty() || definedGlobalClassITables.isNotEmpty() || definedRttiGlobal.isNotEmpty()
+
 class WasmCompiledDeclarationsFileFragment(
     val definedFunctions: MutableMap<IdSignature, WasmFunction> = mutableMapOf(),
     val definedGlobalFields: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
@@ -52,6 +55,7 @@ class WasmCompiledDeclarationsFileFragment(
     val definedGlobalClassITables: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
     val definedRttiGlobal: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
     val definedRttiSuperType: MutableMap<IdSignature, IdSignature?> = mutableMapOf(),
+    var builtinIdSignatures: BuiltinIdSignatures? = null,
 )
 
 class WasmCompiledServiceFileFragment(
@@ -68,15 +72,33 @@ class WasmCompiledServiceFileFragment(
     val equivalentFunctions: MutableList<Pair<String, IdSignature>> = mutableListOf(),
     val jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference> = mutableSetOf(),
     val classAssociatedObjectsInstanceGetters: MutableList<ClassAssociatedObjects> = mutableListOf(),
-    var builtinIdSignatures: BuiltinIdSignatures? = null,
     val objectInstanceFieldInitializers: MutableList<IdSignature> = mutableListOf(),
     val nonConstantFieldInitializers: MutableList<IdSignature> = mutableListOf(),
 )
 
-//class WasmCompiledDependencyFileFragment(
-//    val definedTypes: WasmCompiledTypesFileFragment = WasmCompiledTypesFileFragment(),
-//    val definedDeclarations: WasmCompiledDeclarationsFileFragment = WasmCompiledDeclarationsFileFragment(),
-//) : IrICProgramFragment()
+class WasmCompiledDependencyFileFragment(
+    val definedTypes: WasmCompiledTypesFileFragment = WasmCompiledTypesFileFragment(),
+    val definedDeclarations: WasmCompiledDeclarationsFileFragment = WasmCompiledDeclarationsFileFragment(),
+) : IrICProgramFragment() {
+
+    fun makeProjection(onTypes: ModuleReferencedTypes?, onDeclarations: ModuleReferencedDeclarations): WasmCompiledDependencyFileFragment {
+        val types = onTypes?.let { oldTypes ->
+            WasmCompiledTypesFileFragment().also { newTypes ->
+                definedTypes.definedGcTypes.filterTo(newTypes.definedGcTypes) { it.key in oldTypes.referencedGcTypes }.toMutableMap()
+                definedTypes.definedVTableGcTypes.filterTo(newTypes.definedVTableGcTypes) { it.key in oldTypes.referencedGcTypes }.toMutableMap()
+                definedTypes.definedFunctionTypes.filterTo(newTypes.definedFunctionTypes) { it.key in oldTypes.referencedFunctionTypes }.toMutableMap()
+            }
+        } ?: definedTypes
+
+        val declarations = WasmCompiledDeclarationsFileFragment()
+        definedDeclarations.definedFunctions.filterTo(declarations.definedFunctions) { it.key in onDeclarations.referencedFunction }
+        definedDeclarations.definedGlobalVTables.filterTo(declarations.definedGlobalVTables) { it.key in onDeclarations.referencedGlobalVTable }
+        definedDeclarations.definedGlobalClassITables.filterTo(declarations.definedGlobalClassITables) { it.key in onDeclarations.referencedGlobalClassITable }
+        definedDeclarations.definedRttiGlobal.filterTo(declarations.definedRttiGlobal) { it.key in onDeclarations.referencedRttiGlobal }
+        declarations.builtinIdSignatures = definedDeclarations.builtinIdSignatures
+        return WasmCompiledDependencyFileFragment(types, declarations)
+    }
+}
 
 class WasmCompiledFileFragment(
     val definedTypes: WasmCompiledTypesFileFragment = WasmCompiledTypesFileFragment(),
@@ -88,6 +110,7 @@ enum class ExceptionTagType { WASM_TAG, JS_TAG, TRAP }
 
 class WasmCompiledModuleFragment(
     private val wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
+    private val wasmCompiledFileDependencyFragments: List<WasmCompiledDependencyFileFragment>,
     private val isWasmJsTarget: Boolean
 ) {
     // Used during linking
@@ -96,20 +119,29 @@ class WasmCompiledModuleFragment(
     private val stringDataSectionIndex = WasmImmediate.DataIdx(0)
     private val stringAddressesAndLengthsIndex = WasmImmediate.DataIdx(1)
 
+    private inline fun forEachDefinedDeclarations(body: (WasmCompiledTypesFileFragment, WasmCompiledDeclarationsFileFragment) -> Unit) {
+        wasmCompiledFileFragments.forEach {
+            body(it.definedTypes, it.definedDeclarations)
+        }
+        wasmCompiledFileDependencyFragments.forEach {
+            body(it.definedTypes, it.definedDeclarations)
+        }
+    }
+
     private inline fun tryFindBuiltInFunction(select: (BuiltinIdSignatures) -> IdSignature?): IdSignature? {
-        for (fragment in wasmCompiledFileFragments) {
-            val builtinSignatures = fragment.serviceData.builtinIdSignatures ?: continue
-            val signature = select(builtinSignatures) ?: continue
-            return signature.takeIf { fragment.definedDeclarations.definedFunctions.containsKey(it) } // Can be removed by DCE
+        forEachDefinedDeclarations { _, declarations ->
+            val builtinSignatures = declarations.builtinIdSignatures ?: return@forEachDefinedDeclarations
+            val signature = select(builtinSignatures) ?: return@forEachDefinedDeclarations
+            return signature.takeIf { declarations.definedFunctions.containsKey(it) } // Can be removed by DCE
         }
         return null
     }
 
     private inline fun tryFindBuiltInType(select: (BuiltinIdSignatures) -> IdSignature?): IdSignature? {
-        for (fragment in wasmCompiledFileFragments) {
-            val builtinSignatures = fragment.serviceData.builtinIdSignatures ?: continue
-            val signature = select(builtinSignatures) ?: continue
-            return signature.takeIf { fragment.definedTypes.definedGcTypes.containsKey(it) } // Can be removed by DCE
+        forEachDefinedDeclarations { types, declarations ->
+            val builtinSignatures = declarations.builtinIdSignatures ?: return@forEachDefinedDeclarations
+            val signature = select(builtinSignatures) ?: return@forEachDefinedDeclarations
+            return signature.takeIf { types.definedGcTypes.containsKey(it) } // Can be removed by DCE
         }
         return null
     }
@@ -901,37 +933,21 @@ class WasmCompiledModuleFragment(
     }
 
     private fun getDefinedDeclarationsFromFragments(): DefinedDeclarationsResolver {
-        val singleFragment = wasmCompiledFileFragments.singleOrNull()
-        val definedDeclarations = if (singleFragment != null) {
-            DefinedDeclarationsResolver(
-                functions = singleFragment.definedDeclarations.definedFunctions,
-                globalFields = singleFragment.definedDeclarations.definedGlobalFields,
-                globalVTables = singleFragment.definedDeclarations.definedGlobalVTables,
-                globalClassITables = singleFragment.definedDeclarations.definedGlobalClassITables,
-                globalRTTI = singleFragment.definedDeclarations.definedRttiGlobal,
-                gcTypes = singleFragment.definedTypes.definedGcTypes,
-                vTableGcTypes = singleFragment.definedTypes.definedVTableGcTypes,
-                functionTypes = singleFragment.definedTypes.definedFunctionTypes,
-            )
-        } else {
-            DefinedDeclarationsResolver().also { definedDeclarations ->
-                wasmCompiledFileFragments.forEach { fragment ->
-                    putAllChecked(fragment.definedDeclarations.definedFunctions, definedDeclarations.functions, "functions")
-                    putAllChecked(fragment.definedDeclarations.definedGlobalFields, definedDeclarations.globalFields, "globalFields")
-                    putAllChecked(fragment.definedDeclarations.definedGlobalVTables, definedDeclarations.globalVTables, "globalVTables")
-                    putAllChecked(fragment.definedDeclarations.definedGlobalClassITables, definedDeclarations.globalClassITables, "globalClassITables")
-                    putAllChecked(fragment.definedDeclarations.definedRttiGlobal, definedDeclarations.globalRTTI, "globalRTTI")
-                    putAllChecked(fragment.definedTypes.definedGcTypes, definedDeclarations.gcTypes, "gcTypes")
-                    putAllChecked(fragment.definedTypes.definedVTableGcTypes, definedDeclarations.vTableGcTypes, "vTableGcTypes")
-                    putAllChecked(fragment.definedTypes.definedFunctionTypes, definedDeclarations.functionTypes, "functionTypes")
-                }
-            }
+        val resolver = DefinedDeclarationsResolver()
+        forEachDefinedDeclarations { types, declarations ->
+            putAllChecked(declarations.definedFunctions, resolver.functions, "functions")
+            putAllChecked(declarations.definedGlobalFields, resolver.globalFields, "globalFields")
+            putAllChecked(declarations.definedGlobalVTables, resolver.globalVTables, "globalVTables")
+            putAllChecked(declarations.definedGlobalClassITables, resolver.globalClassITables, "globalClassITables")
+            putAllChecked(declarations.definedRttiGlobal, resolver.globalRTTI, "globalRTTI")
+            putAllChecked(types.definedGcTypes, resolver.gcTypes, "gcTypes")
+            putAllChecked(types.definedVTableGcTypes, resolver.vTableGcTypes, "vTableGcTypes")
+            putAllChecked(types.definedFunctionTypes, resolver.functionTypes, "functionTypes")
         }
 
-        rebindEquivalentFunctions(definedDeclarations.functions)
+        rebindEquivalentFunctions(resolver.functions)
         bindUniqueJsFunNames()
-
-        return definedDeclarations
+        return resolver
     }
 
     private fun bindGlobalLiterals(definedDeclarations: DefinedDeclarationsResolver, stringPoolSize: Int): Int {

@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragments
-import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsMultimodule
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.ModuleReferencedDeclarations
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmFileCodegenContextWithAllImport
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmFileCodegenContextWithExport
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -18,7 +14,10 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.IrCompilerICInterface
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys

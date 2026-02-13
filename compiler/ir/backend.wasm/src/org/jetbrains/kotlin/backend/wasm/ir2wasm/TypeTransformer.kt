@@ -14,12 +14,8 @@ import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.ir.*
-
-fun interface HeapTypeGetter {
-    fun referenceHeapType(klass: IrClass): WasmType
-}
 
 class WasmTypeTransformer(
     val backendContext: WasmBackendContext,
@@ -28,11 +24,11 @@ class WasmTypeTransformer(
     private val builtIns: IrBuiltIns = backendContext.irBuiltIns
     private val symbols = backendContext.wasmSymbols
 
-    fun IrType.hasNoWasmResultType(): Boolean =
-        this == builtIns.unitType || this == builtIns.nothingType
+    fun IrType.hasWasmResultType(): Boolean =
+        this != builtIns.unitType && this != builtIns.nothingType
 
     fun IrType.toWasmResultType(): WasmType? =
-        hasNoWasmResultType().ifFalse { toWasmValueType() }
+        hasWasmResultType().ifTrue { toWasmValueType() }
 
     fun IrType.toWasmBlockResultType(): WasmType? =
         when (this) {

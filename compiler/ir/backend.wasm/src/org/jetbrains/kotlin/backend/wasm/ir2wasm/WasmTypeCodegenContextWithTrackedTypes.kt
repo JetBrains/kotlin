@@ -58,32 +58,11 @@ class ModuleReferencedTypes(private val idSignatureRetriever: IdSignatureRetriev
     }
 }
 
-class WasmFileCodegenContextWithExportTrackedTypes(
-    wasmFileFragment: WasmCompiledFileFragment,
-    idSignatureRetriever: IdSignatureRetriever,
-    moduleReferencedDeclarations: ModuleReferencedDeclarations,
+class WasmTypeCodegenContextWithTrackedTypes(
+    wasmFileFragment: WasmCompiledTypesFileFragment,
     private val moduleReferencedTypes: ModuleReferencedTypes,
-) : WasmFileCodegenContextWithExport(wasmFileFragment, idSignatureRetriever, moduleReferencedDeclarations) {
-
-    override fun referenceFunction(irFunction: IrFunctionSymbol): FuncSymbol {
-        referenceFunctionType(irFunction)
-        return super.referenceFunction(irFunction)
-    }
-
-    override fun referenceGlobalVTable(irClass: IrClassSymbol): VTableGlobalSymbol {
-        moduleReferencedTypes.addGcTypeToReferenced(irClass)
-        return super.referenceGlobalVTable(irClass)
-    }
-
-    override fun referenceGlobalClassITable(irClass: IrClassSymbol): ClassITableGlobalSymbol {
-        moduleReferencedTypes.addGcTypeToReferenced(irClass)
-        return super.referenceGlobalClassITable(irClass)
-    }
-
-    override fun referenceRttiGlobal(irClass: IrClassSymbol): RttiGlobalSymbol {
-        moduleReferencedTypes.addGcTypeToReferenced(irClass)
-        return super.referenceRttiGlobal(irClass)
-    }
+    idSignatureRetriever: IdSignatureRetriever,
+) : WasmTypeCodegenContext(wasmFileFragment, idSignatureRetriever) {
 
     override fun referenceGcType(irClass: IrClassSymbol): GcTypeSymbol {
         moduleReferencedTypes.addGcTypeToReferenced(irClass)

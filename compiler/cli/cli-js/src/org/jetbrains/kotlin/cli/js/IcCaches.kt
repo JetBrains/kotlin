@@ -25,7 +25,6 @@ sealed class IcCachesConfigurationData {
 
     data class Wasm(
         val wasmDebug: Boolean,
-        val preserveIcOrder: Boolean,
         val generateWat: Boolean,
         val generateDebugInformation: Boolean,
     ) : IcCachesConfigurationData()
@@ -43,7 +42,6 @@ internal fun prepareIcCaches(
     val data = when {
         arguments.wasm -> IcCachesConfigurationData.Wasm(
             wasmDebug = arguments.wasmDebug,
-            preserveIcOrder = arguments.preserveIcOrder,
             generateWat = arguments.wasmGenerateWat,
             generateDebugInformation = arguments.sourceMap || arguments.generateDwarf
         )
@@ -88,7 +86,6 @@ internal fun prepareIcCaches(
         is IcCachesConfigurationData.Wasm -> WasmICContext(
             allowIncompleteImplementations = false,
             skipLocalNames = !icConfigurationData.wasmDebug,
-            safeFragmentTags = icConfigurationData.preserveIcOrder,
             skipCommentInstructions = !icConfigurationData.generateWat,
             skipLocations = !icConfigurationData.generateDebugInformation
         )

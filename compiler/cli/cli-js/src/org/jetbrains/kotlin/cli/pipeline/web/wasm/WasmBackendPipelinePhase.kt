@@ -71,7 +71,6 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             .filterIsInstance<WasmModuleArtifact>()
             .flatMap { it.fileArtifacts }
             .mapNotNull { it.loadIrFragments()?.mainFragment }
-            .let { fragments -> if (configuration.preserveIcOrder) fragments.sortedBy { it.fragmentTag } else fragments }
 
         val configuration = WasmIrModuleConfiguration(
             wasmCompiledFileFragments = wasmArtifacts,

@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.ExceptionTagType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.ModuleReferencedDeclarations
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledDeclarationsFileFragment
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledDependencyFileFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.JsCodeSnippet
@@ -174,6 +176,7 @@ private fun String.normalizeEmptyLines(): String {
 }
 
 class MultimoduleCompileOptions(
+    val wasmCompiledDependencyFileFragments: List<WasmCompiledDependencyFileFragment>,
     val stdlibModuleNameForImport: String?,
     val dependencyModules: Set<WasmModuleDependencyImport>,
     val initializeUnit: Boolean,
@@ -204,7 +207,11 @@ fun linkWasmIr(moduleConfiguration: WasmIrModuleConfiguration): WasmModule {
 
     val multimoduleParameters = moduleConfiguration.multimoduleOptions
 
-    val wasmCompiledModuleFragment = WasmCompiledModuleFragment(wasmCompiledFileFragments, isWasmJsTarget)
+    val wasmCompiledModuleFragment = WasmCompiledModuleFragment(
+        wasmCompiledFileFragments = wasmCompiledFileFragments,
+        wasmCompiledFileDependencyFragments = multimoduleParameters?.wasmCompiledDependencyFileFragments ?: emptyList(),
+        isWasmJsTarget = isWasmJsTarget
+    )
 
     val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
 
@@ -268,16 +275,16 @@ fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linked
         val jsFuns = mutableSetOf<JsCodeSnippet>()
         val jsModuleAndQualifierReferences = mutableSetOf<JsModuleAndQualifierReference>()
         wasmCompiledFileFragments.forEach { fragment ->
-            jsModuleImports.addAll(fragment.jsModuleImports.values.distinct())
-            jsFuns.addAll(fragment.jsFuns.values)
-            jsModuleAndQualifierReferences.addAll(fragment.jsModuleAndQualifierReferences)
+            jsModuleImports.addAll(fragment.serviceData.jsModuleImports.values.distinct())
+            jsFuns.addAll(fragment.serviceData.jsFuns.values)
+            jsModuleAndQualifierReferences.addAll(fragment.serviceData.jsModuleAndQualifierReferences)
         }
 
         val useJsTag = !configuration.getBoolean(WasmConfigurationKeys.WASM_NO_JS_TAG)
 
         val jsBuiltinsComposed =
             wasmCompiledFileFragments.flatMap { fragment ->
-                fragment.jsBuiltinsPolyfills.values.toList()
+                fragment.serviceData.jsBuiltinsPolyfills.values.toList()
             }.joinToString("\n")
 
         if (jsBuiltinsComposed.isNotEmpty()) {
