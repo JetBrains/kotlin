@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
-import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
-import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
-import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
-import org.jetbrains.kotlin.arguments.dsl.types.StringType
+import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -39,7 +36,10 @@ private fun generateLevel(genDir: File, levelName: String) {
 }
 
 private fun findLevelWithParent(name: String): Pair<KotlinCompilerArgumentsLevel, KotlinCompilerArgumentsLevel?> {
-    fun find(level: KotlinCompilerArgumentsLevel, parent: KotlinCompilerArgumentsLevel?): Pair<KotlinCompilerArgumentsLevel, KotlinCompilerArgumentsLevel?>? {
+    fun find(
+        level: KotlinCompilerArgumentsLevel,
+        parent: KotlinCompilerArgumentsLevel?,
+    ): Pair<KotlinCompilerArgumentsLevel, KotlinCompilerArgumentsLevel?>? {
         if (level.name == name) return level to parent
         return level.nestedLevels.firstNotNullOfOrNull { find(it, level) }
     }
@@ -143,7 +143,7 @@ private fun generateArgumentsClass(
 private fun SmartPrinter.generateArgumentsClass(
     level: KotlinCompilerArgumentsLevel,
     parent: KotlinCompilerArgumentsLevel?,
-    info: ArgumentsInfo
+    info: ArgumentsInfo,
 ) {
     println(COPYRIGHT)
     println("package org.jetbrains.kotlin.cli.common.arguments")
@@ -348,7 +348,7 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
             val optionalValue = if (ifValue.isNotBlank()) ", \"$ifValue\"" else ""
             println("@Enables(LanguageFeature.$featureName$optionalValue)")
         }
-        is Disables if kind == AnnotationKind.LanguageFeature-> {
+        is Disables if kind == AnnotationKind.LanguageFeature -> {
             val feature = annotation.feature
             val ifValue = annotation.ifValueIs
             val featureName = feature.name
@@ -391,11 +391,13 @@ private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
             false -> "Boolean"
         }
         is StringArrayType -> "Array<String>"
+        is StringListType -> "Array<String>"
         else -> when (type.isNullable.current) {
             true -> "String?"
             false -> "String"
         }
     }
+
     println("var $name: $type = ${argument.defaultValueInArgs}")
     generateSetter(type, argument)
 }
@@ -477,12 +479,12 @@ private fun SmartPrinter.generateFreeArgsAndErrors() {
 @OptIn(ExperimentalArgumentApi::class)
 private val KotlinCompilerArgument.defaultValueInArgs: String
     get() {
-        @Suppress("UNCHECKED_CAST")
-        val valueType = argumentType as KotlinArgumentValueType<Any>
-        if (argumentType is StringArrayType) {
-            return "emptyArray()"
+        return when (@Suppress("UNCHECKED_CAST") val valueType = argumentType as KotlinArgumentValueType<Any>) {
+            is StringArrayType -> "emptyArray()"
+            is StringListType if valueType.defaultValue.current.isNullOrEmpty() -> "emptyArray()"
+            is StringListType -> "arrayOf(${valueType.stringRepresentation(valueType.defaultValue.current)})"
+            else -> valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
         }
-        return valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
     }
 
 private const val tripleQuote = "\"\"\""

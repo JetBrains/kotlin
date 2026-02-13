@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.PathType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
+import org.jetbrains.kotlin.arguments.dsl.types.StringListType
 import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
 import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -358,6 +359,12 @@ internal class BtaImplGenerator(
             argument.valueType.origin is StringArrayType -> {
                 add(" ?: emptyArray()")
             }
+            argument.valueType.origin is StringListType -> {
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M() ?: emptyArray()",
+                    MemberName(KOTLIN_COLLECTIONS, "toTypedArray")
+                )
+            }
             else -> add("")
         }
     }.build()
@@ -426,6 +433,9 @@ internal class BtaImplGenerator(
                         isExtension = true
                     )
                 )
+            }
+            argument.valueType.origin is StringListType -> {
+                add(".%M()", MemberName(targetPackage, "toListOrEmpty", true))
             }
             else -> add("")
         }
