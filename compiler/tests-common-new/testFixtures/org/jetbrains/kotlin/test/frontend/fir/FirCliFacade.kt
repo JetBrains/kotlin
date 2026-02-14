@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 
 abstract class FirCliFacade<Phase, OutputPipelineArtifact>(
     testServices: TestServices,
@@ -95,12 +96,20 @@ fun SingleModuleFrontendOutput.toTestOutputPart(
     )
 }
 
+
+
 fun processErrorFromCliPhase(messageCollector: MessageCollector, testServices: TestServices): Nothing? {
     if (messageCollector.hasErrors()) {
         if (CHECK_COMPILER_OUTPUT in testServices.moduleStructure.allDirectives) {
             // errors from message collector would be checked separately
             return null
         }
+        val errors = when (messageCollector) {
+            is MessageCollectorImpl -> messageCollector.errors.joinToString("\n") { it.toString() }
+            is org.jetbrains.kotlin.test.utils.MessageCollectorForCompilerTests -> messageCollector.errors.joinToString("\n")
+            else -> "Unknown errors (collector is ${messageCollector::class.simpleName})"
+        }
+        error("CLI phase failed with errors:\n$errors")
     }
     error("CLI phase returned null and there are no errors in the message collector ")
 }

@@ -22,12 +22,18 @@ class MessageCollectorForCompilerTests(
     private val _nonSourceMessages = mutableListOf<String>()
     val nonSourceMessages: List<String> get() = _nonSourceMessages
 
+    private val _errors = mutableListOf<String>()
+    val errors: List<String> get() = _errors
+
     override fun report(
         severity: CompilerMessageSeverity,
         message: String,
         location: CompilerMessageSourceLocation?,
     ) {
         hasErrors = hasErrors || severity.isError
+        if (severity.isError) {
+             _errors.add(messageRenderer.render(severity, message, location))
+        }
         if (location == null && severity <= CompilerMessageSeverity.WARNING) {
             _nonSourceMessages.add(messageRenderer.render(severity, message, location))
         }

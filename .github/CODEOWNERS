@@ -45,6 +45,7 @@
 /compiler/build-tools/kotlin-build-tools-compat/gen/ @JetBrains/kotlin
 /compiler/build-tools/kotlin-build-tools-api/api/kotlin-build-tools-api.api @JetBrains/kotlin
 /compiler/cli/ @JetBrains/kotlin-frontend
+/compiler/cli/cli-jklib/ @jDramaix @gkdn @kevinoconnor7
 /compiler/cli/cli-js/ @JetBrains/kotlin-js @JetBrains/kotlin-wasm
 /compiler/cli/cli-native-klib/ @JetBrains/kotlin-frontend @JetBrains/kotlin-common-backend
 /compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt @JetBrains/kotlin-native
@@ -86,6 +87,7 @@
 /compiler/ir/ir.tree/tree-generator @JetBrains/kotlin-common-backend @broadwaylamb
 /compiler/ir/ir.objcinterop/ @JetBrains/kotlin-native
 /compiler/ir/serialization.common/ @JetBrains/kotlin-common-backend
+/compiler/ir/serialization.jklib/ @jDramaix @gkdn @kevinoconnor7
 /compiler/ir/serialization.js/ @JetBrains/kotlin-js
 /compiler/ir/serialization.jvm/ @JetBrains/kotlin-jvm
 /compiler/ir/serialization.native/ @JetBrains/kotlin-native
