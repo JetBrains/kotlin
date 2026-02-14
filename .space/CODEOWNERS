@@ -59,6 +59,7 @@
 
 # SPACE_TO_GITHUB_OWNER: "Google Compose" ShikaSD bentrengrove andrewbailey chuckjaz derekxu16
 # SPACE_TO_GITHUB_OWNER: "Parcelize" troelsbjerre blueshiftlabs jsjeon ting-yuan jaschdoc
+# SPACE_TO_GITHUB_OWNER: "JKlib" jDramaix gkdn kevinoconnor7
 
 # Fallback rule, must always be top
 * "Kotlin"
@@ -99,6 +100,7 @@
 /compiler/build-tools/kotlin-build-tools-compat/gen/ "Kotlin"
 /compiler/build-tools/kotlin-build-tools-api/api/kotlin-build-tools-api.api "Kotlin"
 /compiler/cli/ "Kotlin Frontend"
+/compiler/cli/cli-jklib/ "JKlib"
 /compiler/cli/cli-js/ "Kotlin JS" "Kotlin Wasm"
 /compiler/cli/cli-native-klib/ "Kotlin Frontend" "Kotlin Common Backend"
 /compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt "Kotlin Native"
@@ -140,6 +142,7 @@
 /compiler/ir/ir.tree/tree-generator "Kotlin Common Backend" sergej.jaskiewicz@jetbrains.com
 /compiler/ir/ir.objcinterop/ "Kotlin Native"
 /compiler/ir/serialization.common/ "Kotlin Common Backend"
+/compiler/ir/serialization.jklib/ "JKlib"
 /compiler/ir/serialization.js/ "Kotlin JS"
 /compiler/ir/serialization.jvm/ "Kotlin JVM"
 /compiler/ir/serialization.native/ "Kotlin Native"
