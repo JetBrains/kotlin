@@ -24,6 +24,17 @@ else
 fi
 [ -n "$JAVACMD" ] || JAVACMD=java
 
+findJavaVersion() {
+    # Note that this only loads the first component of the version, so "1.8.0_265" -> "1".
+    # But it's fine because major version is 9 for JDK 9, and so on.
+    regex='^.*version "([[:digit:]]+).*$'
+    while read -r line; do
+        if [[ "$line" =~ $regex ]]; then
+            echo ${BASH_REMATCH[1]}
+        fi
+    done <<< $("${JAVACMD:=java}" -version 2>&1)
+}
+
 declare -a java_args
 declare -a java_opts
 declare -a konan_args
@@ -61,6 +72,16 @@ findHome() {
     (cd -P "$(dirname "$source")/.." && pwd)
 }
 KONAN_HOME="$(findHome)"
+
+java_version="$(findJavaVersion)"
+
+if [[ $java_version -ge 24 ]]; then
+    # Allow JNI access for all compiler code. In particular, this is needed for jansi (see `PlainTextMessageRenderer`).
+    java_args=("${java_args[@]}" "--enable-native-access=ALL-UNNAMED")
+
+    # Suppress unsafe deprecation warnings, see KT-76799 and IDEA-370928.
+    java_args=("${java_args[@]}" "--sun-misc-unsafe-memory-access=allow")
+fi
 
 java_opts=(-ea \
             -Xmx3G \
