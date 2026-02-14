@@ -1,4 +1,3 @@
-// TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 
 @file:JvmName("TestKt")

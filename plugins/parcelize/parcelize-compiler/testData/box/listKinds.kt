@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// FULL_JDK
 
 @file:JvmName("TestKt")
 package test
