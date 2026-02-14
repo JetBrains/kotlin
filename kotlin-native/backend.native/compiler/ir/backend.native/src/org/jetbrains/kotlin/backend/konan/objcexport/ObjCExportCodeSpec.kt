@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import java.io.PrintStream
@@ -153,7 +155,8 @@ internal class ObjCExportCodeSpec(
         val types: List<ObjCTypeForKotlinType>
 )
 
-internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String) {
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String, signaturer: IdSignatureComposer, mapper: ObjCExportMapper) {
     PrintStream(path).use { out ->
         out.println("# Classes mapping")
         for (type in types) {
@@ -172,31 +175,48 @@ internal fun ObjCExportCodeSpec.dumpSelectorToSignatureMapping(path: String) {
             is ObjCGetterForNSEnumType -> true
         }
 
-        fun ObjCMethodSpec.getMapping(objcClass: String): String? = when (this) {
+        fun ObjCMethodSpec.getMapping(objcClass: String, overrides: Map<IdSignature, IdSignature>): String? = when (this) {
             is ObjCClassMethodForKotlinEnumValuesOrEntries -> "$objcClass.$selector,${valuesFunctionSymbol.signature}"
             is ObjCFactoryMethodForKotlinArrayConstructor -> "$objcClass.${baseMethod.selector},${baseMethod.symbol.signature}"
             is ObjCGetterForKotlinEnumEntry -> "$objcClass.$selector,${irEnumEntrySymbol.signature}"
             is ObjCGetterForObjectInstance -> "$objcClass.$selector,${classSymbol.signature}"
             is ObjCInitMethodForKotlinConstructor -> "$objcClass.${baseMethod.selector},${baseMethod.symbol.signature}"
             is ObjCKotlinThrowableAsErrorMethod -> null
-            is ObjCMethodForKotlinMethod -> "$objcClass.${baseMethod.selector},${baseMethod.symbol.signature}"
+            is ObjCMethodForKotlinMethod -> {
+                val signature = baseMethod.symbol.signature
+                "$objcClass.${baseMethod.selector},${overrides[signature] ?: signature}"
+            }
             is ObjCGetterForNSEnumType -> null
         }
         out.println("\n# Instance methods mapping")
         for (type in types) {
+            val overrides = buildMap {
+                for (method in type.irClassSymbol.descriptor.contributedMethods) {
+                    val signature = signaturer.composeSignature(method) ?: continue
+                    for (base in mapper.getBaseMethods(method.original)) {
+                        val baseSignature = signaturer.composeSignature(base) ?: continue
+                        put(baseSignature, signature)
+                    }
+                }
+            }
             for (mapping in type.methods.filter { it.isInstanceMethod() }) {
-                out.println(mapping.getMapping(type.binaryName) ?: continue)
+                out.println(mapping.getMapping(type.binaryName, overrides) ?: continue)
             }
         }
         out.println("\n# Class methods mapping")
         for (type in types) {
             for (mapping in type.methods.filterNot { it.isInstanceMethod() }) {
-                out.println(mapping.getMapping(type.binaryName) ?: continue)
+                out.println(mapping.getMapping(type.binaryName, emptyMap()) ?: continue)
+            }
+            if (type is ObjCClassForKotlinClass) {
+                for (mapping in type.categoryMethods) {
+                    out.println(mapping.getMapping(type.binaryName, emptyMap()) ?: continue)
+                }
             }
         }
         for (file in files) {
             for (mapping in file.methods) {
-                out.println(mapping.getMapping(file.binaryName) ?: continue)
+                out.println(mapping.getMapping(file.binaryName, emptyMap()) ?: continue)
             }
         }
     }
