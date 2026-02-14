@@ -751,7 +751,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("symbol")
         }
 
-        val NO_VALUE_FOR_PARAMETER by error<KtElement>(PositioningStrategy.VALUE_ARGUMENTS) {
+        val NO_VALUE_FOR_PARAMETER by error<KtElement>(PositioningStrategy.VALUE_ARGUMENTS_LIST) {
             parameter<Name>("violatedParameter")
         }
         val TOO_MANY_ARGUMENTS by error<PsiElement> {

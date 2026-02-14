@@ -13,7 +13,7 @@ annotation class AsAnnotationConstructor(val x: Int, val y: String, val z: IntAr
 
 @AsAnnotationConstructor(<!SYNTAX!><!>, "", [])
 @AsAnnotationConstructor(<!SYNTAX!><!>, "", [],)
-@AsAnnotationConstructor(<!SYNTAX!><!>, <!NO_VALUE_FOR_PARAMETER!>"",)<!>
+@AsAnnotationConstructor<!NO_VALUE_FOR_PARAMETER!>(<!SYNTAX!><!>, "",)<!>
 @AsAnnotationConstructor(<!SYNTAX!><!>, "", <!SYNTAX!><!>,)
 @AsAnnotationConstructor(<!SYNTAX!><!>, <!SYNTAX!><!>, <!SYNTAX!><!>,)
 @AsAnnotationConstructor(<!SYNTAX!><!>, <!SYNTAX!><!>,)

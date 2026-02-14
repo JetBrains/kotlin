@@ -44,15 +44,15 @@ fun test() {
     J().foo(1, b = 2)
 
     J2().foo(1, b = 2)
-    J2().foo(1, <!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>bx<!> = 2)<!>
+    <!NO_VALUE_FOR_PARAMETER!>J2().foo(1, <!NAMED_PARAMETER_NOT_FOUND!>bx<!> = 2)<!>
 
     J3().foo(1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>b<!> = 2) // K1 bug, fixed in K2 (KT-67546)
     J3().foo(1, <!NAME_FOR_AMBIGUOUS_PARAMETER!>bb<!> = 2)
-    J3().foo(1, <!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>bx<!> = 2)<!>
+    <!NO_VALUE_FOR_PARAMETER!>J3().foo(1, <!NAMED_PARAMETER_NOT_FOUND!>bx<!> = 2)<!>
 
     J4().foo(1, b = 2)
-    J4().foo(1, <!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>bx<!> = 2)<!>
-    J4().foo(1, <!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>bxx<!> = 2)<!>
+    <!NO_VALUE_FOR_PARAMETER!>J4().foo(1, <!NAMED_PARAMETER_NOT_FOUND!>bx<!> = 2)<!>
+    <!NO_VALUE_FOR_PARAMETER!>J4().foo(1, <!NAMED_PARAMETER_NOT_FOUND!>bxx<!> = 2)<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, javaFunction, javaType */

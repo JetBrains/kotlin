@@ -6,7 +6,7 @@ class A
 
 annotation class AnnVarargs(val x: Int, vararg val y: String, val z: Int)
 
-@AnnVarargs(1, "a", "b", "c", <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>2<!>)<!>
+@AnnVarargs<!NO_VALUE_FOR_PARAMETER!>(1, "a", "b", "c", <!ARGUMENT_TYPE_MISMATCH!>2<!>)<!>
 class B
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, integerLiteral, outProjection, primaryConstructor,

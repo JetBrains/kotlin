@@ -16,7 +16,7 @@ fun main() {
     1.set(2, z = 1)
     1[2] += 1
 
-    1.set(2, <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>1<!>)<!>
+    <!NO_VALUE_FOR_PARAMETER!>1.set(2, <!ARGUMENT_TYPE_MISMATCH!>1<!>)<!>
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, funWithExtensionReceiver, functionDeclaration,

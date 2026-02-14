@@ -9,7 +9,7 @@ annotation class Ann(
         val b3: Boolean
 )
 
-@Ann(!true, <!NO_VALUE_FOR_PARAMETER!>!false)<!> class MyClass
+@Ann<!NO_VALUE_FOR_PARAMETER!>(!true, !false)<!> class MyClass
 
 // EXPECTED: @Ann(b1 = false, b2 = true)
 

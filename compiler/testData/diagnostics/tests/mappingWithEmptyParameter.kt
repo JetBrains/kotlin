@@ -17,7 +17,7 @@ val contextualFunctionalType: context(<!SYNTAX(": Type expected")!><!>, String) 
 fun useSite() {
     normalParams(42, "missed", 'a')
     normalParams(42, <!SYNTAX(": Expecting an argument")!><!>, 'a')
-    normalParams(first = 42, <!NAMED_PARAMETER_NOT_FOUND("<no name provided>")!>`<no name provided>`<!> = "str", <!NO_VALUE_FOR_PARAMETER("<no name provided>")!>third = 'c')<!>
+    normalParams<!NO_VALUE_FOR_PARAMETER("<no name provided>")!>(first = 42, <!NAMED_PARAMETER_NOT_FOUND("<no name provided>")!>`<no name provided>`<!> = "str", third = 'c')<!>
     functionalType("missed")
     functionalType<!NO_VALUE_FOR_PARAMETER("p1")!>()<!>
     functionalType(<!SYNTAX(": Expecting an argument")!><!>,)

@@ -26,7 +26,7 @@ public class MethodPreserving {
 fun test() {
     val builder: MethodPreserving.MethodPreservingBuilder = MethodPreserving.builder();
     builder.name(3, 4); // No error: call the manually written method
-    builder.name(<!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>"str3"<!>)<!>; // Error: method is no generated because a method with the same name already exists
+    builder.name<!NO_VALUE_FOR_PARAMETER!>(<!ARGUMENT_TYPE_MISMATCH!>"str3"<!>)<!>; // Error: method is no generated because a method with the same name already exists
 
     val intResult: Int = builder.integer(200); // No error: call the manually written method
 
