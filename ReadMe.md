@@ -4,7 +4,7 @@
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.jetbrains.com/scans?search.rootProjectNames=Kotlin)
 
-# Kotlin Programming Language
+# Kotlin Programming Language!!
 
 Welcome to [Kotlin](https://kotlinlang.org/)!   
 Kotlin is a concise multiplatform language developed by [JetBrains](https://www.jetbrains.com/) and [contributors](https://kotlinlang.org/docs/contribute.html).
@@ -25,7 +25,7 @@ Some handy links:
  * [TeamCity CI build](https://teamcity.jetbrains.com/project.html?tab=projectOverview&projectId=Kotlin)
  * [Kotlin Foundation](https://kotlinfoundation.org/)
 
-## Kotlin Multiplatform capabilities
+## Kotlin Multiplatform capabilities!
 
 Support for multiplatform programming is one of Kotlin’s key benefits. It reduces time spent writing and maintaining the same code for [different platforms](https://kotlinlang.org/docs/reference/mpp-supported-platforms.html) while retaining the flexibility and benefits of native programming.
 
@@ -41,7 +41,7 @@ Support for multiplatform programming is one of Kotlin’s key benefits. It redu
  * [Kotlin Eclipse Plugin](https://kotlinlang.org/docs/tutorials/getting-started-eclipse.html)
  * [Kotlin Sublime Text Package](https://github.com/vkostyukov/kotlin-sublime-package)
 
-## Build environment requirements
+## Build environment requirements !
 
 This repository is using [Gradle toolchains](https://docs.gradle.org/current/userguide/toolchains.html) feature
 to select and auto-provision required JDKs from [Eclipse Adoptium](https://adoptium.net) project.
