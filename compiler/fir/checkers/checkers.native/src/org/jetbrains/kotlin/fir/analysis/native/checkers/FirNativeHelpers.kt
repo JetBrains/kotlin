@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
@@ -41,12 +40,11 @@ fun FirRegularClassSymbol.forwardDeclarationKindOrNull(): NativeForwardDeclarati
  * Tries to read `@kotlin.native.internal.TypedIntrinsic(kind: String)` from the called function
  * and convert it to `IntrinsicType`.
  */
-@OptIn(SymbolInternals::class)
 fun tryGetIntrinsicType(callSite: FirFunctionCall): IntrinsicType? {
     val symbol = callSite.toResolvedCallableSymbol() ?: return null
     val session = symbol.moduleData.session
 
-    val annotation = symbol.fir.getAnnotationByClassId(ClassId.topLevel(KonanFqNames.typedIntrinsic), session)
+    val annotation = symbol.getAnnotationByClassId(ClassId.topLevel(KonanFqNames.typedIntrinsic), session)
         ?: return null
 
     val literal = annotation.argumentMapping.mapping.values.firstOrNull() as? FirLiteralExpression
