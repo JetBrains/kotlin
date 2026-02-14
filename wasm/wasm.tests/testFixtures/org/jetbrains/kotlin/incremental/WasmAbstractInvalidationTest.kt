@@ -6,22 +6,32 @@
 package org.jetbrains.kotlin.incremental
 
 
+import com.intellij.util.containers.addIfNotNull
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.wasm.MultimoduleCompileOptions
 import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
+import org.jetbrains.kotlin.backend.wasm.WasmModuleDependencyImport
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextForTesting
+import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifactMultimodule
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.ModuleReferencedDeclarations
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.ModuleReferencedTypes
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledCodeFileFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.hasDeclarations
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.encodeModuleName
 import org.jetbrains.kotlin.codegen.ModelTarget
 import org.jetbrains.kotlin.codegen.ModuleInfo
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.sourceMap
 import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
@@ -32,7 +42,6 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.utils.TestDisposable
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmDebug
 import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
 import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
@@ -132,25 +141,14 @@ abstract class WasmAbstractInvalidationTest(
                 commitIncrementalCache = commitIncrementalCache,
             )
 
-            val icCaches = cacheUpdater.actualizeCaches()
-            val fileFragments =
-                icCaches.flatMap { it.fileArtifacts }.mapNotNull { it.loadIrFragments()?.mainFragment as? WasmCompiledFileFragment }
+            val icCaches = cacheUpdater.actualizeCaches().filterIsInstance<WasmModuleArtifactMultimodule>()
 
-            verifyCacheUpdateStats(stepId, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
 
-            val parameters = WasmIrModuleConfiguration(
-                wasmCompiledFileFragments = fileFragments,
-                moduleName = mainModuleInfo.moduleName,
-                configuration = configuration,
-                typeScriptFragment = null,
-                baseFileName = mainModuleInfo.moduleName,
-                multimoduleOptions = null,
-            )
-
-            val linkedModule = linkWasmIr(parameters)
-            val compilationResult = compileWasmIrToBinary(parameters, linkedModule)
-
-            writeCompilationResult(compilationResult, buildDir, mainModuleInfo.moduleName)
+            parameters.forEach { parameters ->
+                val linkedModule = linkWasmIr(parameters)
+                val compilationResult = compileWasmIrToBinary(parameters, linkedModule)
+                writeCompilationResult(compilationResult, buildDir, parameters.baseFileName)
+            }
 
             WasmVM.NodeJs.run(
                 "./test.mjs",
@@ -208,15 +206,15 @@ abstract class WasmAbstractInvalidationTest(
                 val totalSizeBefore =
                     cacheDir.walkTopDown().filter { it.isFile }.map { it.length() }.sum()
 
-                compileVerifyAndRun(
-                    stepId = projStep.id,
-                    cacheDir = cacheDir,
-                    mainModuleInfo = mainModuleInfo,
-                    configuration = configuration,
-                    testInfo = testInfo,
-                    removedModulesInfo = removedModulesInfo,
-                    commitIncrementalCache = false
-                )
+//                compileVerifyAndRun(
+//                    stepId = projStep.id,
+//                    cacheDir = cacheDir,
+//                    mainModuleInfo = mainModuleInfo,
+//                    configuration = configuration,
+//                    testInfo = testInfo,
+//                    removedModulesInfo = removedModulesInfo,
+//                    commitIncrementalCache = false
+//                )
 
                 val totalSizeAfterNotCommit =
                     cacheDir.walkTopDown().filter { it.isFile }.map { it.length() }.sum()

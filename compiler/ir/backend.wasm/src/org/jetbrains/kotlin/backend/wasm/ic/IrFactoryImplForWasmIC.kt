@@ -14,15 +14,24 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.createStringBuiltIn
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.jsToKotlinAnyAdapterBuiltIn
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.jsToKotlinStringAdapterBuiltIn
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.registerModuleDescriptorBuiltIn
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.runRootSuitesBuiltIn
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.tryGetAssociatedObjectBuiltIn
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.unitGetInstanceBuiltIn
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.HeapTypes.anyBuiltInType
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.HeapTypes.throwableBuiltInType
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.irAttribute
 import java.io.File
-import java.util.*
 
 open class WasmICContext(
     protected val allowIncompleteImplementations: Boolean,
     protected val skipLocalNames: Boolean = false,
-    private val safeFragmentTags: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
 ) : PlatformDependentICContext {
@@ -39,13 +48,12 @@ open class WasmICContext(
             irBuiltIns = irBuiltIns,
             configuration = configuration,
             allowIncompleteImplementations = allowIncompleteImplementations,
-            safeFragmentTags = safeFragmentTags,
             skipCommentInstructions = skipCommentInstructions,
             skipLocations = skipLocations,
         )
 
     override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =
-        WasmSrcFileArtifact(fragments as? WasmIrProgramFragments, astArtifact, skipLocalNames)
+        WasmSrcFileArtifactMultimodule(fragments as? WasmIrProgramFragmentsMultimodule, astArtifact, skipLocalNames)
 
     override fun createModuleArtifact(
         moduleName: String,
@@ -54,17 +62,15 @@ open class WasmICContext(
         forceRebuildJs: Boolean,
         externalModuleName: String?,
     ): ModuleArtifact =
-        WasmModuleArtifact(fileArtifacts.map { it as WasmSrcFileArtifact })
+        WasmModuleArtifactMultimodule(fileArtifacts.map { it as WasmSrcFileArtifactMultimodule }, moduleName, externalModuleName)
 }
 
 class WasmICContextForTesting(
     allowIncompleteImplementations: Boolean,
     skipLocalNames: Boolean = false,
-    safeFragmentTags: Boolean = false,
 ) : WasmICContext(
     allowIncompleteImplementations,
     skipLocalNames,
-    safeFragmentTags,
     skipCommentInstructions = false,
     skipLocations = false
 ) {
@@ -98,3 +104,23 @@ class IrFactoryImplForWasmIC(stageController: StageController) : IrFactory(stage
 }
 
 private var IrDeclaration.signatureForWasmIC: IdSignature? by irAttribute(copyByDefault = false)
+
+fun overrideBuiltInsSignatures(backendContext: WasmBackendContext) {
+    with(backendContext.wasmSymbols) {
+        tryGetAssociatedObject.owner.signatureForWasmIC = tryGetAssociatedObjectBuiltIn.value
+        if (backendContext.isWasmJsTarget) {
+            jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter.owner.signatureForWasmIC = jsToKotlinAnyAdapterBuiltIn.value
+            jsRelatedSymbols.jsInteropAdapters.jsToKotlinStringAdapter.owner.signatureForWasmIC = jsToKotlinStringAdapterBuiltIn.value
+        }
+        runRootSuites?.owner?.signatureForWasmIC = runRootSuitesBuiltIn.value
+        createString.owner.signatureForWasmIC = createStringBuiltIn.value
+        registerModuleDescriptor.owner.signatureForWasmIC = registerModuleDescriptorBuiltIn.value
+    }
+
+    backendContext.findUnitGetInstanceFunction().signatureForWasmIC = unitGetInstanceBuiltIn.value
+
+    with(backendContext.irBuiltIns) {
+        throwableClass.owner.signatureForWasmIC = throwableBuiltInType.type
+        anyClass.owner.signatureForWasmIC = anyBuiltInType.type
+    }
+}

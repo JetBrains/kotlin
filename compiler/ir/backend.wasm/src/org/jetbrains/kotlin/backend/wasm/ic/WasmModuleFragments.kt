@@ -5,24 +5,50 @@
 
 package org.jetbrains.kotlin.backend.wasm.ic
 
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.ModuleReferencedDeclarations
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.ModuleReferencedTypes
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledCodeFileFragment
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledDependencyFileFragment
 import org.jetbrains.kotlin.backend.wasm.serialization.WasmSerializer
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICModule
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import java.io.OutputStream
 
-class WasmIrProgramFragments(
-    override val mainFragment: WasmCompiledFileFragment,
+class WasmIrProgramFragmentsMultimodule(
+    mainFragment: WasmCompiledCodeFileFragment,
+    val referencedTypes: ModuleReferencedTypes,
+    val referencedDeclarations: ModuleReferencedDeclarations,
+    val dependencyFragment: WasmCompiledDependencyFileFragment,
+) : WasmIrProgramFragments(mainFragment) {
+    override fun serialize(stream: OutputStream) {
+        with(WasmSerializer(stream)) {
+            check(mainFragment.definedTypes === dependencyFragment.definedTypes)
+            serializeCompiledTypes(dependencyFragment.definedTypes)
+            serializeCompiledDeclarations(dependencyFragment.definedDeclarations)
+            serialize(referencedTypes)
+            serialize(referencedDeclarations)
+            serializeCompiledDeclarations(mainFragment.definedDeclarations)
+            serializeCompiledService(mainFragment.serviceData)
+        }
+    }
+}
+
+open class WasmIrProgramFragments(
+    override val mainFragment: WasmCompiledCodeFileFragment,
 ) : IrICProgramFragments() {
 
-    override val exportFragment: WasmCompiledFileFragment? = null
+    override val exportFragment: WasmCompiledCodeFileFragment? = null
 
     override fun serialize(stream: OutputStream) {
-        WasmSerializer(stream).serialize(this.mainFragment)
+        with(WasmSerializer(stream)) {
+            serializeCompiledTypes(mainFragment.definedTypes)
+            serializeCompiledDeclarations(mainFragment.definedDeclarations)
+            serializeCompiledService(mainFragment.serviceData)
+        }
     }
 }
 
 class WasmIrModule(
     override val moduleName: String,
-    override val fragments: List<WasmCompiledFileFragment>,
+    override val fragments: List<WasmCompiledCodeFileFragment>,
 ) : IrICModule()

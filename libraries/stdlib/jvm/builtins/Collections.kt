@@ -298,6 +298,9 @@ public actual interface List<out E> : Collection<E> {
      * @sample samples.collections.Collections.Lists.subList
      */
     public actual fun subList(fromIndex: Int, toIndex: Int): List<E>
+    private fun fora() {
+        TODO("Not yet implemented")
+    }
 }
 
 /**

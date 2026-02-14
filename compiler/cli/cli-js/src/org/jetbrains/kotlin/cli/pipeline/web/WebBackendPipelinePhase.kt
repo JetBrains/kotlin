@@ -92,7 +92,6 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
                 icConfigurationData = when {
                     configuration.wasmCompilation -> IcCachesConfigurationData.Wasm(
                         wasmDebug = configuration.getBoolean(WasmConfigurationKeys.WASM_DEBUG),
-                        preserveIcOrder = configuration.preserveIcOrder,
                         generateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
                         generateDebugInformation =
                             configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF) || configuration.sourceMap,
