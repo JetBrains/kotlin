@@ -42,8 +42,12 @@ typedef NS_ENUM(int32_t, FooNSEnum) {
   FooNSEnumAlphaBeta NS_SWIFT_NAME(alphaBeta) = 0,
   FooNSEnumAlpha NS_SWIFT_NAME(alpha) = 1,
   FooNSEnumTheCopy NS_SWIFT_NAME(theCopy) = 2,
-  FooNSEnumFooBarObjC NS_SWIFT_NAME(fooBarObjC) = 3,
-  FooNSEnumBarFooObjC NS_SWIFT_NAME(barFooSwift) = 4,
+  FooNSEnumObjCName1Renamed NS_SWIFT_NAME(objCName1Renamed) = 3,
+  FooNSEnumObjcName2Renamed NS_SWIFT_NAME(objcName2Swift) = 4,
+  FooNSEnumEntryName1Renamed NS_SWIFT_NAME(entryName1Renamed) = 5,
+  FooNSEnumEntryName2Renamed NS_SWIFT_NAME(entryName2Swift) = 6,
+  FooNSEnumCombination1Renamed NS_SWIFT_NAME(combination1Renamed) = 7,
+  FooNSEnumCombination2Renamed NS_SWIFT_NAME(combination2Renamed) = 8,
 } NS_SWIFT_NAME(FooNSEnum);
 
 
@@ -56,8 +60,12 @@ __attribute__((objc_subclassing_restricted))
 @property (class, readonly) Foo *alphaBeta __attribute__((swift_name("alphaBeta")));
 @property (class, readonly) Foo *alpha __attribute__((swift_name("alpha")));
 @property (class, readonly) Foo *theCopy __attribute__((swift_name("theCopy")));
-@property (class, readonly) Foo *fooBarObjC __attribute__((swift_name("fooBarObjC")));
-@property (class, readonly) Foo *barFooObjC __attribute__((swift_name("barFooSwift")));
+@property (class, readonly) Foo *objCName1Renamed __attribute__((swift_name("objCName1Renamed")));
+@property (class, readonly) Foo *objcName2Renamed __attribute__((swift_name("objcName2Swift")));
+@property (class, readonly) Foo *entryName1Original __attribute__((swift_name("entryName1Original")));
+@property (class, readonly) Foo *entryName2Swift __attribute__((swift_name("entryName2Swift")));
+@property (class, readonly) Foo *combination1Bad __attribute__((swift_name("combination1Bad")));
+@property (class, readonly) Foo *combination2BadObjC __attribute__((swift_name("combination2BadSwift")));
 + (KotlinArray<Foo *> *)values __attribute__((swift_name("values()")));
 @property (class, readonly) NSArray<Foo *> *entries __attribute__((swift_name("entries")));
 @end
