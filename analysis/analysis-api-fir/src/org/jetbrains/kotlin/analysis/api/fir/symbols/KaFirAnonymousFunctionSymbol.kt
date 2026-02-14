@@ -9,9 +9,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.types.KaFirErrorType
 import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaCannotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.InvalidFirElementTypeException
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
@@ -22,6 +24,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupported
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -55,7 +59,19 @@ internal class KaFirAnonymousFunctionSymbol private constructor(
 
     override val psi: PsiElement? get() = withValidityAssertion { backingPsi ?: firSymbol.fir.getAllowedPsi() }
     override val annotations: KaAnnotationList get() = withValidityAssertion { psiOrSymbolAnnotationList() }
-    override val returnType: KaType get() = withValidityAssertion { createReturnType() }
+    override val returnType: KaType
+        get() = withValidityAssertion {
+            try {
+                createReturnType()
+            } catch (_: InvalidFirElementTypeException) {
+                KaFirErrorType(
+                    ConeErrorType(
+                        ConeUnsupported("Anonymous function FIR mapping is unavailable for this invalid code"),
+                    ),
+                    builder,
+                )
+            }
+        }
 
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {

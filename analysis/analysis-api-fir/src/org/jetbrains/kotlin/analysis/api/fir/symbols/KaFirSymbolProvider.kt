@@ -12,10 +12,18 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolProvid
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.unwrapAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.unwrapErrorExpression
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -84,7 +92,35 @@ internal class KaFirSymbolProvider(
 
     override val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
         get() = withPsiValidityAssertion {
-            KaFirAnonymousFunctionSymbol(this, analysisSession)
+            val parentFir = (parent as? KtLambdaExpression)?.getOrBuildFir(analysisSession.resolutionFacade)
+            val parentSymbol = when (parentFir) {
+                is FirAnonymousFunctionExpression -> parentFir.anonymousFunction.symbol
+                is FirValueParameter -> (parentFir.defaultValue ?: parentFir.initializer ?: parentFir.delegate)
+                    ?.unwrapErrorExpression()
+                    ?.unwrapAnonymousFunctionExpression()
+                    ?.symbol
+
+                else -> null
+            }
+
+            val declarationSymbol = runCatching { this@symbol.resolveToFirSymbol(analysisSession.resolutionFacade) }.getOrNull()
+            val declarationAnonymousFunctionSymbol = when (declarationSymbol) {
+                is FirAnonymousFunctionSymbol -> declarationSymbol
+                is FirValueParameterSymbol -> (declarationSymbol.fir.defaultValue ?: declarationSymbol.fir.initializer ?: declarationSymbol.fir.delegate)
+                    ?.unwrapErrorExpression()
+                    ?.unwrapAnonymousFunctionExpression()
+                    ?.symbol
+
+                else -> null
+            }
+
+            val anonymousFunctionSymbol = parentSymbol ?: declarationAnonymousFunctionSymbol
+
+            if (anonymousFunctionSymbol != null) {
+                KaFirAnonymousFunctionSymbol(anonymousFunctionSymbol, analysisSession)
+            } else {
+                KaFirAnonymousFunctionSymbol(this, analysisSession)
+            }
         }
 
     override val KtProperty.symbol: KaVariableSymbol

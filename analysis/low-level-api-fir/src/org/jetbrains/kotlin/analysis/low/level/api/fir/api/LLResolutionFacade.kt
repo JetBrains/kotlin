@@ -30,8 +30,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
+import org.jetbrains.kotlin.fir.expressions.unwrapAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.unwrapErrorExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -40,6 +43,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -170,7 +174,27 @@ class LLResolutionFacade internal constructor(
     }
 
     private fun findSourceFirDeclarationViaResolve(ktDeclaration: KtExpression): FirDeclaration {
-        return when (val fir = getOrBuildFirFor(ktDeclaration)) {
+        val fir = getOrBuildFirFor(ktDeclaration)
+            ?: if (ktDeclaration is KtFunctionLiteral) {
+                val containingParameter = ktDeclaration.getParentOfType<KtParameter>(strict = true)
+                containingParameter?.let { getOrBuildFirFor(it) }
+            } else {
+                null
+            }
+
+        return when (fir) {
+            is FirValueParameter -> {
+                if (ktDeclaration is KtFunctionLiteral) {
+                    val lambda = (fir.defaultValue ?: fir.initializer ?: fir.delegate)
+                        ?.unwrapErrorExpression()
+                        ?.unwrapAnonymousFunctionExpression()
+                    if (lambda != null) {
+                        return lambda
+                    }
+                }
+
+                fir
+            }
             is FirDeclaration -> fir
             is FirAnonymousFunctionExpression -> fir.anonymousFunction
             is FirAnonymousObjectExpression -> fir.anonymousObject
