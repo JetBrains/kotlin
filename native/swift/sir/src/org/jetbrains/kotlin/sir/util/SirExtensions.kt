@@ -71,6 +71,7 @@ val SirType.swiftName
         is SirErrorType -> "ERROR_TYPE"
         is SirUnsupportedType -> "Swift.Never"
         is SirFunctionalType -> "(${parameterTypes.joinToString { it.annotatedSwiftName }})${" async".takeIf { isAsync } ?: ""} -> ${returnType.swiftName}"
+        is SirTupleType -> "(${types.joinToString { (name, type) -> "${name?.let { "$it: " } ?: ""}${type.swiftName}" }})"
     }
 
 val SirType.annotatedSwiftName

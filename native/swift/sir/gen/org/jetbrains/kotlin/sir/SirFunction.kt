@@ -27,6 +27,7 @@ abstract class SirFunction : SirCallable(), SirClassMemberDeclaration {
     abstract override val isInstance: Boolean
     abstract override val modality: SirModality
     abstract val name: String
+    abstract val contextParameters: List<SirParameter>
     abstract val extensionReceiverParameter: SirParameter?
     abstract val parameters: List<SirParameter>
     abstract val returnType: SirType

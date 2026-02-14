@@ -213,6 +213,7 @@ internal class SirRegularInitFromKtSymbol(
             returnType = obj.type,
             kotlinFqName = fqName,
             selfParameter = null,
+            contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = null,
             isAsync = false,
@@ -235,6 +236,7 @@ internal class SirRegularInitFromKtSymbol(
             returnType = returnType,
             kotlinFqName = fqName,
             selfParameter = null,
+            contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "__error", it)

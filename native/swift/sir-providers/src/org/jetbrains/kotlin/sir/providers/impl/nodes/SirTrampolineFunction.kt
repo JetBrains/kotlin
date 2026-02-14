@@ -26,6 +26,8 @@ public class SirTrampolineFunction(
 
     override val attributes: List<SirAttribute> get() = source.attributes
 
+    override val contextParameters: List<SirParameter>
+        get() = source.contextParameters
     override val extensionReceiverParameter: SirParameter?
         get() = source.extensionReceiverParameter
 

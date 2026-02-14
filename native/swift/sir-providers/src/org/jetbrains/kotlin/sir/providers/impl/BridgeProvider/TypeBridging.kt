@@ -814,6 +814,7 @@ internal sealed class Bridge(
                     returnType = swiftType.returnType,
                     kotlinFqName = FqName(""),
                     selfParameter = null,
+                    contextParameters = emptyList(),
                     extensionReceiverParameter = null,
                     errorParameter = null,
                     isAsync = swiftType.isAsync

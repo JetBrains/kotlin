@@ -79,7 +79,7 @@ public class SirDeclarationFromKtSymbolProvider(
                 SirTranslationResult.EnumCase(createSirEnumCaseFromKtSymbol(ktSymbol, sirSession))
             }
             is KaVariableSymbol -> {
-                if (ktSymbol is KaPropertySymbol && ktSymbol.isExtension) {
+                if (ktSymbol is KaPropertySymbol && (ktSymbol.isExtension || ktSymbol.contextParameters.isNotEmpty())) {
                     ktSymbol.getter?.toSirFunction(ktSymbol)?.let {
                         SirTranslationResult.ExtensionProperty(it, ktSymbol.setter?.toSirFunction(ktSymbol))
                     } ?: SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))

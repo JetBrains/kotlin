@@ -81,9 +81,6 @@ public class SirVisibilityCheckerImpl(
         if (ktSymbol.deprecatedAnnotation?.level == DeprecationLevel.HIDDEN) {
             visibility.value = SirVisibility.PRIVATE
         }
-        if (ktSymbol is KaCallableSymbol && ktSymbol.contextParameters.isNotEmpty()) {
-            return@withSessions SirAvailability.Unavailable("Callables with context parameters are not supported yet")
-        }
         if (ktSymbol is KaNamedFunctionSymbol && ktSymbol.allParameters.map { it.returnType.fullyExpandedType }
                 .filter { type -> !type.isFunctionType && !sirSession.isTypeSupported(type) }
                 .any { hasUnboundTypeParameters(it) }

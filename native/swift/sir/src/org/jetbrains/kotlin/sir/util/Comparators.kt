@@ -66,6 +66,7 @@ object Comparators {
             is SirErrorType -> "SirErrorType"
             is SirUnsupportedType -> "SirUnsupportedType"
             is SirFunctionalType -> "SirFunctionalType"
+            is SirTupleType -> "SirTupleType"
         }
 
     private inline fun <T, reified R> Comparator<T>.thenComparing(comparator: Comparator<R>): Comparator<T> {
