@@ -12,11 +12,16 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmVisibilityOfDefaultArgumentStub
+import org.jetbrains.kotlin.backend.jvm.ir.isBoxedInlineClassType
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFinalClass
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 @PhasePrerequisites(
@@ -32,7 +37,26 @@ internal class JvmDefaultArgumentStubGenerator(context: JvmBackendContext) : Def
 ) {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrFunction && declaration.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) return null
-        return super.transformFlat(declaration)
+        val lowered = super.transformFlat(declaration) ?: return null
+        if (lowered.size != 2) return lowered
+        val stub = lowered[1] as? IrFunction ?: return lowered
+        // KT-78051: For value class parameters with nullable underlying types,
+        // the $default stub parameter stays boxed while the implementation
+        // parameter is unboxed. IrInlineDefaultCodegen copies bytecode verbatim,
+        // causing VerifyError due to the type mismatch.
+        if (stub.parameters.none { it.type.isBoxedInlineClassType() }) return lowered
+
+        stub.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitCall(expression: IrCall): IrExpression {
+                if (expression.origin == JvmLoweredStatementOrigin.DEFAULT_STUB_CALL_TO_IMPLEMENTATION) {
+                    // Clearing the origin forces IrInlineCodegen which handles type coercion.
+                    expression.origin = null
+                }
+                return super.visitCall(expression)
+            }
+        })
+
+        return lowered
     }
 
     override fun defaultArgumentStubVisibility(function: IrFunction) = function.getJvmVisibilityOfDefaultArgumentStub()
