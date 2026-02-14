@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.tools.ToolExecutionTask
 plugins {
     id("kotlin.native.build-tools-conventions")
     id("native")
+    id("jvm-toolchains")
 }
 
 val library = lib("clangext")

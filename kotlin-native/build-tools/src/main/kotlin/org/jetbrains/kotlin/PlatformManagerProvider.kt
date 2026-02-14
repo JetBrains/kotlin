@@ -7,6 +7,7 @@ package org.jetbrains.kotlin
 
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -14,10 +15,15 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JavaToolchainService
+import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.newInstance
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.nativeDistribution.NativeDistribution
+import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.asProperties
 import org.jetbrains.kotlin.nativeDistribution.llvmDistributionSource
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
@@ -44,7 +50,13 @@ open class PlatformManagerProvider @Inject constructor(
     protected val konanProperties = project.nativeProtoDistribution.konanProperties
 
     @get:Input
-    val konanPropertiesOverride: Map<String, String> = project.llvmDistributionSource.asProperties
+    val konanPropertiesOverride: Provider<Map<String, String>> = project.provider {
+        val jdkHome = project.extensions.getByType(JavaToolchainService::class.java).launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }.get().metadata.installationPath.asFile.absolutePath
+        project.llvmDistributionSource.asProperties +
+                mapOf("konan.jdk.home" to jdkHome)
+    }
 
     /**
      * [PlatformManager] may depend on the current host, so the current host must be an input
@@ -61,11 +73,11 @@ open class PlatformManagerProvider @Inject constructor(
     protected val konanDataDir = providerFactory.gradleProperty("konan.data.dir")
 
     @get:Internal("dependencies are: konanProperties and konanDataDir")
-    val platformManager = distributionRoot.map {
+    val platformManager: Provider<PlatformManager> = distributionRoot.asNativeDistribution().zip(konanPropertiesOverride) { dist: NativeDistribution, overrides: Map<String, String> ->
         PlatformManager(Distribution(
-                konanHome = it.asFile.absolutePath,
+                konanHome = dist.root.asFile.absolutePath,
                 onlyDefaultProfiles = true,
-                propertyOverrides = konanPropertiesOverride,
+                propertyOverrides = overrides,
                 konanDataDir = konanDataDir.orNull,
         ))
     }

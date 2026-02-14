@@ -10,6 +10,7 @@ import org.gradle.api.Project
 
 open class PlatformManagerPlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        project.pluginManager.apply("java-base")
         project.extensions.add("platformManager", project.objects.platformManagerProvider(project).platformManager.get())
     }
 }
