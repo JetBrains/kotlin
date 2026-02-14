@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionKind
 import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionSourceKt
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionKt
 import org.jetbrains.kotlin.nativeDistribution.NativeProtoDistributionKt
+import org.jetbrains.kotlin.nativeDistribution.GenerateCrossCompilationWrappers
 import org.jetbrains.kotlin.nativeDistribution.PrepareDistributionFingerprint
 import org.jetbrains.kotlin.nativeDistribution.PrepareKonanProperties
 import org.jetbrains.kotlin.xcode.XcodeOverridePlugin
@@ -276,8 +277,31 @@ tasks.register("distTools", Sync) {
     into(nativeDistribution.map { it.tools })
 }
 
+tasks.register("generateCrossCompilationWrappers", GenerateCrossCompilationWrappers) {
+    konanProperties = file('konan/konan.properties')
+    outputDirectory = layout.buildDirectory.dir("generated-cmd")
+}
+
 tasks.register("distBin", Sync) {
+    dependsOn("generateCrossCompilationWrappers")
+
+    // Core tools from cmd/ (excluding manual wrapper scripts that are now auto-generated)
     from(file('cmd')) {
+        exclude('*-clang')
+        exclude('*-clang++')
+        exclude('*-clang.bat')
+        exclude('*-clang++.bat')
+        filePermissions {
+            unix("0755")
+        }
+        if (!PlatformInfo.isWindows()) {
+            exclude('**/*.bat')
+        }
+    }
+
+    // Generated cross-compilation wrappers (in subdirectory to avoid PATH pollution)
+    from(tasks.named("generateCrossCompilationWrappers").map { it.outputDirectory }) {
+        into('cross-compile')
         filePermissions {
             unix("0755")
         }
