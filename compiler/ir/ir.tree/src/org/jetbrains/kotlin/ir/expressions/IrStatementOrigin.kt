@@ -129,7 +129,6 @@ interface IrStatementOrigin {
         val STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE by IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE")
         val INLINED_FUNCTION_REFERENCE by IrStatementOriginImpl
         val INLINE_LAMBDA by IrStatementOriginImpl
-        val INLINE_ARGS_CONTAINER by IrStatementOriginImpl
     }
 
     data class COMPONENT_N private constructor(val index: Int) : IrStatementOrigin {

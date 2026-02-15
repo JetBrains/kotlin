@@ -165,41 +165,38 @@ private class CallInlining(
 
         val returnType = callSite.type
 
-        return outerIrBuilder.irBlockOrSingleExpression(origin = IrStatementOrigin.INLINE_ARGS_CONTAINER) {
-            +irReturnableBlock(returnType) {
-                val inlinedFunctionBlock = irInlinedFunctionBlock(
-                    inlinedFunctionStartOffset = callee.startOffset,
-                    inlinedFunctionEndOffset = callee.endOffset,
-                    resultType = returnType,
-                    inlinedFunctionSymbol = inlinedFunctionSymbol,
-                    inlinedFunctionFileEntry = inlineFileEntry,
-                    origin = null,
-                ) {
-                    evaluateArguments(
-                        callSiteBuilder = this@irBlockOrSingleExpression,
-                        inlinedBlockBuilder = this@irInlinedFunctionBlock,
-                        callSite, copiedCallee,
-                        parameterToTempVariable,
-                        parameterToLambda,
-                    )
-                    +functionStatements
-                    // Insert a return statement for the function that is supposed to return Unit
-                    if (callee.returnType.isUnit()) {
-                        val potentialReturn = functionStatements.lastOrNull() as? IrReturn
-                        if (potentialReturn == null) {
-                            at(callee.endOffset, callee.endOffset)
-                            +irReturn(irGetObject(context.irBuiltIns.unitClass))
-                        }
+        return outerIrBuilder.irReturnableBlock(returnType) {
+            val inlinedFunctionBlock = irInlinedFunctionBlock(
+                inlinedFunctionStartOffset = callee.startOffset,
+                inlinedFunctionEndOffset = callee.endOffset,
+                resultType = returnType,
+                inlinedFunctionSymbol = inlinedFunctionSymbol,
+                inlinedFunctionFileEntry = inlineFileEntry,
+                origin = null,
+            ) {
+                evaluateArguments(
+                    callSiteBuilder = this@irReturnableBlock,
+                    inlinedBlockBuilder = this@irInlinedFunctionBlock,
+                    callSite, copiedCallee,
+                    parameterToTempVariable,
+                    parameterToLambda,
+                )
+                +functionStatements
+                // Insert a return statement for the function that is supposed to return Unit
+                if (callee.returnType.isUnit()) {
+                    val potentialReturn = functionStatements.lastOrNull() as? IrReturn
+                    if (potentialReturn == null) {
+                        at(callee.endOffset, callee.endOffset)
+                        +irReturn(irGetObject(context.irBuiltIns.unitClass))
                     }
                 }
-                val transformer = InlinePostprocessor(
-                    parameterToTempVariable, parameterToLambda, returnType, copiedCallee.symbol,
-                    returnableBlockSymbol
-                )
-                inlinedFunctionBlock.transformChildrenVoid(transformer)
-                +inlinedFunctionBlock
             }
-            at(callSite) // block is using offsets at the end, let's restore them just in case
+            val transformer = InlinePostprocessor(
+                parameterToTempVariable, parameterToLambda, returnType, copiedCallee.symbol,
+                returnableBlockSymbol
+            )
+            inlinedFunctionBlock.transformChildrenVoid(transformer)
+            +inlinedFunctionBlock
         }
     }
 
