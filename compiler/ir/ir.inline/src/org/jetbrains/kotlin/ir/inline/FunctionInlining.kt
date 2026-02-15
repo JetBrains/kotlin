@@ -166,7 +166,8 @@ private class CallInlining(
         val returnType = callSite.type
 
         return outerIrBuilder.irBlockOrSingleExpression(origin = IrStatementOrigin.INLINE_ARGS_CONTAINER) {
-            +irReturnableBlock(returnType) {
+            var returnOpsCount = 0
+            val returnableBlock = irReturnableBlock(returnType) {
                 val inlinedFunctionBlock = irInlinedFunctionBlock(
                     inlinedFunctionStartOffset = callee.startOffset,
                     inlinedFunctionEndOffset = callee.endOffset,
@@ -197,7 +198,22 @@ private class CallInlining(
                     returnableBlockSymbol
                 )
                 inlinedFunctionBlock.transformChildrenVoid(transformer)
+                returnOpsCount = transformer.returnOpsCount
                 +inlinedFunctionBlock
+            }
+            when (returnOpsCount) {
+                0 -> +returnableBlock.statements
+                1 -> {
+                    val last = returnableBlock.statements.last() as IrInlinedFunctionBlock
+                    val lastReturn = last.statements.lastOrNull() as? IrReturn
+                    if (lastReturn?.returnTargetSymbol == returnableBlock.symbol) {
+                        last.statements[last.statements.lastIndex] = lastReturn.value
+                        +returnableBlock.statements
+                    } else {
+                        +returnableBlock
+                    }
+                }
+                else -> +returnableBlock
             }
             at(callSite) // block is using offsets at the end, let's restore them just in case
         }
@@ -219,6 +235,7 @@ private class CallInlining(
         val inlinedFunctionSymbol: IrFunctionSymbol,
         val returnableBlockSymbol: IrReturnableBlockSymbol,
     ) : IrElementTransformerVoid() {
+        var returnOpsCount = 0
         override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrInlinedFunctionBlock {
             inlinedBlock.transformChildrenVoid(this)
             if (currentFile.fileEntry == inlinedBlock.inlinedFunctionFileEntry) return inlinedBlock
@@ -233,6 +250,7 @@ private class CallInlining(
         override fun visitReturn(expression: IrReturn): IrExpression {
             expression.transformChildrenVoid(this)
             if (expression.returnTargetSymbol == inlinedFunctionSymbol) {
+                returnOpsCount++
                 expression.returnTargetSymbol = returnableBlockSymbol
                 expression.value = expression.value.doImplicitCastIfNeededTo(returnType)
             }
