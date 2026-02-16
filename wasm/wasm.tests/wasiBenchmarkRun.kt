@@ -49,20 +49,20 @@ fun runBenchmark(): Long {
     return median
 }
 
-@kotlin.wasm.WasmImport("ssw_util", "proc_exit")
-private external fun wasiProcExit(code: Int)
-
-@kotlin.wasm.WasmExport
-fun startTest() {
-    try {
-        val result = runBenchmark()
-        if (result < 0) {
-            wasiProcExit(1)
-        }
-    } catch (e: Throwable) {
-        println("Failed with exception!")
-        println(e.message)
-        println(e.printStackTrace())
-        wasiProcExit(1)
-    }
-}
+//@kotlin.wasm.WasmImport("ssw_util", "proc_exit")
+//private external fun wasiProcExit(code: Int)
+//
+//@kotlin.wasm.WasmExport
+//fun startTest() {
+//    try {
+//        val result = runBenchmark()
+//        if (result < 0) {
+//            wasiProcExit(1)
+//        }
+//    } catch (e: Throwable) {
+//        println("Failed with exception!")
+//        println(e.message)
+//        println(e.printStackTrace())
+//        wasiProcExit(1)
+//    }
+//}

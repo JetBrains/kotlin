@@ -88,5 +88,5 @@ fun box(): String {
     assertTrue(jsBigIntAsAny !is JsBoolean)
     assertTrue((jsBigIntAsAny as JsBigInt).toLong() == 10L)
 
-    return "OK"
+    return "KOK"
 }

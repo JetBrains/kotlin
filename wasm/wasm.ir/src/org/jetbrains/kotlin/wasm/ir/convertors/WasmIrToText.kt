@@ -158,6 +158,15 @@ class WasmIrToText(
         }
     }
 
+    private fun appendContHandle(handle: WasmImmediate.ContHandle) {
+        sameLineList("on") {
+            handle.immediates.forEach {
+                appendImmediate(it)
+            }
+        }
+//        return "(on ${handle.immediates.joinToString { (it as WasmImmediate.TagIdx).value.toString() }})"
+    }
+
     private fun appendImmediate(x: WasmImmediate) {
         when (x) {
             is WasmImmediate.ConstU8 -> appendElement(x.value.toString().lowercase())
@@ -197,7 +206,7 @@ class WasmIrToText(
 
             is WasmImmediate.Catch -> appendCatch(x)
 
-            is WasmImmediate.ContHandle -> TODO()
+            is WasmImmediate.ContHandle -> appendContHandle(x)
         }
     }
 
@@ -279,6 +288,33 @@ class WasmIrToText(
         }
     }
 
+    private fun appendContType(type: WasmContType) {
+        newLineList("type") {
+            appendModuleFieldReference(type)
+            sameLineList("cont") {
+                appendModuleFieldReference(type.funType.owner)
+            }
+//            sameLineList("func") {
+//                sameLineList("param") {
+//                    type.parameterTypes.forEach { appendType(it) }
+//                }
+//                if (type.resultTypes.isNotEmpty()) {
+//                    sameLineList("result") {
+//                        type.resultTypes.forEach { appendType(it) }
+//                    }
+//                }
+//            }
+//            appendModuleFieldReference(type)
+//            maybeSubType(type.superType?.owner) {
+//                sameLineList("struct") {
+//                    type.fields.forEach {
+//                        appendStructField(it)
+//                    }
+//                }
+//            }
+        }
+    }
+
     private fun appendWasmTypeList(typeList: List<WasmTypeDeclaration>) {
         typeList.forEach { type ->
             when (type) {
@@ -288,7 +324,7 @@ class WasmIrToText(
                     appendArrayTypeDeclaration(type)
                 is WasmFunctionType ->
                     appendFunctionTypeDeclaration(type)
-                is WasmContType -> TODO()
+                is WasmContType -> appendContType(type)
             }
         }
     }

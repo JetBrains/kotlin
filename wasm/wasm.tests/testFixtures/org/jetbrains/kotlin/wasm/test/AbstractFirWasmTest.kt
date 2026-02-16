@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.wasm.test.handlers.WasiBenchmarkRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasmJsBenchmarkRunner
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
 
 fun TestConfigurationBuilder.configureCodegenFirHandlerSteps() {
@@ -401,6 +402,24 @@ open class AbstractFirWasmSpecBenchmarkTest(
             +WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
             +WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
         }
+    }
+}
+
+open class AbstractFirWasmJsBenchmarkTest(
+    testGroupOutputDirPrefix: String = "benchmark/js/"
+) : AbstractFirWasmJsTest(
+    pathToTestDir = "compiler/testData/codegen/",
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
+) {
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasmJsBenchmarkRunner
+
+    override val additionalSourceProvider: Constructor<AdditionalSourceProvider>?
+        get() = ::WasmWasiBenchmarkHelperSourceProvider
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureCodegenFirHandlerSteps()
     }
 }
 

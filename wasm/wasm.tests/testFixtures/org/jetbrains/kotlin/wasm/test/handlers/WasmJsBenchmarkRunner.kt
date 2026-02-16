@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
+import kotlin.collections.plus
 
-class WasmBoxRunner(
+
+class WasmJsBenchmarkRunner(
     testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
     private val vmsToCheck: List<WasmVM> = listOfNotNull(WasmVM.V8)
@@ -54,7 +56,7 @@ class WasmBoxRunner(
                         // Use "dynamic import" to catch exception happened during JS & Wasm modules initialization
                         let jsModule = await import('./index.mjs');
                         ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
-                        actualResult = jsModule.box();
+                        actualResult = jsModule.runBenchmark();
                     } catch(e) {
                         console.log('Failed with exception!')
 
@@ -69,8 +71,8 @@ class WasmBoxRunner(
                         }
                     }
     
-                    if (actualResult !== "OK")
-                        throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
+//                    if (actualResult !== "OK")
+//                        throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
 
                     if (${debugMode >= DebugMode.DEBUG})
                         console.log('test passed');
@@ -168,96 +170,4 @@ class WasmBoxRunner(
 
         processExceptions(allExceptions)
     }
-}
-
-internal fun WasmVM.runWithCaughtExceptions(
-    debugMode: DebugMode,
-    useNewExceptionHandling: Boolean,
-    failsIn: List<String>,
-    entryFile: String?,
-    jsFilePaths: List<String>,
-    workingDirectory: File,
-): Throwable? {
-    val vmName = javaClass.simpleName
-
-    try {
-        if (debugMode >= DebugMode.DEBUG) {
-            println(" ------ Run in $vmName" + if (shortName in failsIn) " (expected to fail)" else "")
-        }
-        run(
-            "./${entryFile}",
-            jsFilePaths,
-            workingDirectory = workingDirectory,
-            useNewExceptionHandling = useNewExceptionHandling,
-        )
-        if (shortName in failsIn) {
-            return AssertionError("The test expected to fail in ${vmName}. Please update the testdata.")
-        }
-    } catch (e: Throwable) {
-        if (shortName !in failsIn) {
-            return e
-        }
-    }
-    return null
-}
-
-fun checkExpectedDceOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File, filesToIgnore: Set<File>): List<Throwable> {
-    val expectedDceSizes =
-        InTextDirectivesUtils.findListWithPrefixes(testFileContent, "// WASM_DCE_EXPECTED_OUTPUT_SIZE: ")
-            .map {
-                val i = it.indexOf(' ')
-                val extension = it.substring(0, i)
-                val size = it.substring(i + 1)
-                extension.trim().lowercase() to size.filter(Char::isDigit).toInt()
-            }
-    return assertExpectedSizesMatchActual(debugMode, testDir, expectedDceSizes, filesToIgnore)
-}
-
-fun checkExpectedOptimizedOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File, filesToIgnore: Set<File>): List<Throwable> {
-    val expectedOptimizeSizes = InTextDirectivesUtils
-        .findListWithPrefixes(testFileContent, "// WASM_OPT_EXPECTED_OUTPUT_SIZE: ")
-        .lastOrNull()
-        ?.filter(Char::isDigit)
-        ?.toInt() ?: return emptyList()
-
-    return assertExpectedSizesMatchActual(debugMode, testDir, listOf("wasm" to expectedOptimizeSizes), filesToIgnore)
-}
-
-private fun assertExpectedSizesMatchActual(
-    debugMode: DebugMode,
-    testDir: File,
-    fileExtensionToItsExpectedSize: Iterable<Pair<String, Int>>,
-    filesToIgnore: Set<File>
-): List<Throwable> {
-    val filesByExtension = testDir.listFiles()?.filterNot { it in filesToIgnore }?.groupBy { it.extension }.orEmpty()
-
-    val errors = fileExtensionToItsExpectedSize.mapNotNull { (extension, expectedSize) ->
-        val totalSize = filesByExtension[extension].orEmpty().sumOf { it.length() }
-
-        val thresholdPercent = 1
-        val thresholdInBytes = expectedSize * thresholdPercent / 100
-
-        val expectedMinSize = expectedSize - thresholdInBytes
-        val expectedMaxSize = expectedSize + thresholdInBytes
-
-        val diff = totalSize - expectedSize
-
-        val message = "Total size of $extension files in ${testDir.name} dir is ${totalSize.toFormattedString()}," +
-                " but expected $expectedSize ∓ $thresholdInBytes [$expectedMinSize .. $expectedMaxSize]." +
-                " Diff: $diff (${diff * 100 / expectedSize}%)"
-
-        if (debugMode >= DebugMode.DEBUG) {
-            println(" ------ $message")
-        }
-
-        if (totalSize !in expectedMinSize..expectedMaxSize) message else null
-    }
-
-    if (errors.isNotEmpty()) return listOf(AssertionError(errors.joinToString("\n")))
-
-    return emptyList()
-}
-
-private fun Long.toFormattedString(): String {
-    return this.toString().reversed().chunked(3).joinToString("_").reversed()
 }
