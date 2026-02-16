@@ -816,6 +816,38 @@
                     }
                 }
             ]
+        },
+        "jvmDefaultMode": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.JvmDefaultModeType",
+            "values": [
+                {
+                    "name": "enable",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.2.0",
+                        "stabilizedVersion": "2.2.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "no-compatibility",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.2.0",
+                        "stabilizedVersion": "2.2.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "disable",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.2.0",
+                        "stabilizedVersion": "2.2.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
         }
     },
     "topLevel": {

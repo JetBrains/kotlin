@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.arguments.dsl.types
 
 import kotlinx.serialization.Serializable
-import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsExplicitApiModeSerializer
-import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsJvmTargetSerializer
-import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsKlibIrInlinerModeSerializer
-import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsReturnValueCheckerModeSerializer
-import org.jetbrains.kotlin.arguments.serialization.json.AllDetailsKotlinVersionSerializer
+import org.jetbrains.kotlin.arguments.serialization.json.*
 
 /**
  * Class containing all non-primitive compiler argument types which are serialized in more detailed form.
@@ -32,4 +28,8 @@ class AllKotlinArgumentTypes {
 
     @Serializable(with = AllDetailsKlibIrInlinerModeSerializer::class)
     val klibIrInlinerMode = KlibIrInlinerMode.entries.toSet()
+
+    @Serializable(with = AllDetailsJvmDefaultModeSerializer::class)
+    val jvmDefaultMode = JvmDefaultMode.entries.toSet()
+
 }

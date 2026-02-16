@@ -195,6 +195,14 @@ object ProfileCompilerCommandType : KotlinArgumentValueType<ProfileCompilerComma
     }
 }
 
+/**
+ * A value which accepts [JvmDefaultMode] type.
+ */
+@Serializable
+class JvmDefaultModeType : EnumType<JvmDefaultMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<JvmDefaultMode?> = ReleaseDependent(null)
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 
