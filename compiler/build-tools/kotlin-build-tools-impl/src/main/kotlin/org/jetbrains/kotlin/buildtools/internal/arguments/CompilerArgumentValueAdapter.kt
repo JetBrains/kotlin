@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgumen
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JspecifyAnnotationsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
@@ -89,6 +90,11 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
                 mode.stringValue as T
             }
 
+            JvmCompilerArguments.X_JSPECIFY_ANNOTATIONS -> {
+                val mode = value as JspecifyAnnotationsMode
+                mode.stringValue as T
+            }
+
             else -> value as T
         }
     }
@@ -133,6 +139,13 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
 
                 AssertionsMode.entries.firstOrNull { it.stringValue == stringValue } as T
                     ?: throw CompilerArgumentsParseException("Unknown -Xassertions value: $stringValue")
+            }
+
+            JvmCompilerArguments.X_JSPECIFY_ANNOTATIONS -> {
+                val stringValue = value as String
+
+                JspecifyAnnotationsMode.entries.firstOrNull { it.stringValue == stringValue } as T
+                    ?: throw CompilerArgumentsParseException("Unknown -Xjspecify-annotations value: $stringValue")
             }
 
             else -> value as T

@@ -476,6 +476,7 @@ The default value is 'enable'.""".asReleaseDependent()
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xjspecify-annotations"
         description = ReleaseDependent(
@@ -489,6 +490,7 @@ The default value is 'enable'.""".asReleaseDependent()
         )
         valueType = StringType.defaultNull
         valueDescription = "ignore|strict|warn".asReleaseDependent()
+        argumentType = JspecifyAnnotationsModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_30,

@@ -518,6 +518,15 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMod
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode : java/lang/Enum {
+	public static final field IGNORE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode;
+	public static final field STRICT Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode;
+	public static final field WARN Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JspecifyAnnotationsMode;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode : java/lang/Enum {
 	public static final field DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode;
 	public static final field ENABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode;

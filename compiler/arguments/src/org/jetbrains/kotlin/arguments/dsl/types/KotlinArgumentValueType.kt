@@ -219,6 +219,17 @@ class AssertionsModeType : EnumType<AssertionsMode>(ReleaseDependent(true)) {
     override val defaultValue: ReleaseDependent<AssertionsMode?> = ReleaseDependent(AssertionsMode.LEGACY)
 }
 
+/**
+ * A value which accepts [JspecifyAnnotationsMode] type.
+ */
+@Serializable
+class JspecifyAnnotationsModeType : EnumType<JspecifyAnnotationsMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<JspecifyAnnotationsMode?> = ReleaseDependent(
+        current = JspecifyAnnotationsMode.STRICT,
+        KotlinReleaseVersion.v1_4_30..KotlinReleaseVersion.v2_3_20 to null
+    )
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

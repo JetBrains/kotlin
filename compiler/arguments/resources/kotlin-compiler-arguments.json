@@ -912,6 +912,38 @@
                     }
                 }
             ]
+        },
+        "jspecifyAnnotationsMode": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.JspecifyAnnotationsModeType",
+            "values": [
+                {
+                    "name": "ignore",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.30",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "strict",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.30",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "warn",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.30",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
         }
     },
     "topLevel": {
@@ -6472,14 +6504,20 @@
                                     "removedVersion": null
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.JspecifyAnnotationsModeType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": null,
-                                        "valueInVersions": []
+                                        "current": "strict",
+                                        "valueInVersions": [
+                                            {
+                                                "minReleaseVersion": "1.4.30",
+                                                "maxReleaseVersion": "2.3.20",
+                                                "value": null
+                                            }
+                                        ]
                                     }
                                 }
                             },

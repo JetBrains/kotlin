@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JspecifyAnnotationsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
@@ -351,7 +352,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_JSPECIFY_ANNOTATIONS: JvmCompilerArgument<String?> =
+    public val X_JSPECIFY_ANNOTATIONS: JvmCompilerArgument<JspecifyAnnotationsMode?> =
         JvmCompilerArgument("X_JSPECIFY_ANNOTATIONS", KotlinReleaseVersion(1, 4, 30))
 
     /**
