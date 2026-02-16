@@ -91,6 +91,9 @@ class FirDoubleColonExpressionResolver(
                 // If we skipped an object expression result before and the type result is the same, this means that
                 // there was no other classifier except that object that could win.
                 // We prefer to treat the LHS as an expression here, to have a bound callable reference / class literal
+                // TODO: KT-84336
+                //  Qualifier with type arguments always has type `Unit`, but that might be generic typealias to `Unit` in which case
+                //  `resultForType` should be preferred.
                 return resultForExpr
             }
             return resultForType
