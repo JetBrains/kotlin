@@ -25,31 +25,54 @@ import org.jetbrains.kotlin.resolve.CollectionNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
+context(context: ResolutionContext)
+fun resolveCollectionLiteralToPreparedCall(
+    preparedCall: FirFunctionCall,
+    collectionLiteralAtom: ConeCollectionLiteralAtom,
+    topLevelCandidate: Candidate,
+): FirFunctionCall {
+    var call = preparedCall
+    call =
+        context.bodyResolveComponents.callResolver.resolveCallAndSelectCandidate(call, ResolutionMode.ContextDependent, topLevelCandidate)
+    call = context.bodyResolveComponents.callCompleter.completeCall(call, ResolutionMode.ContextDependent)
+
+    return when (val calleeRef = call.calleeReference) {
+        is FirNamedReferenceWithCandidate -> {
+            topLevelCandidate.system.replaceContentWith(calleeRef.candidate.system.currentStorage())
+            collectionLiteralAtom.subAtom = ConeAtomWithCandidate(collectionLiteralAtom.expression, calleeRef.candidate)
+            call
+        }
+        else -> {
+            call
+        }
+    }
+}
+
+context(context: ResolutionContext)
+fun prepareFunctionCallForFallback(collectionLiteral: FirCollectionLiteral): FirFunctionCall {
+    val packageName = StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
+    val functionName = CollectionNames.Factories.LIST_OF
+
+    return context.bodyResolveComponents.buildCollectionLiteralCallForStdlibType(packageName, functionName, collectionLiteral)
+}
+
+fun prepareFunctionCallForErrorCL(collectionLiteral: FirCollectionLiteral): FirFunctionCall {
+    return buildFunctionCall {
+        source = collectionLiteral.source
+        argumentList = collectionLiteral.argumentList
+        calleeReference = buildSimpleNamedReference {
+            source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall)
+            name = SpecialNames.ERROR_NAME_FOR_COLLECTION_LITERAL_CALL
+        }
+    }
+}
+
 abstract class CollectionLiteralResolutionStrategy(protected val context: ResolutionContext) {
     protected val components: BodyResolveComponents get() = context.bodyResolveComponents
 
-    fun resolveCollectionLiteral(
-        collectionLiteralAtom: ConeCollectionLiteralAtom,
-        topLevelCandidate: Candidate,
-        expectedType: FirRegularClassSymbol?,
-    ): FirFunctionCall? {
-        var call = prepareRawCall(collectionLiteralAtom.expression, expectedType) ?: return null
-        call = components.callResolver.resolveCallAndSelectCandidate(call, ResolutionMode.ContextDependent, topLevelCandidate)
-        call = context.bodyResolveComponents.callCompleter.completeCall(call, ResolutionMode.ContextDependent)
-
-        return when (val calleeRef = call.calleeReference) {
-            is FirNamedReferenceWithCandidate -> {
-                topLevelCandidate.system.replaceContentWith(calleeRef.candidate.system.currentStorage())
-                collectionLiteralAtom.subAtom = ConeAtomWithCandidate(collectionLiteralAtom.expression, calleeRef.candidate)
-                call
-            }
-            else -> call
-        }
-    }
-
     internal abstract fun declaresOperatorOf(expectedType: FirRegularClassSymbol): Boolean
 
-    protected abstract fun prepareRawCall(
+    abstract fun prepareRawCall(
         collectionLiteral: FirCollectionLiteral,
         expectedClass: FirRegularClassSymbol?
     ): FirFunctionCall?
@@ -126,38 +149,6 @@ private class CollectionLiteralResolutionStrategyForStdlibType(context: Resoluti
         val (packageName, functionName) = toCollectionOfFactoryPackageAndName(expectedClass, context.session) ?: return null
 
         return components.buildCollectionLiteralCallForStdlibType(packageName, functionName, collectionLiteral)
-    }
-}
-
-class FallbackCollectionLiteralResolutionStrategy(context: ResolutionContext) : CollectionLiteralResolutionStrategy(context) {
-    override fun declaresOperatorOf(expectedType: FirRegularClassSymbol): Boolean = false
-
-    override fun prepareRawCall(
-        collectionLiteral: FirCollectionLiteral,
-        expectedClass: FirRegularClassSymbol?,
-    ): FirFunctionCall {
-        val packageName = StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
-        val functionName = CollectionNames.Factories.LIST_OF
-
-        return components.buildCollectionLiteralCallForStdlibType(packageName, functionName, collectionLiteral)
-    }
-}
-
-class ErrorCollectionLiteralResolutionStrategy(context: ResolutionContext) : CollectionLiteralResolutionStrategy(context) {
-    override fun declaresOperatorOf(expectedType: FirRegularClassSymbol): Boolean = false
-
-    override fun prepareRawCall(
-        collectionLiteral: FirCollectionLiteral,
-        expectedClass: FirRegularClassSymbol?,
-    ): FirFunctionCall {
-        return buildFunctionCall {
-            source = collectionLiteral.source
-            argumentList = collectionLiteral.argumentList
-            calleeReference = buildSimpleNamedReference {
-                source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall)
-                name = SpecialNames.ERROR_NAME_FOR_COLLECTION_LITERAL_CALL
-            }
-        }
     }
 }
 

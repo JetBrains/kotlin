@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.ErrorCollectionLiteralResolutionStrategy
-import org.jetbrains.kotlin.fir.resolve.FallbackCollectionLiteralResolutionStrategy
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
@@ -28,6 +26,9 @@ import org.jetbrains.kotlin.fir.resolve.getClassRepresentativeForCollectionLiter
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPositionWithCoercionToUnit
 import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
 import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
+import org.jetbrains.kotlin.fir.resolve.prepareFunctionCallForErrorCL
+import org.jetbrains.kotlin.fir.resolve.prepareFunctionCallForFallback
+import org.jetbrains.kotlin.fir.resolve.resolveCollectionLiteralToPreparedCall
 import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.toConeDiagnostic
@@ -228,7 +229,7 @@ class PostponedArgumentsAnalyzer(
     ) {
         val originalExpression = atom.expression
 
-        var newExpression: FirFunctionCall? = context(resolutionContext) {
+        val newExpression: FirFunctionCall = context(resolutionContext) {
             val classForResolution = when (precalculatedBounds) {
                 is CollectionLiteralBounds.SingleBound -> precalculatedBounds.bound
                 is CollectionLiteralBounds.NonTvExpected -> precalculatedBounds.bound
@@ -237,30 +238,34 @@ class PostponedArgumentsAnalyzer(
                 else -> null
             }
 
-            tryAllCLResolutionStrategies {
-                resolveCollectionLiteral(atom, topLevelCandidate, classForResolution)
+            val resolvedThroughRegularStrategies = tryAllCLResolutionStrategies {
+                val preparedCall = prepareRawCall(originalExpression, classForResolution) ?: return@tryAllCLResolutionStrategies null
+                resolveCollectionLiteralToPreparedCall(preparedCall, atom, topLevelCandidate)
             }
-        }
 
-        if (newExpression == null) {
-            newExpression = if (precalculatedBounds is CollectionLiteralBounds.Ambiguity) {
-                ErrorCollectionLiteralResolutionStrategy(resolutionContext)
-                    .resolveCollectionLiteral(atom, topLevelCandidate, null)
-                    ?.apply {
-                        val calleeReference = calleeReference as? FirErrorReferenceWithCandidate
-                            ?: error("${ErrorCollectionLiteralResolutionStrategy::class.simpleName} must return callee reference with error candidate")
+            when {
+                resolvedThroughRegularStrategies != null -> resolvedThroughRegularStrategies
+                precalculatedBounds is CollectionLiteralBounds.Ambiguity -> {
+                    val preparedCall = prepareFunctionCallForErrorCL(originalExpression)
+                    resolveCollectionLiteralToPreparedCall(preparedCall, atom, topLevelCandidate)
+                        .apply {
+                            val calleeReference = calleeReference as? FirErrorReferenceWithCandidate
+                                ?: error("${::prepareFunctionCallForErrorCL.name} must return callee reference with error candidate")
 
-                        val calleeReferenceWithNewDiagnostic = FirErrorReferenceWithCandidate(
-                            source = calleeReference.source,
-                            name = calleeReference.name,
-                            candidate = calleeReference.candidate,
-                            diagnostic = precalculatedBounds.toConeDiagnostic(),
-                        )
-                        replaceCalleeReference(calleeReferenceWithNewDiagnostic)
-                    }
-            } else {
-                FallbackCollectionLiteralResolutionStrategy(resolutionContext).resolveCollectionLiteral(atom, topLevelCandidate, null)
-            }!!
+                            val calleeReferenceWithNewDiagnostic = FirErrorReferenceWithCandidate(
+                                source = calleeReference.source,
+                                name = calleeReference.name,
+                                candidate = calleeReference.candidate,
+                                diagnostic = precalculatedBounds.toConeDiagnostic(),
+                            )
+                            replaceCalleeReference(calleeReferenceWithNewDiagnostic)
+                        }
+                }
+                else -> {
+                    val preparedCall = prepareFunctionCallForFallback(originalExpression)
+                    resolveCollectionLiteralToPreparedCall(preparedCall, atom, topLevelCandidate)
+                }
+            }
         }
 
         atom.containingCallCandidate.setUpdatedCollectionLiteral(originalExpression, newExpression)
