@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
@@ -81,6 +83,10 @@ class WasmBackendContext(
 
         var objectInstanceFieldInitializer: IrSimpleFunction? = null
         var nonConstantFieldInitializer: IrSimpleFunction? = null
+
+        // TODO rename, link to from lowerings, etc.
+        val splitCtorToOriginalCtorMap = mutableMapOf<IrConstructorSymbol, IrConstructorSymbol>()
+        val originalCtorToInitNoAllocFnMap = mutableMapOf<IrConstructorSymbol, IrSimpleFunctionSymbol>()
     }
 
     val fileContexts = mutableMapOf<IrFile, CrossFileContext>()

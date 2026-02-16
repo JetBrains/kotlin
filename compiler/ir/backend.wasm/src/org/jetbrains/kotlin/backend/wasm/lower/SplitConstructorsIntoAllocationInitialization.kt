@@ -21,22 +21,47 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.util.copyAnnotationsFrom
+import org.jetbrains.kotlin.ir.util.copyParametersFrom
+import org.jetbrains.kotlin.ir.util.copyTo
+import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
+import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameter
+import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameterWithClassParent
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
 import org.jetbrains.kotlin.ir.validation.validateIr
 import org.jetbrains.kotlin.ir.validation.withBasicChecks
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import kotlin.math.exp
+
+// TODO first run split constructors , then run rewrite
 
 class SplitConstructorsIntoAllocationInitialization(val backendContext: WasmBackendContext) : BodyLoweringPass {
+    // TODO make available outside, serialize for incremental compilation, etc.
+    //       also need to share it with the second lowering somehow
+//           some kind of map from constructors to init functions. need to think about what exactly we map, whether its the old constructor before the rewriting, or the new one, etc.
+    // TODO these maps are in WasmBackendContext for now, and get filled here, see how this can best be linked/explained
+
     override fun lower(irBody: IrBody, container: IrDeclaration) {
 //        return
         if (container is IrConstructor) {
             val originalConstructor = container
+
+            val fileContext = backendContext.getFileContext(container.file)
 
             // very rough first idea: transform it into fn init + constructor (name new or smth, figure names out later), init just initializes, constructor also allocates
             // the observable behavior of the constructor shouldn't change in the ned
@@ -61,11 +86,11 @@ class SplitConstructorsIntoAllocationInitialization(val backendContext: WasmBack
 //                isInfix = false,
 //                isExternal = false,
                 isFakeOverride = false,
+                // use a static function that has an explicit this parameter for now
+                isStatic = true,
             )
 
-            // TODO this seems wrong, should be deep copies for both of these, right?
-            initializeDontAllocateFunction.annotations = originalConstructor.annotations
-            initializeDontAllocateFunction.typeParameters = originalConstructor.typeParameters
+            fileContext.originalCtorToInitNoAllocFnMap += originalConstructor.symbol to initializeDontAllocateFunction.symbol
 
             initializeDontAllocateFunction.body = originalConstructor.body!!.deepCopyWithSymbols(initializeDontAllocateFunction)
 
@@ -85,15 +110,42 @@ class SplitConstructorsIntoAllocationInitialization(val backendContext: WasmBack
                 containerSource = originalConstructor.containerSource
             }
 
-            for (param in originalConstructor.parameters) {
-                initializeDontAllocateFunction.parameters += param.deepCopyWithSymbols(initializeDontAllocateFunction)
-                newConstructorInitializeDoAllocate.parameters += param.deepCopyWithSymbols(newConstructorInitializeDoAllocate)
+            fileContext.splitCtorToOriginalCtorMap += originalConstructor.symbol to newConstructorInitializeDoAllocate.symbol
+
+            assert(initializeDontAllocateFunction.parameters.isEmpty())
+
+
+            // add the explicit `this` parameter for initNoAlloc, by creating it as a dispatch parameter and then rewriting it
+            val dispatchReceiverParameter = initializeDontAllocateFunction.createDispatchReceiverParameterWithClassParent()
+            val correctedParameter = dispatchReceiverParameter.also { it.kind = IrParameterKind.Regular }
+            initializeDontAllocateFunction.parameters += correctedParameter
+
+//            initializeDontAllocateFunction.parameters += backendContext.irFactory.createValueParameter(
+//                startOffset = TODO(),
+//                endOffset = TODO(),
+//                origin = TODO(),
+//                kind = TODO(),
+//                name = TODO(),
+//                type = TODO(),
+//                isAssignable = TODO(),
+//                symbol = TODO(),
+//                varargElementType = TODO(),
+//                isCrossinline = TODO(),
+//                isNoinline = TODO(),
+//                isHidden = TODO()
+//            )
+
+
+            // copy "signatures" to both new functions
+            for (newlyCreated in listOf(newConstructorInitializeDoAllocate, initializeDontAllocateFunction)) {
+                newlyCreated.copyAnnotationsFrom(originalConstructor)
+                newlyCreated.copyTypeParametersFrom(originalConstructor)
+                newlyCreated.copyParametersFrom(originalConstructor)
             }
 
-            // constructors don't have dispatch receivers, but member functions do, so add it here
             assert(originalConstructor.dispatchReceiverParameter == null)
             assert(newConstructorInitializeDoAllocate.dispatchReceiverParameter == null)
-            assert(initializeDontAllocateFunction.dispatchReceiverParameter != null)
+            assert(initializeDontAllocateFunction.dispatchReceiverParameter == null)
 
             val irb = backendContext.createIrBuilder(
                 newConstructorInitializeDoAllocate.symbol,
@@ -104,8 +156,7 @@ class SplitConstructorsIntoAllocationInitialization(val backendContext: WasmBack
             newConstructorInitializeDoAllocate.body = irb.irBlockBody {
                 +irCall(backendContext.wasmSymbols.wasmAllocateGCObject)
                 val returnedThis = irCall(initializeDontAllocateFunction.symbol)
-                // TODO fundamental showstoper problem: can't add the this argument to the call (even though its needed), because it doesn't exist yet
-//                returnedThis.dispatchReceiver = irGet(initializeDontAllocateFunction.dispatchReceiverParameter!!)
+                // TODO fundamental showstopper problem: can't add the this argument to the call (even though its needed), because it doesn't exist yet
                 +irReturn(returnedThis)
             }
 
@@ -126,4 +177,25 @@ class SplitConstructorsIntoAllocationInitialization(val backendContext: WasmBack
         }
     }
 
+}
+
+class RewriteConstructorCallsAfterSplit(val backendContext: WasmBackendContext) : BodyLoweringPass {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        val fileContext = backendContext.getFileContext(container.file)
+
+
+
+        // assert that (has delegating constructor call) implies (is constructor)
+        // TODO maybe remove later because can't do it only in debug mode :(
+
+        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
+            // delegating constructors should delegate to the initNoAlloc function instead
+            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                val fnSymbol = fileContext.originalCtorToInitNoAllocFnMap[expression.symbol]
+                // TODO write similar to irCall/irConstructorCall from irutils, but transforming ctor call into fn call
+            }
+            // normal constructor calls should point to the new one
+            // TODO is there no better way? does this really have to be done manually?
+        })
+    }
 }

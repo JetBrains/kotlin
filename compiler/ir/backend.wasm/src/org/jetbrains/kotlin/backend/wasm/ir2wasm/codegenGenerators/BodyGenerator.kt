@@ -717,6 +717,8 @@ class BodyGenerator(
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
         // TODO might need to change, to call initNoAlloc instead of real constructors
+        // TODO wait, also need this for normal constructors that target the same class, not just delegating ones, right?
+        //      but is that allowed?
         val klass = functionContext.irFunction!!.parentAsClass
 
         // Don't delegate constructors of Any to Any.
@@ -774,6 +776,7 @@ class BodyGenerator(
         }
 
         if (call.symbol == wasmSymbols.wasmAllocateGCObject){
+            // TODO actually generate object prefix here
             return
         }
 
@@ -791,7 +794,15 @@ class BodyGenerator(
             }
         }
 
-        call.arguments.forEach { generateExpression(it!!) }
+        call.arguments.forEach {
+            // TODO this is just a hack to try out, dont actually use this
+            if(it == null){
+                // assumes its a missing `this` local
+                body.buildGetLocal(functionContext.referenceLocal(call.symbol.owner.parentAsClass.thisReceiver!!.symbol), SourceLocation.NoLocation("Get implicit dispatch receiver")) // this parameter
+            }else{
+                generateExpression(it)
+            }
+        }
 
         val callFunction = call.symbol.owner
 
