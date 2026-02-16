@@ -81,7 +81,8 @@ internal val enumNameAccessors = mutableMapOf(
     ExplicitApiMode::class to ExplicitApiMode::modeName,
     KotlinVersion::class to KotlinVersion::versionName,
     ReturnValueCheckerMode::class to ReturnValueCheckerMode::modeState,
-    HeaderMode::class to HeaderMode::modeName
+    HeaderMode::class to HeaderMode::modeName,
+    JvmDefaultMode::class to JvmDefaultMode::modeName,
 )
 
 internal val customTypeAccessors = mutableSetOf(ProfileCompilerCommand::class)
