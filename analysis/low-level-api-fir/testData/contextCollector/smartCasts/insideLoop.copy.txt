@@ -23,7 +23,7 @@ Tower Data Context:
         Scope: FirLocalScope
 Smart Casts:
     FirLocalPropertySymbol lvar current: R|Node?|
-    Stability: CAPTURED_VARIABLE
+    Stability: STABLE_VALUE
     Types:
         kotlin.Any
 

@@ -4,7 +4,6 @@ interface Node {
 
 fun test(initial: Node) {
     var current: Node? = initial
-
     while (current != null) {
         <expr>consume(current)</expr>
         current = current.parent

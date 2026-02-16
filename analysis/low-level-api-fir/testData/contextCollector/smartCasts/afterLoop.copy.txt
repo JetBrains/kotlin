@@ -21,7 +21,7 @@ Tower Data Context:
                 FirLocalPropertySymbol lvar current: R|Node?|
 Smart Casts:
     FirLocalPropertySymbol lvar current: R|Node?|
-    Stability: CAPTURED_VARIABLE
+    Stability: STABLE_VALUE
     Types:
         kotlin.Any
 

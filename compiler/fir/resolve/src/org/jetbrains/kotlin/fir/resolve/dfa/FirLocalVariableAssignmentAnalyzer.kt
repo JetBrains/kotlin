@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CfgInternals
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -31,7 +29,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
  *  [isUnstableInCurrentScope] only works for an access during the natural FIR tree traversal. This class will not work if one
  *  queries after the traversal is done.
  **/
-internal class FirLocalVariableAssignmentAnalyzer private constructor(
+class FirLocalVariableAssignmentAnalyzer private constructor(
     /**
      * Symbol of a topmost declaration containing a code block which is under analysis
      */
@@ -105,6 +103,30 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
         variableAssignments = null
         postponedLambdas.reset()
         scopes.reset()
+    }
+
+    /**
+     * Copies the fixed state of a [rootSymbol] from the provided [snapshot].
+     *
+     * Only state provided by the [MiniCfgBuilder] is transferred.
+     * Scope information still needs to be provided by calling `enter...()` and `exit...()` functions.
+     *
+     * The function is used by the `ContextCollector` from the Analysis API, bringing local variable information from the snapshot of
+     * a partial body analysis. It's not possible to run the [MiniCfgBuilder] on the root element directly, as usual, because its
+     * body may be in inconsistent state due to a concurrent [FirResolvePhase.BODY_RESOLVE] phase run.
+     *
+     * As an alternative, analyzed statements from the snapshot may be directly fed to the [MiniCfgBuilder].
+     * The current approach with [initializeForContextCollectionOnPartiallyResolvedBody] avoid duplicate computation. It also assumes that
+     * if no data is present in the snapshot, no assignments happen in the analyzed part of the body. Properties are assigned `emptyMap()`
+     * for bullet-proof reasons ([buildInfoForRoot] must never run for a partially resolved body).
+     *
+     * Check the `org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector` class in the Analysis API.
+     */
+    @CfgInternals
+    fun initializeForContextCollectionOnPartiallyResolvedBody(snapshot: FirLocalVariableAssignmentAnalyzer) {
+        require(rootSymbol == snapshot.rootSymbol)
+        assignedLocalVariablesByDeclaration = snapshot.assignedLocalVariablesByDeclaration ?: emptyMap()
+        variableAssignments = snapshot.variableAssignments ?: emptyMap()
     }
 
     /** Checks whether the given access is an unstable access to a local variable at this moment. */
