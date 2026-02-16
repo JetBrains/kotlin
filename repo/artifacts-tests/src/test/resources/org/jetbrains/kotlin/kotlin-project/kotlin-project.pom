@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <name>Kotlin</name>
-    <description>Kotlin is a statically typed programming language that compiles to JVM byte codes and JavaScript</description>
+    <description>Kotlin is a modern language that's concise, multiplatform, and interoperable with Java and other languages.</description>
     <url>https://kotlinlang.org/</url>
 
     <licenses>
