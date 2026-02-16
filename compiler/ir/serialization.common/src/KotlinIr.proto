@@ -40,7 +40,8 @@ message IrFile {
 message CommonIdSignature {
   repeated int32 package_fq_name = 1 [packed=true];
   repeated int32 declaration_fq_name = 2 [packed = true];
-  optional int64 member_uniq_id = 3;
+  optional int64 member_uniq_id_pre_2_4_0 = 3;
+  optional fixed64 member_uniq_id = 6;
   optional int64 flags = 4 [default = 0];
   optional int32 debug_info = 5;
 }

@@ -167,7 +167,8 @@ open class IrFileSerializer(
         ::serializeString,
         ::serializeDebugInfo,
         protoIdSignatureMap,
-        protoIdSignatureArray
+        protoIdSignatureArray,
+        serializeForKlibAbi_2_3 = !settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4),
     )
 
     protected val protoBodyArray = mutableListOf<XStatementOrExpression>()
