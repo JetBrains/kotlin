@@ -38,4 +38,7 @@ class AllKotlinArgumentTypes {
     @Serializable(with = AllDetailsAssertionsModeSerializer::class)
     val assertionsMode = AssertionsMode.entries.toSet()
 
+    @Serializable(with = AllDetailsJspecifyAnnotationsModeSerializer::class)
+    val jspecifyAnnotationsMode = JspecifyAnnotationsMode.entries.toSet()
+
 }

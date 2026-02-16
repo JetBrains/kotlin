@@ -492,7 +492,9 @@ The default value is 'enable'.""".asReleaseDependent()
                        Specify the behavior of 'jspecify' annotations.
                        The default value is 'warn'.""".trimIndent()
         )
-        argumentType = StringType.defaultNull
+        @Suppress("DEPRECATION")
+        valueType = StringType.defaultNull
+        argumentType = JspecifyAnnotationsModeType()
         argumentTypeDescription = "ignore|strict|warn".asReleaseDependent()
 
         lifecycle(

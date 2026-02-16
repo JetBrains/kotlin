@@ -266,10 +266,10 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
         description = """Specify the behavior of 'jspecify' annotations.
 The default value is 'strict'.""",
     )
-    var jspecifyAnnotations: String? = null
+    var jspecifyAnnotations: String? = "strict"
         set(value) {
             checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
+            field = if (value.isNullOrEmpty()) "strict" else value
         }
 
     @Argument(

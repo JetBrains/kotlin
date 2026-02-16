@@ -106,3 +106,20 @@ internal fun <T> applyAssertionsMode(
 
     return compilerArgs.assertionsMode as T
 }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> K2JVMCompilerArguments.applyJspecifyAnnotations(mode: T?) {
+    require(mode is String?) { "Xjspecify-annotations must be a string, but was $mode" }
+
+    this.jspecifyAnnotations = mode as String?
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applyJspecifyAnnotations(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is String?) { "Xjspecify-annotations must be a string, but was $currentValue" }
+
+    return compilerArgs.jspecifyAnnotations as T
+}
