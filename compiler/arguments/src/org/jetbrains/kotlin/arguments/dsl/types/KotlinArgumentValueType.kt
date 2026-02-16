@@ -228,6 +228,21 @@ class StringListType(
     }
 }
 
+/**
+ * A value which accepts [JvmDefaultMode] type.
+ */
+@Serializable
+class JvmDefaultModeType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<JvmDefaultMode?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<JvmDefaultMode> {
+
+    override fun stringRepresentation(value: JvmDefaultMode?): String? {
+        if (value == null) return null
+        return value.modeName.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 
