@@ -100,6 +100,7 @@ internal object CompilerArgumentMetrics : FusMetrics {
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_KOTLINX_KOVER, "kover-.*jar"),
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_KOTLINX_SERIALIZATION, "serialization-.*jar"),
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_KOTLINX_DOKKA, "dokka-.*jar"),
+                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_JS_PLAIN_OBJECTS, "js-plain-objects-.*jar"),
                     Pair(
                         BooleanMetrics.ENABLED_COMPILER_PLUGIN_KOTLINX_BINARY_COMPATIBILITY_VALIDATOR,
                         "binary-compatibility-validator-.*jar"
