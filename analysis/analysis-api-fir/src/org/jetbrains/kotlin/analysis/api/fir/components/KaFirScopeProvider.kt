@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.calls.referencedMemberSymbol
+import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.*
@@ -50,6 +53,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -280,7 +284,13 @@ internal class KaFirScopeProvider(
             val firImportingScopesIndexed = firImportingScopes.asReversed().withIndex()
 
             val ktScopesWithKinds = createScopesWithKind(firImportingScopesIndexed)
-            return KaBaseScopeContext(ktScopesWithKinds, implicitValues = emptyList(), token)
+
+            return KaBaseScopeContext(
+                scopes = ktScopesWithKinds,
+                implicitValues = emptyList(),
+                possibleSmartCasts = emptyList(),
+                token
+            )
         }
 
     // Do not check [this] psi validity as it is not used
@@ -336,9 +346,36 @@ internal class KaFirScopeProvider(
                 .flatMap { flattenFirScope(it) }
             availableScopes.map { IndexedValue(index, it) }
         }
-        val ktScopesWithKinds = createScopesWithKind(firScopes)
 
-        return KaBaseScopeContext(ktScopesWithKinds, implicitValues, token)
+        return KaBaseScopeContext(
+            scopes = createScopesWithKind(firScopes),
+            implicitValues = implicitValues,
+            possibleSmartCasts = computeSmartCastPossibilities(context),
+            token = token
+        )
+    }
+
+    private fun computeSmartCastPossibilities(context: ContextCollector.Context): List<KaSmartCastPossibility> {
+        return context.smartCasts.mapNotNull { smartCast ->
+            val source = computeSmartCastSource(smartCast.realVariable)
+                ?.takeIf { it.symbol is KaVariableSymbol } ?: return@mapNotNull null
+
+            KaBaseSmartCastPossibility(
+                source = @Suppress("UNCHECKED_CAST") (source as KaSmartCastSource<KaVariableSymbol>),
+                resultingTypes = smartCast.upperTypes.map { firSymbolBuilder.typeBuilder.buildKtType(it) },
+                isStable = smartCast.stability == SmartcastStability.STABLE_VALUE
+            )
+        }
+    }
+
+    private fun computeSmartCastSource(realVariable: RealVariable): KaSmartCastSource<KaDeclarationSymbol>? {
+        val symbol = firSymbolBuilder.buildSymbol(realVariable.symbol) as? KaDeclarationSymbol ?: return null
+        return KaBaseSmartCastSource(
+            symbol = symbol,
+            dispatchReceiver = realVariable.dispatchReceiver?.let(::computeSmartCastSource),
+            extensionReceiver = realVariable.extensionReceiver?.let(::computeSmartCastSource),
+            type = firSymbolBuilder.typeBuilder.buildKtType(realVariable.originalType),
+        )
     }
 
     private fun createScopesWithKind(firScopes: Iterable<IndexedValue<FirScope>>): List<KaScopeWithKind> {

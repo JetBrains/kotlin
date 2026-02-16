@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtElement
@@ -297,6 +299,125 @@ public interface KaScopeContext : KaLifetimeOwner {
      * The list is sorted according to the order of scopes in the scope tower (from innermost to outermost).
      */
     public val scopes: List<KaScopeWithKind>
+
+    /**
+     * The list of smart casts available at the context position.
+     *
+     * Note that the actual smart cast will only appear if the original expression type does not match the expected type.
+     * For actual smart cast application, check [KaDataFlowProvider.smartCastInfo].
+     *
+     * The list has an arbitrary (but stable) order.
+     */
+    @KaK1Unsupported
+    @KaExperimentalApi
+    public val possibleSmartCasts: List<KaSmartCastPossibility>
+}
+
+/**
+ * Represents a possible smart cast at a fixed context position.
+ *
+ * The word "possible" means that the compiler is allowed to produce smart casts for the [source] expression if there is a need to do so.
+ * Note that unless [isStable] is set, the smart cast will not be applied. In addition, the `SMARTCAST_IMPOSSIBLE` error is issued
+ * in certain cases.
+ */
+@KaExperimentalApi
+public interface KaSmartCastPossibility : KaLifetimeOwner {
+    /**
+     * A declaration, references to which smart cast may be applied (if [isStable] is `true`).
+     */
+    public val source: KaSmartCastSource<KaVariableSymbol>
+
+    /**
+     * Types that [source] may be automatically cast to.
+     */
+    public val resultingTypes: List<KaType>
+
+    /**
+     * Whether the smart cast [source] is stable at the context position.
+     *
+     * The same [source] can have different smart cast stability depending on the context position.
+     * Such as, in the code snippet below, a smart cast will be applied to the first usage of `value`. However, after the conditional
+     * expression, the compiler is not sure anymore that the `value` is still set, so a compilation error is reported.
+     *
+     * ```
+     * fun test() {
+     *     var value: String? = System.getProperty("some.property")
+     *     if (value == null) {
+     *         return
+     *     }
+     *
+     *     value.length  // Smart cast is applied
+     *
+     *     if (Random.nextBoolean()) {
+     *         value = null
+     *     }
+     *
+     *     value.length  // UNSAFE_CALL
+     * }
+     * ```
+     *
+     * For more information on the smart cast stability, check the Kotlin specification:
+     * [Smart cast sink stability](https://kotlinlang.org/spec/type-inference.html#smart-cast-sink-stability).
+     */
+    public val isStable: Boolean
+}
+
+/**
+ * Either a symbol for which a smart cast is generated, or one of its receivers.
+ */
+@KaExperimentalApi
+public interface KaSmartCastSource<T : KaDeclarationSymbol> : KaLifetimeOwner {
+    /**
+     * A declaration participating in the smart cast path.
+     *
+     * Smart casts to the same declaration can be allowed or prohibited, depending on how that declaration is accessed.
+     * In the following example, the [symbol] will be `val value: Any`. However, only for `a.value` a smart cast will be produced.
+     *
+     * ```
+     * class Holder(val value: Any)
+     *
+     * fun test(a: Holder, b: Holder) {
+     *     if (a.value is String) {
+     *         a.value.length  // OK
+     *         b.value.length  // compilation error
+     *     }
+     * }
+     * ```
+     *
+     * For `a.value` from the example above, a [KaSmartCastSource] is generated, [symbol] of which points to `val value: Any` (a property),
+     * and the [dispatchReceiver] will be the `a: Holder` value parameter.
+     */
+    public val symbol: T
+
+    /**
+     * The required dispatch receiver for this path component, if any.
+     *
+     * The [symbol] only participates in the smart cast if its dispatch receiver is the same as this one. E.g.:
+     *
+     * ```
+     * class Holder(val value: Any)
+     *
+     * fun test(holder: Holder) {
+     *     if (holder.value is String) {
+     *         holder.value.legnth  // Context position
+     *     }
+     * }
+     * ```
+     *
+     * In the example above, the `holder` parameter is a required dispatch receiver for `value`. If any other receiver is passed,
+     * such as `Holder().value`, the smart cast is not generated.
+     */
+    public val dispatchReceiver: KaSmartCastSource<KaDeclarationSymbol>?
+
+    /**
+     * The required extension receiver for this path component, if any.
+     */
+    public val extensionReceiver: KaSmartCastSource<KaDeclarationSymbol>?
+
+    /**
+     * The original type of the [symbol].
+     */
+    public val type: KaType
 }
 
 /**

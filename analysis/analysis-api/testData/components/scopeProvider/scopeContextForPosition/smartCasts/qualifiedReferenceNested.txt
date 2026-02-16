@@ -217,3 +217,61 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 10
+
+possible smart casts:
+  source:
+    symbol = KaKotlinPropertySymbol:
+      val a: kotlin.Any
+      dispatchReceiver:
+        symbol = KaValueParameterSymbol:
+          foo: kotlin.Any
+        type = kotlin.Any
+    type = kotlin.Any
+  isStable = true
+  resultingTypes:
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Bar
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+
+  source:
+    symbol = KaKotlinPropertySymbol:
+      val b: kotlin.Any
+      dispatchReceiver:
+        symbol = KaKotlinPropertySymbol:
+          val a: kotlin.Any
+          dispatchReceiver:
+            symbol = KaValueParameterSymbol:
+              foo: kotlin.Any
+            type = kotlin.Any
+        type = kotlin.Any
+    type = kotlin.Any
+  isStable = true
+  resultingTypes:
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+
+  source:
+    symbol = KaValueParameterSymbol:
+      foo: kotlin.Any
+    type = kotlin.Any
+  isStable = true
+  resultingTypes:
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: Foo
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any

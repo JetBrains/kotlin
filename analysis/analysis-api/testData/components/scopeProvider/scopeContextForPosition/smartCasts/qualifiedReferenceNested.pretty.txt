@@ -64,3 +64,43 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 10
+
+possible smart casts:
+  source:
+    symbol = KaKotlinPropertySymbol:
+      val a: kotlin.Any
+      dispatchReceiver:
+        symbol = KaValueParameterSymbol:
+          foo: kotlin.Any
+        type = kotlin.Any
+    type = kotlin.Any
+  isStable = true
+  resultingTypes:
+    Bar
+    kotlin.Any
+
+  source:
+    symbol = KaKotlinPropertySymbol:
+      val b: kotlin.Any
+      dispatchReceiver:
+        symbol = KaKotlinPropertySymbol:
+          val a: kotlin.Any
+          dispatchReceiver:
+            symbol = KaValueParameterSymbol:
+              foo: kotlin.Any
+            type = kotlin.Any
+        type = kotlin.Any
+    type = kotlin.Any
+  isStable = true
+  resultingTypes:
+    kotlin.String
+    kotlin.Any
+
+  source:
+    symbol = KaValueParameterSymbol:
+      foo: kotlin.Any
+    type = kotlin.Any
+  isStable = true
+  resultingTypes:
+    Foo
+    kotlin.Any

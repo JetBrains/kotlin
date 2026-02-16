@@ -10,20 +10,62 @@ import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaContextParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
 @KaImplementationDetail
 class KaBaseScopeContext(
     scopes: List<KaScopeWithKind>,
     implicitValues: List<KaScopeImplicitValue>,
+    possibleSmartCasts: List<KaSmartCastPossibility>,
     override val token: KaLifetimeToken,
 ) : KaScopeContext {
     private val backingImplicitValues: List<KaScopeImplicitValue> = implicitValues
     private val backingScopes: List<KaScopeWithKind> = scopes
+    private val backingPossibleSmartCasts: List<KaSmartCastPossibility> = possibleSmartCasts
 
     override val implicitValues: List<KaScopeImplicitValue> get() = withValidityAssertion { backingImplicitValues }
     override val scopes: List<KaScopeWithKind> get() = withValidityAssertion { backingScopes }
+    override val possibleSmartCasts: List<KaSmartCastPossibility> get() = withValidityAssertion { backingPossibleSmartCasts }
+}
+
+@KaImplementationDetail
+class KaBaseSmartCastPossibility(
+    source: KaSmartCastSource<KaVariableSymbol>,
+    resultingTypes: List<KaType>,
+    isStable: Boolean
+) : KaSmartCastPossibility {
+    private val backingSource: KaSmartCastSource<KaVariableSymbol> = source
+    private val backingResultingTypes: List<KaType> = resultingTypes
+    private val backingIsStable: Boolean = isStable
+
+    override val token: KaLifetimeToken get() = backingSource.token
+
+    override val source: KaSmartCastSource<KaVariableSymbol> get() = withValidityAssertion { backingSource }
+    override val resultingTypes: List<KaType> get() = withValidityAssertion { backingResultingTypes }
+    override val isStable: Boolean get() = withValidityAssertion { backingIsStable }
+}
+
+@KaImplementationDetail
+class KaBaseSmartCastSource<T : KaDeclarationSymbol>(
+    symbol: T,
+    dispatchReceiver: KaSmartCastSource<KaDeclarationSymbol>?,
+    extensionReceiver: KaSmartCastSource<KaDeclarationSymbol>?,
+    type: KaType,
+) : KaSmartCastSource<T> {
+    private val backingSymbol: T = symbol
+    private val backingDispatchReceiver: KaSmartCastSource<KaDeclarationSymbol>? = dispatchReceiver
+    private val backingExtensionReceiver: KaSmartCastSource<KaDeclarationSymbol>? = extensionReceiver
+    private val backingType: KaType = type
+
+    override val token: KaLifetimeToken get() = backingSymbol.token
+
+    override val symbol: T get() = withValidityAssertion { backingSymbol }
+    override val dispatchReceiver: KaSmartCastSource<KaDeclarationSymbol>? get() = withValidityAssertion { backingDispatchReceiver }
+    override val extensionReceiver: KaSmartCastSource<KaDeclarationSymbol>? get() = withValidityAssertion { backingExtensionReceiver }
+    override val type: KaType get() = withValidityAssertion { backingType }
 }
 
 @KaImplementationDetail
