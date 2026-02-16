@@ -8,4 +8,5 @@ Another one representation is JSON-based that is bundled into a published jar as
 ### JSON schema changelog
 
 - `1`: Initial schema
-- `6`: Add StringListType
+- `6`: Add `StringListType`
+- `7`: Add `JvmDefaultModeType`
