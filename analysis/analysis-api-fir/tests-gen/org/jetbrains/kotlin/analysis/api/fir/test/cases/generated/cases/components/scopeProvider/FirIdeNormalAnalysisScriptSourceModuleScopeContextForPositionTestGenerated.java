@@ -65,6 +65,20 @@ public class FirIdeNormalAnalysisScriptSourceModuleScopeContextForPositionTestGe
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCasts")
+  @TestDataPath("$PROJECT_ROOT")
+  public class SmartCasts {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCasts/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInSmartCasts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCasts"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/withTestCompilerPluginEnabled")
   @TestDataPath("$PROJECT_ROOT")
   public class WithTestCompilerPluginEnabled {

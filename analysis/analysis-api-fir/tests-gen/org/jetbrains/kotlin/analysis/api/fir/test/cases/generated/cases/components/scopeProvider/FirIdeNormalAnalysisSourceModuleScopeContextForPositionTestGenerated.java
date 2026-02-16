@@ -503,6 +503,116 @@ public class FirIdeNormalAnalysisSourceModuleScopeContextForPositionTestGenerate
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCasts")
+  @TestDataPath("$PROJECT_ROOT")
+  public class SmartCasts {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCasts/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInSmartCasts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCasts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("bound.kt")
+    public void testBound() {
+      run("bound.kt");
+    }
+
+    @Test
+    @TestMetadata("breakFromInfiniteLoop.kt")
+    public void testBreakFromInfiniteLoop() {
+      run("breakFromInfiniteLoop.kt");
+    }
+
+    @Test
+    @TestMetadata("directSink.kt")
+    public void testDirectSink() {
+      run("directSink.kt");
+    }
+
+    @Test
+    @TestMetadata("directSinkBad.kt")
+    public void testDirectSinkBad() {
+      run("directSinkBad.kt");
+    }
+
+    @Test
+    @TestMetadata("doWhile.kt")
+    public void testDoWhile() {
+      run("doWhile.kt");
+    }
+
+    @Test
+    @TestMetadata("doWhile2.kt")
+    public void testDoWhile2() {
+      run("doWhile2.kt");
+    }
+
+    @Test
+    @TestMetadata("localVariable.kt")
+    public void testLocalVariable() {
+      run("localVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("localVariableMutable.kt")
+    public void testLocalVariableMutable() {
+      run("localVariableMutable.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSink.kt")
+    public void testNestedSink() {
+      run("nestedSink.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSink2.kt")
+    public void testNestedSink2() {
+      run("nestedSink2.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSinkBad2.kt")
+    public void testNestedSinkBad2() {
+      run("nestedSinkBad2.kt");
+    }
+
+    @Test
+    @TestMetadata("noSmartCastInInference.kt")
+    public void testNoSmartCastInInference() {
+      run("noSmartCastInInference.kt");
+    }
+
+    @Test
+    @TestMetadata("parameterSimple.kt")
+    public void testParameterSimple() {
+      run("parameterSimple.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedReference.kt")
+    public void testQualifiedReference() {
+      run("qualifiedReference.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedReferenceNested.kt")
+    public void testQualifiedReferenceNested() {
+      run("qualifiedReferenceNested.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastInInference.kt")
+    public void testSmartCastInInference() {
+      run("smartCastInInference.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/withTestCompilerPluginEnabled")
   @TestDataPath("$PROJECT_ROOT")
   public class WithTestCompilerPluginEnabled {
