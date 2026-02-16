@@ -184,7 +184,9 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
                                  This is the default behavior since language version 2.2.
 -jvm-default=no-compatibility    Generate default methods for non-abstract interface declarations. Do not generate 'DefaultImpls' classes.
 -jvm-default=disable             Do not generate JVM default methods. This is the default behavior up to language version 2.1.""".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        @Suppress("DEPRECATION")
+        valueType = StringType.defaultNull
+        argumentType = JvmDefaultModeType()
         argumentTypeDescription = "{enable|no-compatibility|disable}".asReleaseDependent()
 
         lifecycle(
