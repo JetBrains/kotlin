@@ -203,6 +203,14 @@ class JvmDefaultModeType : EnumType<JvmDefaultMode>(ReleaseDependent(true)) {
     override val defaultValue: ReleaseDependent<JvmDefaultMode?> = ReleaseDependent(null)
 }
 
+/**
+ * A value which accepts [AbiStabilityMode] type.
+ */
+@Serializable
+class AbiStabilityModeType : EnumType<AbiStabilityMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<AbiStabilityMode?> = ReleaseDependent(null)
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

@@ -104,6 +104,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
@@ -162,7 +163,7 @@ internal class JvmCompilerArgumentsImpl(
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (X_ABI_STABILITY in this) { arguments.abiStability = get(X_ABI_STABILITY)}
+    if (X_ABI_STABILITY in this) { arguments.abiStability = get(X_ABI_STABILITY)?.stringValue}
     if (X_ADD_MODULES in this) { arguments.additionalJavaModules = get(X_ADD_MODULES)}
     if (X_ALLOW_NO_SOURCE_FILES in this) { arguments.allowNoSourceFiles = get(X_ALLOW_NO_SOURCE_FILES)}
     if (X_ALLOW_UNSTABLE_DEPENDENCIES in this) { arguments.allowUnstableDependencies = get(X_ALLOW_UNSTABLE_DEPENDENCIES)}
@@ -248,7 +249,7 @@ internal class JvmCompilerArgumentsImpl(
   @Suppress("DEPRECATION")
   public fun applyCompilerArguments(arguments: K2JVMCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[X_ABI_STABILITY] = arguments.abiStability } catch (_: NoSuchMethodError) {  }
+    try { this[X_ABI_STABILITY] = arguments.abiStability?.let { AbiStabilityMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xabi-stability value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_ADD_MODULES] = arguments.additionalJavaModules } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_NO_SOURCE_FILES] = arguments.allowNoSourceFiles } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_UNSTABLE_DEPENDENCIES] = arguments.allowUnstableDependencies } catch (_: NoSuchMethodError) {  }
@@ -351,7 +352,7 @@ internal class JvmCompilerArgumentsImpl(
   public companion object {
     private val knownArguments: MutableSet<String> = mutableSetOf()
 
-    public val X_ABI_STABILITY: JvmCompilerArgument<String?> =
+    public val X_ABI_STABILITY: JvmCompilerArgument<AbiStabilityMode?> =
         JvmCompilerArgument("X_ABI_STABILITY")
 
     public val X_ADD_MODULES: JvmCompilerArgument<Array<String>?> =

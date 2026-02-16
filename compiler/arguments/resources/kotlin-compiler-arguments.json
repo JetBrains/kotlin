@@ -848,6 +848,29 @@
                     }
                 }
             ]
+        },
+        "abiStabilityMode": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.AbiStabilityModeType",
+            "values": [
+                {
+                    "name": "stable",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.30",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "unstable",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.30",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
         }
     },
     "topLevel": {
@@ -5304,7 +5327,7 @@
                                     "removedVersion": null
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.AbiStabilityModeType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []

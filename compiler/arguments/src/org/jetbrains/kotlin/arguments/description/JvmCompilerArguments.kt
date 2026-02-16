@@ -204,6 +204,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xabi-stability"
         description = """When using unstable compiler features such as FIR, use 'stable' to mark generated class files as stable
@@ -212,6 +213,7 @@ When using the JVM IR backend, conversely, use 'unstable' to mark generated clas
 to force diagnostics to be reported.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{stable|unstable}".asReleaseDependent()
+        argumentType = AbiStabilityModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_30,

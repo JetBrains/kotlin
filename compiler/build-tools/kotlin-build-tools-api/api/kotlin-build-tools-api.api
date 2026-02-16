@@ -483,6 +483,14 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArgu
 	public final fun getId ()Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabilityMode : java/lang/Enum {
+	public static final field STABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabilityMode;
+	public static final field UNSTABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabilityMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabilityMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabilityMode;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode : java/lang/Enum {
 	public static final field DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode;
 	public static final field STRICT Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode;
