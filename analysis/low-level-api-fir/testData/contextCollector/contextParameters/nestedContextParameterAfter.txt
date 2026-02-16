@@ -32,6 +32,7 @@ Tower Data Context:
                 FirLocalPropertySymbol lval d: R|D|
 Smart Casts:
     FirValueParameterSymbol a: R|T|
+    Stability: STABLE_VALUE
     Types:
         BaseA
         kotlin.Any

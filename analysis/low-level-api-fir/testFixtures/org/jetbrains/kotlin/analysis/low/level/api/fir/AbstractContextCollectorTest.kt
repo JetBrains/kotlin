@@ -207,6 +207,7 @@ internal object ElementContextRenderer {
         appendBlock("Smart Casts:") {
             for (smartCast in smartCasts) {
                 appendSymbol(smartCast.realVariable.symbol).appendLine()
+                append("Stability: ").append(smartCast.stability).appendLine()
 
                 appendBlock("Types:") {
                     for (type in smartCast.upperTypes) {

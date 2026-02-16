@@ -25,6 +25,7 @@ Tower Data Context:
         Scope: FirLocalScope
 Smart Casts:
     FirRegularClassSymbol public open class Foo : R|kotlin/Any|
+    Stability: STABLE_VALUE
     Types:
         Bar
         kotlin.Any
