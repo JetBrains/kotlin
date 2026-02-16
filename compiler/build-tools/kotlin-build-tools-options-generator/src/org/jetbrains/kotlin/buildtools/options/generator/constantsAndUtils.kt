@@ -84,6 +84,7 @@ internal val enumNameAccessors = mutableMapOf(
     HeaderMode::class to HeaderMode::modeName,
     JvmDefaultMode::class to JvmDefaultMode::modeName,
     AbiStabilityMode::class to AbiStabilityMode::modeName,
+    AssertionsMode::class to AssertionsMode::modeName,
 )
 
 internal val customTypeAccessors = mutableSetOf(ProfileCompilerCommand::class)

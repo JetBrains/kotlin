@@ -491,6 +491,16 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabil
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AbiStabilityMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode : java/lang/Enum {
+	public static final field ALWAYS_DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
+	public static final field ALWAYS_ENABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
+	public static final field JVM Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
+	public static final field LEGACY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode : java/lang/Enum {
 	public static final field DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode;
 	public static final field STRICT Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode;

@@ -89,3 +89,20 @@ internal fun <T> applyAbiStability(
 
     return compilerArgs.abiStability as T
 }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> K2JVMCompilerArguments.applyAssertionsMode(mode: T?) {
+    require(mode is String?) { "Xassertions must be a string, but was $mode" }
+
+    this.assertionsMode = mode as String?
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applyAssertionsMode(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is String?) { "Xassertions must be a string, but was $currentValue" }
+
+    return compilerArgs.assertionsMode as T
+}
