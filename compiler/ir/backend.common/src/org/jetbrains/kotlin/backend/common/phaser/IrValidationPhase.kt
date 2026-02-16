@@ -42,7 +42,7 @@ abstract class IrValidationBeforeLoweringPhase<Context : LoweringContext>(contex
         get() = IrValidatorConfig(checkTreeConsistency = true)
             .withBasicChecks()
             .withCheckers(IrValueAccessScopeChecker)
-            //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
+            .withTypeChecks()
             //.withCheckers(IrTypeParameterScopeChecker) // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305)
             .applyIf(context.configuration.enableIrVisibilityChecks) {
                 withCheckers(IrVisibilityChecker.Strict)
@@ -86,7 +86,7 @@ class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringConte
             .applyIf(context.configuration.enableIrNestedOffsetsChecks) {
                 withCheckers(IrNestedOffsetRangeChecker)
             }
-            //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
+            .withTypeChecks()
             .applyIf(context.configuration.enableIrVarargTypesChecks) {
                 withVarargChecks()
             }
@@ -100,7 +100,7 @@ class IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase<Context : Lower
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(checkTreeConsistency = true)
             .withBasicChecks()
-            //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
+            .withTypeChecks()
             .applyIf(context.configuration.enableIrVisibilityChecks) {
                 withCheckers(IrVisibilityChecker.Relaxed, IrCrossFileFieldUsageChecker, IrValueAccessScopeChecker)
             }

@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUs
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
 import org.jetbrains.kotlin.ir.validation.validateIr
 import org.jetbrains.kotlin.ir.validation.withBasicFirstStageChecks
+import org.jetbrains.kotlin.ir.validation.withTypeChecks
 import org.jetbrains.kotlin.ir.validation.withVarargChecks
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -503,7 +504,7 @@ private class Fir2IrPipeline(
             irBuiltIns,
             IrValidatorConfig(checkTreeConsistency = true, checkUnboundSymbols = true)
                 .withBasicFirstStageChecks()
-                //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
+                .withTypeChecks()
                 .withCheckers(
                     IrCallValueArgumentCountChecker,
                     IrCrossFileFieldUsageChecker,
