@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.LegacyKlibDependencies
 import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
 import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
@@ -173,26 +174,19 @@ class CacheSupport(
 
     fun checkConsistency() {
         // Ensure dependencies of every cached library are cached too:
-        resolvedLibraries.getFullList { libraries ->
-            libraries.map { library ->
-                val cache = cachedLibraries.getLibraryCache(library.library)
-                if (cache != null || library.library == libraryToCache?.klib) {
-                    library.resolvedDependencies.forEach {
-                        if (!cachedLibraries.isLibraryCached(it.library) && it.library != libraryToCache?.klib) {
-                            val description = if (cache != null) {
-                                "cached (in ${cache.path})"
-                            } else {
-                                "going to be cached"
-                            }
-                            configuration.reportCompilationError(
-                                    "${library.library.location} is $description, " +
-                                            "but its dependency isn't: ${it.library.location}"
-                            )
-                        }
+        val libraries = resolvedLibraries.getFullList()
+        val dependenciesMap = LegacyKlibDependencies(libraries)
+
+        for (library in libraries) {
+            val cache = cachedLibraries.getLibraryCache(library)
+            if (cache != null || library == libraryToCache?.klib) {
+                val dependencies = dependenciesMap.getDependenciesFor(library)
+                for (dependency in dependencies) {
+                    if (!cachedLibraries.isLibraryCached(dependency) && dependency != libraryToCache?.klib) {
+                        val description = if (cache != null) "cached (in ${cache.path})" else "going to be cached"
+                        configuration.reportCompilationError("${library.location} is $description, but its dependency isn't: ${dependency.location}")
                     }
                 }
-
-                library
             }
         }
 

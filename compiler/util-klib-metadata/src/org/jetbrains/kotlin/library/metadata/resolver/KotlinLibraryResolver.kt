@@ -59,10 +59,7 @@ interface KotlinLibraryResolveResult {
 
     fun filterRoots(predicate: (KotlinResolvedLibrary) -> Boolean): KotlinLibraryResolveResult
 
-    fun getFullList(order: LibraryOrder? = null): List<KotlinLibrary>
+    fun getFullList(): List<KotlinLibrary>
 
     fun forEach(action: (KotlinLibrary, PackageAccessHandler) -> Unit)
 }
-
-
-typealias LibraryOrder = (Iterable<KotlinResolvedLibrary>) -> List<KotlinResolvedLibrary>
