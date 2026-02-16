@@ -23,6 +23,7 @@ import kotlinx.cli.default
 import kotlinx.cli.required
 import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
 import kotlinx.metadata.klib.KlibMetadataVersion
+import org.jetbrains.kotlin.backend.common.legacyKlibReverseTopoSort
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
-import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinLibraryResolverImpl
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.native.interop.gen.*
@@ -560,7 +560,7 @@ private fun resolveDependencies(
         noStdLib = false,
         noDefaultLibs = noDefaultLibs,
         noEndorsedLibs = noEndorsedLibs
-    ).getFullList(TopologicalLibraryOrder)
+    ).getFullList().legacyKlibReverseTopoSort()
     validateNoLibrariesWerePassedViaCliByUniqueName(cinteropArguments.library, resolvedLibraries, resolver.logger)
     return resolvedLibraries
 }

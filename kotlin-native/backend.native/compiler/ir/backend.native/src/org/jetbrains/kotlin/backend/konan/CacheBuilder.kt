@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
@@ -42,6 +41,7 @@ import java.io.IOException
 import java.nio.channels.ClosedByInterruptException
 import java.nio.file.*
 import kotlin.random.Random
+import org.jetbrains.kotlin.backend.common.legacyKlibReverseTopoSort
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
     val allDependencies = mutableSetOf<KotlinLibrary>()
@@ -75,7 +75,7 @@ class CacheBuilder(
             && (config.isFinalBinary || config.produce.isFullCache)
             && (autoCacheableFrom.isNotEmpty() || icEnabled)
 
-    private val allLibraries by lazy { config.resolvedLibraries.getFullList(TopologicalLibraryOrder) }
+    private val allLibraries by lazy { config.resolvedLibraries.getFullList().legacyKlibReverseTopoSort() }
     private val uniqueNameToLibrary by lazy { allLibraries.associateBy { it.uniqueName } }
     private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 

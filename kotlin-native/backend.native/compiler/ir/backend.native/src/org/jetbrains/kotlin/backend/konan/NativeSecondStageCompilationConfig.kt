@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.legacyKlibReverseTopoSort
 import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
@@ -55,7 +56,6 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.native.resolve.KonanLibrariesResolveSupport
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
@@ -421,9 +421,7 @@ class NativeSecondStageCompilationConfig(
         get() = getExportedLibraries(configuration, resolve.resolvedLibraries, resolve.resolver.searchPathResolver, report = true)
 
     fun librariesWithDependencies(): List<KotlinLibrary> {
-        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(
-                TopologicalLibraryOrder
-        )
+        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList().legacyKlibReverseTopoSort()
     }
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::File)
