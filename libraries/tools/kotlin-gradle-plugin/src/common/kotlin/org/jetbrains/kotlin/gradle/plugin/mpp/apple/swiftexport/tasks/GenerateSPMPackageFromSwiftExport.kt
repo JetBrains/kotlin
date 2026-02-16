@@ -15,6 +15,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModules
+import org.jetbrains.kotlin.gradle.utils.CommaSeparatedEntriesBuilder
+import org.jetbrains.kotlin.gradle.utils.StringBlockBuilder
+import org.jetbrains.kotlin.gradle.utils.buildStringBlock
+import org.jetbrains.kotlin.gradle.utils.commaSeparatedEntries
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -159,26 +163,34 @@ internal object SPMManifestGenerator {
         swiftLibrary: String,
         kotlinRuntime: String,
         modules: List<GradleSwiftExportModule>,
-    ) = """
-        // swift-tools-version: 5.9
-        
-        import PackageDescription
-        let package = Package(
-            name: "$swiftApiModule",
-            products: [
-                .library(
-                    name: "$swiftLibrary",
-                    targets: [${modules.productTargets().joinToString(", ")}]
-                ),
-            ],
-            targets: [
-                ${modules.targetDefinitions(kotlinRuntime).joinToString("\n                ")}
-                .target(
-                    name: "$kotlinRuntime"
-                )
-            ]
-        )
-        """.trimIndent()
+    ): String = buildStringBlock {
+        line("// swift-tools-version: 5.9")
+        line()
+        line("import PackageDescription")
+        block("let package = Package(", ")") {
+            commaSeparatedEntries {
+                entry { line("name: \"$swiftApiModule\"") }
+                entry {
+                    block("products: [", "]") {
+                        block(".library(", ")") {
+                            commaSeparatedEntries {
+                                entry { line("name: \"$swiftLibrary\"") }
+                                entry { line("targets: [${modules.productTargets().joinToString(", ")}]") }
+                            }
+                        }
+                    }
+                }
+                entry {
+                    block("targets: [", "]") {
+                        commaSeparatedEntries {
+                            emitTargetDefinitions(modules, kotlinRuntime)
+                            entry { emitTarget(kotlinRuntime) }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     private fun GradleSwiftExportModule.spmDependencies(kotlinRuntime: String): List<String> {
         return when (this) {
@@ -191,28 +203,29 @@ internal object SPMManifestGenerator {
         return this.map { "\"${it.name}\"" }
     }
 
-    private fun List<GradleSwiftExportModule>.targetDefinitions(kotlinRuntime: String): List<String> {
-
-        fun bridgeTarget(bridgeName: String) =
-            """
-                .target(
-                    name: "$bridgeName"
-                ),
-        """.trim()
-
-        return this.map { module ->
-            """
-                .target(
-                    name: "${module.name}",
-                    dependencies: [${module.spmDependencies(kotlinRuntime).joinToString(", ") { "\"$it\"" }}]
-                ),
-                ${
-                when (module) {
-                    is GradleSwiftExportModule.BridgesToKotlin -> bridgeTarget(module.bridgeName)
-                    else -> ""
+    private fun StringBlockBuilder.emitTarget(
+        name: String,
+        dependencies: List<String>? = null,
+    ) {
+        block(".target(", ")") {
+            commaSeparatedEntries {
+                entry { line("name: \"$name\"") }
+                if (dependencies != null) {
+                    entry { line("dependencies: [${dependencies.joinToString(", ") { "\"$it\"" }}]") }
                 }
             }
-        """.trim()
+        }
+    }
+
+    private fun CommaSeparatedEntriesBuilder.emitTargetDefinitions(
+        modules: List<GradleSwiftExportModule>,
+        kotlinRuntime: String,
+    ) {
+        modules.forEach { module ->
+            entry { emitTarget(module.name, module.spmDependencies(kotlinRuntime)) }
+            if (module is GradleSwiftExportModule.BridgesToKotlin) {
+                entry { emitTarget(module.bridgeName) }
+            }
         }
     }
 }
