@@ -30,6 +30,8 @@ private val jvmFilePhases = createFilePhases(
     ::TypeAliasAnnotationMethodsLowering,
     ::ProvisionalFunctionExpressionLowering,
 
+    ::JvmUpgradeCallableReferences,
+
     ::JvmVersionOverloadsLowering,
     ::JvmOverloadsAnnotationLowering,
     ::MainMethodGenerationLowering,
@@ -42,7 +44,6 @@ private val jvmFilePhases = createFilePhases(
     ::JvmLateinitLowering,
     ::JvmInventNamesForLocalClasses,
 
-    ::JvmUpgradeCallableReferences,
     ::PrepareCallableReferencesForInlining,
     ::DirectInvokeLowering,
     ::FunctionReferenceLowering,
