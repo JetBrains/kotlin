@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import java.io.File
@@ -70,6 +72,11 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
                 } as T
             }
 
+            JvmCompilerArguments.JVM_DEFAULT -> {
+                val mode = value as JvmDefaultMode
+                mode.stringValue as T
+            }
+
             else -> value as T
         }
     }
@@ -93,6 +100,13 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
                 require(parts.size == 3) { "Invalid async profiler settings format: $stringValue" }
 
                 ProfileCompilerCommand(Path(parts[0]), parts[1], Path(parts[2])) as T
+            }
+
+            JvmCompilerArguments.JVM_DEFAULT -> {
+                val stringValue = value as String
+
+                JvmDefaultMode.entries.firstOrNull { it.stringValue == stringValue } as T
+                    ?: throw CompilerArgumentsParseException("Unknown -jvm-default value: $stringValue")
             }
 
             else -> value as T
