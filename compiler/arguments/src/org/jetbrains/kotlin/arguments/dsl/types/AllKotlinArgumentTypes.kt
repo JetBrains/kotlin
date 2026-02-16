@@ -35,4 +35,7 @@ class AllKotlinArgumentTypes {
     @Serializable(with = AllDetailsAbiStabilityModeSerializer::class)
     val abiStabilityMode = AbiStabilityMode.entries.toSet()
 
+    @Serializable(with = AllDetailsAssertionsModeSerializer::class)
+    val assertionsMode = AssertionsMode.entries.toSet()
+
 }

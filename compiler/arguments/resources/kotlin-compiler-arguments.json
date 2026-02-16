@@ -871,6 +871,47 @@
                     }
                 }
             ]
+        },
+        "assertionsMode": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.AssertionsModeType",
+            "values": [
+                {
+                    "name": "always-enable",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.2.60",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "always-disable",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.2.60",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "jvm",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.2.60",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "legacy",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.2.60",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
         }
     },
     "topLevel": {
@@ -5537,7 +5578,7 @@
                                     "removedVersion": null
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.AssertionsModeType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []

@@ -105,6 +105,7 @@ import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
@@ -168,7 +169,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_ALLOW_NO_SOURCE_FILES in this) { arguments.allowNoSourceFiles = get(X_ALLOW_NO_SOURCE_FILES)}
     if (X_ALLOW_UNSTABLE_DEPENDENCIES in this) { arguments.allowUnstableDependencies = get(X_ALLOW_UNSTABLE_DEPENDENCIES)}
     if (X_ANNOTATIONS_IN_METADATA in this) { arguments.annotationsInMetadata = get(X_ANNOTATIONS_IN_METADATA)}
-    if (X_ASSERTIONS in this) { arguments.assertionsMode = get(X_ASSERTIONS)}
+    if (X_ASSERTIONS in this) { arguments.assertionsMode = get(X_ASSERTIONS)?.stringValue}
     if (X_BACKEND_THREADS in this) { arguments.backendThreads = get(X_BACKEND_THREADS).toString()}
     if (X_BUILD_FILE in this) { arguments.buildFile = get(X_BUILD_FILE)}
     try { if (X_COMPILE_BUILTINS_AS_PART_OF_STDLIB in this) { arguments.setUsingReflection("expectBuiltinsAsPartOfStdlib", get(X_COMPILE_BUILTINS_AS_PART_OF_STDLIB))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_BUILTINS_AS_PART_OF_STDLIB. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20 and removed in 2.3.20""").initCause(e) }
@@ -254,7 +255,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_ALLOW_NO_SOURCE_FILES] = arguments.allowNoSourceFiles } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_UNSTABLE_DEPENDENCIES] = arguments.allowUnstableDependencies } catch (_: NoSuchMethodError) {  }
     try { this[X_ANNOTATIONS_IN_METADATA] = arguments.annotationsInMetadata } catch (_: NoSuchMethodError) {  }
-    try { this[X_ASSERTIONS] = arguments.assertionsMode } catch (_: NoSuchMethodError) {  }
+    try { this[X_ASSERTIONS] = arguments.assertionsMode?.let { AssertionsMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xassertions value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[X_BACKEND_THREADS] = arguments.backendThreads.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
     try { this[X_BUILD_FILE] = arguments.buildFile } catch (_: NoSuchMethodError) {  }
     try { this[X_COMPILE_BUILTINS_AS_PART_OF_STDLIB] = arguments.getUsingReflection("expectBuiltinsAsPartOfStdlib") } catch (_: NoSuchMethodError) {  }
@@ -367,7 +368,8 @@ internal class JvmCompilerArgumentsImpl(
     public val X_ANNOTATIONS_IN_METADATA: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_ANNOTATIONS_IN_METADATA")
 
-    public val X_ASSERTIONS: JvmCompilerArgument<String?> = JvmCompilerArgument("X_ASSERTIONS")
+    public val X_ASSERTIONS: JvmCompilerArgument<AssertionsMode?> =
+        JvmCompilerArgument("X_ASSERTIONS")
 
     public val X_BACKEND_THREADS: JvmCompilerArgument<Int> =
         JvmCompilerArgument("X_BACKEND_THREADS")

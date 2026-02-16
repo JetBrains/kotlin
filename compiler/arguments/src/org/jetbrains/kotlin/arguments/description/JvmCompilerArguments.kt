@@ -309,6 +309,7 @@ The default value is 1.""".asReleaseDependent()
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xassertions"
         compilerName = "assertionsMode"
@@ -321,6 +322,7 @@ default: legacy""".asReleaseDependent()
         // TODO: change to JVMAssertionsMode type
         valueType = StringType(defaultValue = "legacy".asReleaseDependent())
         valueDescription = "{always-enable|always-disable|jvm|legacy}".asReleaseDependent()
+        argumentType = AssertionsModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_60,

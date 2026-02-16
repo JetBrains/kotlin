@@ -211,6 +211,14 @@ class AbiStabilityModeType : EnumType<AbiStabilityMode>(ReleaseDependent(true)) 
     override val defaultValue: ReleaseDependent<AbiStabilityMode?> = ReleaseDependent(null)
 }
 
+/**
+ * A value which accepts [AssertionsMode] type.
+ */
+@Serializable
+class AssertionsModeType : EnumType<AssertionsMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<AssertionsMode?> = ReleaseDependent(AssertionsMode.LEGACY)
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

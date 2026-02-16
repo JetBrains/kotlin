@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
@@ -187,6 +188,13 @@ internal class KotlinWrapperPre2_4_0(
                     AbiStabilityMode.values().first { it.stringValue == stringValue } as V
                 }
 
+                JvmCompilerArguments.X_ASSERTIONS -> {
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
+                    AssertionsMode.values().first { it.stringValue == stringValue } as V
+                }
+
                 else -> delegate[key]
             }
         }
@@ -221,6 +229,14 @@ internal class KotlinWrapperPre2_4_0(
 
                 JvmCompilerArguments.X_ABI_STABILITY -> {
                     val mode = value as AbiStabilityMode?
+                    val stringValue = mode?.stringValue
+                    val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                    delegate[stringKey] = stringValue
+                }
+
+                JvmCompilerArguments.X_ASSERTIONS -> {
+                    val mode = value as AssertionsMode?
                     val stringValue = mode?.stringValue
                     val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
 
