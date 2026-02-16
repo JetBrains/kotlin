@@ -14,6 +14,7 @@ import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.AbiStabilityMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
@@ -101,7 +102,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_ABI_STABILITY: JvmCompilerArgument<String?> =
+    public val X_ABI_STABILITY: JvmCompilerArgument<AbiStabilityMode?> =
         JvmCompilerArgument("X_ABI_STABILITY", KotlinReleaseVersion(1, 4, 30))
 
     /**

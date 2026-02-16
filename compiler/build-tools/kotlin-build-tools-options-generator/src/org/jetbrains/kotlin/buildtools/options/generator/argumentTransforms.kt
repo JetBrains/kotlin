@@ -75,6 +75,7 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             compat("jdk-home")
             compat("Xadd-modules")
             compat("jvm-default")
+            compat("Xabi-stability")
         }
         with(removedJvmCompilerArguments) {
             drop("Xuse-javac")

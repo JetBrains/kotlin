@@ -243,6 +243,21 @@ class JvmDefaultModeType(
     }
 }
 
+/**
+ * A value which accepts [AbiStabilityMode] type.
+ */
+@Serializable
+class AbiStabilityModeType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<AbiStabilityMode?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<AbiStabilityMode> {
+
+    override fun stringRepresentation(value: AbiStabilityMode?): String? {
+        if (value == null) return null
+        return value.modeName.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

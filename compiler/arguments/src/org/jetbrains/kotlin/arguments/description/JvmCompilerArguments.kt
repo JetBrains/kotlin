@@ -214,7 +214,9 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
 to prevent diagnostics from being reported when using stable compilers at the call site.
 When using the JVM IR backend, conversely, use 'unstable' to mark generated class files as unstable
 to force diagnostics to be reported.""".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        @Suppress("DEPRECATION")
+        valueType = StringType.defaultNull
+        argumentType = AbiStabilityModeType()
         argumentTypeDescription = "{stable|unstable}".asReleaseDependent()
 
         lifecycle(

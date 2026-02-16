@@ -32,4 +32,7 @@ class AllKotlinArgumentTypes {
     @Serializable(with = AllDetailsJvmDefaultModeSerializer::class)
     val jvmDefaultMode = JvmDefaultMode.entries.toSet()
 
+    @Serializable(with = AllDetailsAbiStabilityModeSerializer::class)
+    val abiStabilityMode = AbiStabilityMode.entries.toSet()
+
 }

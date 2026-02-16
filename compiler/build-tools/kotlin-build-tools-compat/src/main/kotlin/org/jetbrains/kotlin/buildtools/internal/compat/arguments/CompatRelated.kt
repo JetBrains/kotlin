@@ -72,3 +72,20 @@ internal fun <T> applyJvmDefaultStable(
 
     return compilerArgs.jdkHome as T
 }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> K2JVMCompilerArguments.applyAbiStability(mode: T?) {
+    require(mode is String?) { "Xabi-stability must be a string, but was $mode" }
+
+    this.abiStability = mode as String?
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applyAbiStability(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is String?) { "Xabi-stability must be a string, but was $currentValue" }
+
+    return compilerArgs.abiStability as T
+}
