@@ -20,6 +20,9 @@ fun ConeKotlinType.isGroupBy(session: FirSession) = fullyExpandedClassId(session
 
 fun ConeKotlinType.isDataRow(session: FirSession) = fullyExpandedClassId(session) == Names.DATA_ROW_CLASS_ID
 
+fun ConeKotlinType.isPair(session: FirSession) =
+    fullyExpandedClassId(session) == Names.PAIR
+
 /**
  * Returns `true` only if [this] represents an optionally nullable primitive number,
  * (like `Double?`, or `Int`), or a "mixed Number" type: `Number?` or `Number`.
