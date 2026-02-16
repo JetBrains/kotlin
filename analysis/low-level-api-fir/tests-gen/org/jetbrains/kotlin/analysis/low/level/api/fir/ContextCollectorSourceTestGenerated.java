@@ -1134,9 +1134,45 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("bound.kt")
+    public void testBound() {
+      run("bound.kt");
+    }
+
+    @Test
+    @TestMetadata("breakFromInfiniteLoop.kt")
+    public void testBreakFromInfiniteLoop() {
+      run("breakFromInfiniteLoop.kt");
+    }
+
+    @Test
+    @TestMetadata("directSink.kt")
+    public void testDirectSink() {
+      run("directSink.kt");
+    }
+
+    @Test
+    @TestMetadata("directSinkBad.kt")
+    public void testDirectSinkBad() {
+      run("directSinkBad.kt");
+    }
+
+    @Test
     @TestMetadata("dispatchReceiver.kt")
     public void testDispatchReceiver() {
       run("dispatchReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("doWhile.kt")
+    public void testDoWhile() {
+      run("doWhile.kt");
+    }
+
+    @Test
+    @TestMetadata("doWhile2.kt")
+    public void testDoWhile2() {
+      run("doWhile2.kt");
     }
 
     @Test
@@ -1155,6 +1191,54 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("insideLoop.kt")
     public void testInsideLoop() {
       run("insideLoop.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunctionCaptured.kt")
+    public void testLocalFunctionCaptured() {
+      run("localFunctionCaptured.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunctionCapturedSafe.kt")
+    public void testLocalFunctionCapturedSafe() {
+      run("localFunctionCapturedSafe.kt");
+    }
+
+    @Test
+    @TestMetadata("localVariable.kt")
+    public void testLocalVariable() {
+      run("localVariable.kt");
+    }
+
+    @Test
+    @TestMetadata("localVariableMutable.kt")
+    public void testLocalVariableMutable() {
+      run("localVariableMutable.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSink.kt")
+    public void testNestedSink() {
+      run("nestedSink.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSink2.kt")
+    public void testNestedSink2() {
+      run("nestedSink2.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedSinkBad2.kt")
+    public void testNestedSinkBad2() {
+      run("nestedSinkBad2.kt");
+    }
+
+    @Test
+    @TestMetadata("noSmartCastInInference.kt")
+    public void testNoSmartCastInInference() {
+      run("noSmartCastInInference.kt");
     }
 
     @Test
@@ -1206,15 +1290,39 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("parameterSimple.kt")
+    public void testParameterSimple() {
+      run("parameterSimple.kt");
+    }
+
+    @Test
     @TestMetadata("plainCheck.kt")
     public void testPlainCheck() {
       run("plainCheck.kt");
     }
 
     @Test
+    @TestMetadata("qualifiedReference.kt")
+    public void testQualifiedReference() {
+      run("qualifiedReference.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedReferenceNested.kt")
+    public void testQualifiedReferenceNested() {
+      run("qualifiedReferenceNested.kt");
+    }
+
+    @Test
     @TestMetadata("require.kt")
     public void testRequire() {
       run("require.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastInInference.kt")
+    public void testSmartCastInInference() {
+      run("smartCastInInference.kt");
     }
 
     @Test

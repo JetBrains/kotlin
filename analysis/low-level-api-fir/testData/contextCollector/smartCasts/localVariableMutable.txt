@@ -1,0 +1,37 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirLocalPropertySymbol lvar p: R|kotlin/Any|
+Smart Casts:
+    FirLocalPropertySymbol lvar p: R|kotlin/Any|
+    Stability: CAPTURED_VARIABLE
+    Types:
+        kotlin.String
+        kotlin.Any
+
+FILE: [ResolvedTo(IMPORTS)] localVariableMutable.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lvar p: R|kotlin/Any| = String(foo)
+        when () {
+            (R|<local>/p| !is R|kotlin/String|) ->  {
+                ^test Unit
+            }
+        }
+
+        Q|kotlin/Unit|
+    }

@@ -1,0 +1,39 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirLocalPropertySymbol lvar a: R|kotlin/Any?|
+                FirLocalPropertySymbol lvar c: R|kotlin/Any|
+Smart Casts:
+    FirLocalPropertySymbol lvar a: R|kotlin/Any?|
+    Stability: CAPTURED_VARIABLE
+    Types:
+        kotlin.Any
+
+FILE: [ResolvedTo(IMPORTS)] smartCastInInference.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lvar a: R|kotlin/Any?| = Null(null)
+        when () {
+            ==(R|<local>/a|, Null(null)) ->  {
+                ^test Unit
+            }
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] lvar c: R|kotlin/Any| = R|/id|<R|kotlin/Any|>(R|<local>/a|)
+        R|<local>/c|
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> id([ResolvedTo(RAW_FIR)] a: T): T { LAZY_BLOCK }

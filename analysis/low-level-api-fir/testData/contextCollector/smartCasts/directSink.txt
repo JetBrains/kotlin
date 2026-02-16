@@ -1,0 +1,41 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirLocalPropertySymbol lvar x: R|kotlin/Int?|
+    Element 8
+        Scope: FirLocalScope
+Smart Casts:
+    FirLocalPropertySymbol lvar x: R|kotlin/Int?|
+    Stability: CAPTURED_VARIABLE
+    Types:
+        kotlin.Any
+
+FILE: [ResolvedTo(IMPORTS)] directSink.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=2(2/3) #1] fun test(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lvar x: R|kotlin/Int?| = Int(42)
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x|.R|kotlin/Int.inc|()
+            }
+        }
+
+        run#(<L> = [ResolvedTo(RAW_FIR)] run@fun [ResolvedTo(RAW_FIR)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            x# = Null(null)
+        }
+        )
+    }
