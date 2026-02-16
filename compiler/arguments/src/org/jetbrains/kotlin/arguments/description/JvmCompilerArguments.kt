@@ -171,6 +171,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "jvm-default"
         compilerName = "jvmDefaultStable"
@@ -182,6 +183,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
 -jvm-default=disable             Do not generate JVM default methods. This is the default behavior up to language version 2.1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{enable|no-compatibility|disable}".asReleaseDependent()
+        argumentType = JvmDefaultModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
