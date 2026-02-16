@@ -16,13 +16,13 @@ class TestDisplayNameGenerator : DisplayNameGenerator {
         return default.generateDisplayNameForClass(testClass)
     }
 
-    override fun generateDisplayNameForNestedClass(nestedClass: Class<*>?): String {
-        return default.generateDisplayNameForNestedClass(nestedClass)
+    override fun generateDisplayNameForNestedClass(enclosingInstanceTypes: List<Class<*>?>?, nestedClass: Class<*>?): String? {
+        return default.generateDisplayNameForNestedClass(enclosingInstanceTypes, nestedClass)
     }
 
-    override fun generateDisplayNameForMethod(testClass: Class<*>?, testMethod: Method?): String {
-        val defaultName = default.generateDisplayNameForMethod(testClass, testMethod)
-        val isTodo = testMethod?.isAnnotationPresent(TodoAnalysisApi::class.java) ?: false && tag == "AA"
+    override fun generateDisplayNameForMethod(enclosingInstanceTypes: List<Class<*>>, testClass: Class<*>, testMethod: Method): String {
+        val defaultName = default.generateDisplayNameForMethod(enclosingInstanceTypes, testClass, testMethod)
+        val isTodo = testMethod.isAnnotationPresent(TodoAnalysisApi::class.java) && tag == "AA"
 
         return buildString {
             if (tag != null) append("[$tag] ")
