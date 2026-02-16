@@ -13,6 +13,7 @@ import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 
@@ -818,7 +819,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * -jvm-default=disable             Do not generate JVM default methods. This is the default behavior up to language version 2.1.
      */
     @JvmField
-    public val JVM_DEFAULT: JvmCompilerArgument<String?> =
+    public val JVM_DEFAULT: JvmCompilerArgument<JvmDefaultMode?> =
         JvmCompilerArgument("JVM_DEFAULT", KotlinReleaseVersion(2, 2, 0))
 
     /**

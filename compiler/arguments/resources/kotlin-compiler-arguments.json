@@ -8338,7 +8338,7 @@
                                     "removedVersion": null
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.JvmDefaultModeType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []

@@ -500,6 +500,15 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMod
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/HeaderMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode : java/lang/Enum {
+	public static final field DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode;
+	public static final field ENABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode;
+	public static final field NO_COMPATIBILITY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmDefaultMode;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget : java/lang/Enum {
 	public static final field JVM1_6 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
 	public static final field JVM1_8 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JvmTarget;
