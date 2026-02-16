@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
-import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -200,21 +199,20 @@ internal object ElementContextRenderer {
         }
     }
 
-    private fun StringBuilder.renderSmartCasts(smartCasts: Map<RealVariable, Set<ConeKotlinType>>) {
+    private fun StringBuilder.renderSmartCasts(smartCasts: List<ContextCollector.SmartCast>) {
         if (smartCasts.isEmpty()) {
             return
         }
 
         appendBlock("Smart Casts:") {
-            for ((realVariable, types) in smartCasts) {
-                appendSymbol(realVariable.symbol).appendLine()
+            for (smartCast in smartCasts) {
+                appendSymbol(smartCast.realVariable.symbol).appendLine()
 
                 appendBlock("Types:") {
-                    for (type in types) {
+                    for (type in smartCast.upperTypes) {
                         appendType(type).appendLine()
                     }
                 }
-
             }
         }
     }

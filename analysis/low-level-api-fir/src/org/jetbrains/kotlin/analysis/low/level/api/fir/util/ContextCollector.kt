@@ -73,13 +73,20 @@ object ContextCollector {
      * @param towerDataContext a list of tower data elements that may define declaration scopes, implicit receivers,
      * and additional information applicable either to the context element or its semantic parents.
      *
-     * @param smartCasts a set of smart-casts (potentially) available to the context element. Note that the key, [RealVariable], includes
-     * stability. Only stable smart casts impact data flow. Check the "Smart cast sink stability" in the Kotlin language specification.
+     * @param smartCasts a list of smart-casts (potentially) available to the context element. Note that only smart casts with a
+     * [SmartcastStability.STABLE_VALUE] [SmartCast.stability] impact data flow.
+     * Check the "Smart cast sink stability" in the Kotlin language specification.
      * Unstable smart casts are still provided for more precise checking and diagnosing.
      */
     class Context(
         val towerDataContext: FirTowerDataContext,
-        val smartCasts: Map<RealVariable, Set<ConeKotlinType>>,
+        val smartCasts: List<SmartCast>,
+    )
+
+    class SmartCast(
+        val realVariable: RealVariable,
+        val upperTypes: Set<ConeKotlinType>,
+        val stability: SmartcastStability,
     )
 
     enum class FilterResponse {
@@ -317,9 +324,8 @@ private class ContextCollectorVisitor(
     private fun computeContext(fir: FirElement, kind: ContextKind): Context {
         val implicitReceiverStack = context.towerDataContext.implicitValueStorage
 
-        val smartCasts = mutableMapOf<RealVariable, Set<ConeKotlinType>>()
-
         val cfgNode = getClosestControlFlowNode(fir, kind)
+        val smartCasts = mutableListOf<ContextCollector.SmartCast>()
 
         if (cfgNode != null) {
             val flow = cfgNode.flow
@@ -341,7 +347,12 @@ private class ContextCollectorVisitor(
                 ) {
                     withEntry("variable", typeStatementVariable) { it.toString() }
                 }
-                smartCasts[typeStatementVariable] = typeStatement.upperTypes
+
+                smartCasts += ContextCollector.SmartCast(
+                    realVariable = typeStatementVariable,
+                    upperTypes = typeStatement.upperTypes,
+                    stability = stability,
+                )
 
                 // The compiler pushes smart-cast types for implicit receivers to ease later lookups.
                 // Here we emulate such behavior. Unlike the compiler, though, modified types are only reflected in the created snapshot.
@@ -355,7 +366,8 @@ private class ContextCollectorVisitor(
 
         val towerDataContextSnapshot = context.towerDataContext.createSnapshot(keepMutable = true)
 
-        for (realVariable in smartCasts.keys) {
+        for (smartCast in smartCasts) {
+            val realVariable = smartCast.realVariable
             if (realVariable.isImplicit) {
                 implicitReceiverStack.replaceImplicitValueType(realVariable.symbol, realVariable.originalType)
             }
