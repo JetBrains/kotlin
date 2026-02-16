@@ -10,17 +10,21 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCollectionLiteralAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.ImplicitInvokeMode
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.createErrorReferenceWithErrorCandidate
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.CollectionNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -36,16 +40,67 @@ fun resolveCollectionLiteralToPreparedCall(
         context.bodyResolveComponents.callResolver.resolveCallAndSelectCandidate(call, ResolutionMode.ContextDependent, topLevelCandidate)
     call = context.bodyResolveComponents.callCompleter.completeCall(call, ResolutionMode.ContextDependent)
 
-    return when (val calleeRef = call.calleeReference) {
-        is FirNamedReferenceWithCandidate -> {
-            topLevelCandidate.system.replaceContentWith(calleeRef.candidate.system.currentStorage())
-            collectionLiteralAtom.subAtom = ConeAtomWithCandidate(collectionLiteralAtom.expression, calleeRef.candidate)
-            call
-        }
-        else -> {
-            call
-        }
+    return call.also {
+        postprocessCollectionLiteralCall(it, topLevelCandidate, collectionLiteralAtom)
     }
+}
+
+context(context: ResolutionContext)
+fun resolveCollectionLiteralToErrorCall(
+    diagnostic: ConeDiagnostic,
+    collectionLiteralAtom: ConeCollectionLiteralAtom,
+    topLevelCandidate: Candidate,
+): FirFunctionCall {
+    val components = context.bodyResolveComponents
+    val collectionLiteral = collectionLiteralAtom.expression
+    val callInfo = CallInfo(
+        collectionLiteral,
+        CallKind.Function,
+        OperatorNameConventions.OF,
+        explicitReceiver = null,
+        argumentList = collectionLiteral.argumentList,
+        isUsedAsGetClassReceiver = false,
+        typeArguments = emptyList(),
+        session = context.session,
+        containingFile = components.file,
+        containingDeclarations = components.containingDeclarations,
+        resolutionMode = ResolutionMode.ContextDependent,
+        origin = FirFunctionCallOrigin.Operator,
+        implicitInvokeMode = ImplicitInvokeMode.None,
+        containingCandidateForCollectionLiteral = topLevelCandidate,
+    )
+
+    val errorReference = createErrorReferenceWithErrorCandidate(
+        callInfo = callInfo,
+        diagnostic = diagnostic,
+        source = collectionLiteralAtom.expression.source?.fakeElement(KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall),
+        resolutionContext = context,
+        resolutionStageRunner = components.resolutionStageRunner,
+    )
+
+    var call = buildFunctionCall {
+        source = collectionLiteral.source
+        argumentList = collectionLiteral.argumentList
+        calleeReference = errorReference
+        origin = FirFunctionCallOrigin.Operator
+    }
+
+    call = components.callCompleter.completeCall(call, ResolutionMode.ContextDependent)
+
+    return call.also {
+        postprocessCollectionLiteralCall(it, topLevelCandidate, collectionLiteralAtom)
+    }
+}
+
+private fun postprocessCollectionLiteralCall(
+    replacementForCL: FirFunctionCall,
+    topLevelCandidate: Candidate,
+    collectionLiteralAtom: ConeCollectionLiteralAtom,
+) {
+    val calleeReference = replacementForCL.calleeReference as? FirNamedReferenceWithCandidate
+        ?: error("Collection literal is expected to be resolved to a call with named candidate.")
+    topLevelCandidate.system.replaceContentWith(calleeReference.candidate.system.currentStorage())
+    collectionLiteralAtom.subAtom = ConeAtomWithCandidate(collectionLiteralAtom.expression, calleeReference.candidate)
 }
 
 context(context: ResolutionContext)
@@ -54,17 +109,6 @@ fun prepareFunctionCallForFallback(collectionLiteral: FirCollectionLiteral): Fir
     val functionName = CollectionNames.Factories.LIST_OF
 
     return context.bodyResolveComponents.buildCollectionLiteralCallForStdlibType(packageName, functionName, collectionLiteral)
-}
-
-fun prepareFunctionCallForErrorCL(collectionLiteral: FirCollectionLiteral): FirFunctionCall {
-    return buildFunctionCall {
-        source = collectionLiteral.source
-        argumentList = collectionLiteral.argumentList
-        calleeReference = buildSimpleNamedReference {
-            source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall)
-            name = SpecialNames.ERROR_NAME_FOR_COLLECTION_LITERAL_CALL
-        }
-    }
 }
 
 abstract class CollectionLiteralResolutionStrategy(protected val context: ResolutionContext) {

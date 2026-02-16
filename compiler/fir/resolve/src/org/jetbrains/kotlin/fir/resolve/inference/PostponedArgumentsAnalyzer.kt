@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.fir.resolve.getClassRepresentativeForCollectionLiter
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPositionWithCoercionToUnit
 import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
 import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
-import org.jetbrains.kotlin.fir.resolve.prepareFunctionCallForErrorCL
 import org.jetbrains.kotlin.fir.resolve.prepareFunctionCallForFallback
+import org.jetbrains.kotlin.fir.resolve.resolveCollectionLiteralToErrorCall
 import org.jetbrains.kotlin.fir.resolve.resolveCollectionLiteralToPreparedCall
 import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
@@ -246,20 +246,11 @@ class PostponedArgumentsAnalyzer(
             when {
                 resolvedThroughRegularStrategies != null -> resolvedThroughRegularStrategies
                 precalculatedBounds is CollectionLiteralBounds.Ambiguity -> {
-                    val preparedCall = prepareFunctionCallForErrorCL(originalExpression)
-                    resolveCollectionLiteralToPreparedCall(preparedCall, atom, topLevelCandidate)
-                        .apply {
-                            val calleeReference = calleeReference as? FirErrorReferenceWithCandidate
-                                ?: error("${::prepareFunctionCallForErrorCL.name} must return callee reference with error candidate")
-
-                            val calleeReferenceWithNewDiagnostic = FirErrorReferenceWithCandidate(
-                                source = calleeReference.source,
-                                name = calleeReference.name,
-                                candidate = calleeReference.candidate,
-                                diagnostic = precalculatedBounds.toConeDiagnostic(),
-                            )
-                            replaceCalleeReference(calleeReferenceWithNewDiagnostic)
-                        }
+                    resolveCollectionLiteralToErrorCall(
+                        precalculatedBounds.toConeDiagnostic(),
+                        atom,
+                        topLevelCandidate,
+                    )
                 }
                 else -> {
                     val preparedCall = prepareFunctionCallForFallback(originalExpression)
