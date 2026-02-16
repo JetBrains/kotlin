@@ -55,3 +55,20 @@ internal fun <T> applyAdditionalJavaModules(
 
     return compilerArgs.jdkHome as T
 }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> K2JVMCompilerArguments.applyJvmDefaultStable(mode: T?) {
+    require(mode is String?) { "jvm-default must be a string, but was $mode" }
+
+    this.jvmDefaultStable = mode as String?
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applyJvmDefaultStable(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is String?) { "jvm-default must be a string, but was $currentValue" }
+
+    return compilerArgs.jdkHome as T
+}

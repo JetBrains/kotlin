@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.buildtools.api.internal.wrappers
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
@@ -178,6 +179,13 @@ internal class KotlinWrapperPre2_4_0(
                     arrayValue.toList() as V
                 }
 
+                JvmCompilerArguments.JVM_DEFAULT -> {
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
+                    JvmDefaultMode.values().first { it.stringValue == stringValue } as V
+                }
+
                 else -> delegate[key]
             }
         }
@@ -209,6 +217,14 @@ internal class KotlinWrapperPre2_4_0(
                     val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
 
                     delegate[arrayKey] = arrayValue
+                }
+
+                JvmCompilerArguments.JVM_DEFAULT -> {
+                    val mode = value as JvmDefaultMode?
+                    val stringValue = mode?.stringValue
+                    val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                    delegate[stringKey] = stringValue
                 }
 
                 else -> delegate[key] = value
