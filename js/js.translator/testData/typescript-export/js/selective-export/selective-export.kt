@@ -2,6 +2,7 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
+// DIAGNOSTICS: -REPEATED_ANNOTATION
 
 // MODULE: JS_TESTS
 // FILE: file1.kt
@@ -38,7 +39,7 @@ external interface ExternalInterface
 fun zzz(x: Int = 10) {}
 // FILE: file2.kt
 
-<!REPEATED_ANNOTATION!>@file:JsExport<!>
+@file:JsExport
 
 package foo
 

@@ -27,17 +27,17 @@ interface ExportedParent {
     @set:JsName("setGetterAndSetterWithJsName")
     var getterAndSetterWithJsName: String
 
-    fun withDefaultImplementation() = "KOTLIN IMPLEMENTATION: ${<!FUNCTION_CALL_EXPECTED!>anotherParentMethod<!>[0]}"
+    fun withDefaultImplementation() = "KOTLIN IMPLEMENTATION: ${anotherParentMethod()[0]}"
     fun anotherDefaultImplementation() = "FROM ExportedParent"
 
     var propertyWithDefaultSetter: String
-        get() = "KOTLIN IMPLEMENTATION ${<!FUNCTION_CALL_EXPECTED!>anotherParentMethod<!>[0]}"
+        get() = "KOTLIN IMPLEMENTATION ${anotherParentMethod()[0]}"
         set(value) {}
 
     @get:JsName("getDefaultGetterAndSetterWithJsName")
     @set:JsName("setDefaultGetterAndSetterWithJsName")
     var defaultGetterAndSetterWithJsName: String
-        get() = "KOTLIN IMPLEMENTATION ${<!FUNCTION_CALL_EXPECTED!>anotherParentMethod<!>[0]}"
+        get() = "KOTLIN IMPLEMENTATION ${anotherParentMethod()[0]}"
         set(value) {}
 }
 

@@ -48,7 +48,6 @@ fun shortNameBasedDestructuring(): String {
 fun fullNameBasedDestructuring(): String {
     (val value2, var value1) = Test2("4", "2")
     value1 += " "
-    <!VAL_REASSIGNMENT!>value2<!> += " "
     return value1 + value2
 }
 

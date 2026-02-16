@@ -51,7 +51,7 @@ declare namespace JS_TESTS {
         interface TestInterface {
             testName1(): string;
             testName2(): string;
-            setWithSetter1(_set___: string): void;
+            setWithSetter1(value: string): void;
             getWithSetter1(): string;
             setWithSetter2(_set___: string): void;
             getWithSetter2(): string;

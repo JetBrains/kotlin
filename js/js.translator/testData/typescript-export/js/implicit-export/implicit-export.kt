@@ -4,6 +4,10 @@
 // KJS_WITH_FULL_RUNTIME
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
+
+// DIAGNOSTICS: -WRONG_ANNOTATION_TARGET
+// ^ TODO(KT-49795): Remove this when we support export for type aliases
+
 // FILE: qualified.kt
 @file:JsQualifier("WebAssembly")
 package qualified
@@ -12,7 +16,6 @@ package qualified
 external interface CompileError
 // FILE: notQualified.kt
 
-<!WRONG_ANNOTATION_TARGET!>@<!SYNTAX!><!>JsExport.Ignore<!>
 package notQualified
 
 @JsExport.Ignore
@@ -100,7 +103,7 @@ val console: Console
 val error: CompileError
     get() = js("{}")
 
-<!WRONG_ANNOTATION_TARGET!>@JsExport.Ignore<!>
+@JsExport.Ignore
 typealias NotExportedTypeAlias = NonExportedGenericInterface<NonExportedType>
 
 @JsExport

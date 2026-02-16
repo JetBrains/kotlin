@@ -2,6 +2,7 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
+// DIAGNOSTICS: -WRONG_JS_EXPORT_TARGET_VISIBILITY
 
 // TODO fix statics export in DCE-driven mode
 // SKIP_DCE_DRIVEN
@@ -9,22 +10,22 @@
 // MODULE: JS_TESTS
 // FILE: visibility.kt
 
-<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
+@JsExport
 internal val internalVal = 10
-<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
+@JsExport
 internal fun internalFun() = 10
-<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
+@JsExport
 internal class internalClass
-<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
+@JsExport
 internal external interface internalInterface
 
-<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
+@JsExport
 private val privateVal = 10
-<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
+@JsExport
 private fun privateFun() = 10
-<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
+@JsExport
 private class privateClass
-<!WRONG_JS_EXPORT_TARGET_VISIBILITY!>@JsExport<!>
+@JsExport
 private external interface privateInterface
 
 @JsExport

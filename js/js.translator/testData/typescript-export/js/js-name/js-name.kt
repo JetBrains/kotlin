@@ -15,7 +15,7 @@ external interface WeirdInterface {
 
 @JsExport
 @JsName("JsNameTest")
-class __JsNameTest private constructor() {
+class __JsNameTest internal constructor() {
     val withGetter1: String
         @JsName("testName1")
         get() = "name1"
@@ -23,7 +23,7 @@ class __JsNameTest private constructor() {
     @get:JsName("testName2")
     val withGetter2: String get() = "name2"
 
-    <!MUST_BE_INITIALIZED!>var withSetter1: String<!>
+    var withSetter1: String = ""
         @JsName("getWithSetter1")
         get() = "name1"
         @JsName("setWithSetter1")
@@ -67,16 +67,16 @@ class __JsNameTest private constructor() {
 @JsName("TestInterface")
 interface __TestInterface {
     val withGetter1: String
-        @JsName("testName1") get()<!SYNTAX!><!>
+        @JsName("testName1") get() = ""
 
     @get:JsName("testName2")
     val withGetter2: String
 
     var withSetter1: String
         @JsName("getWithSetter1")
-        get()<!SYNTAX!><!>
+        get() = ""
         @JsName("setWithSetter1")
-        set(value)<!SYNTAX!><!>
+        set(value) {}
 
     @get:JsName("getWithSetter2")
     @set:JsName("setWithSetter2")
@@ -95,7 +95,7 @@ interface __TestInterface {
     companion object {
         @JsName("create")
         fun __create(): __JsNameTest {
-            return <!INVISIBLE_REFERENCE!>__JsNameTest<!>()
+            return __JsNameTest()
         }
 
         @JsName("createChild")

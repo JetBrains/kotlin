@@ -155,7 +155,7 @@ abstract class AbstractClassWithProtected {
 }
 
 @JsExport
-object ObjectWithProtected : <!SUPERTYPE_NOT_INITIALIZED!>AbstractClassWithProtected<!> {
+object ObjectWithProtected : AbstractClassWithProtected() {
     override fun protectedAbstractFun(): Int = 42
     override val protectedAbstractVal: Int
         get() = 42
