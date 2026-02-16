@@ -43,7 +43,7 @@ internal fun TestModule.customWebCompilerSettings(testServices: TestServices): C
 /**
  * Note: To be used only internally in [CustomWebCompilerFirstStageFacade] and [CustomJsCompilerSecondStageFacade].
  */
-internal fun TestModule.collectDependencies(
+fun TestModule.collectDependencies(
     testServices: TestServices,
     compilationStage: CompilationStage,
 ): Pair<Set<String>, Set<String>> {

@@ -100,6 +100,15 @@ fun Project.customFirstStageTest(
     )
 }
 
+fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
+    val version = CustomCompilerVersion(rawVersion)
+    return customCompilerTest(
+        version = version,
+        taskName = "testCustomSecondStage_$version",
+        tag = "custom-second-stage"
+    )
+}
+
 fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task> {
     val version = CustomCompilerVersion(rawVersion)
     return customCompilerTest(
@@ -112,6 +121,10 @@ fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task
 /* Custom-first-stage test tasks for different compiler versions. */
 customFirstStageTest("2.3.0")
 // TODO: Add a new task for the "custom-first-stage" test here.
+
+/* Custom-second-stage test task for the two compiler major versions: previous one and the latest one . */
+// TODO: Keep updating the following compiler versions to be the previous one and latest one(as as soon it's released).
+customSecondStageTest("2.3.0")
 
 // TODO: Keep updating the following compiler version to be the previous major one.
 customStagesAggregateTest("2.3.0")

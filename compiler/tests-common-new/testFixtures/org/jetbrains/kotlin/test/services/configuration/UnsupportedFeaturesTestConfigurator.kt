@@ -35,6 +35,7 @@ class UnsupportedFeaturesTestConfigurator(testServices: TestServices) : MetaTest
                         // JsAllowValueClassesInExternals(sinceVersion = KOTLIN_2_0) is always added in `TestConfigurationBuilder.commonConfigurationForJsBackendSecondStageTest()`,
                         // It actually was fine in 1.9 as well, so let's run the whole testsuit for 1.9 as well.
                         languageFeature != LanguageFeature.JsAllowValueClassesInExternals &&
+                        languageFeature != LanguageFeature.JsAllowImplementingFunctionInterface &&
                         !languageFeature.isSupportedInLV(languageVersion)
             }
     }
