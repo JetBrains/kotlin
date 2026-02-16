@@ -111,11 +111,11 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMemb
     var containsInheritedStatics = false
     var containsPackagePrivate = false
     val isKotlin = kClass.java.isKotlin
-    val declaredKotlinMembers: MutableMembersKotlinSignatureMap = HashMap()
+    val declaredTransitiveKotlinMembers: MutableMembersKotlinSignatureMap = HashMap()
     if (isKotlin) {
         for (member in kClass.declaredReflectKCallableMembers) {
             if (isNonTransitiveMember(kClass, member)) continue
-            declaredKotlinMembers[member.toEquatableCallableSignature(EqualityMode.KotlinSignature)] = member
+            declaredTransitiveKotlinMembers[member.toEquatableCallableSignature(EqualityMode.KotlinSignature)] = member
         }
     }
     for (supertype in kClass.supertypes) {
@@ -138,7 +138,7 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMemb
                 )
             val member = notSubstitutedMember.replaceContainerForFakeOverride(kClass, overriddenStorage)
             val kotlinSignature = member.toEquatableCallableSignature(EqualityMode.KotlinSignature)
-            if (declaredKotlinMembers.contains(kotlinSignature)) continue
+            if (declaredTransitiveKotlinMembers.contains(kotlinSignature)) continue
             // Inherited signatures are always compared by the JvmSignatures. Even for kotlin classes.
             javaSignaturesMap.mergeWith(kotlinSignature.withEqualityMode(EqualityMode.JavaSignature), member) { a, b ->
                 val c = minOf(a, b, CovariantOverrideComparator)
@@ -158,7 +158,7 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMemb
             }
         }
     }
-    for ((kotlinSignature, member) in declaredKotlinMembers) {
+    for ((kotlinSignature, member) in declaredTransitiveKotlinMembers) {
         containsInheritedStatics = containsInheritedStatics || member.isStatic
         containsPackagePrivate = containsPackagePrivate || member.isPackagePrivate
         javaSignaturesMap[kotlinSignature.withEqualityMode(EqualityMode.JavaSignature)] = member
