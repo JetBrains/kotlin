@@ -550,10 +550,10 @@ internal object StaticInitializersOptimization {
                         .take(2) // The very first statements by construction.
                         .filter {
                             val calleeOrigin = (it as? IrCall)?.symbol?.owner?.origin
-                            val isNotOptimizedAwayGlobalInitializerCall = calleeOrigin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER
+                            val isNotOptimizedAwayGlobalInitializerCall = calleeOrigin == StaticInitializersDeclarationOrigins.STATIC_GLOBAL_INITIALIZER
                                     && callee !in analysisResult.functionsRequiringGlobalInitializerCall
-                            val isNotOptimizedAwayThreadLocalInitializerCall = (calleeOrigin == DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER
-                                    || calleeOrigin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER)
+                            val isNotOptimizedAwayThreadLocalInitializerCall = (calleeOrigin == StaticInitializersDeclarationOrigins.STATIC_THREAD_LOCAL_INITIALIZER
+                                    || calleeOrigin == StaticInitializersDeclarationOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER)
                                     && callee !in analysisResult.functionsRequiringThreadLocalInitializerCall
                             if (isNotOptimizedAwayGlobalInitializerCall)
                                 ++numberOfCallSitesToFunctionsWithGlobalInitializerCall
@@ -587,7 +587,7 @@ internal object StaticInitializersOptimization {
                         .take(2) // The very first statements by construction.
                         .indexOfFirst {
                             val calleeOrigin = (it as? IrCall)?.symbol?.owner?.origin
-                            calleeOrigin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER
+                            calleeOrigin == StaticInitializersDeclarationOrigins.STATIC_GLOBAL_INITIALIZER
                         }
                 if (globalInitializerCallIndex >= 0) {
                     ++numberOfFunctionsWithGlobalInitializerCall
@@ -601,8 +601,8 @@ internal object StaticInitializersOptimization {
                         .take(2)
                         .indexOfFirst {
                             val calleeOrigin = (it as? IrCall)?.symbol?.owner?.origin
-                            calleeOrigin == DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER
-                                    || calleeOrigin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER
+                            calleeOrigin == StaticInitializersDeclarationOrigins.STATIC_THREAD_LOCAL_INITIALIZER
+                                    || calleeOrigin == StaticInitializersDeclarationOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER
                         }
                 if (threadLocalInitializerCallIndex >= 0) {
                     ++numberOfFunctionsWithThreadLocalInitializerCall
