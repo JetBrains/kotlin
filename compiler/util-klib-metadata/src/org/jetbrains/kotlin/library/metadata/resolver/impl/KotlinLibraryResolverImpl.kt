@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolver
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
-import org.jetbrains.kotlin.library.metadata.resolver.LibraryOrder
 import org.jetbrains.kotlin.util.WithLogger
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -211,7 +210,7 @@ class KotlinLibraryResolverResultImpl(
     override fun filterRoots(predicate: (KotlinResolvedLibrary) -> Boolean) =
         KotlinLibraryResolverResultImpl(roots.filter(predicate))
 
-    override fun getFullList(order: LibraryOrder?): List<KotlinLibrary> = (order?.invoke(all) ?: all).map { it.library }
+    override fun getFullList(): List<KotlinLibrary> = all.map { it.library }
 
     override fun forEach(action: (KotlinLibrary, PackageAccessHandler) -> Unit) {
         all.forEach { action(it.library, it) }
