@@ -357,6 +357,21 @@ class CompatqualAnnotationsModeType(
     }
 }
 
+/**
+ * A value which accepts [WhenExpressionsMode] type.
+ */
+@Serializable
+class WhenExpressionsModeType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<WhenExpressionsMode?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<WhenExpressionsMode> {
+
+    override fun stringRepresentation(value: WhenExpressionsMode?): String? {
+        if (value == null) return null
+        return value.modeName.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

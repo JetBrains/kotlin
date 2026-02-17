@@ -53,4 +53,7 @@ class AllKotlinArgumentTypes {
     @Serializable(with = AllDetailsCompatqualAnnotationsModeSerializer::class)
     val compatqualAnnotationsMode = CompatqualAnnotationsMode.entries.toSet()
 
+    @Serializable(with = AllDetailsWhenExpressionsModeSerializer::class)
+    val whenExpressionsMode = WhenExpressionsMode.entries.toSet()
+
 }
