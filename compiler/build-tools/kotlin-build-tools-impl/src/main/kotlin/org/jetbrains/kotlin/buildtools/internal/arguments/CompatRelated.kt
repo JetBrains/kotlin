@@ -140,3 +140,20 @@ internal fun <T> applyLambdas(
 
     return compilerArgs.lambdas as T
 }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> K2JVMCompilerArguments.applySamConversions(mode: T?) {
+    require(mode is String?) { "Xsam-conversions must be a string, but was $mode" }
+
+    this.samConversions = mode as String
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applySamConversions(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is String?) { "Xsam-conversions must be a string, but was $currentValue" }
+
+    return compilerArgs.samConversions as T
+}

@@ -600,6 +600,14 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnVal
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/SamConversionsMode : java/lang/Enum {
+	public static final field CLASS Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/SamConversionsMode;
+	public static final field INDY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/SamConversionsMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/SamConversionsMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/SamConversionsMode;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/types/ProfileCompilerCommand {
 	public fun <init> (Ljava/nio/file/Path;Ljava/lang/String;Ljava/nio/file/Path;)V
 	public final fun getCommand ()Ljava/lang/String;

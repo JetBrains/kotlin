@@ -650,7 +650,9 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
 -Xsam-conversions=indy          Generate SAM conversions using 'invokedynamic' with 'LambdaMetafactory.metafactory'.
 -Xsam-conversions=class         Generate SAM conversions as explicit classes.
 The default value is 'indy'.""".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        @Suppress("DEPRECATION")
+        valueType = StringType.defaultNull
+        argumentType = SamConversionsModeType()
         argumentTypeDescription = "{class|indy}".asReleaseDependent()
 
         lifecycle(
