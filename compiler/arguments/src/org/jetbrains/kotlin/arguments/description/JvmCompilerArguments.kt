@@ -665,7 +665,9 @@ The default value is 'indy'.""".asReleaseDependent()
                                 A lambda object created using 'LambdaMetafactory.metafactory' will have a different 'toString()'.
 -Xlambdas=class                 Generate lambdas as explicit classes.
 The default value is 'indy' if language version is 2.0+, and 'class' otherwise.""".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        @Suppress("DEPRECATION")
+        valueType = StringType.defaultNull
+        argumentType = LambdasModeType()
         argumentTypeDescription = "{class|indy}".asReleaseDependent()
 
         lifecycle(
