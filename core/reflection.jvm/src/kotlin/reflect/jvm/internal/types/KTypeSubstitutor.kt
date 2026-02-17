@@ -127,15 +127,13 @@ internal class KTypeSubstitutor(
         check(other is KotlinTypeMarker && !other.isFlexible()) { "'$other' must be non flexible" }
         if (isNullabilityFlexible() && !other.isMarkedNullable) return this
         val thiz = this as RigidTypeMarker
-        return with(ReflectTypeSystemContext) {
-            val withNullability = withNullabilityFromTypeSystem(other.isMarkedNullable || isMarkedNullable)
-            if (withNullability is AbstractKType)
-                withNullability.makeDefinitelyNotNullAsSpecified(
-                    (other as? AbstractKType)?.isDefinitelyNotNullType == true ||
-                            ((thiz as? AbstractKType)?.isDefinitelyNotNullType == true && !other.isMarkedNullable)
-                )
-            else withNullability
-        } as KType
+        return when (val withNullability = withNullabilityFromTypeSystem(other.isMarkedNullable || isMarkedNullable)) {
+            is AbstractKType -> withNullability.makeDefinitelyNotNullAsSpecified(
+                (other as? AbstractKType)?.isDefinitelyNotNullType == true ||
+                        ((thiz as? AbstractKType)?.isDefinitelyNotNullType == true && !other.isMarkedNullable)
+            )
+            else -> withNullability as KType
+        }
     }
 
     private fun KTypeProjection.lowerBoundIfFlexible(): KTypeProjection =
@@ -173,7 +171,10 @@ internal class KTypeSubstitutor(
             check(typeParameters.size == arguments.size) {
                 "Params vs args count mismatch (${typeParameters.size} != ${arguments.size}) for class '$klass' with args: ${arguments.joinToString()}"
             }
-            return KTypeSubstitutor(typeParameters.zip(arguments).toMap())
+            return when {
+                typeParameters.isEmpty() -> EMPTY
+                else -> KTypeSubstitutor(typeParameters.zip(arguments).toMap())
+            }
         }
     }
 }
