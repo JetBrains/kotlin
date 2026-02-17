@@ -583,6 +583,14 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVer
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/KotlinVersion;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMode : java/lang/Enum {
+	public static final field CLASS Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMode;
+	public static final field INDY Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMode;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode : java/lang/Enum {
 	public static final field CHECKER Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;
 	public static final field DISABLED Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ReturnValueCheckerMode;

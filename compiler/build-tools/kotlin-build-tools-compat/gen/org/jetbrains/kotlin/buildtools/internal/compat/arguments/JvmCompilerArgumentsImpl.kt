@@ -109,6 +109,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.AssertionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JspecifyAnnotationsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -191,7 +192,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     if (X_JVM_ENABLE_PREVIEW in this) { arguments.enableJvmPreview = get(X_JVM_ENABLE_PREVIEW)}
     try { if (X_JVM_EXPOSE_BOXED in this) { arguments.jvmExposeBoxed = get(X_JVM_EXPOSE_BOXED)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_JVM_EXPOSE_BOXED. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     if (X_KLIB in this) { arguments.klibLibraries = get(X_KLIB)}
-    if (X_LAMBDAS in this) { arguments.lambdas = get(X_LAMBDAS)}
+    if (X_LAMBDAS in this) { try { arguments.lambdas = get(X_LAMBDAS)?.stringValue } catch(e: ClassCastException) { arguments.applyLambdas(get(X_LAMBDAS)) }}
     if (X_LINK_VIA_SIGNATURES in this) { arguments.linkViaSignatures = get(X_LINK_VIA_SIGNATURES)}
     if (X_MODULE_PATH in this) { arguments.javaModulePath = get(X_MODULE_PATH)}
     if (X_MULTIFILE_PARTS_INHERIT in this) { arguments.inheritMultifileParts = get(X_MULTIFILE_PARTS_INHERIT)}
@@ -276,7 +277,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
     try { this[X_JVM_ENABLE_PREVIEW] = arguments.enableJvmPreview } catch (_: NoSuchMethodError) {  }
     try { this[X_JVM_EXPOSE_BOXED] = arguments.jvmExposeBoxed } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB] = arguments.klibLibraries } catch (_: NoSuchMethodError) {  }
-    try { this[X_LAMBDAS] = arguments.lambdas } catch (_: NoSuchMethodError) {  }
+    try { try { this[X_LAMBDAS] = arguments.lambdas?.let { LambdasMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xlambdas value: $it") } } catch (e: ClassCastException) { applyLambdas(this[X_LAMBDAS], arguments) } } catch (_: NoSuchMethodError) {  }
     try { this[X_LINK_VIA_SIGNATURES] = arguments.linkViaSignatures } catch (_: NoSuchMethodError) {  }
     try { this[X_MODULE_PATH] = arguments.javaModulePath } catch (_: NoSuchMethodError) {  }
     try { this[X_MULTIFILE_PARTS_INHERIT] = arguments.inheritMultifileParts } catch (_: NoSuchMethodError) {  }
@@ -432,7 +433,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
 
     public val X_KLIB: JvmCompilerArgument<String?> = JvmCompilerArgument("X_KLIB")
 
-    public val X_LAMBDAS: JvmCompilerArgument<String?> = JvmCompilerArgument("X_LAMBDAS")
+    public val X_LAMBDAS: JvmCompilerArgument<LambdasMode?> = JvmCompilerArgument("X_LAMBDAS")
 
     public val X_LINK_VIA_SIGNATURES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_LINK_VIA_SIGNATURES")

@@ -291,6 +291,21 @@ class JspecifyAnnotationsModeType(
     }
 }
 
+/**
+ * A value which accepts [LambdasMode] type.
+ */
+@Serializable
+class LambdasModeType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<LambdasMode?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<LambdasMode> {
+
+    override fun stringRepresentation(value: LambdasMode?): String? {
+        if (value == null) return null
+        return value.modeName.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

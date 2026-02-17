@@ -41,4 +41,7 @@ class AllKotlinArgumentTypes {
     @Serializable(with = AllDetailsJspecifyAnnotationsModeSerializer::class)
     val jspecifyAnnotationsMode = JspecifyAnnotationsMode.entries.toSet()
 
+    @Serializable(with = AllDetailsLambdasModeSerializer::class)
+    val lambdasMode = LambdasMode.entries.toSet()
+
 }
