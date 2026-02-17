@@ -24,6 +24,63 @@ func testRegular() async {
 
 @Test
 @MainActor
+func testString() async {
+    let expected: [String] = ["hello", "any", "world"]
+
+    let task = Task<[String], any Error>.detached {
+        var actual: [String] = []
+        for try await element in testString() {
+            actual.append(element)
+        }
+        return actual
+    }
+
+    let actual = await task.result
+
+    #expect(!task.isCancelled)
+    #expect(actual == .success(expected))
+}
+
+@Test
+@MainActor
+func testList() async {
+    let expected: [[Int32]] = [[1], [2], [3]]
+
+    let task = Task<[[Int32]], any Error>.detached {
+        var actual: [[Int32]] = []
+        for try await element in testList() {
+            actual.append(element)
+        }
+        return actual
+    }
+
+    let actual = await task.result
+
+    #expect(!task.isCancelled)
+    #expect(actual == .success(expected))
+}
+
+@Test
+@MainActor
+func testPrimitive() async {
+    let expected: [UInt32] = [1, 2, 3]
+
+    let task = Task<[UInt32], any Error>.detached {
+        var actual: [UInt32] = []
+        for try await element in testPrimitive() {
+            actual.append(element)
+        }
+        return actual
+    }
+
+    let actual = await task.result
+
+    #expect(!task.isCancelled)
+    #expect(actual == .success(expected))
+}
+
+@Test
+@MainActor
 func testEmpty() async {
     let task = Task<Void, any Error>.detached {
         for try await _ in testEmpty() {

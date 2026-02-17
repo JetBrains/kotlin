@@ -16,3 +16,12 @@ class TripleBox(i: Int): Box<Box<Box<Foo>>>(DefaultBox(DefaultBox(Foo(i)))) {
         t.t.t = Foo(newValue)
     }
 }
+
+fun <T> castToString(x: T): String? = x as? String
+fun <T> castToInt(x: T): Int? = x as? Int
+fun <T> isNull(x: T): Boolean = x == null
+fun <T> genericToString(x: T): String = x.toString()
+
+fun anyString(): Any = "hello"
+fun anyInt(): Any = 42
+fun anyBool(): Any = true

@@ -400,7 +400,7 @@ internal sealed class Bridge(
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
-                "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__createProtocolWrapper(externalRCRef: $valueExpression) as! ${typeNamer.swiftFqName(swiftType)}"
+                "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__createBridgeable(externalRCRef: $valueExpression)"
         }
     }
 

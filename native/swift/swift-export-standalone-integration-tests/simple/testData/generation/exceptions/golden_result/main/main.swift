@@ -84,7 +84,7 @@ public func throwing_fun_any() throws -> any KotlinRuntimeSupport._KotlinBridgea
     var _out_error: UnsafeMutableRawPointer? = nil
     let _result = __root___throwing_fun_any(&_out_error)
     guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _result) as! any KotlinRuntimeSupport._KotlinBridgeable
+    return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: _result)
 }
 public func throwing_fun_any(
     arg: any KotlinRuntimeSupport._KotlinBridgeable
@@ -92,7 +92,7 @@ public func throwing_fun_any(
     var _out_error: UnsafeMutableRawPointer? = nil
     let _result = __root___throwing_fun_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef(), &_out_error)
     guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _result) as! any KotlinRuntimeSupport._KotlinBridgeable
+    return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: _result)
 }
 public func throwing_fun_boolean() throws -> Swift.Bool {
     var _out_error: UnsafeMutableRawPointer? = nil
@@ -160,7 +160,7 @@ public func throwing_fun_nullable() throws -> (any KotlinRuntimeSupport._KotlinB
     var _out_error: UnsafeMutableRawPointer? = nil
     let _result = __root___throwing_fun_nullable(&_out_error)
     guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
-    return { switch _result { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+    return { switch _result { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
 }
 public func throwing_fun_nullable(
     arg: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -168,7 +168,7 @@ public func throwing_fun_nullable(
     var _out_error: UnsafeMutableRawPointer? = nil
     let _result = __root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(arg.map { it in it.__externalRCRef() } ?? nil, &_out_error)
     guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
-    return { switch _result { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+    return { switch _result { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
 }
 public func throwing_fun_object() throws -> main.Object {
     var _out_error: UnsafeMutableRawPointer? = nil

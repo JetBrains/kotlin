@@ -29,6 +29,12 @@ fun testRegular(): Flow<Elem> = flowOf(Element1, Element2, Element3)
 
 fun testEmpty(): Flow<Elem> = flowOf()
 
+fun testString(): Flow<String> = flowOf("hello", "any", "world")
+
+fun testList(): Flow<List<Int>> = flowOf(listOf(1), listOf(2), listOf(3))
+
+fun testPrimitive(): Flow<UInt> = flowOf(1u, 2u, 3u)
+
 fun testFailing(): Flow<Elem> = flow {
     emit(Element1)
     emit(Element2)

@@ -90,19 +90,14 @@ public class SirTypeProviderImpl(
                                 val elementArg = kaType.typeArguments.singleOrNull()
                                 if (elementArg is KaTypeArgumentWithVariance) {
                                     val elementType = elementArg.type
-                                    if (!elementType.isAnyType
-                                        && elementType is KaUsualClassType
-                                        && !sirSession.isClassIdSupported(elementType.classId)
-                                    ) {
-                                        val translatedElement = elementType.translateType(ctx)
-                                        if (translatedElement !is SirErrorType && translatedElement !is SirUnsupportedType) {
-                                            val flowType = resolveFlowProtocolType(kaType)
-                                            return@withSessions SirWrappedFlowType(
-                                                wrapperStruct = KotlinCoroutineSupportModule.kotlinTypedFlowStruct,
-                                                flowType = flowType,
-                                                typeArguments = listOf(translatedElement)
-                                            ).optionalIfNeeded(kaType)
-                                        }
+                                    val translatedElement = elementType.translateType(ctx)
+                                    if (translatedElement !is SirErrorType && translatedElement !is SirUnsupportedType) {
+                                        val flowType = resolveFlowProtocolType(kaType)
+                                        return@withSessions SirWrappedFlowType(
+                                            wrapperStruct = KotlinCoroutineSupportModule.kotlinTypedFlowStruct,
+                                            flowType = flowType,
+                                            typeArguments = listOf(translatedElement)
+                                        ).optionalIfNeeded(kaType)
                                     }
                                 }
                             }

@@ -120,7 +120,7 @@ public final class KotlinFlowIterator: KotlinRuntime.KotlinBase, AsyncIteratorPr
 
                         let _: () = _kotlin_swift_SwiftFlowIterator_next(self.__externalRCRef(), { arg0 in
                                 return {
-                                    continuation(arg0.flatMap(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef:)));
+                                    continuation(arg0.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)));
                                     return 0
                                 }()
                         }, { arg0 in

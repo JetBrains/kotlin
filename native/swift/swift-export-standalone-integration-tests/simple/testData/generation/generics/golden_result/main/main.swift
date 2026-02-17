@@ -87,7 +87,7 @@ public final class ArrayBox: KotlinRuntime.KotlinBase {
 open class Box: KotlinRuntime.KotlinBase {
     public final var t: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
-            return { switch Box_t_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+            return { switch Box_t_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
     }
     package init(
@@ -212,7 +212,7 @@ public final class Holder: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
     public func headOrNull() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch Holder_headOrNull(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+        return { switch Holder_headOrNull(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
 }
 public final class IdentityProcessor: KotlinRuntime.KotlinBase {
@@ -231,18 +231,18 @@ public final class IdentityProcessor: KotlinRuntime.KotlinBase {
     public func process(
         input: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch IdentityProcessor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), input.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+        return { switch IdentityProcessor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), input.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
 }
 public final class Pair: KotlinRuntime.KotlinBase {
     public var first: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
-            return { switch Pair_first_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+            return { switch Pair_first_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
     }
     public var second: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
-            return { switch Pair_second_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+            return { switch Pair_second_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
     }
     package override init(
@@ -296,7 +296,7 @@ public func bar(
     param1: (any KotlinRuntimeSupport._KotlinBridgeable)?,
     param2: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-    return { switch __root___bar__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(param1.map { it in it.__externalRCRef() } ?? nil, param2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+    return { switch __root___bar__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(param1.map { it in it.__externalRCRef() } ?? nil, param2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
 }
 public func createMap(
     pairs: [main.Pair]
@@ -309,19 +309,19 @@ public func customFilter(
 ) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
     return __root___customFilter__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(receiver.map { it in it as! NSObject? ?? NSNull() }, {
         let originalBlock = predicate
-        return { arg0 in return originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()) }
+        return { arg0 in return originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()) }
     }()) as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
 }
 public func foo(
     param1: (any KotlinRuntimeSupport._KotlinBridgeable)?,
     param2: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-    return { switch __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(param1.map { it in it.__externalRCRef() } ?? nil, param2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+    return { switch __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(param1.map { it in it.__externalRCRef() } ?? nil, param2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
 }
 extension main.A where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
-            return { switch A_foo_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+            return { switch A_foo_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
     }
 }
@@ -330,7 +330,7 @@ extension main.A {
 extension main.B where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
-            return { switch B_foo_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+            return { switch B_foo_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
     }
 }
@@ -353,14 +353,14 @@ extension main.Processor where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func process(
         input: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), input.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+        return { switch Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), input.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
 }
 extension main.Processor {
 }
 extension main.Producer where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func produce() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch Producer_produce(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+        return { switch Producer_produce(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
 }
 extension main.Producer {

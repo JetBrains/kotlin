@@ -174,7 +174,7 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase {
     }
     public var c: any KotlinRuntimeSupport._KotlinBridgeable {
         get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_c_get(self.__externalRCRef())) as! any KotlinRuntimeSupport._KotlinBridgeable
+            return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_c_get(self.__externalRCRef()))
         }
     }
     public var d: Swift.Double {
@@ -231,7 +231,7 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase {
 public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     public var o: any KotlinRuntimeSupport._KotlinBridgeable {
         get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef())) as! any KotlinRuntimeSupport._KotlinBridgeable
+            return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef()))
         }
     }
     public init(

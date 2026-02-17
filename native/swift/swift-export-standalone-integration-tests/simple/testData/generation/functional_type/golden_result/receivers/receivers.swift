@@ -15,7 +15,7 @@ public func fooAny(
 ) -> Swift.Void {
     return __root___fooAny__TypesOfArguments__U28anyU20KotlinRuntimeSupport__KotlinBridgeableU29202D_U20Swift_Void__({
         let originalBlock = i
-        return { arg0 in return originalBlock(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any KotlinRuntimeSupport._KotlinBridgeable) }
+        return { arg0 in return originalBlock(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: arg0)) }
     }())
 }
 public func fooList(

@@ -20,7 +20,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow {
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public var value: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
-            return { switch kotlinx_coroutines_flow_StateFlow_value_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+            return { switch kotlinx_coroutines_flow_StateFlow_value_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
     }
 }

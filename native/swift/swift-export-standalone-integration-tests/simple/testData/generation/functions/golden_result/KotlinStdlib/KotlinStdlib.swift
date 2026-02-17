@@ -8,7 +8,7 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : Kotlin
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
     }
     public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
+        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator {

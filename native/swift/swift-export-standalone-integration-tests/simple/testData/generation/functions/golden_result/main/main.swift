@@ -103,7 +103,7 @@ public func getFoo(
     return __root___foo_get__TypesOfArguments__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? nil)
 }
 public func return_any_should_append_runtime_import() -> any KotlinRuntimeSupport._KotlinBridgeable {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___return_any_should_append_runtime_import()) as! any KotlinRuntimeSupport._KotlinBridgeable
+    return KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: __root___return_any_should_append_runtime_import())
 }
 public func setFoo(
     _ receiver: Swift.Int32,
