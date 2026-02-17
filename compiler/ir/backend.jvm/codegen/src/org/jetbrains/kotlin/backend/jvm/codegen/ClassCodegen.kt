@@ -289,11 +289,6 @@ class ClassCodegen private constructor(
             entry is MultifileFacadeFileEntry -> KotlinClassHeader.Kind.MULTIFILE_CLASS
             else -> KotlinClassHeader.Kind.SYNTHETIC_CLASS
         }
-        val serializedIr = when (metadata) {
-            is MetadataSource.Class -> metadata.serializedIr
-            is MetadataSource.File -> metadata.serializedIr
-            else -> null
-        }
 
         val isMultifileClassOrPart = kind == KotlinClassHeader.Kind.MULTIFILE_CLASS || kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
 
@@ -352,7 +347,6 @@ class ClassCodegen private constructor(
                 av.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, irClass.fqNameWhenAvailable!!.parent().asString())
             }
         }
-        serializedIr?.let { storeSerializedIr(it) }
     }
 
     private fun IrFile.loadSourceFilesInfo(): List<File> {
@@ -557,17 +551,6 @@ class ClassCodegen private constructor(
         while (!c.isTopLevelDeclaration && innerClasses.add(c)) {
             c = c.parentClassOrNull ?: break
         }
-    }
-
-    private fun storeSerializedIr(serializedIr: ByteArray) {
-        val av = visitor.newAnnotation(JvmAnnotationNames.SERIALIZED_IR_DESC, true)
-        val partsVisitor = av.visitArray(JvmAnnotationNames.SERIALIZED_IR_BYTES_FIELD_NAME)
-        val serializedIrParts = BitEncoding.encodeBytes(serializedIr)
-        for (part in serializedIrParts) {
-            partsVisitor.visit(null, part)
-        }
-        partsVisitor.visitEnd()
-        av.visitEnd()
     }
 
     companion object {
