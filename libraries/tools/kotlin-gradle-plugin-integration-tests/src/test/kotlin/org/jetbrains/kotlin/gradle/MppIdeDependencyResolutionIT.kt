@@ -35,8 +35,11 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.ByteBuffer
@@ -1074,6 +1077,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
     @GradleAndroidTest
     @DisplayName("KT-82090 jvm+android commonMain dependency with Project Isolation")
+    @DisabledOnOs(OS.WINDOWS, architectures = [], disabledReason = "KT-84353")
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_813)
     fun `KT-82090 jvm+android commonMain dependency with Project Isolation`(
         gradleVersion: GradleVersion,
