@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -92,6 +93,9 @@ class IrDeclarationDeserializer(
 
     private val irTypeCache = hashMapOf<Int, IrType>()
 
+    internal var isDeserializingIrType = false
+        private set
+
     fun deserializeNullableIrType(index: Int): IrType? = if (index == -1) null else deserializeIrType(index)
 
     fun deserializeIrType(index: Int): IrType {
@@ -107,6 +111,15 @@ class IrDeclarationDeserializer(
         if (encoding.isStarProjection) return IrStarProjectionImpl
 
         return makeTypeProjection(deserializeIrType(encoding.typeIndex), encoding.variance)
+    }
+
+    internal fun deserializeCoordinates(rawCoordinates: Long): Pair<Int, Int> {
+        if (isDeserializingIrType) {
+            return UNDEFINED_OFFSET to UNDEFINED_OFFSET
+        } else {
+            val coordinates = BinaryCoordinates.decode(rawCoordinates)
+            return coordinates.startOffset to coordinates.endOffset
+        }
     }
 
     // Deserializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
@@ -174,7 +187,9 @@ class IrDeclarationDeserializer(
     }
 
     private fun deserializeIrTypeData(proto: ProtoType): IrType {
-        return when (proto.kindCase) {
+        val wasDeserializingIrType = isDeserializingIrType
+        isDeserializingIrType = true
+        val type = when (proto.kindCase) {
             DNN -> deserializeDefinitelyNotNullType(proto.dnn)
             SIMPLE -> deserializeSimpleType(proto.simple)
             LEGACYSIMPLE -> deserializeLegacySimpleType(proto.legacySimple)
@@ -182,6 +197,8 @@ class IrDeclarationDeserializer(
             ERROR -> deserializeErrorType(proto.error)
             else -> error("Unexpected IrType kind: ${proto.kindCase}")
         }
+        isDeserializingIrType = wasDeserializingIrType
+        return type
     }
 
     private var currentParent: IrDeclarationParent = parent
@@ -219,11 +236,11 @@ class IrDeclarationDeserializer(
         block: (IrSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T,
     ): T where T : IrDeclaration, T : IrSymbolOwner {
         val (s, uid) = symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(proto.symbol)
-        val coordinates = BinaryCoordinates.decode(proto.coordinates)
+        val (startOffset, endOffset) = deserializeCoordinates(proto.coordinates)
         val result = block(
             s,
             uid,
-            coordinates.startOffset, coordinates.endOffset,
+            startOffset, endOffset,
             deserializeIrDeclarationOrigin(proto.originName), proto.flags
         )
         // avoid duplicate annotations for local variables
@@ -242,7 +259,7 @@ class IrDeclarationDeserializer(
     ): IrTypeParameter {
 
         val name = deserializeName(proto.name)
-        val coordinates = BinaryCoordinates.decode(proto.base.coordinates)
+        val (startOffset, endOffset) = deserializeCoordinates(proto.base.coordinates)
         val flags = TypeParameterFlags.decode(proto.base.flags)
 
         val signature: IdSignature = symbolDeserializer.deserializeIdSignature(
@@ -257,8 +274,8 @@ class IrDeclarationDeserializer(
         val typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = { symbol: IrTypeParameterSymbol ->
             createIfUnbound(symbol) {
                 irFactory.createTypeParameter(
-                    startOffset = coordinates.startOffset,
-                    endOffset = coordinates.endOffset,
+                    startOffset = startOffset,
+                    endOffset = endOffset,
                     origin = deserializeIrDeclarationOrigin(proto.base.originName),
                     name = name,
                     symbol = symbol,

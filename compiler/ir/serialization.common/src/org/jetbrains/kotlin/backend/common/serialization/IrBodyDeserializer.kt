@@ -138,9 +138,7 @@ class IrBodyDeserializer(
     }
 
     internal fun deserializeStatement(proto: ProtoStatement): IrElement {
-        val coordinates = BinaryCoordinates.decode(proto.coordinates)
-        val start = coordinates.startOffset
-        val end = coordinates.endOffset
+        val (start, end) = declarationDeserializer.deserializeCoordinates(proto.coordinates)
         val element = when (proto.statementCase) {
             StatementCase.BLOCK_BODY //proto.hasBlockBody()
             -> deserializeBlockBody(proto.blockBody, start, end)
@@ -664,8 +662,8 @@ class IrBodyDeserializer(
 
     private fun deserializeSpreadElement(proto: ProtoSpreadElement): IrSpreadElement {
         val expression = deserializeExpression(proto.expression)
-        val coordinates = BinaryCoordinates.decode(proto.coordinates)
-        return IrSpreadElementImpl(coordinates.startOffset, coordinates.endOffset, expression)
+        val (startOffset, endOffset) = declarationDeserializer.deserializeCoordinates(proto.coordinates)
+        return IrSpreadElementImpl(startOffset, endOffset, expression)
     }
 
     private fun deserializeStringConcat(proto: ProtoStringConcat, start: Int, end: Int, type: IrType): IrStringConcatenation {
@@ -1001,9 +999,7 @@ class IrBodyDeserializer(
             return null
         }
 
-        val coordinates = BinaryCoordinates.decode(proto.coordinates)
-        val start = coordinates.startOffset
-        val end = coordinates.endOffset
+        val (start, end) = declarationDeserializer.deserializeCoordinates(proto.coordinates)
         val type = declarationDeserializer.deserializeIrType(proto.type)
 
         val expression = if (proto.operationCase != ProtoExpression.OperationCase.OPERATION_NOT_SET) {

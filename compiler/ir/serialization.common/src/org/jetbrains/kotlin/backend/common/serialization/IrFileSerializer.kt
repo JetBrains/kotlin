@@ -120,6 +120,7 @@ open class IrFileSerializer(
     private val loopIndex = hashMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
     private var fileBeingSerialized: IrFile? = null
+    private var isSerializingIrType = false
 
     /**
      * The abstraction that represents all [ProtoType]s to be serialized in the current [IrFile].
@@ -233,6 +234,12 @@ open class IrFileSerializer(
 
     private fun serializeCoordinates(start: Int, end: Int): Long {
         if (settings.publicAbiOnly && !isInsideInline) {
+            return 0
+        }
+
+        // As IrType's themselves don't have coordinates and their instances can appear multiple times in the IR tree,
+        // it is quite meaningless to store coordinates of anything inside them - namely, type's annotations and their arguments.
+        if (isSerializingIrType && settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
             return 0
         }
 
@@ -406,6 +413,8 @@ open class IrFileSerializer(
         .build()
 
     private fun serializeIrTypeData(type: IrType): ProtoType {
+        val wasSerializingIrType = isSerializingIrType
+        isSerializingIrType = true
         val proto = ProtoType.newBuilder()
         when (type) {
             is IrSimpleType ->
@@ -415,6 +424,7 @@ open class IrFileSerializer(
             is IrErrorType ->
                 error("Serialization of IrErrorType is not supported anymore")
         }
+        isSerializingIrType = wasSerializingIrType
         return proto.build()
     }
 
