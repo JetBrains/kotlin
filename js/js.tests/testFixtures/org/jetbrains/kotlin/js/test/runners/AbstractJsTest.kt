@@ -52,7 +52,7 @@ abstract class AbstractJsTest(
         super.configure(builder)
         with(builder) {
             setUpDefaultDirectivesForJsBoxTest(parser)
-            firHandlersStep {
+            configureFirHandlersStep {
                 useHandlers(
                     ::FirDumpHandler,
                     ::FirCfgDumpHandler,
