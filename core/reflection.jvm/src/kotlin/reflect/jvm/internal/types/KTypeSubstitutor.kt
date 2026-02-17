@@ -151,6 +151,9 @@ internal class KTypeSubstitutor(
                 val classifier = (type as AbstractKType).typeConstructor()
                 List(classifier.parametersCount()) { classifier.getParameter(it) as KTypeParameter }
             }
+            check(parameters.size == type.arguments.size) {
+                "Params vs args count mismatch (${parameters.size} != ${type.arguments.size}) for type '$type'"
+            }
             return when {
                 parameters.isEmpty() -> EMPTY.copy(isRaw)
                 else -> KTypeSubstitutor(parameters.zip(type.arguments).toMap(), eraseToUpperBoundsAfterSubstitution = isRaw)
@@ -162,6 +165,9 @@ internal class KTypeSubstitutor(
                 // For a type `suspend () -> String` (also known as `SuspendFunction0<String>`), the classifier will be `Function1` because
                 // suspend functions are mapped to normal functions (with +1 arity) on JVM.
                 if (isSuspendFunctionType) drop(1) else this
+            }
+            check(typeParameters.size == arguments.size) {
+                "Params vs args count mismatch (${typeParameters.size} != ${arguments.size}) for class '$klass' with args: ${arguments.joinToString()}"
             }
             return KTypeSubstitutor(typeParameters.zip(arguments).toMap())
         }
