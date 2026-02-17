@@ -1,0 +1,8 @@
+gradle.projectsEvaluated {
+    allprojects {
+        tasks.withType(Test) {
+            reports.junitXml.required = true
+            reports.html.required = false
+        }
+    }
+}
