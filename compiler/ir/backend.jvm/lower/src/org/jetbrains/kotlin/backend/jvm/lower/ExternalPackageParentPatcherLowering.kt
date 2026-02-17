@@ -55,7 +55,6 @@ internal class ExternalPackageParentPatcherLowering(val context: JvmBackendConte
                 if (deserializedSource.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS,
                 facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName(),
                 deserializedSource,
-                deserializeIr = { irClass -> false }
             ).also {
                 it.createThisReceiverParameter()
                 it.classNameOverride = facadeName

@@ -43,10 +43,6 @@ class IrLazyClass(
 ) : IrClass(), IrLazyClassBase, Psi2IrLazyDeclarationBase {
     init {
         symbol.bind(this)
-        this.deserializedIr = lazy {
-            assert(parent is IrPackageFragment)
-            stubGenerator.extensions.deserializeClass(this, stubGenerator, parent)
-        }
     }
 
     override var annotations: List<IrAnnotation> by createLazyAnnotations()
