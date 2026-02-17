@@ -1796,6 +1796,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/statistics/plugins/Observa
 	public static final field DOKKA_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
 	public static final field KOTLIN_JS_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
 	public static final field KOVER_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
+	public static final field NPM_PUBLISH_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
 	public static final field SERIALIZATION_PLUGIN Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
 	public final fun getMetric ()Lorg/jetbrains/kotlin/statistics/metrics/BooleanMetrics;
 	public final fun getTitle ()Ljava/lang/String;
