@@ -9,16 +9,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.KotlinType
-
-/**
- * A lazy initialization of IR information about functions, such as bodies, declared in this class.
- * Null if the class doesn't contain IR info that can be deserialized.
- * The boolean return value of Lazy class indicates whether the deserialization was successful.
- */
-var IrClass.deserializedIr: Lazy<Boolean>? by irAttribute(copyByDefault = false)
 
 open class StubGeneratorExtensions {
     open fun computeExternalDeclarationOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin? = null
