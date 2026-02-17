@@ -668,6 +668,12 @@ public class FirIdeDependentAnalysisSourceModuleIsUsedAsExpressionTestGenerated 
   }
 
   @Test
+  @TestMetadata("contract.kt")
+  public void testContract() {
+    run("contract.kt");
+  }
+
+  @Test
   @TestMetadata("defaultExtensionLambda.kt")
   public void testDefaultExtensionLambda() {
     run("defaultExtensionLambda.kt");

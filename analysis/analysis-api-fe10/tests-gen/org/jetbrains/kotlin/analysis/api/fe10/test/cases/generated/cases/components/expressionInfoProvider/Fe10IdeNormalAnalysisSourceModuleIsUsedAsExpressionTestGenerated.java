@@ -668,6 +668,12 @@ public class Fe10IdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ex
   }
 
   @Test
+  @TestMetadata("contract.kt")
+  public void testContract() {
+    run("contract.kt");
+  }
+
+  @Test
   @TestMetadata("defaultExtensionLambda.kt")
   public void testDefaultExtensionLambda() {
     run("defaultExtensionLambda.kt");
