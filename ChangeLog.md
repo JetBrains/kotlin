@@ -1,3 +1,65 @@
+## 2.3.20-RC
+
+### Backend. Wasm
+
+- [`KT-82649`](https://youtrack.jetbrains.com/issue/KT-82649) K/Wasm: Rewrite StringBuilder to use JsString
+- [`KT-83995`](https://youtrack.jetbrains.com/issue/KT-83995) K/Wasm: 2.3.0 -> 2.3.20-Beta1 degradation in arrow tests
+- [`KT-83839`](https://youtrack.jetbrains.com/issue/KT-83839) K/Wasm: CMP. Load time on Safari significantly increased with Kotlin = 2.3.20-Beta1
+
+### Compiler
+
+- [`KT-83372`](https://youtrack.jetbrains.com/issue/KT-83372) compileDebugKotlinAndroid hangs in 2.3.0 with SQLDelight
+- [`KT-83849`](https://youtrack.jetbrains.com/issue/KT-83849) False-positive NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS for `Optional.orElse(null)` call
+- [`KT-84192`](https://youtrack.jetbrains.com/issue/KT-84192) "Member overrides different '`@Throws`' filter from" caused by overriding in different module
+- [`KT-83697`](https://youtrack.jetbrains.com/issue/KT-83697) Native: increased bitcode produced with enabled safe casts
+- [`KT-83984`](https://youtrack.jetbrains.com/issue/KT-83984) Data races around kotlinx.serialization plugin protobuf extensions registration
+- [`KT-83031`](https://youtrack.jetbrains.com/issue/KT-83031) K2: unstable resolution of EnhancedNullability from type-use NotNull in presence of unused code
+- [`KT-83824`](https://youtrack.jetbrains.com/issue/KT-83824) Delegated property in Gradle DSL fails to compile
+- [`KT-81700`](https://youtrack.jetbrains.com/issue/KT-81700) flaky overload resolution behaviors (false-positive errors, different final candidates, compile-time failures)
+- [`KT-78443`](https://youtrack.jetbrains.com/issue/KT-78443) Refactor session component initialization for multi-target compilation
+
+### Compose compiler
+
+- [`b/481953005`](https://issuetracker.google.com/issues/481953005), [`b/481769383`](https://issuetracker.google.com/issues/481769383) Cache stability inference results during session
+- [`b/481735904`](https://issuetracker.google.com/issues/481735904) Fix Compose codegen crash in inline function
+- [`b/479646393`](https://issuetracker.google.com/issues/479646393) Add groups to inline functions with two or more inline parameters
+
+### JavaScript
+
+- [`KT-83572`](https://youtrack.jetbrains.com/issue/KT-83572) KJS/Wasm: Cannot access `@JsModule`-declared class from non-modular project
+- [`KT-84134`](https://youtrack.jetbrains.com/issue/KT-84134) KJS/CMP: "IrLinkageError: Function 'get' can not be called: No function found for symbol"
+- [`KT-64951`](https://youtrack.jetbrains.com/issue/KT-64951) Kotlin-Multiplatform does not allow JSExport of expect
+
+### Klibs
+
+- [`KT-84273`](https://youtrack.jetbrains.com/issue/KT-84273) [Klib] Added IrOffsetsChecker broke backward klib compatibility
+
+### Native
+
+- [`KT-83542`](https://youtrack.jetbrains.com/issue/KT-83542) Switch the default GC back to PMCS in 2.3.20-RC
+
+### Native. ObjC Export
+
+- [`KT-83736`](https://youtrack.jetbrains.com/issue/KT-83736) Objective-C export with `objcExportBlockExplicitParameterNames` generates invalid block signature when lambda parameter is named `id`
+
+### Tools. Build Tools API
+
+- [`KT-83971`](https://youtrack.jetbrains.com/issue/KT-83971) BTA: OperationCancelledException cannot be thrown properly from isolated classloader
+
+### Tools. Compiler plugins. Compose
+
+- [`KT-84055`](https://youtrack.jetbrains.com/issue/KT-84055) Reference to lambda in lambda in function 'TextField' can not be evaluated
+
+### Tools. Gradle
+
+- [`KT-82885`](https://youtrack.jetbrains.com/issue/KT-82885) Run tests against Gradle 9.3.0
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-82090`](https://youtrack.jetbrains.com/issue/KT-82090) Kotlin JVM + Android Shared Source set fails Import with the Project Isolation enabled
+- [`KT-83917`](https://youtrack.jetbrains.com/issue/KT-83917) compileCommonMainKotlinMetadata fails in CMP core repository with Kotlin 2.3.20-Beta1
+
+
 ## 2.3.20-Beta2
 
 ### Analysis API. FIR
