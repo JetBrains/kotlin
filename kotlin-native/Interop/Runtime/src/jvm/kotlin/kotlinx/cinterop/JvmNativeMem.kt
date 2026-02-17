@@ -16,8 +16,8 @@
 
 package kotlinx.cinterop
 
+import org.jetbrains.kotlin.utils.unsafeMemoryAccess
 import org.jetbrains.kotlin.utils.nativeMemoryAllocator
-import sun.misc.Unsafe
 
 private val NativePointed.address: Long
     get() = this.rawPtr
@@ -40,23 +40,23 @@ internal val pointerSize: Int = dataModel.pointerSize.toInt()
 
 @PublishedApi
 internal object nativeMemUtils {
-    fun getByte(mem: NativePointed) = unsafe.getByte(mem.address)
-    fun putByte(mem: NativePointed, value: Byte) = unsafe.putByte(mem.address, value)
+    fun getByte(mem: NativePointed) = unsafeMemoryAccess.getByte(mem.address)
+    fun putByte(mem: NativePointed, value: Byte) = unsafeMemoryAccess.putByte(mem.address, value)
 
-    fun getShort(mem: NativePointed) = unsafe.getShort(mem.address)
-    fun putShort(mem: NativePointed, value: Short) = unsafe.putShort(mem.address, value)
-    
-    fun getInt(mem: NativePointed) = unsafe.getInt(mem.address)
-    fun putInt(mem: NativePointed, value: Int) = unsafe.putInt(mem.address, value)
-    
-    fun getLong(mem: NativePointed) = unsafe.getLong(mem.address)
-    fun putLong(mem: NativePointed, value: Long) = unsafe.putLong(mem.address, value)
+    fun getShort(mem: NativePointed) = unsafeMemoryAccess.getShort(mem.address)
+    fun putShort(mem: NativePointed, value: Short) = unsafeMemoryAccess.putShort(mem.address, value)
 
-    fun getFloat(mem: NativePointed) = unsafe.getFloat(mem.address)
-    fun putFloat(mem: NativePointed, value: Float) = unsafe.putFloat(mem.address, value)
+    fun getInt(mem: NativePointed) = unsafeMemoryAccess.getInt(mem.address)
+    fun putInt(mem: NativePointed, value: Int) = unsafeMemoryAccess.putInt(mem.address, value)
 
-    fun getDouble(mem: NativePointed) = unsafe.getDouble(mem.address)
-    fun putDouble(mem: NativePointed, value: Double) = unsafe.putDouble(mem.address, value)
+    fun getLong(mem: NativePointed) = unsafeMemoryAccess.getLong(mem.address)
+    fun putLong(mem: NativePointed, value: Long) = unsafeMemoryAccess.putLong(mem.address, value)
+
+    fun getFloat(mem: NativePointed) = unsafeMemoryAccess.getFloat(mem.address)
+    fun putFloat(mem: NativePointed, value: Float) = unsafeMemoryAccess.putFloat(mem.address, value)
+
+    fun getDouble(mem: NativePointed) = unsafeMemoryAccess.getDouble(mem.address)
+    fun putDouble(mem: NativePointed, value: Double) = unsafeMemoryAccess.putDouble(mem.address, value)
 
     fun getNativePtr(mem: NativePointed): NativePtr = when (dataModel) {
         DataModel._32BIT -> getInt(mem).toLong()
@@ -69,46 +69,38 @@ internal object nativeMemUtils {
     }
 
     fun getByteArray(source: NativePointed, dest: ByteArray, length: Int) {
-        unsafe.copyMemory(null, source.address, dest, byteArrayBaseOffset, length.toLong())
+        unsafeMemoryAccess.copyToByteArray(source.address, dest, length)
     }
 
     fun putByteArray(source: ByteArray, dest: NativePointed, length: Int) {
-        unsafe.copyMemory(source, byteArrayBaseOffset, null, dest.address, length.toLong())
+        unsafeMemoryAccess.copyFromByteArray(source, dest.address, length)
     }
 
     fun getCharArray(source: NativePointed, dest: CharArray, length: Int) {
-        unsafe.copyMemory(null, source.address, dest, charArrayBaseOffset, length.toLong() * 2)
+        unsafeMemoryAccess.copyToCharArray(source.address, dest, lengthInChars = length)
     }
 
     fun putCharArray(source: CharArray, dest: NativePointed, length: Int) {
-        unsafe.copyMemory(source, charArrayBaseOffset, null, dest.address, length.toLong() * 2)
+        unsafeMemoryAccess.copyFromCharArray(source, dest.address, lengthInChars = length)
     }
 
     fun zeroMemory(dest: NativePointed, length: Int): Unit =
-            unsafe.setMemory(dest.address, length.toLong(), 0)
+            unsafeMemoryAccess.setMemory(dest.address, length.toLong(), 0)
 
     fun copyMemory(dest: NativePointed, length: Int, src: NativePointed) =
-            unsafe.copyMemory(src.address, dest.address, length.toLong())
+            unsafeMemoryAccess.copyMemory(src.address, dest.address, length.toLong())
 
     internal fun allocRaw(size: Long, align: Int): NativePtr {
-        val address = unsafe.allocateMemory(size)
+        val address = unsafeMemoryAccess.allocateMemory(size)
         if (address % align != 0L) TODO(align.toString())
         return address
     }
 
     internal fun freeRaw(mem: NativePtr) {
-        unsafe.freeMemory(mem)
+        unsafeMemoryAccess.freeMemory(mem)
     }
 
     fun alloc(size: Long, align: Int) = interpretOpaquePointed(nativeMemoryAllocator.alloc(size, align))
 
     fun free(mem: NativePtr) = nativeMemoryAllocator.free(mem)
-
-    private val unsafe = with(Unsafe::class.java.getDeclaredField("theUnsafe")) {
-        isAccessible = true
-        return@with this.get(null) as Unsafe
-    }
-
-    private val byteArrayBaseOffset = unsafe.arrayBaseOffset(ByteArray::class.java).toLong()
-    private val charArrayBaseOffset = unsafe.arrayBaseOffset(CharArray::class.java).toLong()
 }

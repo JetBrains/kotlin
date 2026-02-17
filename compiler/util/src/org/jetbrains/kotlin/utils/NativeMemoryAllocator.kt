@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.utils
 
-import sun.misc.Unsafe
 import kotlin.concurrent.atomics.AtomicLong
 import kotlin.concurrent.atomics.AtomicLongArray
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -83,11 +82,6 @@ class NativeMemoryAllocator {
     private fun alignUp(x: Long, align: Int) = (x + align - 1) and (align - 1).toLong().inv()
     private fun alignUp(x: Int, align: Int) = (x + align - 1) and (align - 1).inv()
 
-    private val unsafe = with(Unsafe::class.java.getDeclaredField("theUnsafe")) {
-        isAccessible = true
-        return@with this.get(null) as Unsafe
-    }
-
     @JvmInline
     private value class ChunkRef(val value: Int) {
         val offset get() = (value and ((1 shl RawChunkOffsetBits) - 1)) shl ChunkSizeAlignmentBits
@@ -118,11 +112,11 @@ class NativeMemoryAllocator {
         }
     }
 
-    private fun getChunkSize(chunk: Long) = unsafe.getInt(chunk)
-    private fun setChunkSize(chunk: Long, size: Int) = unsafe.putInt(chunk, size)
+    private fun getChunkSize(chunk: Long) = unsafeMemoryAccess.getInt(chunk)
+    private fun setChunkSize(chunk: Long, size: Int) = unsafeMemoryAccess.putInt(chunk, size)
 
-    private fun getChunkRef(chunk: Long): ChunkRef = ChunkRef(unsafe.getInt(chunk + Int.SIZE_BYTES /* skip chunk size */))
-    private fun setChunkRef(chunk: Long, chunkRef: ChunkRef) = unsafe.putInt(chunk + Int.SIZE_BYTES /* skip chunk size */, chunkRef.value)
+    private fun getChunkRef(chunk: Long): ChunkRef = ChunkRef(unsafeMemoryAccess.getInt(chunk + Int.SIZE_BYTES /* skip chunk size */))
+    private fun setChunkRef(chunk: Long, chunkRef: ChunkRef) = unsafeMemoryAccess.putInt(chunk + Int.SIZE_BYTES /* skip chunk size */, chunkRef.value)
 
     private val smallChunks = AtomicLongArray(ChunkBucketSize)
     private val mediumChunks = AtomicLongArray(ChunkBucketSize)
@@ -135,25 +129,25 @@ class NativeMemoryAllocator {
             totalChunkSize <= MaxSmallSize -> allocFromFreeList(totalChunkSize.toInt(), SmallChunksSizeAlignment, smallChunks)
             totalChunkSize <= MaxMediumSize -> allocFromFreeList(totalChunkSize.toInt(), MediumChunksSizeAlignment, mediumChunks)
             totalChunkSize <= MaxBigSize -> allocFromFreeList(totalChunkSize.toInt(), BigChunksSizeAlignment, bigChunks)
-            else -> unsafe.allocateMemory(totalChunkSize).also {
+            else -> unsafeMemoryAccess.allocateMemory(totalChunkSize).also {
                 // The actual size is not used. Just put value bigger than the biggest threshold.
                 setChunkSize(it, Int.MAX_VALUE)
             }
         }
         val chunkWithSkippedHeader = chunkStart + ChunkHeaderSize
         val alignedPtr = alignUp(chunkWithSkippedHeader, align)
-        unsafe.putInt(alignedPtr - Int.SIZE_BYTES, (alignedPtr - chunkStart).toInt())
+        unsafeMemoryAccess.putInt(alignedPtr - Int.SIZE_BYTES, (alignedPtr - chunkStart).toInt())
         return alignedPtr
     }
 
     fun free(mem: Long) {
-        val chunkStart = mem - unsafe.getInt(mem - Int.SIZE_BYTES)
+        val chunkStart = mem - unsafeMemoryAccess.getInt(mem - Int.SIZE_BYTES)
         val chunkSize = getChunkSize(chunkStart)
         when {
             chunkSize <= MaxSmallSize -> freeToFreeList(chunkSize, SmallChunksSizeAlignment, smallChunks, chunkStart)
             chunkSize <= MaxMediumSize -> freeToFreeList(chunkSize, MediumChunksSizeAlignment, mediumChunks, chunkStart)
             chunkSize <= MaxBigSize -> freeToFreeList(chunkSize, BigChunksSizeAlignment, bigChunks, chunkStart)
-            else -> unsafe.freeMemory(chunkStart)
+            else -> unsafeMemoryAccess.freeMemory(chunkStart)
         }
     }
 
@@ -180,7 +174,7 @@ class NativeMemoryAllocator {
                 synchronized(rawChunksLock) {
                     rawChunk = rawChunks[rawChunkIndex]
                     if (rawChunk == 0L) {
-                        rawChunk = unsafe.allocateMemory(RawChunkSize)
+                        rawChunk = unsafeMemoryAccess.allocateMemory(RawChunkSize)
                         rawChunks[rawChunkIndex] = rawChunk
                     }
                 }
@@ -203,7 +197,7 @@ class NativeMemoryAllocator {
                 break
             } else {
                 val chunk = chunkRef.dereference()
-                val nextChunkRef = unsafe.getInt(chunk)
+                val nextChunkRef = unsafeMemoryAccess.getInt(chunk)
                 val nextChunkRefWithTimestamp = ChunkRefWithTimestamp.encode(nextChunkRef, chunkRefWithTimestamp.timestamp + 1)
                 if (freeList.compareAndSetAt(index, chunkRefWithTimestamp.value, nextChunkRefWithTimestamp.value)) {
                     ptr = chunk
@@ -220,7 +214,7 @@ class NativeMemoryAllocator {
         val index = paddedSize / align - 1
         do {
             val nextChunkRefWithTimestamp = ChunkRefWithTimestamp(freeList.loadAt(index))
-            unsafe.putInt(chunk, nextChunkRefWithTimestamp.chunkRef.value)
+            unsafeMemoryAccess.putInt(chunk, nextChunkRefWithTimestamp.chunkRef.value)
             val chunkRef = getChunkRef(chunk)
             val chunkRefWithTimestamp = ChunkRefWithTimestamp.encode(chunkRef.value, nextChunkRefWithTimestamp.timestamp + 1)
         } while (!freeList.compareAndSetAt(index, nextChunkRefWithTimestamp.value, chunkRefWithTimestamp.value))
@@ -235,7 +229,7 @@ class NativeMemoryAllocator {
         for (index in rawChunks.indices) {
             val rawChunk = rawChunks[index]
             if (rawChunk != 0L)
-                unsafe.freeMemory(rawChunk)
+                unsafeMemoryAccess.freeMemory(rawChunk)
             rawChunks[index] = 0L
         }
         rawOffset.store(0L)
