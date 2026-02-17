@@ -33,6 +33,7 @@ projectTests {
             excludeTags("llFirNative")
         }
     }
+    withWasmRuntime()
 
     testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.multiplatform.compiler.based.TestGeneratorKt")
 
