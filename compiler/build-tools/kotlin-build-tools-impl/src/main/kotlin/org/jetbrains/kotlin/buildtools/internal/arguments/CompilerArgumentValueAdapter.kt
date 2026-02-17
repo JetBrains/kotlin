@@ -112,6 +112,11 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
                 mode.stringValue as T
             }
 
+            JvmCompilerArguments.X_WHEN_EXPRESSIONS -> {
+                val mode = value as WhenExpressionsMode
+                mode.stringValue as T
+            }
+
             else -> value as T
         }
     }
@@ -191,6 +196,13 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
 
                 CompatqualAnnotationsMode.entries.firstOrNull { it.stringValue == stringValue } as T
                     ?: throw CompilerArgumentsParseException("Unknown -Xsupport-compatqual-checker-framework-annotations value: $stringValue")
+            }
+
+            JvmCompilerArguments.X_WHEN_EXPRESSIONS -> {
+                val stringValue = value as String
+
+                WhenExpressionsMode.entries.firstOrNull { it.stringValue == stringValue } as T
+                    ?: throw CompilerArgumentsParseException("Unknown -Xwhen-expressions value: $stringValue")
             }
 
             else -> value as T

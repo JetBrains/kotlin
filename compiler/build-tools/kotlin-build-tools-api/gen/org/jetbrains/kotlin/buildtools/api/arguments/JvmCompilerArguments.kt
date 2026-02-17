@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 
 /**
@@ -794,7 +795,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_WHEN_EXPRESSIONS: JvmCompilerArgument<String?> =
+    public val X_WHEN_EXPRESSIONS: JvmCompilerArgument<WhenExpressionsMode?> =
         JvmCompilerArgument("X_WHEN_EXPRESSIONS", KotlinReleaseVersion(2, 2, 20))
 
     /**

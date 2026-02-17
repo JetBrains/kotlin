@@ -1045,6 +1045,29 @@
                     }
                 }
             ]
+        },
+        "whenExpressionsMode": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.WhenExpressionsModeType",
+            "values": [
+                {
+                    "name": "indy",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.2.20",
+                        "stabilizedVersion": "2.2.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "inline",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.2.20",
+                        "stabilizedVersion": "2.2.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
         }
     },
     "topLevel": {
@@ -8259,7 +8282,7 @@
                                     "removedVersion": null
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.WhenExpressionsModeType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []

@@ -268,6 +268,14 @@ class CompatqualAnnotationsModeType : EnumType<CompatqualAnnotationsMode>(Releas
     )
 }
 
+/**
+ * A value which accepts [WhenExpressionsMode] type.
+ */
+@Serializable
+class WhenExpressionsModeType : EnumType<WhenExpressionsMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<WhenExpressionsMode?> = ReleaseDependent(null)
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

@@ -113,6 +113,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -234,7 +235,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_USE_TYPE_TABLE in this) { arguments.useTypeTable = get(X_USE_TYPE_TABLE)}
     if (X_VALIDATE_BYTECODE in this) { arguments.validateBytecode = get(X_VALIDATE_BYTECODE)}
     if (X_VALUE_CLASSES in this) { arguments.valueClasses = get(X_VALUE_CLASSES)}
-    if (X_WHEN_EXPRESSIONS in this) { arguments.whenExpressionsGeneration = get(X_WHEN_EXPRESSIONS)}
+    if (X_WHEN_EXPRESSIONS in this) { arguments.whenExpressionsGeneration = get(X_WHEN_EXPRESSIONS)?.stringValue}
     if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)}
     if (D in this) { arguments.destination = get(D)}
     if (EXPRESSION in this) { arguments.expression = get(EXPRESSION)}
@@ -320,7 +321,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_USE_TYPE_TABLE] = arguments.useTypeTable } catch (_: NoSuchMethodError) {  }
     try { this[X_VALIDATE_BYTECODE] = arguments.validateBytecode } catch (_: NoSuchMethodError) {  }
     try { this[X_VALUE_CLASSES] = arguments.valueClasses } catch (_: NoSuchMethodError) {  }
-    try { this[X_WHEN_EXPRESSIONS] = arguments.whenExpressionsGeneration } catch (_: NoSuchMethodError) {  }
+    try { this[X_WHEN_EXPRESSIONS] = arguments.whenExpressionsGeneration?.let { WhenExpressionsMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xwhen-expressions value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[CLASSPATH] = arguments.classpath } catch (_: NoSuchMethodError) {  }
     try { this[D] = arguments.destination } catch (_: NoSuchMethodError) {  }
     try { this[EXPRESSION] = arguments.expression } catch (_: NoSuchMethodError) {  }
@@ -540,7 +541,7 @@ internal class JvmCompilerArgumentsImpl(
     public val X_VALUE_CLASSES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_VALUE_CLASSES")
 
-    public val X_WHEN_EXPRESSIONS: JvmCompilerArgument<String?> =
+    public val X_WHEN_EXPRESSIONS: JvmCompilerArgument<WhenExpressionsMode?> =
         JvmCompilerArgument("X_WHEN_EXPRESSIONS")
 
     public val CLASSPATH: JvmCompilerArgument<String?> = JvmCompilerArgument("CLASSPATH")

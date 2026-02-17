@@ -932,6 +932,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xwhen-expressions"
         compilerName = "whenExpressionsGeneration"
@@ -942,6 +943,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
 The default value is 'inline'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{indy|inline}".asReleaseDependent()
+        argumentType = WhenExpressionsModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_20
