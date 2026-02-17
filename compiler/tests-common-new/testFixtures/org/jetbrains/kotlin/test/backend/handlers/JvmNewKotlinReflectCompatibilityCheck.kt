@@ -23,10 +23,7 @@ import java.lang.ref.SoftReference
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.jvm.internal.Reflection
-import kotlin.reflect.KCallable
-import kotlin.reflect.KClass
-import kotlin.reflect.KDeclarationContainer
-import kotlin.reflect.KFunction
+import kotlin.reflect.*
 import kotlin.reflect.full.declaredMembers
 import kotlin.reflect.full.staticFunctions
 import kotlin.reflect.full.staticProperties
@@ -250,8 +247,26 @@ class RunInAlienClassLoader {
                     if (kCallable.isInline) append("inline ")
                     if (kCallable.isExternal) append("external ")
                 }
+                val typeParameters = kCallable.typeParameters
+                if (typeParameters.isNotEmpty()) {
+                    append(typeParameters.joinToString(prefix = "<", postfix = "> ") { typeParameter ->
+                        buildString {
+                            if (typeParameter.isReified) append("reified ")
+                            append(typeParameter)
+                        }
+                    })
+                }
 
                 append(str)
+
+                val bounds = typeParameters.flatMap { typeParameter ->
+                    typeParameter.upperBounds
+                        .filter { it != typeOf<Any?>() }
+                        .map { bound -> "${typeParameter.name} : $bound" }
+                }
+                if (bounds.isNotEmpty()) {
+                    append(" where " + bounds.joinToString())
+                }
             }
         }.sortedWith(compareBy(/* Sorting by it.first helps with readability when dumps mismatch */ { it.first }, { it.second }))
             .forEach { dump(it.second) }
