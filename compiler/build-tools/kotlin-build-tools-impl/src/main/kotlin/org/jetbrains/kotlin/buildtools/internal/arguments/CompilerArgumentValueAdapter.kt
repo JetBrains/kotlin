@@ -107,6 +107,11 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
                 mode.stringValue as T
             }
 
+            JvmCompilerArguments.X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS -> {
+                val mode = value as CompatqualAnnotationsMode
+                mode.stringValue as T
+            }
+
             else -> value as T
         }
     }
@@ -179,6 +184,13 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
 
                 StringConcatMode.entries.firstOrNull { it.stringValue == stringValue } as T
                     ?: throw CompilerArgumentsParseException("Unknown -Xstring-concat value: $stringValue")
+            }
+
+            JvmCompilerArguments.X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS -> {
+                val stringValue = value as String
+
+                CompatqualAnnotationsMode.entries.firstOrNull { it.stringValue == stringValue } as T
+                    ?: throw CompilerArgumentsParseException("Unknown -Xsupport-compatqual-checker-framework-annotations value: $stringValue")
             }
 
             else -> value as T

@@ -257,6 +257,17 @@ class StringConcatModeType : EnumType<StringConcatMode>(ReleaseDependent(true)) 
     override val defaultValue: ReleaseDependent<StringConcatMode?> = ReleaseDependent(null)
 }
 
+/**
+ * A value which accepts [CompatqualAnnotationsMode] type.
+ */
+@Serializable
+class CompatqualAnnotationsModeType : EnumType<CompatqualAnnotationsMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<CompatqualAnnotationsMode?> = ReleaseDependent(
+        CompatqualAnnotationsMode.ENABLE,
+        KotlinReleaseVersion.v1_2_20..KotlinReleaseVersion.v2_3_20 to null
+    )
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

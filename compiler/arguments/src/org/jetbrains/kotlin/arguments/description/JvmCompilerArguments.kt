@@ -464,12 +464,14 @@ Modes:
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xsupport-compatqual-checker-framework-annotations"
         description = """Specify the behavior for Checker Framework 'compatqual' annotations ('NullableDecl'/'NonNullDecl').
 The default value is 'enable'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "enable|disable".asReleaseDependent()
+        argumentType = CompatqualAnnotationsModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_20,

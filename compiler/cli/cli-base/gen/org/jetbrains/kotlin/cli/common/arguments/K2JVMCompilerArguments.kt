@@ -568,10 +568,10 @@ default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.
         description = """Specify the behavior for Checker Framework 'compatqual' annotations ('NullableDecl'/'NonNullDecl').
 The default value is 'enable'.""",
     )
-    var supportCompatqualCheckerFrameworkAnnotations: String? = null
+    var supportCompatqualCheckerFrameworkAnnotations: String? = "enable"
         set(value) {
             checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
+            field = if (value.isNullOrEmpty()) "enable" else value
         }
 
     @Argument(

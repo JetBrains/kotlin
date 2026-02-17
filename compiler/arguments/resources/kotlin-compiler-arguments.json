@@ -1022,6 +1022,29 @@
                     }
                 }
             ]
+        },
+        "compatqualAnnotationsMode": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.CompatqualAnnotationsModeType",
+            "values": [
+                {
+                    "name": "enable",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.2.20",
+                        "stabilizedVersion": "1.2.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "disable",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.2.20",
+                        "stabilizedVersion": "1.2.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
         }
     },
     "topLevel": {
@@ -7684,14 +7707,20 @@
                                     "removedVersion": null
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.CompatqualAnnotationsModeType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": null,
-                                        "valueInVersions": []
+                                        "current": "enable",
+                                        "valueInVersions": [
+                                            {
+                                                "minReleaseVersion": "1.2.20",
+                                                "maxReleaseVersion": "2.3.20",
+                                                "value": null
+                                            }
+                                        ]
                                     }
                                 }
                             },
