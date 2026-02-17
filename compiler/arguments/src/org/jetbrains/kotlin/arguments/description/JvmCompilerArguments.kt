@@ -615,7 +615,9 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
 -Xstring-concat=indy                 Concatenate strings using 'invokedynamic' and 'makeConcat'. This requires '-jvm-target 9' or greater.
 -Xstring-concat=inline               Concatenate strings using 'StringBuilder'
 default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.""".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        @Suppress("DEPRECATION")
+        valueType = StringType.defaultNull
+        argumentType = StringConcatModeType()
         argumentTypeDescription = "{indy-with-constants|indy|inline}".asReleaseDependent()
 
         lifecycle(

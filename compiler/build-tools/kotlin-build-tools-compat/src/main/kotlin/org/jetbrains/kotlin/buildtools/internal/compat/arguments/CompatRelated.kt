@@ -157,3 +157,20 @@ internal fun <T> applySamConversions(
 
     return compilerArgs.samConversions as T
 }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> K2JVMCompilerArguments.applyStringConcat(mode: T?) {
+    require(mode is String?) { "Xstring-concat must be a string, but was $mode" }
+
+    this.stringConcat = mode as String?
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applyStringConcat(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is String?) { "Xstring-concat must be a string, but was $currentValue" }
+
+    return compilerArgs.stringConcat as T
+}

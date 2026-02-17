@@ -324,6 +324,21 @@ class SamConversionsModeType(
     }
 }
 
+/**
+ * A value which accepts [StringConcatMode] type.
+ */
+@Serializable
+class StringConcatModeType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<StringConcatMode?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<StringConcatMode> {
+
+    override fun stringRepresentation(value: StringConcatMode?): String? {
+        if (value == null) return null
+        return value.modeName.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

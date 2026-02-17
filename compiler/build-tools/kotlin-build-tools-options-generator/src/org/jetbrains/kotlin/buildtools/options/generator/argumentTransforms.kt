@@ -80,6 +80,7 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             compat("Xjspecify-annotations")
             compat("Xlambdas")
             compat("Xsam-conversions")
+            compat("Xstring-concat")
         }
         with(removedJvmCompilerArguments) {
             drop("Xuse-javac")
