@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -28,14 +29,17 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import kotlin.reflect.full.memberProperties
 
 object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private const val EMPTY_CONTRACT_MESSAGE = "Empty contract block is not allowed"
@@ -65,6 +69,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             is FirResolvedContractDescription -> {
                 checkUnresolvedEffects(contractDescription, declaration)
                 checkDuplicateCallsInPlace(contractDescription)
+                checkCallsInPlaceOnReturnedLambda(contractDescription, declaration)
                 checkComplexArgumentConditions(contractDescription)
                 if (declaration.contextParameters.isNotEmpty()) {
                     checkCallsInPlaceOnContextParameter(contractDescription, declaration.valueParameters.size)
@@ -199,7 +204,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         OperatorNameConventions.REM_ASSIGN,
             -> true
         // TBD
-        OperatorNameConventions.OF
+        OperatorNameConventions.OF,
             -> true
         else -> false
     }
@@ -236,13 +241,69 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkCallsInPlaceOnReturnedLambda(
+        description: FirResolvedContractDescription,
+        declaration: FirFunction,
+    ) {
+        val report = IEReporter(description.source, context, reporter, FirErrors.CALLS_IN_PLACE_ON_RETURNED_LAMBDA)
+        val callsInPlaceEffects = description.effects.mapNotNull { it.effect as? ConeCallsEffectDeclaration }
+        if (callsInPlaceEffects.isEmpty()) return
+
+        val body = declaration.body ?: return
+        val returnedParameters = mutableSetOf<Int>()
+
+        val parameterCollector = object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                element.acceptChildren(this)
+            }
+
+            override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
+                val calleeReference = propertyAccessExpression.calleeReference
+                if (calleeReference is FirResolvedNamedReference) {
+                    val resolvedSymbol = calleeReference.resolvedSymbol
+                    if (resolvedSymbol is FirValueParameterSymbol) {
+                        val paramIndex = declaration.valueParameters.indexOfFirst { it.symbol == resolvedSymbol }
+                        if (paramIndex >= 0) {
+                            returnedParameters.add(paramIndex)
+                        }
+                    }
+                }
+                super.visitPropertyAccessExpression(propertyAccessExpression)
+            }
+        }
+
+        body.accept(object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                element.acceptChildren(this)
+            }
+
+            override fun visitReturnExpression(returnExpression: FirReturnExpression) {
+                returnExpression.result.accept(parameterCollector)
+                super.visitReturnExpression(returnExpression)
+            }
+        })
+
+        for (effect in callsInPlaceEffects) {
+            val parameterIndex = effect.valueParameterReference.parameterIndex
+            if (parameterIndex in returnedParameters && parameterIndex in declaration.valueParameters.indices) {
+                val parameter = declaration.valueParameters[parameterIndex]
+                report(
+                    IEData(
+                        containingLambda = parameter.name.asString()
+                    )
+                )
+            }
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkComplexArgumentConditions(
         description: FirResolvedContractDescription,
     ) {
         val conditionalReturns = description.effects.mapNotNull { it.effect as? ConeConditionalReturnsDeclaration }
 
         fun ConeBooleanExpression.containsUnsupportedElements(): Boolean = when (this) {
-            is ConeLogicalNot
+            is ConeLogicalNot,
                 -> arg.containsUnsupportedElements()
             is ConeBinaryLogicExpression,
             is ConeBooleanValueParameterReference,
@@ -273,14 +334,14 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private object DiagnosticExtractor : KtContractDescriptionVisitor<ConeDiagnostic?, Nothing?, ConeKotlinType, ConeDiagnostic>() {
         override fun visitContractDescriptionElement(
             contractDescriptionElement: ConeContractDescriptionElement,
-            data: Nothing?
+            data: Nothing?,
         ): ConeDiagnostic? {
             return null
         }
 
         override fun visitConditionalEffectDeclaration(
             conditionalEffect: ConeConditionalEffectDeclaration,
-            data: Nothing?
+            data: Nothing?,
         ): ConeDiagnostic? {
             return conditionalEffect.effect.accept(this, null) ?: conditionalEffect.condition.accept(this, null)
         }
@@ -309,14 +370,14 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         override fun visitErroneousCallsEffectDeclaration(
             callsEffect: KtErroneousCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
-            data: Nothing?
+            data: Nothing?,
         ): ConeDiagnostic {
             return callsEffect.diagnostic
         }
 
         override fun visitLogicalBinaryOperationContractExpression(
             binaryLogicExpression: ConeBinaryLogicExpression,
-            data: Nothing?
+            data: Nothing?,
         ): ConeDiagnostic? {
             return binaryLogicExpression.left.accept(this, null) ?: binaryLogicExpression.right.accept(this, null)
         }
@@ -331,7 +392,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         override fun visitErroneousIsInstancePredicate(
             isInstancePredicate: KtErroneousIsInstancePredicate<ConeKotlinType, ConeDiagnostic>,
-            data: Nothing?
+            data: Nothing?,
         ): ConeDiagnostic {
             return isInstancePredicate.diagnostic
         }
@@ -342,20 +403,20 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         override fun visitErroneousConstantReference(
             erroneousConstantReference: KtErroneousConstantReference<ConeKotlinType, ConeDiagnostic>,
-            data: Nothing?
+            data: Nothing?,
         ): ConeDiagnostic {
             return erroneousConstantReference.diagnostic
         }
 
         override fun visitErroneousValueParameterReference(
             valueParameterReference: KtErroneousValueParameterReference<ConeKotlinType, ConeDiagnostic>,
-            data: Nothing?
+            data: Nothing?,
         ): ConeDiagnostic {
             return valueParameterReference.diagnostic
         }
 
         override fun visitErroneousElement(
-            element: KtErroneousContractElement<ConeKotlinType, ConeDiagnostic>, data: Nothing?
+            element: KtErroneousContractElement<ConeKotlinType, ConeDiagnostic>, data: Nothing?,
         ): ConeDiagnostic {
             return element.diagnostic
         }
@@ -365,14 +426,14 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         KtContractDescriptionVisitor<ConeDiagnostic?, Nothing?, ConeKotlinType, ConeDiagnostic>() {
         override fun visitContractDescriptionElement(
             contractDescriptionElement: KtContractDescriptionElement<ConeKotlinType, ConeDiagnostic>,
-            data: Nothing?
+            data: Nothing?,
         ): ConeDiagnostic? {
             return null
         }
 
         override fun visitConditionalEffectDeclaration(
             conditionalEffect: KtConditionalEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
-            data: Nothing?
+            data: Nothing?,
         ): ConeDiagnostic? {
             return conditionalEffect.condition.accept(this, data)
         }
@@ -393,7 +454,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         override fun visitIsInstancePredicate(
             isInstancePredicate: KtIsInstancePredicate<ConeKotlinType, ConeDiagnostic>,
-            data: Nothing?
+            data: Nothing?,
         ): ConeDiagnostic? {
             val parameterType = getParameterType(isInstancePredicate.arg.parameterIndex)
             return with(context) {
@@ -405,7 +466,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         override fun visitLogicalBinaryOperationContractExpression(
             binaryLogicExpression: KtBinaryLogicExpression<ConeKotlinType, ConeDiagnostic>,
-            data: Nothing?
+            data: Nothing?,
         ): ConeDiagnostic? {
             return binaryLogicExpression.left.accept(this, data) ?: binaryLogicExpression.right.accept(this, data)
         }
@@ -427,3 +488,32 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
     }
 }
+
+
+class IEReporter(
+    private val source: KtSourceElement?,
+    private val context: CheckerContext,
+    private val reporter: DiagnosticReporter,
+    private val error: KtDiagnosticFactory1<String>,
+) {
+    operator fun invoke(v: IEData) {
+        val dataStr = buildList {
+            addAll(serializeData(v))
+        }.joinToString("; ")
+        val str = "$borderTag $dataStr $borderTag"
+        reporter.reportOn(source, error, str, context)
+    }
+
+    private val borderTag: String = "KLEKLE"
+
+    private fun serializeData(v: IEData): List<String> = buildList {
+        v::class.memberProperties.forEach { property ->
+            add("${property.name}: ${property.getter.call(v)}")
+        }
+    }
+}
+
+@JvmInline
+value class IEData(
+    val containingLambda: String? = null,
+)

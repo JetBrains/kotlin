@@ -100,6 +100,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CALLS_IN_PLACE_ON_RETURNED_LAMBDA) { firDiagnostic ->
+        CallsInPlaceOnReturnedLambdaImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.OTHER_ERROR) { firDiagnostic ->
         OtherErrorImpl(
             firDiagnostic as KtPsiDiagnostic,

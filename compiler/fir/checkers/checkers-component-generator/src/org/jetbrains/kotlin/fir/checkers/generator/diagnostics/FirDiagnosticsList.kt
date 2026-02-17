@@ -60,6 +60,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NEW_INFERENCE_ERROR by error<PsiElement> {
             parameter<String>("error")
         }
+        val CALLS_IN_PLACE_ON_RETURNED_LAMBDA by warning<KtElement> {
+            parameter<String>("info")
+        }
     }
 
     val Miscellaneous by object : DiagnosticGroup("Miscellaneous") {
