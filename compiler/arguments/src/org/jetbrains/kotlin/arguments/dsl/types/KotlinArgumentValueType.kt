@@ -249,6 +249,14 @@ class SamConversionsModeType : EnumType<SamConversionsMode>(ReleaseDependent(tru
     )
 }
 
+/**
+ * A value which accepts [StringConcatMode] type.
+ */
+@Serializable
+class StringConcatModeType : EnumType<StringConcatMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<StringConcatMode?> = ReleaseDependent(null)
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

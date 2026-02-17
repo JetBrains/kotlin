@@ -214,6 +214,13 @@ internal class KotlinWrapperPre2_4_0(
                     SamConversionsMode.values().first { it.stringValue == stringValue } as V
                 }
 
+                JvmCompilerArguments.X_STRING_CONCAT -> {
+                    if (delegate[key] == null) return null as V
+
+                    val stringValue = delegate[key] as String
+                    StringConcatMode.values().first { it.stringValue == stringValue } as V
+                }
+
                 else -> delegate[key]
             }
         }
@@ -280,6 +287,14 @@ internal class KotlinWrapperPre2_4_0(
 
                 JvmCompilerArguments.X_SAM_CONVERSIONS -> {
                     val mode = value as SamConversionsMode?
+                    val stringValue = mode?.stringValue
+                    val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
+
+                    delegate[stringKey] = stringValue
+                }
+
+                JvmCompilerArguments.X_STRING_CONCAT -> {
+                    val mode = value as StringConcatMode?
                     val stringValue = mode?.stringValue
                     val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
 

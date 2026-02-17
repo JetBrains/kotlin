@@ -603,6 +603,7 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xstring-concat"
         description = """Select the code generation scheme for string concatenation:
@@ -612,6 +613,7 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
 default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{indy-with-constants|indy|inline}".asReleaseDependent()
+        argumentType = StringConcatModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_20,

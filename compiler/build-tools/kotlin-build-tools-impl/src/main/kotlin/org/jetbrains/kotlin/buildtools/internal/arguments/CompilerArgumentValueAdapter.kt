@@ -102,6 +102,11 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
                 mode.stringValue as T
             }
 
+            JvmCompilerArguments.X_STRING_CONCAT -> {
+                val mode = value as StringConcatMode
+                mode.stringValue as T
+            }
+
             else -> value as T
         }
     }
@@ -167,6 +172,13 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
 
                 SamConversionsMode.entries.firstOrNull { it.stringValue == stringValue } as T
                     ?: throw CompilerArgumentsParseException("Unknown -Xsam-conversions value: $stringValue")
+            }
+
+            JvmCompilerArguments.X_STRING_CONCAT -> {
+                val stringValue = value as String
+
+                StringConcatMode.entries.firstOrNull { it.stringValue == stringValue } as T
+                    ?: throw CompilerArgumentsParseException("Unknown -Xstring-concat value: $stringValue")
             }
 
             else -> value as T

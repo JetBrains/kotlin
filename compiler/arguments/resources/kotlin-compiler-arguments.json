@@ -990,6 +990,38 @@
                     }
                 }
             ]
+        },
+        "stringConcatMode": {
+            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringConcatModeType",
+            "values": [
+                {
+                    "name": "indy-with-constants",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.20",
+                        "stabilizedVersion": "1.4.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "indy",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.20",
+                        "stabilizedVersion": "1.4.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "inline",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "1.4.20",
+                        "stabilizedVersion": "1.4.20",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                }
+            ]
         }
     },
     "topLevel": {
@@ -7610,7 +7642,7 @@
                                     "removedVersion": null
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringConcatModeType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []

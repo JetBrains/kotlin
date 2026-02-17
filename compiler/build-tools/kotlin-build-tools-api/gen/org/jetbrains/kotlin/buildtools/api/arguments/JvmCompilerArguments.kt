@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmDefaultMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.LambdasMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.SamConversionsMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.StringConcatMode
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 
 /**
@@ -649,7 +650,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_STRING_CONCAT: JvmCompilerArgument<String?> =
+    public val X_STRING_CONCAT: JvmCompilerArgument<StringConcatMode?> =
         JvmCompilerArgument("X_STRING_CONCAT", KotlinReleaseVersion(1, 4, 20))
 
     /**
