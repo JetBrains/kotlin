@@ -639,6 +639,7 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xsam-conversions"
         description = """Select the code generation scheme for SAM conversions.
@@ -647,6 +648,7 @@ This also sets the value of '-jvm-target' to be equal to the selected JDK versio
 The default value is 'indy'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{class|indy}".asReleaseDependent()
+        argumentType = SamConversionsModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_0,

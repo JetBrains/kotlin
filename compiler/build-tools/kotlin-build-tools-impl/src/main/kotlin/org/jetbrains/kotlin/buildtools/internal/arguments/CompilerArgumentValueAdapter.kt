@@ -97,6 +97,11 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
                 mode.stringValue as T
             }
 
+            JvmCompilerArguments.X_SAM_CONVERSIONS -> {
+                val mode = value as SamConversionsMode
+                mode.stringValue as T
+            }
+
             else -> value as T
         }
     }
@@ -155,6 +160,13 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CompilerArgumentValueAd
 
                 LambdasMode.entries.firstOrNull { it.stringValue == stringValue } as T
                     ?: throw CompilerArgumentsParseException("Unknown -Xlambdas value: $stringValue")
+            }
+
+            JvmCompilerArguments.X_SAM_CONVERSIONS -> {
+                val stringValue = value as String
+
+                SamConversionsMode.entries.firstOrNull { it.stringValue == stringValue } as T
+                    ?: throw CompilerArgumentsParseException("Unknown -Xsam-conversions value: $stringValue")
             }
 
             else -> value as T

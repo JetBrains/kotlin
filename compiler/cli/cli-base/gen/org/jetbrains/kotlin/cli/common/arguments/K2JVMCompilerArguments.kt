@@ -518,10 +518,10 @@ Example (Windows): -Xprofile=<PATH_TO_ASYNC_PROFILER>\async-profiler\build\libas
 -Xsam-conversions=class         Generate SAM conversions as explicit classes.
 The default value is 'indy'.""",
     )
-    var samConversions: String? = null
+    var samConversions: String? = "indy"
         set(value) {
             checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
+            field = if (value.isNullOrEmpty()) "indy" else value
         }
 
     @Argument(

@@ -44,4 +44,7 @@ class AllKotlinArgumentTypes {
     @Serializable(with = AllDetailsLambdasModeSerializer::class)
     val lambdasMode = LambdasMode.entries.toSet()
 
+    @Serializable(with = AllDetailsSamConversionsModeSerializer::class)
+    val samConversionsMode = SamConversionsMode.entries.toSet()
+
 }

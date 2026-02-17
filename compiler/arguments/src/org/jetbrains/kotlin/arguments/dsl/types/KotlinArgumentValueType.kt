@@ -238,6 +238,17 @@ class LambdasModeType : EnumType<LambdasMode>(ReleaseDependent(true)) {
     override val defaultValue: ReleaseDependent<LambdasMode?> = ReleaseDependent(null)
 }
 
+/**
+ * A value which accepts [SamConversionsMode] type.
+ */
+@Serializable
+class SamConversionsModeType : EnumType<SamConversionsMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<SamConversionsMode?> = ReleaseDependent(
+        SamConversionsMode.INDY,
+        KotlinReleaseVersion.v1_5_0..KotlinReleaseVersion.v2_3_20 to null
+    )
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 
