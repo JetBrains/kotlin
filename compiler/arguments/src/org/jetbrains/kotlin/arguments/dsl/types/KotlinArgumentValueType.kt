@@ -230,6 +230,14 @@ class JspecifyAnnotationsModeType : EnumType<JspecifyAnnotationsMode>(ReleaseDep
     )
 }
 
+/**
+ * A value which accepts [LambdasMode] type.
+ */
+@Serializable
+class LambdasModeType : EnumType<LambdasMode>(ReleaseDependent(true)) {
+    override val defaultValue: ReleaseDependent<LambdasMode?> = ReleaseDependent(null)
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

@@ -653,6 +653,7 @@ The default value is 'indy'.""".asReleaseDependent()
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xlambdas"
         description = """Select the code generation scheme for lambdas.
@@ -662,6 +663,7 @@ The default value is 'indy'.""".asReleaseDependent()
 The default value is 'indy' if language version is 2.0+, and 'class' otherwise.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{class|indy}".asReleaseDependent()
+        argumentType = LambdasModeType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_0,
