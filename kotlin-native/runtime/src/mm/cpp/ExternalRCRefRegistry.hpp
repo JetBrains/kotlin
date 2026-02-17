@@ -180,6 +180,15 @@ public:
     // Locks the registry and allows safe iteration over it.
     Iterable lockForIter() noexcept { return Iterable(*this); }
 
+    size_t registrySizeBytes() {
+#if KONAN_MACOSX
+        return sizeof(*this) +
+               all_.size() * sizeof(std::__list_node<ExternalRCRefImpl, void*>);
+#else
+        return 0;
+#endif
+    }
+
 private:
     friend class ExternalRCRefImpl;
     friend class ExternalRCRefRegistryTest;

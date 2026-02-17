@@ -11,6 +11,7 @@
 
 #include "Allocator.hpp"
 #include "CallsChecker.hpp"
+#include "ExternalRCRefRegistry.hpp"
 #include "Logging.hpp"
 #include "concurrent/Mutex.hpp"
 #include "Porting.h"
@@ -289,6 +290,10 @@ void GCHandle::finished() {
                       info.ri_phys_footprint,
                       info.ri_lifetime_max_phys_footprint
                   );
+            GCLogInfo(epoch_,
+                "ExternalRCRef registry size: %zu bytes",
+                mm::ExternalRCRefRegistry::instance().registrySizeBytes()
+            );
         }
         #endif
 
