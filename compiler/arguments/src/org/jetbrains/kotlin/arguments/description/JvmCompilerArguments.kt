@@ -473,7 +473,9 @@ Modes:
         name = "Xsupport-compatqual-checker-framework-annotations"
         description = """Specify the behavior for Checker Framework 'compatqual' annotations ('NullableDecl'/'NonNullDecl').
 The default value is 'enable'.""".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        @Suppress("DEPRECATION")
+        valueType = StringType.defaultNull
+        argumentType = CompatqualAnnotationsModeType()
         argumentTypeDescription = "enable|disable".asReleaseDependent()
 
         lifecycle(
