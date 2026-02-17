@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertToIrAndActualizeForJvm
@@ -28,7 +27,7 @@ object JvmFir2IrPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFi
 
     fun executePhase(input: JvmFrontendPipelineArtifact, irGenerationExtensions: List<IrGenerationExtension>): JvmFir2IrPipelineArtifact? {
         val (firResult, configuration, environment, sourceFiles) = input
-        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
+        val fir2IrExtensions = JvmFir2IrExtensions(configuration)
         val fir2IrAndIrActualizerResult = firResult.convertToIrAndActualizeForJvm(
             fir2IrExtensions,
             configuration,

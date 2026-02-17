@@ -16,7 +16,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -65,7 +64,7 @@ fun convertAnalyzedFirToIr(
     frontendOutput: AllModulesFrontendOutput,
     environment: ModuleCompilerEnvironment
 ): ModuleCompilerIrBackendInput {
-    val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
+    val extensions = JvmFir2IrExtensions(configuration)
 
     val (moduleFragment, components, pluginContext, irActualizedResult, _, symbolTable) =
         frontendOutput.convertToIrAndActualizeForJvm(

@@ -23,7 +23,6 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
@@ -191,7 +190,6 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
         val fir2IrExtensions = JvmFir2IrExtensions(
             configuration,
-            JvmIrDeserializerImpl(),
         )
 
         val fir2IrResult = analysisResult.frontendOutput.convertToIrAndActualizeForJvm(

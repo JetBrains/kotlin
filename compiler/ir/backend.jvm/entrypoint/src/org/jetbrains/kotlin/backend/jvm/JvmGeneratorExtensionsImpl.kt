@@ -91,14 +91,6 @@ open class JvmGeneratorExtensionsImpl(
         }
     }
 
-    override fun deserializeClass(
-        irClass: IrClass,
-        stubGenerator: DeclarationStubGenerator,
-        parent: IrDeclarationParent,
-    ): Boolean = JvmIrDeserializerImpl().deserializeTopLevelClass(
-        irClass, stubGenerator.irBuiltIns, stubGenerator.symbolTable, listOf(stubGenerator), this
-    )
-
     override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean =
         descriptor.hasJvmFieldAnnotation()
 
