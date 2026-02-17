@@ -945,7 +945,9 @@ inside suspend functions and lambdas to distinguish them from user code by debug
                                 following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
 -Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
 The default value is 'inline'.""".asReleaseDependent()
-        argumentType = StringType.defaultNull
+        @Suppress("DEPRECATION")
+        valueType = StringType.defaultNull
+        argumentType = WhenExpressionsModeType()
         argumentTypeDescription = "{indy|inline}".asReleaseDependent()
 
         lifecycle(
