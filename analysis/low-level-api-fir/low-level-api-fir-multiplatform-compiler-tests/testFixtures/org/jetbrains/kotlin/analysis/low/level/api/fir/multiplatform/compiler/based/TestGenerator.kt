@@ -13,15 +13,16 @@ import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
+        val llFirNativeTag = listOf(annotation(Tag::class.java, "llFirNative"))
         testGroup("analysis/low-level-api-fir/low-level-api-fir-multiplatform-compiler-tests/tests-gen", "compiler/testData/diagnostics") {
             testClass<AbstractLLNativeDiagnosticsTest>(
-                annotations = listOf(annotation(Tag::class.java, "llFirNative"))
+                annotations = llFirNativeTag
             ) {
                 model("nativeTests", testMethod = "doTest", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
             testClass<AbstractLLReversedNativeDiagnosticsTest>(
-                annotations = listOf(annotation(Tag::class.java, "llFirNative"))
+                annotations = llFirNativeTag
             ) {
                 model("nativeTests", testMethod = "doTest", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
@@ -51,6 +52,12 @@ fun main(args: Array<String>) {
                     model("codegen/boxWasmWasi")
                 }
 
+                testClass<AbstractLLNativeBlackBoxTest>(
+                    annotations = llFirNativeTag
+                ) {
+                    blackBoxTestsInit()
+                }
+
                 testClass<AbstractLLReversedJsBlackBoxTest> {
                     blackBoxTestsInit()
                 }
@@ -62,6 +69,12 @@ fun main(args: Array<String>) {
                 testClass<AbstractLLReversedWasmWasiBlackBoxTest> {
                     blackBoxTestsInit()
                     model("codegen/boxWasmWasi")
+                }
+
+                testClass<AbstractLLReversedNativeBlackBoxTest>(
+                    annotations = llFirNativeTag
+                ) {
+                    blackBoxTestsInit()
                 }
             }
         }
