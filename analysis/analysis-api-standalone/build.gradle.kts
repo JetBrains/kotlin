@@ -115,3 +115,12 @@ tasks.named("check") {
 }
 
 testsJar()
+
+run /* Workaround for KT-84365 */ {
+    tasks.named("test").configure {
+        mustRunAfter("updateKotlinAbi")
+    }
+    tasks.named("testCodebase").configure {
+        mustRunAfter("updateKotlinAbi")
+    }
+}

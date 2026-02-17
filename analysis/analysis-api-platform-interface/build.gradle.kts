@@ -74,3 +74,9 @@ projectTests {
 tasks.named("check") {
     dependsOn("testCodebase")
 }
+
+run /* Workaround for KT-84365 */ {
+    tasks.named("testCodebase").configure {
+        mustRunAfter("updateKotlinAbi")
+    }
+}

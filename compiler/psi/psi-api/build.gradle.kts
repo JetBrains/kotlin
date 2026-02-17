@@ -70,10 +70,11 @@ val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::clas
     nonPublicMarkers.addAll(stableNonPublicMarkers)
 }
 
-tasks.named("checkKotlinAbi").configure {
-    /**
-     * The ABI task depends on the whole 'api/' directory which contains output of the [checkForeignClassUsage] task.
-     * Gradle requires having an explicit task dependency when inputs of a certain task contain outputs of another.
-     */
-    dependsOn(checkForeignClassUsage)
+run /* Workaround for KT-84365 */ {
+    tasks.named("checkKotlinAbi").configure {
+        mustRunAfter(checkForeignClassUsage)
+    }
+    tasks.named("test").configure {
+        mustRunAfter("updateKotlinAbi")
+    }
 }
