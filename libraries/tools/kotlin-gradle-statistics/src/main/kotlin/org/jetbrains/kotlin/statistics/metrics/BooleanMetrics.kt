@@ -71,6 +71,10 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
 
     JS_IR_INCREMENTAL(OR, SAFE),
 
+    JS_GENERATE_DTS(OR, SAFE),
+
+    JS_LONG_AS_BIGINT(OR, SAFE),
+
     WASM_IR_INCREMENTAL(OR, SAFE),
 
     //Garbage collector
@@ -133,6 +137,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ;
 
     companion object {
-        const val VERSION = 25
+        const val VERSION = 26
     }
 }

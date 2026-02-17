@@ -80,6 +80,8 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     JS_TARGET_MODE(CONCAT, AllowedListAnonymizer(listOf("both", "browser", "nodejs", "none"))),
     JS_BINARY_TYPE(CONCAT, AllowedListAnonymizer(listOf("both", "library", "executable", "none"))),
     JS_OUTPUT_GRANULARITY(OVERRIDE, RegexControlled("(whole_program|per_module|per_file)", false)),
+    JS_ES_TARGET(OVERRIDE, AllowedListAnonymizer(listOf("es5", "es2015", "default"))),
+    JS_MODULE_SYSTEM(OVERRIDE, AllowedListAnonymizer(listOf("plain", "amd", "commonjs", "umd", "es", "default"))),
 
     // Compiler parameters
     JVM_DEFAULTS(CONCAT, AllowedListAnonymizer(listOf("enable", "no-compatibility", "disable"))),
@@ -91,6 +93,6 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
 
     companion object {
-        const val VERSION = 8
+        const val VERSION = 9
     }
 }
