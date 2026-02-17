@@ -111,18 +111,18 @@ internal object CompilerArgumentMetrics : FusMetrics {
                         "binary-compatibility-validator-.*jar"
                     ),
                 )
-                val pluginJars = args.pluginClasspaths?.map { it.replace("\\", "/").split("/").last() }
-                if (pluginJars != null) {
-                    for (pluginPattern in pluginPatterns) {
-                        if (pluginJars.any { it.matches(pluginPattern.second.toRegex()) }) {
-                            metricsConsumer.report(pluginPattern.first, true)
-                        }
-                    }
-                }
+
+                metricsConsumer.reportPluginsFromListIfUsed(args, pluginPatterns)
             }
             is K2JSCompilerArguments -> {
                 val args = K2JSCompilerArguments()
                 parseCommandLineArguments(argsArray.toList(), args)
+
+                val pluginPatterns = listOf(
+                    Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_JS_PLAIN_OBJECTS, "js-plain-objects-.*jar"),
+                )
+
+                metricsConsumer.reportPluginsFromListIfUsed(args, pluginPatterns)
 
                 if (args.irProduceJs) {
                     metricsConsumer.report(BooleanMetrics.JS_SOURCE_MAP, args.sourceMap)
@@ -136,6 +136,17 @@ internal object CompilerArgumentMetrics : FusMetrics {
         }
     }
 
+    private fun <Args : CommonCompilerArguments> StatisticsValuesConsumer.reportPluginsFromListIfUsed(args: Args, pluginPatterns: List<Pair<BooleanMetrics, String>>) {
+        val pluginJars = args.pluginClasspaths?.map { it.replace("\\", "/").split("/").last() }
+
+        if (pluginJars != null) {
+            for (pluginPattern in pluginPatterns) {
+                if (pluginJars.any { it.matches(pluginPattern.second.toRegex()) }) {
+                    report(pluginPattern.first, true)
+                }
+            }
+        }
+    }
 }
 
 internal object NativeArgumentMetrics : FusMetrics {

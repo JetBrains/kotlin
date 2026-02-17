@@ -32,6 +32,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ENABLED_COMPILER_PLUGIN_KOTLINX_SERIALIZATION(OR, SAFE),
     ENABLED_COMPILER_PLUGIN_KOTLINX_DOKKA(OR, SAFE),
     ENABLED_COMPILER_PLUGIN_KOTLINX_BINARY_COMPATIBILITY_VALIDATOR(OR, SAFE),
+    ENABLED_COMPILER_PLUGIN_JS_PLAIN_OBJECTS(OR, SAFE),
     ENABLED_COMPILER_REFERENCE_INDEX(OR, SAFE),
     ENABLED_HMPP(OR, SAFE),
 
@@ -137,6 +138,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ;
 
     companion object {
-        const val VERSION = 26
+        const val VERSION = 27
     }
 }
