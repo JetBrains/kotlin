@@ -245,8 +245,6 @@ internal class KaFirCompilerFacility(
         val chunkRegistrar = CompilationChunkRegistrar(mainFile, mainFirFile, target, actualizer)
         val chunks = collectCompilationChunks(chunkRegistrar, compilationPeerData, codeFragmentMappings)
 
-        val jvmIrDeserializer = JvmIrDeserializerImpl()
-
         val registeredCodeProviders = ArrayList<CompiledCodeProvider>()
 
         val contextDeclarationCache = if (codeFragmentMappings != null) {
@@ -307,7 +305,6 @@ internal class KaFirCompilerFacility(
                 configuration,
                 target,
                 allowedErrorFilter,
-                jvmIrDeserializer,
                 codeFragmentMappings?.takeIf { chunk.hasCodeFragments },
                 generateClassFilter,
                 KaFirDelegatingCompiledCodeProvider(registeredCodeProviders),
@@ -967,7 +964,6 @@ internal class KaFirCompilerFacility(
         baseConfiguration: CompilerConfiguration,
         target: KaCompilerTarget.Jvm,
         allowedErrorFilter: (KaDiagnostic) -> Boolean,
-        jvmIrDeserializer: JvmIrDeserializer,
         codeFragmentMappings: CodeFragmentMappings?,
         generateClassFilter: GenerationState.GenerateClassFilter,
         compiledCodeProvider: CompiledCodeProvider,
@@ -980,7 +976,7 @@ internal class KaFirCompilerFacility(
             put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, session.languageVersionSettings)
         }
 
-        val baseFir2IrExtensions = JvmFir2IrExtensions(configuration, jvmIrDeserializer)
+        val baseFir2IrExtensions = JvmFir2IrExtensions(configuration)
 
         val fir2IrExtensions = when {
             codeFragmentMappings != null && chunk.mainFile != null -> {

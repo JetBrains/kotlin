@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 object NativeFir2IrExtensions : Fir2IrExtensions {
     override val parametersAreAssignable: Boolean get() = false
     override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = listOf(IrObjCOverridabilityCondition)
-    override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean = false
     override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue? = null
     override fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression? = null
 

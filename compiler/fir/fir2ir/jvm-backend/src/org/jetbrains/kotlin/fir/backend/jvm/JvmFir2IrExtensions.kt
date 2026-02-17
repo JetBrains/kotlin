@@ -7,16 +7,13 @@ package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
-import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializer
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.overrides.IrJavaIncompatibilityRulesOverridabilityCondition
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
@@ -45,7 +42,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class JvmFir2IrExtensions(
     configuration: CompilerConfiguration,
-    private val irDeserializer: JvmIrDeserializer,
 ) : Fir2IrExtensions, JvmGeneratorExtensions {
     private var irBuiltIns: IrBuiltIns? = null
     private var symbolTable: SymbolTable? = null
@@ -94,14 +90,6 @@ class JvmFir2IrExtensions(
     }
 
     override fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression? = null
-
-    override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents): Boolean {
-        val builtIns = irBuiltIns ?: error("BuiltIns are not initialized")
-        val symbolTable = symbolTable ?: error("SymbolTable is not initialized")
-        return irDeserializer.deserializeTopLevelClass(
-            irClass, builtIns, symbolTable, components.irProviders, this
-        )
-    }
 
     override fun hasBackingField(property: FirProperty, session: FirSession): Boolean =
         property.origin is FirDeclarationOrigin.Java ||

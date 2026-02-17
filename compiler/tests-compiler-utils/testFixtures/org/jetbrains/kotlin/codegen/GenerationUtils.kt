@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -105,7 +104,7 @@ object GenerationUtils {
             FirParser.Psi,
         )
 
-        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
+        val fir2IrExtensions = JvmFir2IrExtensions(configuration)
         val diagnosticReporter = DiagnosticsCollectorImpl()
         firAnalyzerFacade.runResolution()
         val irGenerationExtensions = configuration.getCompilerExtensions(IrGenerationExtension)

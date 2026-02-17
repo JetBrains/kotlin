@@ -53,10 +53,6 @@ class Fir2IrLazyClass(
         this.parent = parent
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
-        this.deserializedIr = lazy {
-            assert(parent is IrPackageFragment)
-            extensions.deserializeToplevelClass(this, this)
-        }
     }
 
     override var annotations: List<IrAnnotation> by createLazyAnnotations()
