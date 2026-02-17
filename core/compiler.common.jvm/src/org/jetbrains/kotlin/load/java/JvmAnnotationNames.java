@@ -61,10 +61,6 @@ public final class JvmAnnotationNames {
 
     public static final FqName KOTLIN_JVM_INTERNAL = new FqName("kotlin.jvm.internal");
 
-    public static final FqName SERIALIZED_IR_FQ_NAME = new FqName("kotlin.jvm.internal.SerializedIr");
-    public static final String SERIALIZED_IR_DESC = "L" + JvmClassName.byFqNameWithoutInnerClasses(SERIALIZED_IR_FQ_NAME).getInternalName() + ";";
-    public static final String SERIALIZED_IR_BYTES_FIELD_NAME = "b";
-
     public static final String SOURCE_DEBUG_EXTENSION_DESC = "Lkotlin/jvm/internal/SourceDebugExtension;";
 
     // Just for internal use: there is no such real classes in bytecode

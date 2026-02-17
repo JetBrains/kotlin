@@ -18,14 +18,10 @@ interface MetadataSource {
     val source: KtSourceElement? get() = null
 
     interface File : MetadataSource {
-        var serializedIr: ByteArray?
-
         fun asEvaluatedConstTrackerKey(): EvaluatedConstTracker.Key?
     }
 
     interface Class : MetadataSource {
-        var serializedIr: ByteArray?
-
         fun recordLocalClassType(type: FqName)
         fun asFirSymbol(): Any?
     }
@@ -48,14 +44,10 @@ sealed class DescriptorMetadataSource : MetadataSource {
         get() = descriptor?.name
 
     class File(val descriptors: List<DeclarationDescriptor>) : DescriptorMetadataSource(), MetadataSource.File {
-        override var serializedIr: ByteArray? = null
-
         override fun asEvaluatedConstTrackerKey(): EvaluatedConstTracker.Key? = null
     }
 
     class Class(override val descriptor: ClassDescriptor) : DescriptorMetadataSource(), MetadataSource.Class {
-        override var serializedIr: ByteArray? = null
-
         override fun recordLocalClassType(type: FqName) {}
 
         override fun asFirSymbol(): Any? = null
