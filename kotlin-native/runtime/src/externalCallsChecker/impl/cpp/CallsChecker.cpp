@@ -275,6 +275,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.tan.*",
         "llvm.tanh.*",
         "llvm.atan.*",
+        "llvm.atan2.*",
         "llvm.smax.*",
         "llvm.smin.*",
         "llvm.sqrt.*",
