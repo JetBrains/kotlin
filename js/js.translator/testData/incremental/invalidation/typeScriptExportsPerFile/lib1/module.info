@@ -34,4 +34,11 @@ STEP 9:
     modified ir: l1.kt
     expected dts: l1.9.d.ts
 STEP 10:
-    updated exports: l1.kt
+    modifications:
+        D : l1.kt
+        U : l1.9.kt -> l1_moved.kt
+    added file: l1_moved.kt
+    removed file: l1.kt
+    expected dts: l1_moved.10.d.ts
+STEP 11:
+    updated exports: l1_moved.kt

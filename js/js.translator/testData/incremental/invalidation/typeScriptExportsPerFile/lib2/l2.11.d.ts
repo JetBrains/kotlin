@@ -1,5 +1,3 @@
-import type { default as ExportedClass } from "../lib1/l1_moved.export.mjs";
-
 type Nullable<T> = T | null | undefined
 declare function KtSingleton<T>(): T & (abstract new() => any);
 export declare class MyClass {
@@ -13,4 +11,4 @@ export declare namespace MyClass {
         const constructor: abstract new () => MyClass;
     }
 }
-export declare function useExportedClass(ec: Nullable<ExportedClass>): Nullable<number>;
+export declare function useExportedClass(ec: Nullable<any>): Nullable<number>;

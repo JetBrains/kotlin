@@ -33,4 +33,7 @@ STEP 9:
     dirty js files:   lib1/l1, lib1/l1.export, lib2/l2
 STEP 10:
     libs: lib1, lib2, main
-    dirty js files:   lib1/l1, lib1/l1.export, lib2/l2, lib2/l2.export
+    dirty js files:   lib1/l1_moved, lib1/l1_moved.export, lib2/l2, lib1
+STEP 11:
+    libs: lib1, lib2, main
+    dirty js files:   lib1/l1_moved, lib1/l1_moved.export, lib2/l2, lib2/l2.export

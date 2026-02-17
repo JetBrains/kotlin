@@ -44,6 +44,10 @@ STEP 9:
     expected dts: l2.9.d.ts
 STEP 10:
     dependencies: lib1
+    removed direct depends: l2.kt
+    expected dts: l2.9.d.ts
+STEP 11:
+    dependencies: lib1
     modifications:
         U : l2.10.kt -> l2.kt
     modified ir: l2.kt

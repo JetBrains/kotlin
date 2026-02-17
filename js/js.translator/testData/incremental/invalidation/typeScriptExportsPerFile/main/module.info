@@ -23,6 +23,6 @@ STEP 6:
     dependencies: lib1, lib2
     updated imports: m.kt
     expected dts: m.d.ts
-STEP 7..10:
+STEP 7..11:
     dependencies: lib1, lib2
     expected dts: m.d.ts
