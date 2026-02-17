@@ -1,0 +1,17 @@
+@file:OptIn(ExperimentalVersionOverloading::class)
+
+class C {
+    fun inTrailing(
+        x: String,
+        @IntroducedAt("1") y: Int = 10,
+        @IntroducedAt("2") z: Boolean = false,
+        block: (String) -> String = { x.uppercase() }
+    ): String = "$x/$y/$z/${block("")}"
+
+    fun inArgument(
+        x: String,
+        @IntroducedAt("1") y: Int = 5,
+        @IntroducedAt("2") z: (Int) -> Int = { y + 1 },
+        block: (String) -> String
+    ): String = "$x/$y/${z(0)}/${block("")}"
+}

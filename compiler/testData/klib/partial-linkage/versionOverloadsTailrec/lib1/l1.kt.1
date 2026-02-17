@@ -1,0 +1,12 @@
+@file:OptIn(ExperimentalVersionOverloading::class)
+
+tailrec fun foo(
+    n: Int = 10,
+
+    @IntroducedAt("1") step: Int = 2,
+    @IntroducedAt("2") adjust: Int = step - 1,
+    @IntroducedAt("2") guard: Boolean = true,
+): Int =
+    if (!guard) -1
+    else if (n <= 0) adjust
+    else foo(n - step, step, adjust, guard)

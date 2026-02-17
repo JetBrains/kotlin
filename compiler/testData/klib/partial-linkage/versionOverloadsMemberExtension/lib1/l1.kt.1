@@ -1,0 +1,9 @@
+@file:OptIn(ExperimentalVersionOverloading::class)
+
+class C {
+    val p: String = "p"
+    fun String.ex(
+        @IntroducedAt("1") b: String = p,
+        @IntroducedAt("2") c: Int = length,
+    ): String = "s=$this,b=$b,c=$c"
+}

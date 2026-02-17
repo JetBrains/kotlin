@@ -1,0 +1,18 @@
+@file:OptIn(ExperimentalVersionOverloading::class)
+
+class C {
+    fun foo(
+        a: Int = 1,
+        @IntroducedAt("1") b: String = "B",
+        @IntroducedAt("2") c: Boolean = false,
+        f: (String) -> String
+    ): String = f("$a/$b/$c")
+
+    @Suppress("NON_ASCENDING_VERSION_ANNOTATION")
+    fun bar(
+        a: Int = 1,
+        @IntroducedAt("2") a1: String = "A1",
+        @IntroducedAt("1") b: Boolean = false,
+        f: (String) -> String
+    ): String = f("$a/$a1/$b")
+}
