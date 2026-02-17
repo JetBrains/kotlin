@@ -50,4 +50,7 @@ class AllKotlinArgumentTypes {
     @Serializable(with = AllDetailsStringConcatModeSerializer::class)
     val stringConcatMode = StringConcatMode.entries.toSet()
 
+    @Serializable(with = AllDetailsCompatqualAnnotationsModeSerializer::class)
+    val compatqualAnnotationsMode = CompatqualAnnotationsMode.entries.toSet()
+
 }

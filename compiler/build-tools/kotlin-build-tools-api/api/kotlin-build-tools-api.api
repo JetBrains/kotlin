@@ -501,6 +501,14 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/Assertion
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/AssertionsMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/CompatqualAnnotationsMode : java/lang/Enum {
+	public static final field DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompatqualAnnotationsMode;
+	public static final field ENABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompatqualAnnotationsMode;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompatqualAnnotationsMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/CompatqualAnnotationsMode;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode : java/lang/Enum {
 	public static final field DISABLE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode;
 	public static final field STRICT Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/ExplicitApiMode;

@@ -339,6 +339,24 @@ class StringConcatModeType(
     }
 }
 
+/**
+ * A value which accepts [CompatqualAnnotationsMode] type.
+ */
+@Serializable
+class CompatqualAnnotationsModeType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<CompatqualAnnotationsMode?> = ReleaseDependent(
+        CompatqualAnnotationsMode.ENABLE,
+        KotlinReleaseVersion.v1_2_20..KotlinReleaseVersion.v2_3_20 to null
+    ),
+) : KotlinArgumentValueType<CompatqualAnnotationsMode> {
+
+    override fun stringRepresentation(value: CompatqualAnnotationsMode?): String? {
+        if (value == null) return null
+        return value.modeName.valueOrNullStringLiteral
+    }
+}
+
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
 

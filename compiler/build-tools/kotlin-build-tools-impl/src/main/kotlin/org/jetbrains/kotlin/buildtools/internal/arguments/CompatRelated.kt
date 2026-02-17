@@ -174,3 +174,20 @@ internal fun <T> applyStringConcat(
 
     return compilerArgs.stringConcat as T
 }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> K2JVMCompilerArguments.applySupportCompatqualCheckerFrameworkAnnotations(mode: T?) {
+    require(mode is String?) { "Xsupport-compatqual-checker-framework-annotations must be a string, but was $mode" }
+
+    this.supportCompatqualCheckerFrameworkAnnotations = mode as String?
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T> applySupportCompatqualCheckerFrameworkAnnotations(
+    currentValue: Any?,
+    compilerArgs: K2JVMCompilerArguments,
+): T {
+    require(currentValue is String?) { "Xsupport-compatqual-checker-framework-annotations must be a string, but was $currentValue" }
+
+    return compilerArgs.supportCompatqualCheckerFrameworkAnnotations as T
+}

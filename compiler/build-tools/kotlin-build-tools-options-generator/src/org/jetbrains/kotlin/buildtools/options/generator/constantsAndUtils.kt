@@ -89,6 +89,7 @@ internal val enumNameAccessors = mutableMapOf(
     LambdasMode::class to LambdasMode::modeName,
     SamConversionsMode::class to SamConversionsMode::modeName,
     StringConcatMode::class to StringConcatMode::modeName,
+    CompatqualAnnotationsMode::class to CompatqualAnnotationsMode::modeName,
 )
 
 internal val customTypeAccessors = mutableSetOf(ProfileCompilerCommand::class)
