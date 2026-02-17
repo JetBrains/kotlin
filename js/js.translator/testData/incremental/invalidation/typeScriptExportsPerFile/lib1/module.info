@@ -18,3 +18,20 @@ STEP 4:
         U : l1.0.4.kt -> l1.kt
     modified ir: l1.kt
 STEP 5..6:
+STEP 7:
+    modifications:
+        U : l1.7.kt -> l1.kt
+    modified ir: l1.kt
+    expected dts: l1.7.d.ts
+STEP 8:
+    modifications:
+        U : l1.8.kt -> l1.kt
+    modified ir: l1.kt
+    expected dts: l1.8.d.ts
+STEP 9:
+    modifications:
+        U : l1.9.kt -> l1.kt
+    modified ir: l1.kt
+    expected dts: l1.9.d.ts
+STEP 10:
+    updated exports: l1.kt

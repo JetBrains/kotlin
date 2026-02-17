@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.klib.reader.KaModules
 import org.jetbrains.kotlin.analysis.api.klib.reader.createKaModulesForStandaloneAnalysis
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedDeclaration
-import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptMerger
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionGenerator
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScriptFragment
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.TsCompilationStrategy
@@ -41,7 +41,7 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
         return emptyList()
     }
 
-    val tsMerger = TypeScriptMerger(config.artifactConfiguration.moduleKind)
+    val tsMerger = TypeScriptDefinitionGenerator(config.artifactConfiguration.moduleKind)
     val kaModules = createKaModulesForStandaloneAnalysis(klibs, config.targetPlatform)
     val exportModel = klibs.map {
         generateExportModelForModule(it, kaModules, config)
@@ -64,7 +64,8 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
                     val dtsFile = config.artifactConfiguration.outputDtsFile(artifact.externalModuleName).normalizedAbsoluteFile
                     val tsDefinitions = tsMerger.generateSingleWrappedTypeScriptDefinitions(
                         jsFileName,
-                        artifact.exportModel.toTypeScriptFragment(config.artifactConfiguration.moduleKind)
+                        artifact.exportModel.toTypeScriptFragment(config.artifactConfiguration.moduleKind),
+                        null
                     )
                     dtsFile.writeText(tsDefinitions.body)
                     dtsFile
@@ -75,7 +76,7 @@ public fun runTypeScriptExport(klibs: List<KlibInputModule<TypeScriptModuleConfi
 }
 
 private fun writeMergedTsFile(
-    tsMerger: TypeScriptMerger,
+    tsMerger: TypeScriptDefinitionGenerator,
     artifacts: List<TypeScriptModuleArtifact>,
     config: WebArtifactConfiguration,
     moduleName: String,

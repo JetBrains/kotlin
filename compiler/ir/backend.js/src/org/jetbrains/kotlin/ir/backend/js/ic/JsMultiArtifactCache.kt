@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionsFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragmentHeader
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
 
@@ -20,6 +22,20 @@ abstract class JsMultiArtifactCache<T : JsMultiArtifactCache.CacheInfo> {
     open fun commitOnyTypeScriptFiles(cacheInfo: T): Boolean = false
     abstract fun loadTypeScriptFragment(cacheInfo: T): TypeScriptDefinitionsFragment?
     abstract fun commitTypeScriptFragment(cacheInfo: T, fragment: TypeScriptDefinitionsFragment?)
+
+    protected fun CodedInputStream.fetchImportedAndExportedTypes(): ImportedAndExportedTypes {
+        val importedTypes = mutableMapOf<ClassId, String>()
+        repeat(readInt32()) {
+            importedTypes[ClassId.fromString(readString())] = readString()
+        }
+
+        val exportedTypes = mutableMapOf<ClassId, String>()
+        repeat(readInt32()) {
+            exportedTypes[ClassId.fromString(readString())] = readString()
+        }
+
+        return ImportedAndExportedTypes(importedTypes, exportedTypes)
+    }
 
     protected fun CodedInputStream.fetchJsIrModuleHeaderNames(): JsIrModuleHeaderNames {
         val definitions = mutableSetOf<String>()
@@ -41,6 +57,20 @@ abstract class JsMultiArtifactCache<T : JsMultiArtifactCache.CacheInfo> {
         }
 
         return JsIrModuleHeaderNames(definitions, nameBindings, optionalCrossModuleImports)
+    }
+
+    protected fun CodedOutputStream.commitImportedAndExportedTypes(tsFragmentHeader: TypeScriptFragmentHeader) {
+        writeInt32NoTag(tsFragmentHeader.importedTypes.size)
+        tsFragmentHeader.importedTypes.forEach { (classId, importedAs) ->
+            writeStringNoTag(classId.asString())
+            writeStringNoTag(importedAs)
+        }
+
+        writeInt32NoTag(tsFragmentHeader.exportedTypes.size)
+        tsFragmentHeader.exportedTypes.forEach { (classId, exportedAs) ->
+            writeStringNoTag(classId.asString())
+            writeStringNoTag(exportedAs)
+        }
     }
 
     protected fun CodedOutputStream.commitJsIrModuleHeaderNames(jsIrHeader: JsIrModuleHeader) {
@@ -71,12 +101,18 @@ abstract class JsMultiArtifactCache<T : JsMultiArtifactCache.CacheInfo> {
 
     interface CacheInfo {
         val jsIrHeader: JsIrModuleHeader
+        val tsFragmentHeader: TypeScriptFragmentHeader?
     }
 
     protected data class JsIrModuleHeaderNames(
         val definitions: Set<String>,
         val nameBindings: Map<String, String>,
         val optionalCrossModuleImports: Set<String>,
+    )
+
+    protected data class ImportedAndExportedTypes(
+        val importedTypes: Map<ClassId, String>,
+        val exportedTypes: Map<ClassId, String>,
     )
 
     protected enum class NameType(val typeMask: Int) {

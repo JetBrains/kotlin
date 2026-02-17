@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionsFragment
-import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptMerger
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionGenerator
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragmentHeader
+import org.jetbrains.kotlin.ir.backend.js.tsexport.merge
 import org.jetbrains.kotlin.js.artifacts.CachedTestFunctionsWithTheirPackage
 import org.jetbrains.kotlin.js.artifacts.PerFileGenerator
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
@@ -78,6 +81,7 @@ class JsPerFileCache(
     sealed class CachedFileInfo(val moduleArtifact: JsModuleArtifact, moduleHeader: JsIrModuleHeader?) : CacheInfo {
         var crossFileReferencesHash: ICHash = ICHash()
         final override lateinit var jsIrHeader: JsIrModuleHeader
+        override var tsFragmentHeader: TypeScriptFragmentHeader? = null
 
         init {
             if (moduleHeader != null) jsIrHeader = moduleHeader
@@ -108,7 +112,11 @@ class JsPerFileCache(
             }
         }
 
-        open class MainFileCachedInfo(moduleArtifact: JsModuleArtifact, fileArtifact: JsSrcFileArtifact, moduleHeader: JsIrModuleHeader? = null) :
+        open class MainFileCachedInfo(
+            moduleArtifact: JsModuleArtifact,
+            fileArtifact: JsSrcFileArtifact,
+            moduleHeader: JsIrModuleHeader? = null,
+        ) :
             SerializableCachedFileInfo(moduleArtifact, fileArtifact, moduleHeader) {
             var mainFunctionTag: String? = null
             var testEnvironment: JsIrProgramTestEnvironment? = null
@@ -174,7 +182,8 @@ class JsPerFileCache(
             fileArtifact: JsSrcFileArtifact,
             moduleHeader: JsIrModuleHeader? = null,
             var tsDeclarationsHash: Long? = null,
-            var onlyDtsWereChanged: Boolean = false
+            var onlyDtsWereChanged: Boolean = false,
+            override var tsFragmentHeader: TypeScriptFragmentHeader? = null
         ) : SerializableCachedFileInfo(moduleArtifact, fileArtifact, moduleHeader) {
             val jsFileArtifact by lazy(LazyThreadSafetyMode.NONE) { getArtifactWithName(CACHED_EXPORT_FILE_JS) }
             val dtsFileArtifact by lazy(LazyThreadSafetyMode.NONE) { getArtifactWithName(CACHED_FILE_D_TS) }
@@ -183,7 +192,14 @@ class JsPerFileCache(
                 override val filePrefix: String,
                 moduleHeader: JsIrModuleHeader,
                 private val cachedFileInfos: List<ExportFileCachedInfo>,
-            ) : ExportFileCachedInfo(cachedFileInfos.first().moduleArtifact, cachedFileInfos.first().fileArtifact, moduleHeader) {
+            ) : ExportFileCachedInfo(
+                cachedFileInfos.first().moduleArtifact,
+                cachedFileInfos.first().fileArtifact,
+                moduleHeader,
+                tsFragmentHeader = cachedFileInfos
+                    .mapNotNull { it.tsFragmentHeader }
+                    .ifNotEmpty { merge() }
+            ) {
                 override fun loadJsIrModule(): JsIrModule = cachedFileInfos.map { it.loadJsIrModule() }.merge()
             }
         }
@@ -240,6 +256,9 @@ class JsPerFileCache(
 
         val importWithEffectIn = ifTrue { readString() }
         val (definitions, nameBindings, optionalCrossModuleImports) = fetchJsIrModuleHeaderNames()
+
+        it.tsFragmentHeader = ifTrue { fetchImportedAndExportedTypes() }
+            ?.let { (importedTypes, exportedTypes) -> TypeScriptFragmentHeader(moduleName, importedTypes, exportedTypes) }
 
         it.jsIrHeader = JsIrModuleHeader(
             moduleName = moduleName,
@@ -308,6 +327,7 @@ class JsPerFileCache(
         }
         ifNotNull(cachedFileInfo.jsIrHeader.importedWithEffectInModuleWithName) { writeStringNoTag(it) }
         commitJsIrModuleHeaderNames(cachedFileInfo.jsIrHeader)
+        ifNotNull(cachedFileInfo.tsFragmentHeader) { commitImportedAndExportedTypes(it) }
     }
 
     private fun CodedOutputStream.writeTestFunctions(cachedTestFunctionsWithTheirPackage: CachedTestFunctionsWithTheirPackage) {
@@ -381,7 +401,8 @@ class JsPerFileCache(
                     fileArtifact,
                     headers.exportHeader,
                     headers.tsDeclarationsHash,
-                    onlyDtsWereChanged = !isSomethingChangedInExportFile
+                    onlyDtsWereChanged = !isSomethingChangedInExportFile,
+                    headers.exportHeader.associatedModule?.makeTypeScriptFragmentHeader()
                 )
             } else {
                 cachedExportFileInfo
@@ -424,7 +445,8 @@ class JsPerFileCache(
         val header = cacheInfo.jsIrHeader
         val dtsFragments = header.associatedModule?.fragments?.mapNotNull { it.dts }
         // TODO(KT-48979): as soon as we add cross TypeScript files linking, this logic should be moved from here
-        val typeScriptDefinitions = dtsFragments?.let { TypeScriptMerger(moduleKind).mergeIntoTypeScriptDefinitions(header.externalModuleName, it) }
+        val typeScriptDefinitions =
+            dtsFragments?.let { TypeScriptDefinitionGenerator(moduleKind).mergeIntoTypeScriptDefinitions(header.externalModuleName, it) }
         cacheInfo.dtsFileArtifact?.writeIfNotNull(typeScriptDefinitions?.body)
         return true
     }

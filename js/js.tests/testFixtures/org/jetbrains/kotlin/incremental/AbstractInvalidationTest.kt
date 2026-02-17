@@ -441,9 +441,10 @@ abstract class AbstractInvalidationTest(
                 ),
                 input = ConfigurationPipelineArtifact(configuration, rootDisposable),
             )
-        } catch (_: PipelineStepException) {
+        } catch (e: PipelineStepException) {
             // Some pipeline step did not produce any output because of an error.
             // Check for an error below.
+            println(e)
         }
 
         reportCollectedDiagnostics(configuration, diagnosticCollector, messageCollector)

@@ -30,8 +30,8 @@ public fun DataWriter.writeTypeScriptFragment(fragment: TypeScriptDefinitionsFra
         serializer.internalizeString(name)
     }
     writeCollection(fragment.exportedTypes.entries) { (classId, name) ->
-        writeString(classId.asString())
-        writeString(name)
+        serializer.internalizeString(classId.asString())
+        serializer.internalizeString(name)
     }
 }
 

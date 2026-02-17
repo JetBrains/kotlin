@@ -23,5 +23,4 @@ public fun AbstractDeserializer.readTypeScriptFragment(): TypeScriptDefinitionsF
 private fun AbstractDeserializer.readClassId(): ClassId =
     ClassId.fromString(stringTable[readInt()])
 
-private class TypeScriptFragmentDeserializer(source: ByteArray) : AbstractDeserializer(source) {
-}
+private class TypeScriptFragmentDeserializer(source: ByteArray) : AbstractDeserializer(source)

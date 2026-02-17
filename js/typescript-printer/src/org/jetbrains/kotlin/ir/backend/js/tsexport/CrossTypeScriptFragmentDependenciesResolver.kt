@@ -5,29 +5,31 @@
 
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
+import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.ClassId
 
 public data class TypeScriptFragmentHeader(
-    val modulePath: String,
+    val moduleName: String,
     val importedTypes: Map<ClassId, String>,
     val exportedTypes: Map<ClassId, String>,
-    var associatedFragment: TypeScriptDefinitionsFragment? = null
 )
 
 public data class CrossFragmentTypeImport(
     val importedAs: String,
     val exportedAs: String,
-    val sourcePath: String,
+    val importModuleName: String,
 )
 
-public data class CrossFragmentReferences(val imports: List<CrossFragmentTypeImport>) {
-    public companion object {
-        public fun empty(): CrossFragmentReferences = CrossFragmentReferences(emptyList())
-    }
-}
+public data class CrossFragmentReferences(val imports: List<CrossFragmentTypeImport>)
 
-public class CrossTypeScriptFragmentDependenciesResolver(private val headers: List<TypeScriptFragmentHeader>) {
+public class CrossTypeScriptFragmentDependenciesResolver(
+    private val moduleKind: ModuleKind,
+    private val headers: Iterable<TypeScriptFragmentHeader>
+) {
     public fun resolveCrossFragmentDependencies(): Map<TypeScriptFragmentHeader, CrossFragmentReferences> {
+        // TODO: support other module systems
+        if (moduleKind != ModuleKind.ES) return emptyMap()
+
         val headerToBuilder = headers.associateWith { TypeScriptFragmentReferenceBuilder(it) }
         val typeExportedBy = mutableMapOf<ClassId, TypeScriptFragmentReferenceBuilder>()
 
@@ -75,7 +77,7 @@ private class TypeScriptFragmentReferenceBuilder(
             CrossFragmentTypeImport(
                 exportedAs = exportedAs,
                 importedAs = ref.importedAs,
-                sourcePath = ref.sourceBuilder.header.modulePath
+                importModuleName = ref.sourceBuilder.header.moduleName
             )
         }
 

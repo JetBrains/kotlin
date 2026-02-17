@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 
-import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionsFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments

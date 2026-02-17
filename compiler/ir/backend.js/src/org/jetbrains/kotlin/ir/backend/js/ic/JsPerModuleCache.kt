@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionsFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragmentHeader
 import org.jetbrains.kotlin.ir.backend.js.tsexport.deserializeTypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.tsexport.serializeTypeScriptFragment
 import org.jetbrains.kotlin.js.config.ModuleKind
@@ -29,6 +30,7 @@ class JsPerModuleCache(
     class CachedModuleInfo(
         val artifact: JsModuleArtifact,
         override val jsIrHeader: JsIrModuleHeader,
+        override val tsFragmentHeader: TypeScriptFragmentHeader?,
         var crossModuleReferencesHash: ICHash = ICHash()
     ) : CacheInfo
 
@@ -39,6 +41,8 @@ class JsPerModuleCache(
         val reexportedInModuleWithName = ifTrue { readString() }
         val importedWithEffectInModuleWithName = ifTrue { readString() }
         val (definitions, nameBindings, optionalCrossModuleImports) = fetchJsIrModuleHeaderNames()
+        val tsFragmentHeader = ifTrue { fetchImportedAndExportedTypes() }
+            ?.let { (importedTypes, exportedTypes) -> TypeScriptFragmentHeader(moduleExternalName, importedTypes, exportedTypes) }
 
         CachedModuleInfo(
             artifact = this@fetchModuleInfo,
@@ -52,6 +56,7 @@ class JsPerModuleCache(
                 importedWithEffectInModuleWithName = importedWithEffectInModuleWithName,
                 associatedModule = null
             ),
+            tsFragmentHeader,
             crossModuleReferencesHash = crossModuleReferencesHash
         )
     }
@@ -62,6 +67,7 @@ class JsPerModuleCache(
             ifNotNull(jsIrHeader.reexportedInModuleWithName) { writeStringNoTag(it) }
             ifNotNull(jsIrHeader.importedWithEffectInModuleWithName) { writeStringNoTag(it) }
             commitJsIrModuleHeaderNames(jsIrHeader)
+            ifNotNull(tsFragmentHeader) { commitImportedAndExportedTypes(it) }
         }
     }
 
@@ -101,14 +107,14 @@ class JsPerModuleCache(
             fun loadModuleInfo(): CachedModuleInfo {
                 val couldBeReexportedInMain = moduleKind !== ModuleKind.ES && artifact !== mainModule
                 val couldBeImportedWithEffectInMain = moduleKind === ModuleKind.ES && artifact !== mainModule
+                val loadedModule = artifact.loadJsIrModule(
+                    reexportedInModuleWithName = mainModuleSafeName.takeIf { couldBeReexportedInMain },
+                    importedWithEffectInModuleWithName = mainModuleSafeName.takeIf { couldBeImportedWithEffectInMain }
+                )
                 return CachedModuleInfo(
                     artifact,
-                    artifact
-                        .loadJsIrModule(
-                            reexportedInModuleWithName = mainModuleSafeName.takeIf { couldBeReexportedInMain },
-                            importedWithEffectInModuleWithName = mainModuleSafeName.takeIf { couldBeImportedWithEffectInMain }
-                        )
-                        .makeModuleHeader()
+                    loadedModule.makeModuleHeader(),
+                    loadedModule.makeTypeScriptFragmentHeader()
                 )
             }
 

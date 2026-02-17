@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportModelToTypeScripFragment
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitions
-import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptMerger
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionGenerator
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -127,7 +127,7 @@ fun compileToLoweredIr(
         val exportModel = ExportModelGenerator(context).generateExport(allModules)
         val exportModelToDtsTranslator = ExportModelToTypeScripFragment(moduleKind)
         val fragment = exportModelToDtsTranslator.generateTypeScriptFragment(exportModel.declarations)
-        TypeScriptMerger(moduleKind).generateSingleWrappedTypeScriptDefinitions("", fragment)
+        TypeScriptDefinitionGenerator(moduleKind).generateSingleWrappedTypeScriptDefinitions("", fragment, null)
     }
 
     lowerPreservingTags(

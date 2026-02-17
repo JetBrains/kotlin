@@ -16,6 +16,8 @@ private const val declare = "declare "
 private const val default = "default "
 private const val export = "export "
 
+private const val defaultName = "default"
+
 private const val getInstance = "getInstance"
 
 private const val Metadata = $$"$metadata$"
@@ -34,19 +36,29 @@ public fun List<ExportedDeclaration>.toTypeScriptFragment(moduleKind: ModuleKind
     return ExportModelToTypeScripFragment(moduleKind).generateTypeScriptFragment(this)
 }
 
-@JvmInline
-private value class ImportedTypes(private val map: MutableMap<ClassId, String>) {
-    fun importType(classId: ClassId, importedName: String) {
-        map.put(classId, importedName)?.let {
+private class ImportedTypes(
+    private val importMap: MutableMap<ClassId, String>,
+    private val exportMap: MutableMap<ClassId, String>
+) {
+    fun importType(importedType: ExportedType.ClassType) {
+        val classId = importedType.classId ?: return
+        val importedName = importedType.name
+        if (classId in exportMap) return
+        importMap.put(classId, importedName)?.let {
             if (it != importedName) error("Type imported with different names in a single fragment: $classId")
         }
     }
 }
 
-@JvmInline
-private value class ExportedTypes(private val map: MutableMap<ClassId, String>) {
-    fun declareType(classId: ClassId, exportedName: String) {
-        map.put(classId, exportedName)?.let { error("Type declared multiple times: $classId") }
+private class ExportedTypes(
+    private val exportMap: MutableMap<ClassId, String>,
+    private val importMap: MutableMap<ClassId, String>
+) {
+    fun declareType(exportedType: ExportedClass) {
+        val classId = exportedType.originalClassId ?: return
+        val exportedName = if (exportedType.isDefaultExport) defaultName else exportedType.name
+        exportMap.put(classId, exportedName)?.let { error("Type declared multiple times: $classId") }
+        importMap.remove(classId)
     }
 }
 
@@ -65,14 +77,14 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
     public fun generateTypeScriptFragment(declarations: List<ExportedDeclaration>): TypeScriptDefinitionsFragment {
         val importedTypes = mutableMapOf<ClassId, String>()
         val exportedTypes = mutableMapOf<ClassId, String>()
-        val raw = context(ImportedTypes(importedTypes), ExportedTypes(exportedTypes)) {
+        val raw = context(
+            ImportedTypes(importedTypes, exportedTypes),
+            ExportedTypes(exportedTypes, importedTypes)
+        ) {
             declarations.toTypeScript()
         }
         return TypeScriptDefinitionsFragment(raw, importedTypes, exportedTypes)
     }
-
-    private val ExportedDeclaration.isDefaultExport: Boolean
-        get() = attributes.contains(ExportedAttribute.DefaultExport)
 
     context(imports: ImportedTypes, exports: ExportedTypes)
     private fun List<ExportedDeclaration>.toTypeScript(): String {
@@ -231,7 +243,7 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
 
     context(imports: ImportedTypes, exports: ExportedTypes)
     private fun ExportedObject.generateTypeScriptString(indent: String, prefix: String): String {
-        originalClassId?.let { exports.declareType(it, name) }
+        exports.declareType(this)
 
         val shouldGenerateObjectWithGetInstance = isEsModules && !isExternal && isTopLevel
         val constructorTypeReference =
@@ -316,7 +328,7 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
 
     context(imports: ImportedTypes, exports: ExportedTypes)
     private fun ExportedRegularClass.generateTypeScriptString(indent: String, prefix: String): String {
-        originalClassId?.let { exports.declareType(it, name) }
+        exports.declareType(this)
 
         val keyword = if (isInterface) "interface" else "class"
         val superInterfacesKeyword = if (isInterface) "extends" else "implements"
@@ -463,7 +475,7 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
             "abstract new " + renderTypeParameters(typeParameters) + "() => ${returnType.toTypeScript(indent, isInCommentContext)}"
 
         is ExportedType.ClassType -> {
-            classId?.let { imports.importType(it, name) }
+            imports.importType(this)
             name + if (arguments.isNotEmpty()) "<${arguments.joinToString(", ") { it.toTypeScript(indent, isInCommentContext) }}>" else ""
         }
 
@@ -520,3 +532,7 @@ public class ExportModelToTypeScripFragment(private val moduleKind: ModuleKind) 
         return "/** @deprecated $message */"
     }
 }
+
+private val ExportedDeclaration.isDefaultExport: Boolean
+    get() = attributes.contains(ExportedAttribute.DefaultExport)
+

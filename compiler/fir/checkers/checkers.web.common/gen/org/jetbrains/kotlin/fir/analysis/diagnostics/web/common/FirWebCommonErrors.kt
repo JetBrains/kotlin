@@ -58,7 +58,7 @@ object FirWebCommonErrors : KtDiagnosticsContainer() {
     // Export
     val NESTED_JS_EXPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_JS_EXPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE: KtDiagnosticFactory0 = KtDiagnosticFactory0("MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val WRONG_JS_EXPORT_TARGET_VISIBILITY: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_EXPORT_TARGET_VISIBILITY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val WRONG_JS_EXPORT_TARGET_VISIBILITY: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_EXPORT_TARGET_VISIBILITY", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // JsCode
     val JSCODE_ARGUMENT_NON_CONST_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JSCODE_ARGUMENT_NON_CONST_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitions
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionsFragment
-import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptMerger
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionGenerator
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.util.TextOutputImpl
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -604,7 +605,7 @@ private fun generateWrappedModuleBody(
                 outJsProgram = outJsProgram,
                 typeScriptDefinitions = runIf(dtsCompilationStrategy != TsCompilationStrategy.NONE) {
                     val tsFragments = fragments.mapNotNull { it.dts }.ifEmpty { return@runIf null }
-                    TypeScriptMerger(moduleKind).mergeIntoTypeScriptDefinitions(mainModuleName, tsFragments)
+                    TypeScriptDefinitionGenerator(moduleKind).mergeIntoTypeScriptDefinitions(mainModuleName, tsFragments)
                 }
             )
         }
@@ -630,9 +631,12 @@ private fun generateMultiWrappedModuleBody(
     relativeRequirePath: Boolean,
     outJsProgram: Boolean
 ): CompilationOutputsBuilt {
-    val tsMerger = TypeScriptMerger(moduleKind)
+    val tsDefinitionGenerator = TypeScriptDefinitionGenerator(moduleKind)
     val noTypeScript = dtsCompilationStrategy == TsCompilationStrategy.NONE
     val generateTypeScriptPerArtifact = dtsCompilationStrategy == TsCompilationStrategy.PER_ARTIFACT
+    val tsReferences = runIf(generateTypeScriptPerArtifact) {
+        program.calculateTypeScriptFragmentDependencies(moduleKind)
+    }
     // mutable container allows explicitly remove elements from itself,
     // so we are able to help GC to free heavy JsIrModule objects
     // TODO: It makes sense to invent something better, because this logic can be easily broken
@@ -644,11 +648,11 @@ private fun generateMultiWrappedModuleBody(
         while (moduleToRef.isNotEmpty()) {
             moduleToRef.removeFirst().let { (module, moduleRef) ->
                 val moduleName = module.externalModuleName
-                val tsFragments = runIf(!noTypeScript) { module.fragments.mapNotNull { it.dts }.ifEmpty { null } }
-                val dependencyTsFragment = tsFragments?.let(tsMerger::mergeIntoSingleFragment)
+                val dependencyTsFragment = runIf(!noTypeScript) { module.typeScriptFragment }
                 val dependencyTsDefinitions = dependencyTsFragment?.let {
-                    if (generateTypeScriptPerArtifact) {
-                        tsMerger.generateSingleWrappedTypeScriptDefinitions(moduleName, it)
+                    if (tsReferences != null) {
+                        val references = tsReferences[module]
+                        tsDefinitionGenerator.generateSingleWrappedTypeScriptDefinitions(moduleName, it, references)
                     } else {
                         mainModuleTsFragments.add(it)
                         null
@@ -669,21 +673,29 @@ private fun generateMultiWrappedModuleBody(
         }
     }
 
-    if (!noTypeScript) {
-        main.fragments.mapNotNullTo(mainModuleTsFragments) { fragment ->
-            fragment.dts
-        }
-    }
-
     val mainModule = generateSingleWrappedModuleBody(
         mainModuleName,
         moduleKind,
         main.fragments,
         sourceMapsInfo,
         generateCallToMain = true,
-        typeScriptDefinitions = runIf(!noTypeScript) { tsMerger.mergeIntoTypeScriptDefinitions(mainModuleName, mainModuleTsFragments) },
-        mainRef,
-        outJsProgram
+        crossModuleReferences = mainRef,
+        outJsProgram = outJsProgram,
+        typeScriptDefinitions = when {
+            generateTypeScriptPerArtifact ->
+                main.typeScriptFragment?.let {
+                    tsDefinitionGenerator.generateSingleWrappedTypeScriptDefinitions(mainModuleName, it, tsReferences?.get(main))
+                }
+            noTypeScript -> null
+            else -> {
+                mainModuleTsFragments.addIfNotNull(main.typeScriptFragment)
+                tsDefinitionGenerator.mergeIntoTypeScriptDefinitions(
+                    mainModuleName,
+                    mainModuleTsFragments
+                )
+            }
+
+        }
     )
 
     return mainModule.also {

@@ -9,12 +9,16 @@ import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsCached
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleDependenciesResolver
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrModuleHeader
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.generateSingleWrappedModuleBody
+import org.jetbrains.kotlin.ir.backend.js.tsexport.CrossTypeScriptFragmentDependenciesResolver
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionsFragment
-import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptMerger
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionGenerator
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragmentHeader
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.TsCompilationStrategy
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /**
@@ -58,7 +62,7 @@ class JsExecutableProducer(
             outJsProgram = outJsProgram,
             typeScriptDefinitions = runIf(dtsCompilationStrategy != TsCompilationStrategy.NONE) {
                 val tsFragments = fragments.mapNotNull { it.dts }.ifEmpty { return@runIf null }
-                TypeScriptMerger(moduleKind).mergeIntoTypeScriptDefinitions(mainModuleName, tsFragments)
+                TypeScriptDefinitionGenerator(moduleKind).mergeIntoTypeScriptDefinitions(mainModuleName, tsFragments)
             }
         )
         return BuildResult(out, listOf(mainModuleName))
@@ -68,7 +72,7 @@ class JsExecutableProducer(
         outJsProgram: Boolean,
         jsMultiArtifactCache: JsMultiArtifactCache<CacheInfo>
     ): BuildResult {
-        val tsMerger = TypeScriptMerger(moduleKind)
+        val tsDefinitionGenerator = TypeScriptDefinitionGenerator(moduleKind)
         val noTypeScript = dtsCompilationStrategy == TsCompilationStrategy.NONE
         val generateTypeScriptPerArtifact = dtsCompilationStrategy == TsCompilationStrategy.PER_ARTIFACT
 
@@ -77,8 +81,18 @@ class JsExecutableProducer(
         val cachedProgram = jsMultiArtifactCache.loadProgramHeadersFromCache()
 
         stopwatch.startNext("Cross module references resolving")
-        val jsResolver = CrossModuleDependenciesResolver(moduleKind, cachedProgram.map { it.jsIrHeader })
+        val (jsIrHeaders, tsFragmentHeaders) = cachedProgram.fold(mutableListOf<JsIrModuleHeader>() to mutableListOf<TypeScriptFragmentHeader>()) { (jsIrHeaders, tsFragmentHeaders), cache ->
+            jsIrHeaders.add(cache.jsIrHeader)
+            tsFragmentHeaders.addIfNotNull(cache.tsFragmentHeader)
+            jsIrHeaders to tsFragmentHeaders
+        }
+
+        val jsResolver = CrossModuleDependenciesResolver(moduleKind, jsIrHeaders)
         val jsCrossModuleReferences = jsResolver.resolveCrossModuleDependencies(relativeRequirePath)
+        val tsCrossFragmentReferences = runIf(generateTypeScriptPerArtifact) {
+            CrossTypeScriptFragmentDependenciesResolver(moduleKind, tsFragmentHeaders).resolveCrossFragmentDependencies()
+        }
+
         val mainModuleTsFragments = mutableListOf<TypeScriptDefinitionsFragment>()
 
         stopwatch.startNext("Loading JS IR modules with updated cross module references")
@@ -107,16 +121,21 @@ class JsExecutableProducer(
             }
 
             if (!noTypeScript && mergedTsFragment == null) {
-                val tsFragments = jsIrHeader.associatedModule?.fragments?.mapNotNull { it.dts }?.ifEmpty { null }
-                mergedTsFragment = tsFragments?.let(tsMerger::mergeIntoSingleFragment)
+                mergedTsFragment = jsIrHeader.associatedModule?.typeScriptFragment
                 stopwatch.startNext("Committing module TypeScript fragment")
                 jsMultiArtifactCache.commitTypeScriptFragment(this, mergedTsFragment)
             }
 
             val tsDefinitions = mergedTsFragment?.let {
                 when {
-                    generateTypeScriptPerArtifact -> tsMerger.generateSingleWrappedTypeScriptDefinitions(moduleName, mergedTsFragment)
-                    isMainModule -> tsMerger.mergeIntoTypeScriptDefinitions(moduleName, mainModuleTsFragments + mergedTsFragment)
+                    generateTypeScriptPerArtifact ->
+                        tsDefinitionGenerator.generateSingleWrappedTypeScriptDefinitions(
+                            moduleName,
+                            mergedTsFragment,
+                            tsCrossFragmentReferences?.get(tsFragmentHeader)
+                        )
+                    isMainModule ->
+                        tsDefinitionGenerator.mergeIntoTypeScriptDefinitions(moduleName, mainModuleTsFragments + mergedTsFragment)
                     else -> null.also { mainModuleTsFragments.add(mergedTsFragment) }
                 }
             }

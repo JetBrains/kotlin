@@ -28,3 +28,23 @@ STEP 6:
         U : l2.6.kt -> l2.kt
     modified ir: l2.kt
     expected dts: l2.6.d.ts
+STEP 7:
+    dependencies: lib1
+    modifications:
+        U : l2.7.kt -> l2.kt
+    modified ir: l2.kt
+    expected dts: l2.7.d.ts
+STEP 8:
+    dependencies: lib1
+    updated imports: l2.kt
+    expected dts: l2.8.d.ts
+STEP 9:
+    dependencies: lib1
+    updated imports: l2.kt
+    expected dts: l2.9.d.ts
+STEP 10:
+    dependencies: lib1
+    modifications:
+        U : l2.10.kt -> l2.kt
+    modified ir: l2.kt
+    expected dts: l2.10.d.ts

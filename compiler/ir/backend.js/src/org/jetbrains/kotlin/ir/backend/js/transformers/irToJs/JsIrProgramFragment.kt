@@ -9,12 +9,20 @@ import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICModule
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
+import org.jetbrains.kotlin.ir.backend.js.tsexport.CrossFragmentReferences
+import org.jetbrains.kotlin.ir.backend.js.tsexport.CrossTypeScriptFragmentDependenciesResolver
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptDefinitionsFragment
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragmentHeader
+import org.jetbrains.kotlin.ir.backend.js.tsexport.merge
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.serializeTo
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsIdentifier
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.associateByNotNull
+import org.jetbrains.kotlin.utils.relativeRequirePathBetweenSources
 import java.io.File
 import java.io.OutputStream
 
@@ -54,6 +62,19 @@ class JsIrModule(
     val reexportedInModuleWithName: String? = null,
     val importedWithEffectInModuleWithName: String? = null,
 ) : IrICModule() {
+    val typeScriptFragment: TypeScriptDefinitionsFragment? by lazy(LazyThreadSafetyMode.NONE) {
+        fragments.mapNotNull { it.dts }.ifNotEmpty { merge() }
+    }
+
+    fun makeTypeScriptFragmentHeader(): TypeScriptFragmentHeader? {
+        val tsFragment = typeScriptFragment ?: return null
+        return TypeScriptFragmentHeader(
+            moduleName = externalModuleName,
+            importedTypes = tsFragment.importedTypes,
+            exportedTypes = tsFragment.exportedTypes
+        )
+    }
+
     fun makeModuleHeader(): JsIrModuleHeader {
         val nameBindings = mutableMapOf<String, String>()
         val definitions = mutableSetOf<String>()
@@ -97,6 +118,19 @@ class JsIrModuleHeader(
 }
 
 class JsIrProgram(private var modules: List<JsIrModule>) {
+    fun calculateTypeScriptFragmentDependencies(moduleKind: ModuleKind): Map<JsIrModule, CrossFragmentReferences> {
+        val moduleToTypeScripHeader = modules.associateByNotNull({ it.makeTypeScriptFragmentHeader() }, { it })
+        val resolver = CrossTypeScriptFragmentDependenciesResolver(moduleKind, moduleToTypeScripHeader.keys)
+        val crossFragmentReferences = resolver.resolveCrossFragmentDependencies()
+
+        return buildMap {
+            moduleToTypeScripHeader.forEach { (header, module) ->
+                val crossFragmentReference = crossFragmentReferences[header] ?: return@forEach
+                put(module, crossFragmentReference)
+            }
+        }
+    }
+
     fun asCrossModuleDependencies(moduleKind: ModuleKind, relativeRequirePath: Boolean): List<Pair<JsIrModule, CrossModuleReferences>> {
         val resolver = CrossModuleDependenciesResolver(moduleKind, modules.map { it.makeModuleHeader() })
         modules = emptyList()
@@ -238,17 +272,10 @@ private class JsIrModuleCrossModuleReferenceBuilder(
         )
     }
 
-    private fun relativeRequirePath(moduleHeader: JsIrModuleHeader): String? {
-        if (!this.relativeRequirePath) return null
-
-        val parentMain = File(header.externalModuleName).parentFile ?: return "./${moduleHeader.externalModuleName}"
-
-        val relativePath = File(moduleHeader.externalModuleName)
-            .toRelativeString(parentMain)
-            .replace(File.separator, "/")
-
-        return relativePath.takeIf { it.startsWith("../") } ?: "./$relativePath"
-    }
+    private fun relativeRequirePath(moduleHeader: JsIrModuleHeader): String? =
+        runIf(relativeRequirePath) {
+            relativeRequirePathBetweenSources(header.externalModuleName, moduleHeader.externalModuleName)
+        }
 }
 
 

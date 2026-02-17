@@ -12,9 +12,7 @@ abstract class AbstractDeserializer(private val source: ByteArray) {
     private val buffer: ByteBuffer = ByteBuffer.wrap(source)
     protected open val charset: Charset get() = Charsets.UTF_8
 
-    val stringTable: Array<String> by lazy {
-        readArray { readStringDirect() }
-    }
+    val stringTable = readArray { readStringDirect() }
 
     fun readByte(): Byte {
         return buffer.get()
