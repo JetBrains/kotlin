@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
-import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.AsmUtil.RECEIVER_PARAMETER_NAME
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irRichFunctionReference
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -56,6 +56,10 @@ class PrepareCallableReferencesForInlining(val context: JvmBackendContext) : Fil
                     (expression.arguments[param] as? IrRichFunctionReference)?.also {
                         it.origin = IrStatementOrigin.INLINE_LAMBDA
                         it.invokeFunction.origin = IrDeclarationOrigin.INLINE_LAMBDA
+                        // Rename <this> -> $receiver
+                        it.invokeFunction.parameters.singleOrNull { param -> param.name == SpecialNames.THIS }?.also { param ->
+                            param.name = Name.identifier(RECEIVER_PARAMETER_NAME)
+                        }
                     }
                 }
             }
@@ -78,7 +82,7 @@ class PrepareCallableReferencesForInlining(val context: JvmBackendContext) : Fil
  * Converts
  *
  * RICH_PROPERTY_REFERENCE
- *   bound <this>: ...
+ *   bound values
  *   getter: ...
  *     VALUE_PARAMETER <this>
  *     <getter_body>
@@ -87,15 +91,12 @@ class PrepareCallableReferencesForInlining(val context: JvmBackendContext) : Fil
  * ->
  *
  * RICH_FUNCTION_REFERENCE
- *   bound $receiver ...
+ *   bound values
  *   invoke:
  *     VALUE_PARAMETER $receiver
  *     <getter_body>
  */
-fun IrRichPropertyReference.convertToRichFunctionReference(context: LoweringContext): IrRichFunctionReference {
-    getterFunction.parameters.singleOrNull { it.name == SpecialNames.THIS }?.also {
-        it.name = Name.identifier(AsmUtil.RECEIVER_PARAMETER_NAME)
-    }
+private fun IrRichPropertyReference.convertToRichFunctionReference(context: LoweringContext): IrRichFunctionReference {
     val overriddenClass = context.irBuiltIns.functionN(getterFunction.parameters.size)
     val builder = context.createIrBuilder(getterFunction.symbol).at(this)
     val referenceType = overriddenClass.typeWith(getterFunction.parameters.map { it.type } + getterFunction.returnType)
