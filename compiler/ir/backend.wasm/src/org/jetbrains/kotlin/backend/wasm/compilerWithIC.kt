@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragments
+import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.compileIrFile
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
@@ -79,6 +80,8 @@ open class WasmCompilerWithIC(
             context,
             context.irFactory.stageController as WholeWorldStageController,
         )
+
+        overrideBuiltInsSignatures(context)
 
         return dirtyFiles.map { { compileIrFile(it) } }
     }

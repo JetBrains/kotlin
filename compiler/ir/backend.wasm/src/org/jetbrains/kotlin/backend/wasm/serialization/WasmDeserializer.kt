@@ -622,7 +622,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         equivalentFunctions = deserializeClosureCallExports(),
         jsModuleAndQualifierReferences = deserializeJsModuleAndQualifierReferences(),
         classAssociatedObjectsInstanceGetters = deserializeClassAssociatedObjectInstanceGetters(),
-        builtinIdSignatures = deserializeBuiltinIdSignatures(),
         objectInstanceFieldInitializers = deserializeList(::deserializeIdSignature),
         nonConstantFieldInitializers = deserializeList(::deserializeIdSignature),
     )
@@ -669,21 +668,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeClosureCallExports() = deserializeList { deserializePair(::deserializeString, ::deserializeIdSignature) }
     private fun deserializeJsModuleAndQualifierReferences() = deserializeSet(::deserializeJsModuleAndQualifierReference)
     private fun deserializeClassAssociatedObjectInstanceGetters() = deserializeList(::deserializeClassAssociatedObjects)
-
-    private fun deserializeBuiltinIdSignatures() =
-        deserializeNullable {
-            BuiltinIdSignatures(
-                throwable = deserializeNullable(::deserializeIdSignature),
-                kotlinAny = deserializeNullable(::deserializeIdSignature),
-                tryGetAssociatedObject = deserializeNullable(::deserializeIdSignature),
-                jsToKotlinAnyAdapter = deserializeNullable(::deserializeIdSignature),
-                jsToKotlinStringAdapter = deserializeNullable(::deserializeIdSignature),
-                unitGetInstance = deserializeNullable(::deserializeIdSignature),
-                runRootSuites = deserializeNullable(::deserializeIdSignature),
-                createString = deserializeNullable(::deserializeIdSignature),
-                registerModuleDescriptor = deserializeNullable(::deserializeIdSignature),
-            )
-        }
 
     private fun deserializeAssociatedObject(): AssociatedObject = withFlags {
         val obj = deserializeLong()
