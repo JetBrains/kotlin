@@ -753,15 +753,15 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                 // swift-tools-version: 5.9
                 import PackageDescription
                 let package = Package(
-                  name: "KotlinMultiplatformLinkedPackage",
+                  name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
                   platforms: [
                     .iOS("15.0")
                   ],
                   products: [
                     .library(
-                      name: "KotlinMultiplatformLinkedPackage",
+                      name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
                       type: .none,
-                      targets: ["KotlinMultiplatformLinkedPackage"]
+                      targets: ["$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME"]
                     )
                   ],
                   dependencies: [
@@ -771,7 +771,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                   ],
                   targets: [
                     .target(
-                      name: "KotlinMultiplatformLinkedPackage",
+                      name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
                       dependencies: [
                         .product(
                           name: "LocalSwiftPackage",
@@ -1021,15 +1021,15 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                             // swift-tools-version: 5.9
                             import PackageDescription
                             let package = Package(
-                              name: "KotlinMultiplatformLinkedPackage",
+                              name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
                               platforms: [
                                 .iOS("15.0")
                               ],
                               products: [
                                 .library(
-                                  name: "KotlinMultiplatformLinkedPackage",
+                                  name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
                                   type: .none,
-                                  targets: ["KotlinMultiplatformLinkedPackage"]
+                                  targets: ["$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME"]
                                 )
                               ],
                               dependencies: [
@@ -1037,7 +1037,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                               ],
                               targets: [
                                 .target(
-                                  name: "KotlinMultiplatformLinkedPackage",
+                                  name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
                                   dependencies: [
                                     .product(name: "_producer", package: "_producer")
                                   ]
@@ -1084,7 +1084,7 @@ public open expect fun initWithAuthorizationEndpoint(authorizationEndpoint: plat
                               ]
                             )
                         """.trimIndent() + "\n",
-                    manifestRelativePath = "iosApp/KotlinMultiplatformLinkedPackage/subpackages/_producer/Package.swift"
+                    manifestRelativePath = "iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/subpackages/_producer/Package.swift"
                 )
             }
         }
@@ -1209,7 +1209,7 @@ private fun TestProject.testVisibleSignatures(
 private fun TestProject.testPackageManifest(
     expectedContent: String,
     swiftImportBasePath: Path = projectPath,
-    manifestRelativePath: String = "iosApp/KotlinMultiplatformLinkedPackage/Package.swift",
+    manifestRelativePath: String = "iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/Package.swift",
 ) {
     val packageSwift = swiftImportBasePath.resolve(manifestRelativePath)
 
