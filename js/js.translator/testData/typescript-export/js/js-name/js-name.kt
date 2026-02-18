@@ -105,5 +105,5 @@ interface __TestInterface {
     }
 
     @JsName("NestedJsName")
-    class <!WRONG_EXPORTED_DECLARATION!>__NestJsNameTest(@JsName("value") val __value: Int)<!>
+    class __NestJsNameTest(@JsName("value") val __value: Int)
 }

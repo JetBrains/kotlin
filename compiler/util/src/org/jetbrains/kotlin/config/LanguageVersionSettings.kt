@@ -498,6 +498,7 @@ enum class LanguageFeature(
     WrapContinuationForTailCallFunctions(KOTLIN_2_4, sinceApiVersion = ApiVersion.KOTLIN_2_4, "KT-74051"),
     ProhibitFunctionCallsInDefaultParametersOfInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-83829"),
     AllowNamedCompanionForJsExport(sinceVersion = KOTLIN_2_4, issue = "KT-82128"),
+    AllowInterfaceNestedClassesInJsExport(sinceVersion = KOTLIN_2_4, issue = "KT-84332"),
 
     // 2.5
 

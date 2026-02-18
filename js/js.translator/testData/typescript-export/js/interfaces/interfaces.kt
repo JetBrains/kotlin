@@ -93,7 +93,7 @@ interface InterfaceWithNamedCompanion {
 @JsExport
 sealed interface SomeSealedInterface {
     val x: String
-    data class <!WRONG_EXPORTED_DECLARATION!>SomeNestedImpl(override val x: String)<!> : SomeSealedInterface
+    data class SomeNestedImpl(override val x: String) : SomeSealedInterface
 }
 
 // KT-64708
