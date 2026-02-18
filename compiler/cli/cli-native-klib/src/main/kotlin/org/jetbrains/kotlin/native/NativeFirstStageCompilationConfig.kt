@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.native
 
-import org.jetbrains.kotlin.backend.common.LoadedNativeKlibs
 import org.jetbrains.kotlin.backend.konan.NativeCompilationConfig
 import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibsInProductionPipeline
@@ -23,10 +22,11 @@ import org.jetbrains.kotlin.util.PerformanceManager
 class NativeFirstStageCompilationConfig(
     override val configuration: CompilerConfiguration,
     override val target: KonanTarget,
-    val loadedKlibs: LoadedNativeKlibs,
 ) : NativeCompilationConfig() {
     override val moduleId: String
         get() = configuration.moduleName ?: File(outputPath).name
+
+    override val loadedKlibs = loadNativeKlibsInProductionPipeline(configuration, target)
 }
 
 class NativeFirstStagePhaseContext(
@@ -52,9 +52,5 @@ internal fun createFirstStageCompilationConfig(configuration: CompilerConfigurat
         HostManager.host
     }
 
-    return NativeFirstStageCompilationConfig(
-        configuration = configuration,
-        target = target,
-        loadedKlibs = loadNativeKlibsInProductionPipeline(configuration, target),
-    )
+    return NativeFirstStageCompilationConfig(configuration, target)
 }
