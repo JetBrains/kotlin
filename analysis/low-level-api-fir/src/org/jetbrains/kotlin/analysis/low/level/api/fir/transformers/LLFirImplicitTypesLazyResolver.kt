@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIs
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
@@ -175,7 +176,13 @@ internal class LLFirImplicitBodyTargetResolver(
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
             is FirCallableDeclaration if target.canHaveDeferredReturnTypeCalculation -> {
-                transformer.returnTypeCalculator.callableCopyTypeCalculator.computeReturnType(target)
+                val typeCalculator = transformer.returnTypeCalculator.callableCopyTypeCalculator
+                typeCalculator.computeReturnType(target)
+
+                val explicitBackingField = (target as? FirProperty)?.getExplicitBackingField()
+                if (explicitBackingField != null) {
+                    typeCalculator.computeReturnType(explicitBackingField)
+                }
             }
 
             is FirFunction -> {

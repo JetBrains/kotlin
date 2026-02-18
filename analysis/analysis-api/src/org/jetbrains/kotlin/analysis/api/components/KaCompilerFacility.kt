@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.*
-import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
+import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -92,7 +92,7 @@ public sealed class KaCompilationResult(
     @KaExperimentalApi
     public class Success(
         public val output: List<KaCompiledFile>,
-        public val capturedValues: List<CodeFragmentCapturedValue>,
+        public val capturedValues: List<KaCodeFragmentCapturedValue>,
         public var canBeCached: Boolean,
         mutedExceptions: List<Throwable> = emptyList(),
     ) : KaCompilationResult(mutedExceptions)
@@ -150,7 +150,7 @@ public sealed class KaCompilerTarget {
     public class Jvm(
         public val isTestMode: Boolean,
         public val compiledClassHandler: KaCompiledClassHandler?,
-        public val debuggerExtension: DebuggerExtension?,
+        public val debuggerExtension: KaDebuggerExtension?,
     ) : KaCompilerTarget()
 }
 
@@ -159,7 +159,7 @@ public sealed class KaCompilerTarget {
  *
  * @see KaCompilerTarget.Jvm
  */
-@KaExtensibleApi
+@KaSpi
 @KaExperimentalApi
 public fun interface KaCompiledClassHandler {
     /**
@@ -169,6 +169,7 @@ public fun interface KaCompiledClassHandler {
      *  for example if it's an anonymous object from another module, regenerated during inlining.
      * @param className The name of the class in the JVM's internal name format, for example `"java/lang/Object"`.
      */
+    @KaSpiExtensionPoint
     public fun handleClassDefinition(file: PsiFile?, className: String)
 }
 
@@ -189,7 +190,7 @@ public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cau
  * listed from the top to the bottom.
  */
 @KaExperimentalApi
-public class DebuggerExtension(public val stack: Sequence<PsiElement?>)
+public class KaDebuggerExtension(public val stack: Sequence<PsiElement?>)
 
 /**
  * Compiles the given [file] in-memory (without dumping the compiled binaries to the disk).
@@ -213,14 +214,14 @@ public class DebuggerExtension(public val stack: Sequence<PsiElement?>)
 @KaExperimentalApi
 @Throws(KaCodeCompilationException::class)
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun compile(
     file: KtFile,
     configuration: CompilerConfiguration,
     target: KaCompilerTarget,
     allowedErrorFilter: (KaDiagnostic) -> Boolean,
 ): KaCompilationResult {
-    return with(s) {
+    return with(session) {
         compile(
             file = file,
             configuration = configuration,

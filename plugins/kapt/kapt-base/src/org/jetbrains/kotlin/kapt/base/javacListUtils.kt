@@ -28,7 +28,7 @@ inline fun <T, R> mapJListIndexed(values: Iterable<T>?, f: (Int, T) -> R?): Java
 }
 
 inline fun <T> mapPairedValuesJList(valuePairs: List<Any>?, f: (String, Any) -> T?): JavacList<T> {
-    if (valuePairs == null || valuePairs.isEmpty()) return JavacList.nil()
+    if (valuePairs.isNullOrEmpty()) return JavacList.nil()
 
     val size = valuePairs.size
     var result = JavacList.nil<T>()

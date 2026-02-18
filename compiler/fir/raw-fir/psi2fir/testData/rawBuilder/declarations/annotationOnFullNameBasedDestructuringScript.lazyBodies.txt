@@ -1,23 +1,23 @@
 FILE: annotationOnFullNameBasedDestructuringScript.kts
     SCRIPT: <script-annotationOnFullNameBasedDestructuringScript.kts>
 
-        public final? annotation class Ann : R|kotlin/Annotation| {
-            public? constructor(x: String = LAZY_EXPRESSION): R|Ann| {
+        public final? [ContainingScriptKey=FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts>, ScriptTopLevelDeclaration=true] annotation class Ann : R|kotlin/Annotation| {
+            public? [ContainingClassKey=Ann] constructor([CorrespondingProperty=/Ann.x] x: String = LAZY_EXPRESSION): R|Ann| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? val x: String = R|<local>/x|
-                public? get(): String
+            public? final? [IsFromPrimaryConstructor=true] val x: String = R|<local>/x|
+                public? [ContainingClassKey=Ann] get(): String
 
         }
 
-        public final? data class Foo : R|kotlin/Any| {
-            public? constructor(first: String): R|Foo| {
+        public final? data [ContainingScriptKey=FirScriptSymbol <script-annotationOnFullNameBasedDestructuringScript.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {
+            public? [ContainingClassKey=Foo] constructor([CorrespondingProperty=/Foo.first] first: String): R|Foo| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? val first: String = R|<local>/first|
-                public? get(): String
+            public? final? [ComponentFunctionSymbolKey=/Foo.component1, IsFromPrimaryConstructor=true] val first: String = R|<local>/first|
+                public? [ContainingClassKey=Foo] get(): String
 
             public? final operator fun component1(): String
 
@@ -25,37 +25,37 @@ FILE: annotationOnFullNameBasedDestructuringScript.kts
 
         }
 
-        public? final? val x: <implicit> = LAZY_EXPRESSION
+        public? final? [ScriptTopLevelDeclaration=true] val x: <implicit> = LAZY_EXPRESSION
             public? get(): <implicit>
 
-        @Ann() lval <destruct>: <implicit> = LAZY_EXPRESSION
-        public final var first: <implicit> = LAZY_EXPRESSION
+        @Ann() [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] var first: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>
             public set(value: <implicit>): R|kotlin/Unit|
 
-        @Ann() lval <destruct>: <implicit> = LAZY_EXPRESSION
-        public final var a: <implicit> = LAZY_EXPRESSION
+        @Ann() [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] var a: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>
             public set(value: <implicit>): R|kotlin/Unit|
 
-        @Ann() lval <destruct>: <implicit> = LAZY_EXPRESSION
-        public final var b: <implicit> = LAZY_EXPRESSION
+        @Ann() [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] var b: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>
             public set(value: <implicit>): R|kotlin/Unit|
 
-        @Ann(LAZY_EXPRESSION) lval <destruct>: <implicit> = LAZY_EXPRESSION
-        public final var c: <implicit> = LAZY_EXPRESSION
+        @Ann(LAZY_EXPRESSION) [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] var c: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>
             public set(value: <implicit>): R|kotlin/Unit|
 
-        @Ann() lval <destruct>: <implicit> = LAZY_EXPRESSION
-        public final val d: <implicit> = LAZY_EXPRESSION
+        @Ann() [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val d: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>
 
-        @Ann() lval <destruct>: <implicit> = LAZY_EXPRESSION
-        public final val e: <implicit> = LAZY_EXPRESSION
+        @Ann() [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val e: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>
 
-        @Ann(LAZY_EXPRESSION) lval <destruct>: <implicit> = LAZY_EXPRESSION
-        public final val f: <implicit> = LAZY_EXPRESSION
+        @Ann(LAZY_EXPRESSION) [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val f: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>

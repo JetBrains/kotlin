@@ -27,116 +27,122 @@ import org.jetbrains.kotlin.util.PerformanceManager
 
 object CommonConfigurationKeys {
     @JvmField
-    val LANGUAGE_VERSION_SETTINGS = CompilerConfigurationKey.create<LanguageVersionSettings>("language version settings")
+    val LANGUAGE_VERSION_SETTINGS = CompilerConfigurationKey.create<LanguageVersionSettings>("LANGUAGE_VERSION_SETTINGS")
 
     @JvmField
-    val DISABLE_INLINE = CompilerConfigurationKey.create<Boolean>("disable inline")
+    val DISABLE_INLINE = CompilerConfigurationKey.create<Boolean>("DISABLE_INLINE")
 
     @JvmField
-    val MODULE_NAME = CompilerConfigurationKey.create<String>("module name")
+    val MODULE_NAME = CompilerConfigurationKey.create<String>("MODULE_NAME")
 
     @JvmField
-    val REPORT_OUTPUT_FILES = CompilerConfigurationKey.create<Boolean>("report output files")
+    val REPORT_OUTPUT_FILES = CompilerConfigurationKey.create<Boolean>("REPORT_OUTPUT_FILES")
 
     @JvmField
-    val LOOKUP_TRACKER = CompilerConfigurationKey.create<LookupTracker>("lookup tracker")
+    val LOOKUP_TRACKER = CompilerConfigurationKey.create<LookupTracker>("LOOKUP_TRACKER")
 
     @JvmField
-    val EXPECT_ACTUAL_TRACKER = CompilerConfigurationKey.create<ExpectActualTracker>("expect actual tracker")
+    val EXPECT_ACTUAL_TRACKER = CompilerConfigurationKey.create<ExpectActualTracker>("EXPECT_ACTUAL_TRACKER")
 
     @JvmField
-    val INLINE_CONST_TRACKER = CompilerConfigurationKey.create<InlineConstTracker>("inline constant tracker")
+    val INLINE_CONST_TRACKER = CompilerConfigurationKey.create<InlineConstTracker>("INLINE_CONST_TRACKER")
 
     @JvmField
-    val FILE_MAPPING_TRACKER = CompilerConfigurationKey.create<ICFileMappingTracker>("file mapping tracker")
+    val FILE_MAPPING_TRACKER = CompilerConfigurationKey.create<ICFileMappingTracker>("FILE_MAPPING_TRACKER")
 
     @JvmField
-    val ENUM_WHEN_TRACKER = CompilerConfigurationKey.create<EnumWhenTracker>("enum when tracker")
+    val ENUM_WHEN_TRACKER = CompilerConfigurationKey.create<EnumWhenTracker>("ENUM_WHEN_TRACKER")
 
     @JvmField
-    val IMPORT_TRACKER = CompilerConfigurationKey.create<ImportTracker>("import tracker")
+    val IMPORT_TRACKER = CompilerConfigurationKey.create<ImportTracker>("IMPORT_TRACKER")
 
     @JvmField
-    val METADATA_VERSION = CompilerConfigurationKey.create<BinaryVersion>("metadata version")
+    val METADATA_VERSION = CompilerConfigurationKey.create<BinaryVersion>("METADATA_VERSION")
 
     @JvmField
-    val USE_FIR = CompilerConfigurationKey.create<Boolean>("front-end IR")
+    val USE_FIR = CompilerConfigurationKey.create<Boolean>("USE_FIR")
 
     @JvmField
-    val USE_LIGHT_TREE = CompilerConfigurationKey.create<Boolean>("light tree")
+    val USE_LIGHT_TREE = CompilerConfigurationKey.create<Boolean>("USE_LIGHT_TREE")
 
     @JvmField
-    val HMPP_MODULE_STRUCTURE = CompilerConfigurationKey.create<HmppCliModuleStructure>("HMPP module structure")
+    val HMPP_MODULE_STRUCTURE = CompilerConfigurationKey.create<HmppCliModuleStructure>("HMPP_MODULE_STRUCTURE")
 
     @JvmField
-    val METADATA_KLIB = CompilerConfigurationKey.create<Boolean>("Produce metadata klib")
+    val METADATA_KLIB = CompilerConfigurationKey.create<Boolean>("METADATA_KLIB")
 
     @JvmField
-    val USE_FIR_EXTRA_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir extra checkers")
+    val USE_FIR_EXTRA_CHECKERS = CompilerConfigurationKey.create<Boolean>("USE_FIR_EXTRA_CHECKERS")
+
+    // Enables FIR experimental (not ready for public use) checkers.
+    @JvmField
+    val USE_FIR_EXPERIMENTAL_CHECKERS = CompilerConfigurationKey.create<Boolean>("USE_FIR_EXPERIMENTAL_CHECKERS")
 
     @JvmField
-    val USE_FIR_EXPERIMENTAL_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir not-public-ready checkers")
+    val DUMP_INFERENCE_LOGS = CompilerConfigurationKey.create<Boolean>("DUMP_INFERENCE_LOGS")
+
+    // Runs the codegen phase in parallel with N threads.
+    @JvmField
+    val PARALLEL_BACKEND_THREADS = CompilerConfigurationKey.create<Int>("PARALLEL_BACKEND_THREADS")
 
     @JvmField
-    val DUMP_INFERENCE_LOGS = CompilerConfigurationKey.create<Boolean>("render the inference constraints dump file")
+    val DUMP_MODEL = CompilerConfigurationKey.create<String>("DUMP_MODEL")
 
     @JvmField
-    val PARALLEL_BACKEND_THREADS = CompilerConfigurationKey.create<Int>("Run codegen phase in parallel with N threads")
+    val INCREMENTAL_COMPILATION = CompilerConfigurationKey.create<Boolean>("INCREMENTAL_COMPILATION")
 
     @JvmField
-    val DUMP_MODEL = CompilerConfigurationKey.create<String>("Dump compilation model")
+    val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS = CompilerConfigurationKey.create<Boolean>("ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS")
 
     @JvmField
-    val INCREMENTAL_COMPILATION = CompilerConfigurationKey.create<Boolean>("Enable incremental compilation")
+    val IGNORE_CONST_OPTIMIZATION_ERRORS = CompilerConfigurationKey.create<Boolean>("IGNORE_CONST_OPTIMIZATION_ERRORS")
+
+    // Keeps track of all constants evaluated by IrInterpreter.
+    @JvmField
+    val EVALUATED_CONST_TRACKER = CompilerConfigurationKey.create<EvaluatedConstTracker>("EVALUATED_CONST_TRACKER")
 
     @JvmField
-    val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS = CompilerConfigurationKey.create<Boolean>("Allow to compile any scripts along with regular Kotlin sources")
+    val MESSAGE_COLLECTOR_KEY = CompilerConfigurationKey.create<MessageCollector>("MESSAGE_COLLECTOR_KEY")
 
     @JvmField
-    val IGNORE_CONST_OPTIMIZATION_ERRORS = CompilerConfigurationKey.create<Boolean>("Ignore errors from IrConstTransformer")
+    val VERIFY_IR = CompilerConfigurationKey.create<IrVerificationMode>("VERIFY_IR")
+
+    // Checks pre-lowering IR for visibility violations.
+    @JvmField
+    val ENABLE_IR_VISIBILITY_CHECKS = CompilerConfigurationKey.create<Boolean>("ENABLE_IR_VISIBILITY_CHECKS")
+
+    // Checks IR for vararg types mismatches.
+    @JvmField
+    val ENABLE_IR_VARARG_TYPES_CHECKS = CompilerConfigurationKey.create<Boolean>("ENABLE_IR_VARARG_TYPES_CHECKS")
+
+    // Checks that offsets of nested IR elements conform to offsets of their containers.
+    @JvmField
+    val ENABLE_IR_NESTED_OFFSETS_CHECKS = CompilerConfigurationKey.create<Boolean>("ENABLE_IR_NESTED_OFFSETS_CHECKS")
 
     @JvmField
-    val EVALUATED_CONST_TRACKER = CompilerConfigurationKey.create<EvaluatedConstTracker>("Keeps track of all evaluated by IrInterpreter constants")
+    val PHASE_CONFIG = CompilerConfigurationKey.create<PhaseConfig>("PHASE_CONFIG")
+
+    // Should be used only in tests, impossible to set via compiler arguments.
+    @JvmField
+    val DONT_CREATE_SEPARATE_SESSION_FOR_SCRIPTS = CompilerConfigurationKey.create<Boolean>("DONT_CREATE_SEPARATE_SESSION_FOR_SCRIPTS")
 
     @JvmField
-    val MESSAGE_COLLECTOR_KEY = CompilerConfigurationKey.create<MessageCollector>("message collector")
+    val DONT_SORT_SOURCE_FILES = CompilerConfigurationKey.create<Boolean>("DONT_SORT_SOURCE_FILES")
+
+    // Internal for passing configuration in the scripting pipeline, impossible to set via compiler arguments.
+    @JvmField
+    val SCRIPTING_HOST_CONFIGURATION = CompilerConfigurationKey.create<Any>("SCRIPTING_HOST_CONFIGURATION")
+
+    // A helper that can be used to measure performance (compiler phases, JIT and GC info) or collect stats (e.g. number of lines in a project). It might be inaccurate if use in multithreading mode.
+    @JvmField
+    val PERF_MANAGER = CompilerConfigurationKey.create<PerformanceManager>("PERF_MANAGER")
+
+    // Enables detailed performance stats that might slow down the general compiler performance. See the description of `-Xdetailed-perf` for more details.
+    @JvmField
+    val DETAILED_PERF = CompilerConfigurationKey.create<Boolean>("DETAILED_PERF")
 
     @JvmField
-    val VERIFY_IR = CompilerConfigurationKey.create<IrVerificationMode>("IR verification mode")
-
-    @JvmField
-    val ENABLE_IR_VISIBILITY_CHECKS = CompilerConfigurationKey.create<Boolean>("Check pre-lowering IR for visibility violations")
-
-    @JvmField
-    val ENABLE_IR_VARARG_TYPES_CHECKS = CompilerConfigurationKey.create<Boolean>("Check IR for vararg types mismatches")
-
-    @JvmField
-    val ENABLE_IR_NESTED_OFFSETS_CHECKS = CompilerConfigurationKey.create<Boolean>("Check that offsets of nested IR elements conform to offsets of their containers")
-
-    @JvmField
-    val PHASE_CONFIG = CompilerConfigurationKey.create<PhaseConfig>("phase configuration")
-
-    // Should be used only in tests, impossible to set via compiler arguments
-    @JvmField
-    val DONT_CREATE_SEPARATE_SESSION_FOR_SCRIPTS = CompilerConfigurationKey.create<Boolean>("don't create separate session for scripts")
-
-    @JvmField
-    val DONT_SORT_SOURCE_FILES = CompilerConfigurationKey.create<Boolean>("don't sort source files in FS order")
-
-    // Internal for passing configuration in the scripting pipeline, impossible to set via compiler arguments
-    @JvmField
-    val SCRIPTING_HOST_CONFIGURATION = CompilerConfigurationKey.create<Any>("scripting host configuration")
-
-    // It might be inaccurate if use in multithreading mode
-    @JvmField
-    val PERF_MANAGER = CompilerConfigurationKey.create<PerformanceManager>("A helper that can be used to measure performance (compiler phases, JIT and GC info) or collect stats (e.g. number of lines in a project)")
-
-    // See the description of `-Xdetailed-perf` for more details
-    @JvmField
-    val DETAILED_PERF = CompilerConfigurationKey.create<Boolean>("Enables detailed performance stats that might slow down the general compiler performance")
-
-    @JvmField
-    val TARGET_PLATFORM = CompilerConfigurationKey.create<TargetPlatform>("target platform")
+    val TARGET_PLATFORM = CompilerConfigurationKey.create<TargetPlatform>("TARGET_PLATFORM")
 
 }
 

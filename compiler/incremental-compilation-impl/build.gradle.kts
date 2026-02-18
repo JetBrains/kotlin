@@ -13,7 +13,9 @@ dependencies {
     api(project(":compiler:frontend"))
     api(project(":compiler:frontend.java"))
     api(project(":compiler:cli"))
+    api(project(":compiler:cli-jvm"))
     api(project(":compiler:cli-js"))
+    api(project(":compiler:cli-metadata"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":compiler:fir:fir2ir:jvm-backend"))
     api(project(":compiler:ir.serialization.jvm"))
@@ -53,13 +55,13 @@ projectTests {
     testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
         dependsOn(":dist")
         workingDir = rootDir
-        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+        useJsIrBoxTests(buildDir = layout.buildDirectory)
     }
 
     testTask("testJvmICWithJdk11", parallel = true, jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = false) {
         dependsOn(":dist")
         workingDir = rootDir
-        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+        useJsIrBoxTests(buildDir = layout.buildDirectory)
         filter {
             includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK1JvmCompilerRunnerTestGenerated*")
             includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK2JvmCompilerRunnerTestGenerated*")
@@ -68,6 +70,10 @@ projectTests {
     }
 
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForICTestsKt")
+    testData(isolated, "testData")
+    testData(project(":jps:jps-plugin").isolated, "testData")
+    withJsRuntime()
+    withJvmStdlibAndReflect()
 }
 
 testsJar()

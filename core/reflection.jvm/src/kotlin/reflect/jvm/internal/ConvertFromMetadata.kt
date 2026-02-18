@@ -7,19 +7,28 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.runtime.structure.parameterizedTypeArguments
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.NameUtils
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.coroutines.Continuation
+import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.*
 import kotlin.metadata.jvm.annotations
+import kotlin.metadata.jvm.fieldSignature
+import kotlin.metadata.jvm.getterSignature
+import kotlin.metadata.jvm.isRaw
+import kotlin.metadata.jvm.signature
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
 import kotlin.reflect.jvm.internal.types.AbstractKType
+import kotlin.reflect.jvm.internal.types.FlexibleKType
 import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
 import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.jvm.internal.types.getMutableCollectionKClass
@@ -120,6 +129,11 @@ internal fun KmType.toKType(
         result = unwrapSuspendFunctionType(result, computeJavaType)
             ?: throw KotlinReflectionInternalError("Invalid suspend function type: $result")
     }
+    flexibleTypeUpperBound?.let {
+        if (it.typeFlexibilityId == JvmProtoBufUtil.PLATFORM_TYPE_ID) {
+            return FlexibleKType.create(result, it.type.toKType(classLoader, typeParameterTable) as SimpleKType, isRaw, computeJavaType)
+        }
+    }
     return result
 }
 
@@ -176,7 +190,14 @@ private fun KmClassifier.toClassifier(
     is KmClassifier.TypeAlias ->
         KTypeAliasImpl(name.toClassId().asSingleFqName())
     is KmClassifier.TypeParameter ->
-        typeParameterTable[id] ?: throw KotlinReflectionInternalError("Type parameter not found: $id")
+        typeParameterTable[id] ?: run {
+            // Do not throw exception here until KT-47030 is supported.
+            ErrorTypeParameter(id)
+        }
+}
+
+internal class ErrorTypeParameter(private val id: Int) : KClassifier {
+    override fun toString(): String = "[Error type parameter $id]"
 }
 
 private fun KmTypeProjection.toKTypeProjection(
@@ -255,4 +276,65 @@ internal fun Visibility.toKVisibility(): KVisibility? = when (this) {
     Visibility.PUBLIC -> KVisibility.PUBLIC
     Visibility.PRIVATE_TO_THIS -> KVisibility.PRIVATE
     Visibility.LOCAL -> null
+}
+
+internal fun KmProperty.computeJvmSignature(container: KDeclarationContainerImpl): String? =
+    getterSignature?.toString() ?: fieldSignature?.let { fieldSignature ->
+        JvmAbi.getterName(fieldSignature.name) + getManglingSuffix(container) + "()" + fieldSignature.descriptor
+    }
+
+// For the complete set of mangling required to compute JVM signatures correctly, see the JVM backend implementation in
+// `MethodSignatureMapper.mapFunctionName`. However, note that there are cases which are not applicable to kotlin-reflect.
+// Also, we don't need to compute mangling caused by having inline classes in the signature, because such declarations always have the
+// JVM signature in the metadata.
+private fun KmProperty.getManglingSuffix(container: KDeclarationContainerImpl): String {
+    if (visibility == Visibility.INTERNAL && container is KClassImpl<*>) {
+        val moduleName = container.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
+        return "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName)
+    }
+    if (visibility == Visibility.PRIVATE && container is KPackageImpl && container.isMultifilePart) {
+        return "$" + container.jClass.simpleName
+    }
+    return ""
+}
+
+internal fun createUnboundProperty(property: KmProperty, container: KDeclarationContainerImpl): KotlinKProperty<*> {
+    val receiverCount = when {
+        property.contextParameters.isNotEmpty() -> -1
+        property.receiverParameterType != null -> 1
+        else -> 0
+    }
+    val signature = property.computeJvmSignature(container)
+        ?: throw KotlinReflectionInternalError("No field or getter signature for property: ${property.name}")
+    val boundReceiver = CallableReference.NO_RECEIVER
+    return when {
+        !property.isVar -> when (receiverCount) {
+            -1 -> KotlinKPropertyN(container, signature, boundReceiver, property)
+            0 -> KotlinKProperty0(container, signature, boundReceiver, property)
+            1 -> KotlinKProperty1<Any?, Any?>(container, signature, boundReceiver, property)
+            else -> null
+        }
+        else -> when (receiverCount) {
+            -1 -> KotlinKMutablePropertyN(container, signature, boundReceiver, property)
+            0 -> KotlinKMutableProperty0(container, signature, boundReceiver, property)
+            1 -> KotlinKMutableProperty1<Any?, Any?>(container, signature, boundReceiver, property)
+            else -> null
+        }
+    } ?: throw KotlinReflectionInternalError(
+        "Unsupported property: name=${property.name} signature=$signature container=$container"
+    )
+}
+
+internal fun createUnboundFunction(function: KmFunction, container: KDeclarationContainerImpl): KotlinKFunction {
+    val signature = function.signature?.toString()
+        ?: throw KotlinReflectionInternalError("No signature for function: ${function.name}")
+    return KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, function)
+}
+
+internal fun createUnboundConstructor(constructor: KmConstructor, container: KDeclarationContainerImpl): KotlinKFunction {
+    val signature = constructor.signature?.toString()
+        ?: throw KotlinReflectionInternalError(
+            "No signature for constructor (${constructor.valueParameters.size} parameters, declared in $container)"
+        )
+    return KotlinKConstructor(container, signature, CallableReference.NO_RECEIVER, constructor)
 }

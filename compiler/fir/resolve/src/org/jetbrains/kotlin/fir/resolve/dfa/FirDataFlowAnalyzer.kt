@@ -629,12 +629,16 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitComparisonExpression(comparisonExpression).mergeIncomingFlow()
     }
 
+    fun enterEqualityOperatorCall() {
+        graphBuilder.enterCall()
+    }
+
     fun exitEqualityOperatorLhs() {
         graphBuilder.exitEqualityOperatorLhs()
     }
 
-    fun exitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall) {
-        val (lhsExitNode, node) = graphBuilder.exitEqualityOperatorCall(equalityOperatorCall)
+    fun exitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, callCompleted: Boolean) {
+        val (lhsExitNode, node) = graphBuilder.exitEqualityOperatorCall(equalityOperatorCall, callCompleted)
         val operation = equalityOperatorCall.operation
         val leftOperand = equalityOperatorCall.arguments[0]
         val rightOperand = equalityOperatorCall.arguments[1]
@@ -662,11 +666,11 @@ abstract class FirDataFlowAnalyzer(
         node.mergeIncomingFlow { _, flow ->
             if (leftIsNull || leftConst != null || rightIsNull || rightConst != null) {
                 when {
-                    leftIsNull -> processEqNull(flow, equalityOperatorCall, rightOperand, operation.isEq())
+                    leftIsNull -> processEqNull(flow, equalityOperatorCall, rightOperand, operation.isEq(), lhsExitNode.flow)
                     leftConst != null -> processEqConst(flow, equalityOperatorCall, rightOperand, leftConst, operation.isEq())
                 }
                 when {
-                    rightIsNull -> processEqNull(flow, equalityOperatorCall, leftOperand, operation.isEq())
+                    rightIsNull -> processEqNull(flow, equalityOperatorCall, leftOperand, operation.isEq(), lhsExitNode.flow)
                     rightConst != null -> processEqConst(flow, equalityOperatorCall, leftOperand, rightConst, operation.isEq())
                 }
             } else {
@@ -710,8 +714,18 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    private fun processEqNull(flow: MutableFlow, expression: FirExpression, operand: FirExpression, isEq: Boolean) {
+    private fun processEqNull(
+        flow: MutableFlow,
+        expression: FirExpression,
+        operand: FirExpression,
+        isEq: Boolean,
+        lhsExitFlow: PersistentFlow? = null,
+    ) {
         val operandVariable = flow.getVariableIfUsedOrReal(operand) ?: return
+        if (operandVariable is RealVariable && lhsExitFlow != null &&
+            !logicSystem.isSameValueIn(lhsExitFlow, flow, operandVariable)
+        ) return
+
         val expressionVariable = SyntheticVariable(expression)
         flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq null))
         flow.addImplication((expressionVariable eq !isEq) implies (operandVariable notEq null))
@@ -1294,6 +1308,7 @@ abstract class FirDataFlowAnalyzer(
     private fun processBackingFieldAccess(flow: MutableFlow, qualifiedAccess: FirQualifiedAccessExpression) {
         val callee = qualifiedAccess.calleeReference as? FirPropertyWithExplicitBackingFieldResolvedNamedReference ?: return
         val fieldSymbol = callee.tryAccessExplicitFieldSymbol(components.context.inlineFunction, session) ?: return
+        if (isPrivateToThisInvisibleAccess(qualifiedAccess, session, fieldSymbol)) return
         val variable = flow.getOrCreateVariable(qualifiedAccess) ?: return
         val returnType = components.returnTypeCalculator.tryCalculateReturnType(fieldSymbol).coneType
         flow.addTypeStatement(variable typeEq returnType)

@@ -1,0 +1,117 @@
+KtCallExpression(117,140): 'block(regularParameter)'
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = block
+        isSafeNavigation = false
+        type = @R|kotlin.ContextFunctionTypeParams|(count = Int(1))  kotlin.Function3<kotlin.String, kotlin.Int, kotlin.Boolean, kotlin.Unit>
+      extensionReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
+          annotations: []
+          callableId: null
+          compilerVisibility: Local
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+          visibility: LOCAL
+        type = kotlin.Int
+      signature = KaFunctionSignature:
+        receiverType = kotlin.String
+        returnType = kotlin.Unit
+        symbol = kotlin/Function3.invoke(<extension receiver>: P1, <dispatch receiver>: kotlin.Function3<P1, P2, P3, R>, p2: P2, p3: P3): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p2
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p2: P2
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = p3
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = p3: P3
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function3.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        regularParameter -> (KaVariableSignature:
+          name = p2
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = p2: P2
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Boolean but Int was expected>
+    isInBestCandidates = false
+
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = block
+        isSafeNavigation = false
+        type = @R|kotlin.ContextFunctionTypeParams|(count = Int(1))  kotlin.Function3<kotlin.String, kotlin.Int, kotlin.Boolean, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function3.invoke(<dispatch receiver>: kotlin.Function3<P1, P2, P3, R>, p1: P1, p2: P2, p3: P3): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = kotlin.String
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = p2
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p2: P2
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = p3
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = p3: P3
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function3.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        regularParameter -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = kotlin.String
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Boolean but String was expected>
+    isInBestCandidates = true

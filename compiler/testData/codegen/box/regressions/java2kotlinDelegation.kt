@@ -4,20 +4,21 @@
 
 // FILE: TestJava.java
 public class TestJava {
-    String testString;
+    String javaTestString;
 }
 
 // FILE: TestKotlin.kt
-
 class TestKotlin(testJava: TestJava) {
-    val testString: String? by testJava::testString
+    var kotlinTestString: String? by testJava::javaTestString
 }
 
 fun box(): String {
     val testJava = TestJava()
-    testJava.testString = "test"
-
     val testKotlin = TestKotlin(testJava)
-    require(testKotlin.testString == "test") { testKotlin.testString.toString() }
+
+    require(testKotlin.kotlinTestString == null)
+    testKotlin.kotlinTestString = "test"
+    require(testKotlin.kotlinTestString == "test") { testKotlin.kotlinTestString.toString() }
+
     return "OK"
 }

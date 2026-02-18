@@ -10,11 +10,9 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
+import org.jetbrains.kotlin.arguments.dsl.types.PathType
 import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
-import org.jetbrains.kotlin.generators.kotlinpoet.annotation
-import org.jetbrains.kotlin.generators.kotlinpoet.function
-import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
-import org.jetbrains.kotlin.generators.kotlinpoet.property
+import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -29,7 +27,7 @@ internal class BtaImplGenerator(
 
     private val outputs = mutableListOf<Pair<Path, String>>()
 
-    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?): GeneratorOutputs {
+    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: ClassName?): GeneratorOutputs {
         val apiClassName = level.name.capitalizeAsciiOnly()
         val implClassName = apiClassName + "Impl"
         val mainFileAppendable = createGeneratedFileAppendable()
@@ -42,78 +40,96 @@ internal class BtaImplGenerator(
                 AnnotationSpec.builder(ClassName("kotlin", "OptIn"))
                     .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
             )
-            addType(
-                TypeSpec.classBuilder(implClassName).apply {
-                    addModifiers(KModifier.INTERNAL)
-                    if (!level.isLeaf()) {
-                        addModifiers(KModifier.ABSTRACT)
+            classType(implClassName) {
+                addModifiers(KModifier.INTERNAL)
+                if (!level.isLeaf()) {
+                    addModifiers(KModifier.ABSTRACT)
+                }
+                if (parentClass != null) {
+                    superclass(parentClass)
+                } else {
+                    property(
+                        "internalArguments",
+                        ClassName("kotlin.collections", "MutableSet").parameterizedBy(typeNameOf<String>()),
+                        KModifier.PROTECTED
+                    ) {
+                        initializer("%M()", MemberName("kotlin.collections", "mutableSetOf"))
                     }
-                    if (parentClass != null) {
-                        superclass(parentClass)
-                    } else {
-                        property(
-                            "internalArguments",
-                            ClassName("kotlin.collections", "MutableSet").parameterizedBy(typeNameOf<String>()),
-                            KModifier.PROTECTED
-                        ) {
-                            initializer("%M()", MemberName("kotlin.collections", "mutableSetOf"))
-                        }
+                }
+
+                addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.name.capitalizeAsciiOnly()))
+                addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.name.capitalizeAsciiOnly()).nestedClass("Builder"))
+
+                val toCompilerConverterFun = toCompilerConverterFunBuilder(level, parentClass)
+                val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass)
+                val defaultsInitializer = CodeBlock.builder()
+
+                val argumentTypeNameString =
+                    generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
+                val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
+                val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
+
+                generateGetPutFunctions(argumentTypeName, argumentImplTypeName)
+
+                addType(TypeSpec.companionObjectBuilder().apply {
+                    property(
+                        "knownArguments",
+                        ClassName("kotlin.collections", "MutableSet").parameterizedBy(ClassName("kotlin", "String")),
+                        KModifier.PRIVATE
+                    ) {
+                        initializer("%M()", MemberName("kotlin.collections", "mutableSetOf"))
                     }
+                    generateOptions(
+                        arguments = level.transformImplArguments(),
+                        implClassName = implClassName,
+                        argumentTypeName = argumentImplTypeName,
+                        applyCompilerArgumentsFun = applyCompilerArgumentsFun,
+                        toCompilerConverterFun = toCompilerConverterFun,
+                        defaultsInitializer = defaultsInitializer,
+                    )
+                }.build())
 
-                    addSuperinterface(ClassName(API_ARGUMENTS_PACKAGE, level.name.capitalizeAsciiOnly()))
+                // Initialize default values for custom arguments
+                defaultsInitializer.build().takeIf { it.isNotEmpty() }?.let { addInitializerBlock(it) }
 
-                    val toCompilerConverterFun = toCompilerConverterFunBuilder(level, parentClass)
-                    val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass)
-                    val defaultsInitializer = CodeBlock.builder()
-
-                    val argumentTypeNameString =
-                        generateArgumentType(apiClassName, includeSinceVersion = false, registerAsKnownArgument = true)
-                    val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
-                    val argumentImplTypeName = ClassName(targetPackage, implClassName, argumentTypeNameString)
-
-                    generateGetPutFunctions(argumentTypeName, argumentImplTypeName)
-                    addType(TypeSpec.companionObjectBuilder().apply {
-                        property(
-                            "knownArguments",
-                            ClassName("kotlin.collections", "MutableSet").parameterizedBy(ClassName("kotlin", "String")),
-                            KModifier.PRIVATE
-                        ) {
-                            initializer("%M()", MemberName("kotlin.collections", "mutableSetOf"))
-                        }
-                        generateOptions(
-                            arguments = level.transformImplArguments(),
-                            implClassName = implClassName,
-                            argumentTypeName = argumentImplTypeName,
-                            applyCompilerArgumentsFun = applyCompilerArgumentsFun,
-                            toCompilerConverterFun = toCompilerConverterFun,
-                            defaultsInitializer = defaultsInitializer,
+                if (level.isLeaf()) {
+                    function("deepCopy") {
+                        addModifiers(KModifier.OVERRIDE)
+                        returns(ClassName(targetPackage, implClassName))
+                        addStatement(
+                            "return %T().also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }",
+                            ClassName(targetPackage, implClassName)
                         )
+                    }
+                    function("build") {
+                        addModifiers(KModifier.OVERRIDE)
+                        returns(ClassName(API_ARGUMENTS_PACKAGE, apiClassName))
+                        addStatement("return deepCopy()")
+                    }
+                    addSuperinterface(
+                        ClassName(targetPackage.removeSuffix("arguments"), "DeepCopyable").parameterizedBy(
+                            ClassName(targetPackage, implClassName)
+                        )
+                    )
+                    toCompilerConverterFun.addStatement(
+                        "arguments.internalArguments = %M<%T>(internalArguments.toList()).internalArguments",
+                        MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments"),
+                        level.getCompilerArgumentsClassName()
+                    )
+
+                    primaryConstructor(FunSpec.constructorBuilder().apply {
+                        addStatement("applyCompilerArguments(%T())", level.getCompilerArgumentsClassName())
                     }.build())
+                }
+                toCompilerConverterFun.addStatement("return arguments")
+                addFunction(toCompilerConverterFun.build())
 
-                    // Initialize default values for custom arguments
-                    defaultsInitializer.build().takeIf { it.isNotEmpty() }?.let { addInitializerBlock(it) }
+                applyCompilerArgumentsFun.addStatement("internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })")
+                addFunction(applyCompilerArgumentsFun.build())
 
-                    if (level.isLeaf()) {
-                        toCompilerConverterFun.addStatement(
-                            "arguments.internalArguments = %M<%T>(internalArguments.toList()).internalArguments",
-                            MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments"),
-                            level.getCompilerArgumentsClassName()
-                        )
-
-                        primaryConstructor(FunSpec.constructorBuilder().apply {
-                            addStatement("applyCompilerArguments(%T())", level.getCompilerArgumentsClassName())
-                        }.build())
-                    }
-                    toCompilerConverterFun.addStatement("return arguments")
-                    addFunction(toCompilerConverterFun.build())
-
-                    applyCompilerArgumentsFun.addStatement("internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })")
-                    addFunction(applyCompilerArgumentsFun.build())
-
-                    maybeAddApplyArgumentStringsFun(level, parentClass)
-                    maybeAddToArgumentsStringFun(level, parentClass)
-                }.build()
-            )
+                maybeAddApplyArgumentStringsFun(level, parentClass)
+                maybeAddToArgumentsStringFun(level, parentClass)
+            }
         }.build()
         mainFile.writeTo(mainFileAppendable)
         outputs += Path(mainFile.relativePath) to mainFileAppendable.toString()
@@ -152,11 +168,18 @@ internal class BtaImplGenerator(
             val argumentTypeParameter = when (argument.valueType) {
                 is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
                     val type = argument.valueType.kType
-                    if (type.isCompilerEnum) {
-                        val classifier = type.classifier as KClass<*>
-                        classifier.toBtaEnumClassName()
-                    } else {
-                        type.asTypeName()
+                    when {
+                        type.isCompilerEnum -> {
+                            val classifier = type.classifier as KClass<*>
+                            classifier.toBtaEnumClassName()
+                        }
+                        type.isCustomType -> {
+                            val classifier = type.classifier as KClass<*>
+                            classifier.toBtaCustomClassName()
+                        }
+                        else -> {
+                            type.asTypeName()
+                        }
                     }
                 }
                 is BtaCompilerArgumentValueType.CustomArgumentValueType -> argument.valueType.type
@@ -180,6 +203,23 @@ internal class BtaImplGenerator(
                         argumentTypeParameter
                     )
                 }
+
+                is BtaCompilerArgument.SSoTCompilerArgumentCompat -> {
+                    generateCompatArgumentsPropagators(
+                        implClassName,
+                        name,
+                        argumentTypeParameter,
+                        argument,
+                        wasRemoved,
+                        argument.effectiveCompilerName,
+                        toCompilerConverterFun,
+                        wasIntroducedRecently,
+                        applyCompilerArgumentsFun,
+                        argumentTypeParameter,
+                        argument.applierSimpleName
+                    )
+                }
+
                 is BtaCompilerArgument.CustomCompilerArgument -> {
                     defaultsInitializer.addStatement("optionsMap[%S] = %L", name, argument.defaultValue)
                     generateCustomRepresentation(
@@ -206,9 +246,11 @@ internal class BtaImplGenerator(
         wasIntroducedRecently: Boolean,
     ) {
         val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
+        val applier = MemberName(targetPackage, argument.applierSimpleName)
+
         CodeBlock.builder().apply {
             add("if (%M in this) { ", member)
-            add("arguments.%M(get(%M))", argument.applier, member)
+            add("arguments.%M(get(%M))", applier, member)
             add("}")
         }.build().also { setStatement ->
             toCompilerConverterFun.addSafeSetStatement(
@@ -222,7 +264,7 @@ internal class BtaImplGenerator(
         }
 
         applyCompilerArgumentsFun.addSafeMethodAccessStatement(CodeBlock.builder().apply {
-            add("this[%M] = %M(this[%M], arguments)", member, argument.applier, member)
+            add("this[%M] = %M(this[%M], arguments)", member, applier, member)
         }.build(), failOnNoSuchMethod = false)
     }
 
@@ -241,32 +283,14 @@ internal class BtaImplGenerator(
         applyCompilerArgumentsFun: FunSpec.Builder,
         argumentTypeParameter: TypeName,
     ) {
-        // add argument to the converter functions
         val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
+
+        // BTA → Compiler conversion
         CodeBlock.builder().apply {
             add("if (%M in this) { ", member)
-            val valueToAssign = CodeBlock.builder().apply {
-                add("get(%M)", member)
-                add(
-                    when {
-                        type.isCompilerEnum -> maybeGetNullabilitySign(
-                            argument
-                        ) + ".stringValue"
-                        argument.valueType.origin is IntType -> maybeGetNullabilitySign(argument) + ".toString()"
-                        else -> ""
-                    }
-                )
-            }.build()
-            if (wasRemoved) {
-                add(
-                    "arguments.%M(%S, %L)",
-                    MemberName(targetPackage, "setUsingReflection", isExtension = true),
-                    effectiveCompilerName,
-                    valueToAssign
-                )
-            } else {
-                add("arguments.%N = %L", effectiveCompilerName, valueToAssign)
-            }
+            val valueToAssign = buildBtaToCompilerValueTransform(member, type, argument)
+            val assignment = buildCompilerAssignment(effectiveCompilerName, wasRemoved, valueToAssign)
+            add("%L", assignment)
             add("}")
         }.build().also { setStatement ->
             toCompilerConverterFun.addSafeSetStatement(
@@ -279,31 +303,172 @@ internal class BtaImplGenerator(
             )
         }
 
-        applyCompilerArgumentsFun.addSafeMethodAccessStatement(CodeBlock.builder().apply {
-            add("this[%M] = ", member)
-            if (wasRemoved) {
-                add("arguments.%M(%S)", MemberName(targetPackage, "getUsingReflection", isExtension = true), effectiveCompilerName)
-            } else {
-                add("arguments.%N", effectiveCompilerName)
-            }
-
-            when {
-                type.isCompilerEnum -> {
-                    add(maybeGetNullabilitySign(argument))
-                    add(
-                        $$".let { %T.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
-                        argumentTypeParameter.copy(nullable = false),
-                        MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
-                    )
-                }
-                argument.valueType.origin is IntType -> {
-                    add(maybeGetNullabilitySign(argument))
-                    add(".let { it.toInt() }")
-                }
-                else -> ""
-            }
-        }.build(), failOnNoSuchMethod = false)
+        // Compiler → BTA conversion
+        val compilerToBtaStatement = buildCompilerToBtaValueTransform(
+            member, type, argument, effectiveCompilerName, wasRemoved, argumentTypeParameter
+        )
+        applyCompilerArgumentsFun.addSafeMethodAccessStatement(compilerToBtaStatement, failOnNoSuchMethod = false)
     }
+
+    /**
+     * Generates code for compat arguments with ClassCastException handling
+     */
+    private fun generateCompatArgumentsPropagators(
+        implClassName: String,
+        name: String,
+        type: TypeName,
+        argument: BtaCompilerArgument.SSoTCompilerArgumentCompat,
+        wasRemoved: Boolean,
+        effectiveCompilerName: String,
+        toCompilerConverterFun: FunSpec.Builder,
+        wasIntroducedRecently: Boolean,
+        applyCompilerArgumentsFun: FunSpec.Builder,
+        argumentTypeParameter: TypeName,
+        applierSimpleName: String,
+    ) {
+        val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
+        val applier = MemberName(targetPackage, applierSimpleName)
+
+        // BTA → Compiler conversion with ClassCastException handling
+        CodeBlock.builder().apply {
+            add("if (%M in this) { ", member)
+            val valueToAssign = buildBtaToCompilerValueTransform(member, type, argument)
+            val assignment = buildCompilerAssignment(effectiveCompilerName, wasRemoved, valueToAssign)
+            add("try { %L } catch(e: ClassCastException) { arguments.%M(get(%M)) }", assignment, applier, member)
+            add("}")
+        }.build().also { setStatement ->
+            toCompilerConverterFun.addSafeSetStatement(
+                wasIntroducedRecently,
+                wasRemoved,
+                name,
+                argument,
+                setStatement,
+                generateCompatLayer,
+            )
+        }
+
+        // Compiler → BTA conversion with ClassCastException handling
+        val compilerToBtaStatement = buildCompilerToBtaValueTransform(
+            member, type, argument, effectiveCompilerName, wasRemoved, argumentTypeParameter
+        )
+        val wrappedStatement = CodeBlock.of(
+            "try { %L } catch (e: ClassCastException) { %M(this[%M], arguments) }",
+            compilerToBtaStatement,
+            applier,
+            member
+        )
+
+        applyCompilerArgumentsFun.addSafeMethodAccessStatement(wrappedStatement, failOnNoSuchMethod = false)
+    }
+
+    /**
+     * Builds the value transformation from BTA to compiler (e.g., enum.stringValue, int.toString(), path.absolutePathStringOrThrow())
+     */
+    private fun buildBtaToCompilerValueTransform(
+        member: MemberName,
+        type: TypeName,
+        argument: BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>,
+    ): CodeBlock = CodeBlock.builder().apply {
+        add("get(%M)", member)
+        when {
+            type.isCompilerEnum -> {
+                add(maybeGetNullabilitySign(argument) + ".stringValue")
+            }
+            argument.valueType.origin is IntType -> {
+                add(maybeGetNullabilitySign(argument) + ".toString()")
+            }
+            argument.valueType.origin is PathType -> {
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M()",
+                    MemberName(
+                        packageName = targetPackage,
+                        simpleName = "absolutePathStringOrThrow",
+                        isExtension = true
+                    )
+                )
+            }
+            type.isCustomType -> {
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M()",
+                    MemberName(
+                        packageName = targetPackage,
+                        simpleName = "toArgumentString",
+                        isExtension = true
+                    )
+                )
+            }
+            else -> add("")
+        }
+    }.build()
+
+    /**
+     * Builds the assignment statement: arguments.property = value or arguments.setUsingReflection(...)
+     */
+    private fun buildCompilerAssignment(
+        effectiveCompilerName: String,
+        wasRemoved: Boolean,
+        valueToAssign: CodeBlock,
+    ): CodeBlock = CodeBlock.builder().apply {
+        if (wasRemoved) {
+            add(
+                "arguments.%M(%S, %L)",
+                MemberName(targetPackage, "setUsingReflection", isExtension = true),
+                effectiveCompilerName,
+                valueToAssign
+            )
+        } else {
+            add("arguments.%N = %L", effectiveCompilerName, valueToAssign)
+        }
+    }.build()
+
+    /**
+     * Builds the value transformation from compiler to BTA (e.g., string to enum, string.toInt(), path parsing)
+     */
+    private fun buildCompilerToBtaValueTransform(
+        member: MemberName,
+        type: TypeName,
+        argument: BtaCompilerArgument<BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType>,
+        effectiveCompilerName: String,
+        wasRemoved: Boolean,
+        argumentTypeParameter: TypeName,
+    ): CodeBlock = CodeBlock.builder().apply {
+        add("this[%M] = ", member)
+        if (wasRemoved) {
+            add("arguments.%M(%S)", MemberName(targetPackage, "getUsingReflection", isExtension = true), effectiveCompilerName)
+        } else {
+            add("arguments.%N", effectiveCompilerName)
+        }
+
+        when {
+            type.isCompilerEnum -> {
+                add(maybeGetNullabilitySign(argument))
+                add(
+                    $$".let { %T.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
+                    argumentTypeParameter.copy(nullable = false),
+                    MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
+                )
+            }
+            argument.valueType.origin is IntType -> {
+                add(maybeGetNullabilitySign(argument))
+                add(".let { it.toInt() }")
+            }
+            argument.valueType.origin is PathType -> {
+                add(maybeGetNullabilitySign(argument))
+                add(".let { %M(it) }", MemberName(KOTLIN_IO_PATH, "Path"))
+            }
+            type.isCustomType -> {
+                add(
+                    maybeGetNullabilitySign(argument) + ".%M()",
+                    MemberName(
+                        packageName = targetPackage,
+                        simpleName = "to${argument.name.replaceFirstChar { it.uppercase() }}",
+                        isExtension = true
+                    )
+                )
+            }
+            else -> add("")
+        }
+    }.build()
 
     fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, implParameter: ClassName) {
         val mapProperty = property(
@@ -388,7 +553,7 @@ internal class BtaImplGenerator(
         }
         function("set") {
             val typeParameter = TypeVariableName("V")
-            addModifiers(KModifier.OPERATOR)
+            addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
             addTypeVariable(typeParameter)
             addParameter("key", implParameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)

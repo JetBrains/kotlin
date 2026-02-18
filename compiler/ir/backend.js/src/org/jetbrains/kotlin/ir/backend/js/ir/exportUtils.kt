@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isPromisifiedWrapper
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isPromisifiedMemberWrapper
 import org.jetbrains.kotlin.ir.backend.js.tsexport.Exportability
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedVisibility
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toExportedVisibility
@@ -44,7 +44,7 @@ internal fun IrClass.exportability(): Exportability {
     return Exportability.Allowed
 }
 
-internal fun IrSimpleFunction.exportability(context: JsIrBackendContext): Exportability {
+internal fun IrSimpleFunction.exportability(context: JsIrBackendContext, specializedName: String? = null): Exportability {
     if (isInline && typeParameters.any { it.isReified })
         return Exportability.Prohibited("Inline reified function")
     if (isSuspend)
@@ -78,7 +78,7 @@ internal fun IrSimpleFunction.exportability(context: JsIrBackendContext): Export
         return Exportability.NotNeeded
     }
 
-    val name = getExportedIdentifier()
+    val name = specializedName ?: getExportedIdentifier()
     // TODO: Use [] syntax instead of prohibiting
     if (parentClass == null && name in allReservedWords)
         return Exportability.Prohibited("Name is a reserved word")
@@ -100,12 +100,16 @@ internal fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNa
     if (declaration is IrSimpleFunction) {
         val property = declaration.correspondingPropertySymbol?.owner
         if (property != null) {
+            val customJsName = declaration.getJsNameForOverriddenDeclaration()
             // Return property for getter accessors only to prevent
             // returning it twice (for getter and setter) in the same scope
-            return if (property.getter == declaration)
-                property
-            else
-                null
+            return when {
+                // to respect defined @JsName on accessors, we need to export them as regular functions
+                // not as a property
+                customJsName != null -> declaration
+                property.getter == declaration -> property
+                else -> null
+            }
         }
     }
 
@@ -182,7 +186,7 @@ private fun shouldDeclarationBeExported(
 }
 
 internal fun IrOverridableDeclaration<*>.isAllowedFakeOverriddenDeclaration(context: JsIrBackendContext): Boolean {
-    if (isPromisifiedWrapper || isOverriddenEnumProperty(context)) return true
+    if (isPromisifiedMemberWrapper || isOverriddenEnumProperty(context)) return true
 
     val firstExportedRealOverride = runIf(isFakeOverride) {
         resolveFakeOverrideMaybeAbstract { it === this || it.isFakeOverride || it.parentClassOrNull?.isExported(context) != true }

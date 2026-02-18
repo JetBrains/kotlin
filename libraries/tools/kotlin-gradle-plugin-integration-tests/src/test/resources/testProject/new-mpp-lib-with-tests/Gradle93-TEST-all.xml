@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results>
+  <testsuite name="jsNodeTest.com.example.lib.TestCommonCode" tests="2" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
+    <properties />
+    <testcase name="testId[js, node]" classname="jsNodeTest.com.example.lib.TestCommonCode" time="..." />
+    <testcase name="testExpectedFun[js, node]" classname="jsNodeTest.com.example.lib.TestCommonCode" time="..." />
+    <system-out />
+    <system-err />
+  </testsuite>
+  <testsuite name="jsNodeTest.com.example.lib.TestJs" tests="1" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
+    <properties />
+    <testcase name="testJsSpecificCode[js, node]" classname="jsNodeTest.com.example.lib.TestJs" time="..." />
+    <system-out />
+    <system-err />
+  </testsuite>
+  <testsuite name="<target>Test.com.example.lib.TestCommonCode" tests="2" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
+    <properties />
+    <testcase name="testId[<target>]" classname="<target>Test.com.example.lib.TestCommonCode" time="..." />
+    <testcase name="testExpectedFun[<target>]" classname="<target>Test.com.example.lib.TestCommonCode" time="..." />
+    <system-out />
+    <system-err />
+  </testsuite>
+</results>

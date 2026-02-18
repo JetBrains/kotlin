@@ -30,9 +30,9 @@ projectTests {
         // nativeTest sets workingDir to rootDir so here we need to override it
         workingDir = projectDir
 
-        // The test id for `executeSingle`. Use for debugging.
-        project.findProperty("gcfuzzing.id")?.let {
-            systemProperty("gcfuzzing.id", it)
+        // If set, execute a single test with the given id instead of the fuzzing process.
+        project.findProperty("gcfuzzing.single.id")?.let {
+            systemProperty("gcfuzzing.single.id", it)
         }
         // The timeout for a single fuzzer test. After the time is out the test will try to do one final GC a nd kill itself gracefully.
         // Should be lower than `kn.executionTimeout`.

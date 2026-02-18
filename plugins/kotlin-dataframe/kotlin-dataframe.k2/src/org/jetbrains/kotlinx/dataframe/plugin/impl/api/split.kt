@@ -138,7 +138,7 @@ fun PluginDataFrameSchema.split(
     val resolvedColumns = columns.resolve(this)
     if (resolvedColumns.size != 1) error("Compiler plugin only supports split of 1 column, but was $resolvedColumns")
 
-    return asDataFrame().split { columns }.by { targetType() }
+    return asDataFrame(impliedColumnsResolver = columns).split { columns }.by { targetType() }
 }
 
 class SplitWithTransformInto0 : SplitWithTransformAbstractOperation() {
@@ -194,7 +194,7 @@ class SplitWithTransformIntoRows : AbstractSchemaModificationInterpreter() {
         return receiver.df.convert(receiver.columns) {
             val targetProjection = arrayOf(receiver.targetType.coneType.toTypeProjection(Variance.INVARIANT))
             StandardClassIds.List.createConeType(session, targetProjection).wrap()
-        }.explodeImpl(dropEmpty, receiver.columns.resolve(receiver.df))
+        }.explodeImpl(dropEmpty, receiver.columns)
     }
 }
 
@@ -203,7 +203,7 @@ class SplitIntoRows : AbstractSchemaModificationInterpreter() {
     val Arguments.dropEmpty: Boolean by arg(defaultValue = Present(true))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.explodeImpl(dropEmpty, receiver.columns.resolve(receiver.df))
+        return receiver.df.explodeImpl(dropEmpty, receiver.columns)
     }
 }
 
@@ -212,7 +212,7 @@ class SplitAnyFrameRows : AbstractSchemaModificationInterpreter() {
     val Arguments.dropEmpty: Boolean by arg(defaultValue = Present(true))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.explodeImpl(dropEmpty, receiver.columns.resolve(receiver.df))
+        return receiver.df.explodeImpl(dropEmpty, receiver.columns)
     }
 }
 

@@ -9,13 +9,16 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.junit.jupiter.api.Assumptions
 
 /**
@@ -48,7 +51,7 @@ class CustomKlibCompilerSecondStageTestSuppressor(
                         else
                             listOf(wrappedException)
                     }
-                    is JsBinaryArtifactHandler -> processException(  // Execution error
+                    is BinaryArtifactHandler -> processException(  // Execution error
                         wrappedException,
                         IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE
                     )
@@ -60,6 +63,9 @@ class CustomKlibCompilerSecondStageTestSuppressor(
                         IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE
                     )
                     else -> processException(wrappedException, IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE)
+                }
+                is WrappedException.FromAfterAnalysisChecker -> {
+                    listOf(wrappedException)
                 }
                 else -> error("Yet unsupported wrapped exception type: ${wrappedException::class.qualifiedName} ")
             }
@@ -76,6 +82,13 @@ class CustomKlibCompilerSecondStageTestSuppressor(
     private fun processException(wrappedException: WrappedException, ignoreDirective: StringDirective): List<WrappedException> {
         if (testServices.versionAndTargetAreIgnored(ignoreDirective, defaultLanguageVersion))
             return emptyList()
+
+        if (testServices.moduleStructure.modules.any {
+                it.files.any { file -> JsEnvironmentConfigurationDirectives.RECOMPILE in file.directives }
+            }) {
+            // Forward compatibility is not guaranteed for incremental caches, so these tests may fail during forward compatibility testing
+            return emptyList()
+        }
 
         return listOf(wrappedException)
     }

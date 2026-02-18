@@ -1,4 +1,10 @@
-PROTO DIFFERENCE in test/AnnotationListBecomeEmpty: FLAGS
+PROTO DIFFERENCE in test/AnnotationAdded: ANNOTATION_LIST
+CHANGES in test/AnnotationAdded: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/AnnotationListBecomeEmpty: ANNOTATION_LIST, FLAGS
 CHANGES in test/AnnotationListBecomeEmpty: CLASS_SIGNATURE
-PROTO DIFFERENCE in test/AnnotationListBecomeNotEmpty: FLAGS
+PROTO DIFFERENCE in test/AnnotationListBecomeNotEmpty: ANNOTATION_LIST, FLAGS
 CHANGES in test/AnnotationListBecomeNotEmpty: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/AnnotationRemoved: ANNOTATION_LIST
+CHANGES in test/AnnotationRemoved: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/AnnotationReplaced: ANNOTATION_LIST
+CHANGES in test/AnnotationReplaced: CLASS_SIGNATURE

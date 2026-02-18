@@ -1,0 +1,2 @@
+KtBinaryExpression(238,262): 'variable[0] += MyClass()'
+  null

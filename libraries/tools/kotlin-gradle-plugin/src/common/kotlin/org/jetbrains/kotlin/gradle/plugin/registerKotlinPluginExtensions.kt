@@ -70,9 +70,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, ConfigurationTimeFusMetricsCollectorAction)
         register(project, FinalizeConfigurationFusMetricAction)
 
-        if (isAbiValidationEnabled) {
-            register(project, AbiValidationSetupAction)
-        }
+        register(project, AbiValidationSetupAction)
 
         if (isJvm || isMultiplatform) {
             register(project, ScriptingGradleSubpluginSetupAction)
@@ -196,10 +194,10 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KmpPartiallyResolvedDependenciesChecker)
         register(project, TestApiDependenciesChecker)
         register(project, ConfigurationOnDemandSupportChecker)
+        register(project, KotlinCompilerExecutionStrategyOutOfProcessValueChecker)
 
         if (isMultiplatform) {
             register(project, NativeVersionChecker)
-            register(project, DisabledNativeCacheChecker)
             register(project, SupportedNativeHostChecker)
             register(project, MultipleSourceSetRootsInCompilationChecker)
             register(project, SwiftExportModuleNameChecker)
@@ -210,8 +208,6 @@ internal fun Project.registerKotlinPluginExtensions() {
 }
 
 private val Project.isKmpProjectIsolationEnabled get() = PropertiesProvider(project).kotlinKmpProjectIsolationEnabled
-
-private val Project.isAbiValidationEnabled get() = !PropertiesProvider(project).abiValidationDisabled
 
 /* Helper functions to make configuration code above easier to read */
 

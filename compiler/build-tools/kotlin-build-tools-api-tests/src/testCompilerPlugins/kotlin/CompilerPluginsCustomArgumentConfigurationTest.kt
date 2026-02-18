@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation
+package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.COMPILER_PLUGINS
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginOption
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrder
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginPartialOrderRelation
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -22,8 +23,8 @@ import java.nio.file.Paths
 class CompilerPluginsCustomArgumentConfigurationTest {
     @Test
     fun testDefaultValue() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         assertEquals(emptyList<CompilerPlugin>(), operation.compilerArguments[COMPILER_PLUGINS])
     }
 
@@ -31,8 +32,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
     fun testBeforeAfterSemanticEquivalence() {
         // Scenario 1: pluginA BEFORE pluginB
         val argsBefore = run {
-            val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-            val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+            val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+            val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
             operation.compilerArguments[COMPILER_PLUGINS] = listOf(
                 CompilerPlugin(
                     "pluginA",
@@ -47,13 +48,13 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                     emptySet()
                 ),
             )
-            operation.compilerArguments.toArgumentStrings()
+            operation.build().compilerArguments.toArgumentStrings()
         }
 
         // Scenario 2: pluginB AFTER pluginA
         val argsAfter = run {
-            val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-            val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+            val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+            val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
             operation.compilerArguments[COMPILER_PLUGINS] = listOf(
                 CompilerPlugin(
                     "pluginB",
@@ -68,7 +69,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                     emptySet()
                 ),
             )
-            operation.compilerArguments.toArgumentStrings()
+            operation.build().compilerArguments.toArgumentStrings()
         }
 
         fun onlyOrderFlags(args: List<String>): List<String> = args.filter { it.startsWith("-Xcompiler-plugin-order=") }
@@ -78,8 +79,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
 
     @Test
     fun testPluginWithOneOption() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "test-plugin",
@@ -88,14 +89,14 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
         assertEquals(listOf("-P", "plugin:test-plugin:option1=value1"), stringArgumentsDump)
     }
 
     @Test
     fun testPluginWithoutAnyOptions() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "test-plugin",
@@ -104,7 +105,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         assertTrue(
             !stringArgumentsDump.contains("-P"),
             "Expected no -P flag (no options provided): $stringArgumentsDump"
@@ -113,8 +114,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
 
     @Test
     fun testPluginWithTwoDifferentOptions() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "test-plugin",
@@ -123,14 +124,14 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
         assertEquals(listOf("-P", "plugin:test-plugin:option1=value1,plugin:test-plugin:option2=value2"), stringArgumentsDump)
     }
 
     @Test
     fun testPluginWithOneOptionDifferentValues() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "test-plugin",
@@ -139,15 +140,15 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
         assertEquals(listOf("-P", "plugin:test-plugin:option1=value1,plugin:test-plugin:option1=value2"), stringArgumentsDump)
     }
 
     @Test
     @Disabled("KT-83023")
     fun testDuplicateOptionSameKeyValue() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "test-plugin",
@@ -159,7 +160,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
         assertEquals(
             listOf("-P", "plugin:test-plugin:option1=value1,plugin:test-plugin:option1=value1"),
             stringArgumentsDump
@@ -169,8 +170,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
     @Test
     @Disabled("KT-83023")
     fun testPluginWithOptionNoValue() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "test-plugin",
@@ -180,15 +181,15 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filterNot { it.startsWith("-Xplugin=") }
         assertEquals(listOf("-P", "plugin:test-plugin:option1="), stringArgumentsDump)
     }
 
     @Test
     @Disabled("KT-83023")
     fun testPluginWithOptionEmptyKey() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "test-plugin",
@@ -198,15 +199,15 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         println(stringArgumentsDump)
     }
 
     @Test
     @Disabled("KT-83023")
     fun testPluginWithOptionEmptyKeyAndValue() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "test-plugin",
@@ -216,7 +217,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         assertTrue(
             !stringArgumentsDump.contains("-P"),
             "Expected no -P flag when key and value are empty: $stringArgumentsDump"
@@ -226,8 +227,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
     @Test
     @Disabled("KT-83023")
     fun testPluginOptionKeyWithEquals() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "test-plugin",
@@ -237,15 +238,15 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         println(stringArgumentsDump)
     }
 
     @Test
     @Disabled("KT-83023")
     fun testPluginOptionValueWithColon() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "test-plugin",
@@ -255,15 +256,15 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         println(stringArgumentsDump)
     }
 
     @Test
     @Disabled("KT-83023")
     fun testPluginOptionValueWithComma() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "test-plugin",
@@ -273,7 +274,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         println(stringArgumentsDump)
     }
 
@@ -284,8 +285,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
 
     @Test
     fun testSimpleDirectOrder() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "pluginA",
@@ -300,14 +301,14 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 setOf(CompilerPluginPartialOrder(CompilerPluginPartialOrderRelation.AFTER, "pluginA"))
             ),
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
         assertEquals(listOf("-Xcompiler-plugin-order=pluginA>pluginB"), stringArgumentsDump)
     }
 
     @Test
     fun testSeveralOrderingToSamePlugin() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "plugin1",
@@ -331,7 +332,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             ),
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
         // Order of two flags is not semantically important; compare as a set
         assertEquals(
             setOf(
@@ -345,8 +346,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
     @Test
     fun testLinearChainOrdering() {
         // A -> B -> C should produce two flags: A>B and B>C
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "pluginA",
@@ -367,7 +368,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             ),
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
         assertEquals(
             setOf(
                 "-Xcompiler-plugin-order=pluginA>pluginB",
@@ -379,8 +380,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
 
     @Test
     fun testNoPluginOrdering() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "plugin1",
@@ -395,15 +396,15 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet(),
             ),
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         val orderingFlags = stringArgumentsDump.filter { it.startsWith("-Xcompiler-plugin-order=") }
         assertTrue(orderingFlags.isEmpty(), "Expected no -Xcompiler-plugin-order= flags: $orderingFlags")
     }
 
     @Test
     fun testPluginOrderingWithEmptyOtherPluginId() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "plugin1",
@@ -419,7 +420,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             ),
         )
         val exception = assertThrows<IllegalStateException> {
-            operation.compilerArguments.toArgumentStrings()
+            operation.build().compilerArguments.toArgumentStrings()
         }
         assertEquals(
             "Invalid compiler plugin configuration: plugin id is empty in the ordering requirements for plugin 'plugin2'.",
@@ -430,8 +431,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
     @Test
     fun testRedundantOrdering() {
         // Redundant consistent requirements: A BEFORE B + B AFTER A should produce A>B only once
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "plugin.one",
@@ -446,7 +447,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 setOf(CompilerPluginPartialOrder(CompilerPluginPartialOrderRelation.AFTER, "plugin.one"))
             ),
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         val orderingFlags = stringArgumentsDump.filter { it.startsWith("-Xcompiler-plugin-order=") }
         assertEquals(listOf("-Xcompiler-plugin-order=plugin.one>plugin.two"), orderingFlags, "Expected A>B to appear only once")
     }
@@ -454,8 +455,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
     @Test
     @Disabled("KT-83023")
     fun testOrderingToNonExistentPlugin() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "plugin1",
@@ -464,15 +465,15 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 setOf(CompilerPluginPartialOrder(CompilerPluginPartialOrderRelation.AFTER, "nonExistentPlugin"))
             )
         )
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings().filter { it.startsWith("-Xcompiler-plugin-order=") }
         // BTA emits the ordering constraint even though the target plugin doesn't exist in the list
         assertEquals(listOf("-Xcompiler-plugin-order=nonExistentPlugin>plugin1"), stringArgumentsDump)
     }
 
     @Test
     fun testPluginIdEmpty() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "",
@@ -482,7 +483,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
         val exception = assertThrows<IllegalStateException> {
-            operation.compilerArguments.toArgumentStrings()
+            operation.build().compilerArguments.toArgumentStrings()
         }
         assertEquals(
             "Invalid compiler plugin configuration: plugin id is empty.",
@@ -493,8 +494,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
     @Test
     @Disabled("KT-83023")
     fun testPluginIdWithSpecialCharacters() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "plug:in=bad",
@@ -504,7 +505,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
         val exception = assertThrows<IllegalStateException> {
-            operation.compilerArguments.toArgumentStrings()
+            operation.build().compilerArguments.toArgumentStrings()
         }
         assertEquals(
             "Invalid compiler plugin configuration: plugin id 'plug:in=bad' contains forbidden character(s): ':='.",
@@ -514,8 +515,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
 
     @Test
     fun testSingleClasspathEntry() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "plugin1",
@@ -524,15 +525,15 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val args = operation.compilerArguments.toArgumentStrings()
+        val args = operation.build().compilerArguments.toArgumentStrings()
 
         assertTrue(args.any { it.endsWith("plugin1.jar") }, "plugin1.jar not found in classpath: $args")
     }
 
     @Test
     fun testMultipleClasspathEntries() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "plugin1",
@@ -541,7 +542,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val args = operation.compilerArguments.toArgumentStrings()
+        val args = operation.build().compilerArguments.toArgumentStrings()
 
         assertTrue(args.any { it.contains("plugin1.jar") }, "plugin1.jar not found in classpath: $args")
         assertTrue(args.any { it.contains("lib.jar") }, "lib.jar not found in classpath: $args")
@@ -549,8 +550,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
 
     @Test
     fun testEmptyClasspath() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "plugin1",
@@ -560,7 +561,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
         val exception = assertThrows<IllegalStateException> {
-            operation.compilerArguments.toArgumentStrings()
+            operation.build().compilerArguments.toArgumentStrings()
         }
         assertEquals(
             "Invalid compiler plugin configuration: plugin 'plugin1' has empty classpath.",
@@ -570,8 +571,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
 
     @Test
     fun testDuplicateClasspathEntries() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "plugin1",
@@ -580,7 +581,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val args = operation.compilerArguments.toArgumentStrings()
+        val args = operation.build().compilerArguments.toArgumentStrings()
 
         // Find the -Xplugin argument and count occurrences of plugin1.jar within it
         val xpluginArg = args.find { it.startsWith("-Xplugin=") } ?: ""
@@ -592,8 +593,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
     @Test
     @Disabled("KT-83023")
     fun testDuplicatePluginIdsAndClasspathEntries() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "same-plugin-id",
@@ -609,15 +610,15 @@ class CompilerPluginsCustomArgumentConfigurationTest {
             )
         )
 
-        val stringArgumentsDump = operation.compilerArguments.toArgumentStrings()
+        val stringArgumentsDump = operation.build().compilerArguments.toArgumentStrings()
         println(stringArgumentsDump)
         // [-Xplugin=C:\same-plugin\same-plugin-id.jar,C:\same-plugin\same-plugin-id.jar,C:\same-plugin\lib.jar, -P, plugin:same-plugin-id:option1=value1,plugin:same-plugin-id:option2=value2]
     }
 
     @Test
     fun testDifferentPluginIdsSameClasspath() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments[COMPILER_PLUGINS] = listOf(
             CompilerPlugin(
                 "fake-plugin-id-1",
@@ -632,7 +633,7 @@ class CompilerPluginsCustomArgumentConfigurationTest {
                 emptySet()
             )
         )
-        val args = operation.compilerArguments.toArgumentStrings()
+        val args = operation.build().compilerArguments.toArgumentStrings()
         println(args)
 
         // Find the -Xplugin argument and count occurrences of same-plugin.jar within it
@@ -649,8 +650,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
 
     @Test
     fun testRawArgumentsMarkerPluginDefault() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments.applyArgumentStrings(listOf("-Xplugin=1.jar"))
         assertEquals(
             listOf("___RAW_PLUGINS_APPLIED___"),
@@ -660,8 +661,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
 
     @Test
     fun testRawArgumentsMarkerPluginModern() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments.applyArgumentStrings(listOf("-Xcompiler-plugin=1.jar"))
         assertEquals(
             listOf("___RAW_PLUGINS_APPLIED___"),
@@ -671,8 +672,8 @@ class CompilerPluginsCustomArgumentConfigurationTest {
 
     @Test
     fun testNoRawArgumentsMarkerPlugin() {
-        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
         operation.compilerArguments.applyArgumentStrings(listOf())
         assertEquals(
             emptyList<CompilerPlugin>(),

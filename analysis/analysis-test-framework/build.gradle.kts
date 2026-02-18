@@ -24,6 +24,7 @@ dependencies {
     testFixturesImplementation(project(":analysis:analysis-api-impl-base"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesApi(testFixtures(project(":analysis:test-data-manager")))
 }
 
 sourceSets {
@@ -38,5 +39,6 @@ tasks.withType<KotlinJvmCompile>().configureEach {
         "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
         "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
         "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
+        "org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint",
     )
 }

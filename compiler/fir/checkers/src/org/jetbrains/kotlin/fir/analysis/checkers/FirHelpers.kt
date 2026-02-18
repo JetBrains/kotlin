@@ -597,6 +597,9 @@ fun extractArgumentsTypeRefAndSource(typeRef: FirTypeRef?): List<FirTypeRefSourc
         is FirFunctionTypeRef -> {
             val parameters = delegatedTypeRef.parameters
 
+            for (contextParameter in delegatedTypeRef.contextParameterTypeRefs) {
+                result.add(FirTypeRefSource(contextParameter, contextParameter.source))
+            }
             delegatedTypeRef.receiverTypeRef?.let { result.add(FirTypeRefSource(it, it.source)) }
             for (valueParameter in parameters) {
                 val valueParamTypeRef = valueParameter.returnTypeRef
@@ -1014,17 +1017,23 @@ fun FirElement.requireFeatureSupport(
     source.requireFeatureSupport(feature, positioningStrategy)
 }
 
+context(context: CheckerContext)
+internal val ConeKotlinType.hasStableIdentityForAtomicOperations: Boolean
+    get() = fullyExpandedType().unwrapToSimpleTypeUsingLowerBound().let {
+        !it.isPrimitiveOrNullablePrimitive && !it.isValueClass(context.session)
+    }
+
 context(context: CheckerContext, reporter: DiagnosticReporter)
-fun reportAtomicToPrimitiveProblematicAccess(
+fun checkAtomicCallReceiverForStableIdentity(
     type: ConeKotlinType,
     source: KtSourceElement?,
     atomicReferenceClassId: ClassId,
     appropriateCandidatesForArgument: Map<ClassId, ClassId>,
 ) {
     val expanded = type.fullyExpandedType()
-    val argument = expanded.typeArguments.firstOrNull()?.type?.unwrapToSimpleTypeUsingLowerBound() ?: return
+    val argument = expanded.typeArguments.firstOrNull()?.type ?: return
 
-    if (argument.isPrimitiveOrNullablePrimitive || argument.isValueClass(context.session)) {
+    if (!argument.hasStableIdentityForAtomicOperations) {
         val candidate = appropriateCandidatesForArgument[argument.classId]
         reporter.reportOn(source, FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY, atomicReferenceClassId, argument, candidate)
     }

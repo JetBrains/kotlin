@@ -38,7 +38,7 @@
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm-tree</artifactId>
-      <version>9.7</version>
+      <version>9.9.1</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>

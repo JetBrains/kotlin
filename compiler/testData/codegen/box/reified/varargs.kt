@@ -1,5 +1,5 @@
 // WITH_STDLIB
-
+// FILE: lib.kt
 import kotlin.test.assertEquals
 
 fun <T> foo(vararg a: T) = a.size
@@ -11,6 +11,9 @@ inline fun <reified T> bar(block: () -> T): Array<T> {
 }
 
 inline fun <reified T> empty() = arrayOf<T>()
+
+// FILE: main.kt
+import kotlin.test.assertEquals
 
 fun box(): String {
     var i = 0

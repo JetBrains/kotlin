@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.analysis.api.platform.declarations
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
+@KaPlatformInterface
 public interface KotlinDirectInheritorsProvider : KotlinPlatformComponent {
     /**
      * Returns all direct *Kotlin* inheritors of [ktClass] that can be found in the given [scope].
@@ -33,6 +35,7 @@ public interface KotlinDirectInheritorsProvider : KotlinPlatformComponent {
         includeLocalInheritors: Boolean = true,
     ): Iterable<KtClassOrObject>
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinDirectInheritorsProvider = project.service()
     }

@@ -3,6 +3,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun <T : Base<T>> BaseAlias<T> /* = Base<T> */.ext1()
 
@@ -11,6 +12,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun <T : Base<T>> BaseAlias<T> /* = Base<T> */.ext1()
 
@@ -19,6 +21,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun <T : Base<T>> BaseAlias<T> /* = Base<T> */.ext1()
 
@@ -27,6 +30,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun <T : Base<T>> BaseAlias<T> /* = Base<T> */.ext1()
 
@@ -35,6 +39,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -43,6 +48,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun <T : BaseAlias<T> /* = Base<T> */> Base<T>.ext2()
 
@@ -51,6 +57,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun <T : BaseAlias<T> /* = Base<T> */> Base<T>.ext2()
 
@@ -59,6 +66,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun <T : BaseAlias<T> /* = Base<T> */> Base<T>.ext2()
 
@@ -67,6 +75,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) fun <T : BaseAlias<T> /* = Base<T> */> Base<T>.ext2()
 
@@ -75,5 +84,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: null
       symbols:
         Nothing (Unresolved reference)

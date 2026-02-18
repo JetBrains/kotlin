@@ -100,7 +100,7 @@ digraph whenExpressionType_kt {
                     36 [label="Exit $subj"];
                     37 [label="Access qualifier /A"];
                     38 [label="Access variable R|/A.A1|"];
-                    39 [label="Equality operator =="];
+                    39 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     40 [label="Exit when branch condition"];
                 }
                 subgraph cluster_12 {
@@ -111,7 +111,7 @@ digraph whenExpressionType_kt {
                     44 [label="Exit $subj"];
                     45 [label="Access qualifier /A"];
                     46 [label="Access variable R|/A.A2|"];
-                    47 [label="Equality operator =="];
+                    47 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     48 [label="Exit when branch condition"];
                 }
                 49 [label="Enter when branch result"];
@@ -241,7 +241,7 @@ digraph whenExpressionType_kt {
                     91 [label="Exit $subj"];
                     92 [label="Access qualifier /A"];
                     93 [label="Access variable R|/A.A1|"];
-                    94 [label="Equality operator =="];
+                    94 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     95 [label="Exit when branch condition"];
                 }
                 subgraph cluster_22 {
@@ -252,7 +252,7 @@ digraph whenExpressionType_kt {
                     99 [label="Exit $subj"];
                     100 [label="Access qualifier /A"];
                     101 [label="Access variable R|/A.A2|"];
-                    102 [label="Equality operator =="];
+                    102 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     103 [label="Exit when branch condition"];
                 }
                 104 [label="Enter when branch result"];
@@ -382,7 +382,7 @@ digraph whenExpressionType_kt {
                     147 [label="Exit $subj"];
                     148 [label="Access qualifier /A"];
                     149 [label="Access variable R|/A.A1|"];
-                    150 [label="Equality operator =="];
+                    150 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     151 [label="Exit when branch condition"];
                 }
                 subgraph cluster_32 {
@@ -393,7 +393,7 @@ digraph whenExpressionType_kt {
                     155 [label="Exit $subj"];
                     156 [label="Access qualifier /A"];
                     157 [label="Access variable R|/A.A2|"];
-                    158 [label="Equality operator =="];
+                    158 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     159 [label="Exit when branch condition"];
                 }
                 160 [label="Enter when branch result"];
@@ -523,7 +523,7 @@ digraph whenExpressionType_kt {
                     202 [label="Exit $subj"];
                     203 [label="Access qualifier /A"];
                     204 [label="Access variable R|/A.A1|"];
-                    205 [label="Equality operator =="];
+                    205 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     206 [label="Exit when branch condition"];
                 }
                 subgraph cluster_42 {
@@ -534,7 +534,7 @@ digraph whenExpressionType_kt {
                     210 [label="Exit $subj"];
                     211 [label="Access qualifier /A"];
                     212 [label="Access variable R|/A.A2|"];
-                    213 [label="Equality operator =="];
+                    213 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     214 [label="Exit when branch condition"];
                 }
                 215 [label="Enter when branch result"];
@@ -661,7 +661,7 @@ digraph whenExpressionType_kt {
                     255 [label="Exit $subj"];
                     256 [label="Access qualifier /A"];
                     257 [label="Access variable R|/A.A1|"];
-                    258 [label="Equality operator =="];
+                    258 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     259 [label="Exit when branch condition"];
                 }
                 subgraph cluster_52 {
@@ -672,7 +672,7 @@ digraph whenExpressionType_kt {
                     263 [label="Exit $subj"];
                     264 [label="Access qualifier /A"];
                     265 [label="Access variable R|/A.A2|"];
-                    266 [label="Equality operator =="];
+                    266 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     267 [label="Exit when branch condition"];
                 }
                 subgraph cluster_53 {
@@ -827,7 +827,7 @@ digraph whenExpressionType_kt {
                     319 [label="Exit $subj"];
                     320 [label="Access qualifier /A"];
                     321 [label="Access variable R|/A.A1|"];
-                    322 [label="Equality operator =="];
+                    322 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     323 [label="Exit when branch condition"];
                 }
                 subgraph cluster_65 {
@@ -838,7 +838,7 @@ digraph whenExpressionType_kt {
                     327 [label="Exit $subj"];
                     328 [label="Access qualifier /A"];
                     329 [label="Access variable R|/A.A2|"];
-                    330 [label="Equality operator =="];
+                    330 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     331 [label="Exit when branch condition"];
                 }
                 subgraph cluster_66 {
@@ -993,7 +993,7 @@ digraph whenExpressionType_kt {
                     382 [label="Exit $subj"];
                     383 [label="Access qualifier /A"];
                     384 [label="Access variable R|/A.A1|"];
-                    385 [label="Equality operator =="];
+                    385 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     386 [label="Exit when branch condition"];
                 }
                 subgraph cluster_78 {
@@ -1004,7 +1004,7 @@ digraph whenExpressionType_kt {
                     390 [label="Exit $subj"];
                     391 [label="Access qualifier /A"];
                     392 [label="Access variable R|/A.A2|"];
-                    393 [label="Equality operator =="];
+                    393 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     394 [label="Exit when branch condition"];
                 }
                 subgraph cluster_79 {
@@ -1159,7 +1159,7 @@ digraph whenExpressionType_kt {
                     446 [label="Exit $subj"];
                     447 [label="Access qualifier /A"];
                     448 [label="Access variable R|/A.A1|"];
-                    449 [label="Equality operator =="];
+                    449 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     450 [label="Exit when branch condition"];
                 }
                 subgraph cluster_91 {
@@ -1170,7 +1170,7 @@ digraph whenExpressionType_kt {
                     454 [label="Exit $subj"];
                     455 [label="Access qualifier /A"];
                     456 [label="Access variable R|/A.A2|"];
-                    457 [label="Equality operator =="];
+                    457 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     458 [label="Exit when branch condition"];
                 }
                 subgraph cluster_92 {
@@ -1325,7 +1325,7 @@ digraph whenExpressionType_kt {
                     509 [label="Exit $subj"];
                     510 [label="Access qualifier /A"];
                     511 [label="Access variable R|/A.A1|"];
-                    512 [label="Equality operator =="];
+                    512 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     513 [label="Exit when branch condition"];
                 }
                 subgraph cluster_104 {
@@ -1336,7 +1336,7 @@ digraph whenExpressionType_kt {
                     517 [label="Exit $subj"];
                     518 [label="Access qualifier /A"];
                     519 [label="Access variable R|/A.A2|"];
-                    520 [label="Equality operator =="];
+                    520 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     521 [label="Exit when branch condition"];
                 }
                 522 [label="Synthetic else branch"];

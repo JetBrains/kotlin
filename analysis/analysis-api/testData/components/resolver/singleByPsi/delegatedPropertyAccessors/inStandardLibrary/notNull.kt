@@ -1,4 +1,4 @@
 // WITH_STDLIB
 import kotlin.properties.Delegates
 
-var x: Int <caret>by Delegates.notNull()
+var x: Int <expr>by Delegates.notNull()</expr>

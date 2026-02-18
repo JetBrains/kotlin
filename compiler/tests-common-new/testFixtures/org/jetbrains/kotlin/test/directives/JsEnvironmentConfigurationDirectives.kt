@@ -198,6 +198,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val DELEGATE_JS_TRANSPILATION by directive(
+        description = "Enables new transpilation pipeline, where the compiler produces only latest ECMAScript version and the lowering to older versions is on the swc tool",
+        applicability = DirectiveApplicability.Global
+    )
+
     val ES6_MODE by directive(
         description = "Enables the Kotlin/JS compilation with ES-classes",
         applicability = DirectiveApplicability.Global

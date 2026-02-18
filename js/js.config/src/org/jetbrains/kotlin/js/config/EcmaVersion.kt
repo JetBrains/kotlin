@@ -13,5 +13,9 @@ enum class EcmaVersion {
         fun defaultVersion(): EcmaVersion {
             return es5
         }
+
+        fun latestSupportedVersion(): EcmaVersion {
+            return es2015
+        }
     }
 }

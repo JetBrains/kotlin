@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis
 
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 
 /**
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponen
  *   must be published when *exiting* restricted analysis mode, to mitigate potential issues with inconsistent cache states that accumulated
  *   during restricted analysis.
  */
+@KaPlatformInterface
 public interface KotlinRestrictedAnalysisService : KotlinOptionalPlatformComponent {
     /**
      * Whether the Analysis API platform is currently in *restricted analysis mode*.
@@ -79,6 +81,7 @@ public interface KotlinRestrictedAnalysisService : KotlinOptionalPlatformCompone
      */
     public fun <R> runWithRestrictedDataAccess(action: () -> R): R
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinRestrictedAnalysisService? = project.serviceOrNull()
     }
@@ -87,6 +90,7 @@ public interface KotlinRestrictedAnalysisService : KotlinOptionalPlatformCompone
 /**
  * Runs [action] with [KotlinRestrictedAnalysisService.runWithRestrictedDataAccess] if deemed necessary and applicable.
  */
+@KaPlatformInterface
 public inline fun <R> KotlinRestrictedAnalysisService?.withRestrictedDataAccess(crossinline action: () -> R): R {
     return if (this != null && isAnalysisRestricted && isRestrictedAnalysisAllowed) {
         this.runWithRestrictedDataAccess { action() }

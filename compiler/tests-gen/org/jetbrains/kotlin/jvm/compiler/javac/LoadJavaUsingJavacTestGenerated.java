@@ -1779,6 +1779,11 @@ public class LoadJavaUsingJavacTestGenerated extends AbstractLoadJavaUsingJavacT
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/PrimitiveArrayArguments.kt");
       }
 
+      @TestMetadata("RepeatableAnnotation.kt")
+      public void testRepeatableAnnotation() {
+        runTest("compiler/testData/loadJava/compiledKotlin/annotations/RepeatableAnnotation.kt");
+      }
+
       @TestMetadata("SelfReferentialAnnotation.kt")
       public void testSelfReferentialAnnotation() {
         runTest("compiler/testData/loadJava/compiledKotlin/annotations/SelfReferentialAnnotation.kt");

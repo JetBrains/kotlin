@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.build.report
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.util.*
 
-fun BuildReporter<BuildTimeMetric, BuildPerformanceMetric>.reportPerformanceData(moduleStats: UnitStats) {
+fun BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>.reportPerformanceData(moduleStats: UnitStats) {
     if (moduleStats.linesCount > 0) {
         addMetric(SOURCE_LINES_NUMBER, moduleStats.linesCount.toLong())
     }
@@ -50,6 +50,10 @@ fun BuildReporter<BuildTimeMetric, BuildPerformanceMetric>.reportPerformanceData
         if (phaseType == PhaseType.Analysis) {
             reportLps(ANALYSIS_LPS, time)
         }
+    }
+
+    moduleStats.klibElementStats?.forEach { (path, size) ->
+        addMetric(KlibSizeMetric.createIfDoesNotExistAndReturn(path), size)
     }
 
     if (codegenTime != Time.ZERO) {

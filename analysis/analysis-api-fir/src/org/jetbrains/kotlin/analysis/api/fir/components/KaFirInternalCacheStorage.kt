@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.platform.caches.NullableConcurrentCache
-import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolBasedReference
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
@@ -32,9 +33,15 @@ import java.util.concurrent.ConcurrentHashMap
 internal class KaFirInternalCacheStorage(private val analysisSession: KaFirSession) {
     private val project get() = analysisSession.project
 
-    val resolveToCallCache: CachedValue<NullableConcurrentCache<KtElement, KaCallInfo?>> by lazy {
+    val resolveCallCache: CachedValue<NullableConcurrentCache<KtElement, KaCallResolutionAttempt?>> by lazy {
         softCachedValueWithPsiKey {
-            NullableConcurrentCache<KtElement, KaCallInfo?>()
+            NullableConcurrentCache()
+        }
+    }
+
+    val resolveSymbolCache: CachedValue<NullableConcurrentCache<KtElement, KaSymbolResolutionAttempt?>> by lazy {
+        softCachedValueWithPsiKey {
+            NullableConcurrentCache()
         }
     }
 

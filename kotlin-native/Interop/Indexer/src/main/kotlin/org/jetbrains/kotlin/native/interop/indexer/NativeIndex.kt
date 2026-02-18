@@ -48,7 +48,11 @@ sealed class NativeLibraryHeaderFilter {
             val excludeDepdendentModules: Boolean
     ) : NativeLibraryHeaderFilter()
 
-    class Predefined(val headers: Set<String>, val modules: List<String>) : NativeLibraryHeaderFilter()
+    class Predefined(
+            val headers: Set<String>,
+            // In "skipNonImportableModules" mode the modules that were skipped (failed to import) are not excluded in this field
+            val modules: List<String>
+    ) : NativeLibraryHeaderFilter()
 }
 
 interface Compilation {
@@ -124,7 +128,11 @@ data class IndexerResult(val index: NativeIndex, val compilation: Compilation)
 /**
  * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).
  */
-fun buildNativeIndex(library: NativeLibrary, verbose: Boolean, allowPrecompiledHeaders: Boolean = true): IndexerResult = buildNativeIndexImpl(library, verbose, allowPrecompiledHeaders)
+fun buildNativeIndex(
+        library: NativeLibrary,
+        verbose: Boolean,
+        allowPrecompiledHeaders: Boolean = true,
+): IndexerResult = buildNativeIndexImpl(library, verbose, allowPrecompiledHeaders)
 
 /**
  * This class describes the IR of definitions from C header file(s).

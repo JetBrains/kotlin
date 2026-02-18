@@ -1,17 +1,19 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 val sb = StringBuilder()
+
+inline fun bar() {
+    sb.append({ "OK" }())
+}
+
+// FILE: main.kt
+import kotlin.test.*
 
 class Foo {
     init {
         bar()
     }
-}
-
-inline fun bar() {
-    sb.append({ "OK" }())
 }
 
 fun box(): String {

@@ -1,6 +1,6 @@
 FILE: initWithLocalDeclarations.kt
     public final? class A : R|kotlin/Any| {
-        public? constructor(): R|util/A| {
+        public? [ContainingClassKey=A] constructor(): R|util/A| {
             LAZY_super<R|kotlin/Any|>
         }
 

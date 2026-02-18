@@ -1,0 +1,2 @@
+KtNameReferenceExpression(48,49): 'y'
+  null

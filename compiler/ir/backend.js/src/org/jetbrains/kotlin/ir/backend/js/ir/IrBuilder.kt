@@ -42,7 +42,7 @@ object JsIrBuilder {
         ).apply {
             typeArguments?.let {
                 assert(typeArguments.size == this.typeArguments.size)
-                it.withIndex().forEach { (i, t) ->
+                for ((i, t) in it.withIndex()) {
                     this.typeArguments[i] = t
                 }
             }
@@ -77,7 +77,43 @@ object JsIrBuilder {
         ).apply {
             typeArguments?.let {
                 assert(it.size == this.typeArguments.size)
-                it.withIndex().forEach { (i, t) ->
+                for ((i, t) in it.withIndex()) {
+                    this.typeArguments[i] = t
+                }
+            }
+        }
+    }
+
+    fun buildAnnotation(
+        target: IrConstructorSymbol,
+        typeArguments: List<IrType?>? = null,
+        constructorTypeArguments: List<IrType?>? = null,
+        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
+    ): IrAnnotation {
+        val owner = target.owner
+        val irClass = owner.parentAsClass
+
+        return IrAnnotationImpl(
+            startOffset,
+            endOffset,
+            owner.returnType,
+            target,
+            typeArgumentsCount = irClass.typeParameters.size,
+            constructorTypeArgumentsCount = owner.typeParameters.size,
+            origin = origin
+        ).apply {
+            typeArguments?.let {
+                assert(it.size == this.typeArguments.size)
+                for ((i, t) in it.withIndex()) {
+                    this.typeArguments[i] = t
+                }
+            }
+
+            constructorTypeArguments?.let {
+                assert(it.size == this.typeArguments.size)
+                for ((i, t) in it.withIndex()) {
                     this.typeArguments[i] = t
                 }
             }
@@ -106,14 +142,14 @@ object JsIrBuilder {
         ).apply {
             typeArguments?.let {
                 assert(it.size == this.typeArguments.size)
-                it.withIndex().forEach { (i, t) ->
+                for ((i, t) in it.withIndex()) {
                     this.typeArguments[i] = t
                 }
             }
 
             constructorTypeArguments?.let {
                 assert(it.size == this.typeArguments.size)
-                it.withIndex().forEach { (i, t) ->
+                for ((i, t) in it.withIndex()) {
                     this.typeArguments[i] = t
                 }
             }

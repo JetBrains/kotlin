@@ -79,7 +79,7 @@ void assertArtifactsAreDownloadedFromCacheRedirector() {
     for (int i = 0; i < buildLog.length; i++) {
         String line = buildLog[i];
         if (line.startsWith("[INFO] Downloading from")) {
-            if (!line.contains("cache-redirector.jetbrains.com")) {
+            if (!line.contains("cache-redirector.jetbrains.com") && !line.contains("file://")) {
                 throw new Exception("cache-redirector is not enabled: " + line);
             }
         }

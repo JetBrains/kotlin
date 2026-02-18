@@ -6,16 +6,20 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_DEPRECATED_TEST_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
+import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.GradleDeprecatedPropertyChecker.DeprecatedProperty
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
@@ -23,6 +27,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
     private open class DeprecatedProperty(
         val propertyName: String,
         val details: String? = null,
+        val filter: (Any) -> Boolean = { true },
     )
 
     private class NativeCacheDeprecatedProperty(presetName: String? = null) : DeprecatedProperty(
@@ -32,6 +37,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
     )
 
     private val warningDeprecatedProperties: List<DeprecatedProperty> = listOf(
+        DeprecatedProperty(KOTLIN_DEPRECATED_TEST_PROPERTY), // this property is used for a behavior check
         DeprecatedProperty("kotlin.useK2"),
         DeprecatedProperty("kotlin.experimental.tryK2"),
         DeprecatedProperty("kotlin.incremental.classpath.snapshot.enabled"),
@@ -42,7 +48,10 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         DeprecatedProperty(KotlinJsCompilerType.jsCompilerProperty),
         DeprecatedProperty("${KotlinJsCompilerType.jsCompilerProperty}.nowarn"),
         DeprecatedProperty("kotlin.mpp.androidGradlePluginCompatibility.nowarn"), // Since 2.1.0
-        DeprecatedProperty("kotlin.experimental.swift-export.enabled"),
+        DeprecatedProperty(
+            "kotlin.experimental.swift-export.enabled",
+            "Swift Export is now enabled by default, so this property is no longer needed."
+        ),
         DeprecatedProperty("kotlin.native.cacheOrchestration"), // Since 2.3.20
         NativeCacheDeprecatedProperty(), // Since 2.3.20
         NativeCacheDeprecatedProperty(KonanTarget.IOS_ARM64.presetName), // Since 2.3.20
@@ -74,7 +83,11 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         DeprecatedProperty(
             propertyName = "kotlin.mpp.import.enableKgpDependencyResolution",
             details = "Legacy mode of KMP IDE import has been removed: https://kotl.in/KT-61127",
-        ),
+            filter = {
+                // KT-83254: true was the default since long ago and AGP pre 9.1 sets this property to true and emits the diagnostic otherwise
+                it.toString().toBooleanLenient() == false
+            }
+        ), // since 2.3.0
         DeprecatedProperty(
             propertyName = KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT,
             details = "Since Kotlin 2.2, the KMP Isolated Projects support is enabled by default. This property will be removed in 2.4 release." +
@@ -84,6 +97,14 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         DeprecatedProperty(
             propertyName = "kotlin.mpp.enableKotlinToolingMetadataArtifact",
             details = "The flag is deprecated and scheduled to be removed in 2.4.0: https://kotl.in/KT-79924",
+        ), // since 2.3.20
+        DeprecatedProperty(
+            propertyName = KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE,
+            details = "The flag is deprecated and scheduled to be removed in 2.4.0: https://kotl.in/KT-83678",
+            filter = {
+                // true was the default since 2.0.20 (KT-49919). Multiplatform AGP sets this property to true, so we only deprecate the false value
+                it.toString().toBooleanLenient() == false
+            }
         ), // since 2.3.20
     )
 
@@ -99,10 +120,12 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
     )
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
+        KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
+
         val propertiesBuildService = PropertiesBuildService.registerIfAbsent(project).get()
 
         warningDeprecatedProperties.filter {
-            propertiesBuildService.isPropertyUsed(project, it.propertyName)
+            propertiesBuildService.shouldReportProperty(project, it)
         }.forEach {
             collector.reportOncePerGradleBuild(
                 project,
@@ -115,7 +138,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         }
 
         errorDeprecatedProperties.filter {
-            propertiesBuildService.isPropertyUsed(project, it.propertyName)
+            propertiesBuildService.shouldReportProperty(project, it)
         }.forEach {
             collector.reportOncePerGradleBuild(
                 project,
@@ -128,5 +151,11 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         }
     }
 
-    private fun PropertiesBuildService.isPropertyUsed(project: Project, property: String): Boolean = get(property, project) != null
+    private fun PropertiesBuildService.shouldReportProperty(
+        project: Project,
+        property: DeprecatedProperty,
+    ): Boolean {
+        val value = get(property.propertyName, project) ?: return false
+        return property.filter(value)
+    }
 }

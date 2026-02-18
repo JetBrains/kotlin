@@ -9,5 +9,6 @@ KtCallExpression(91,115): 'MyAlias(param = "hello")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

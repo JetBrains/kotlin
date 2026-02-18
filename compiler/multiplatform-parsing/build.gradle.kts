@@ -41,6 +41,7 @@ kotlin {
                 implementation(project(":compiler:cli"))
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
+                runtimeOnly(libs.junit.platform.launcher)
                 api(kotlinTest("junit"))
             }
             kotlin {

@@ -96,12 +96,6 @@ public class Preloader {
         ClassLoader parent = Preloader.class.getClassLoader();
 
         List<File> instrumenters = options.instrumenters;
-        if (options.arguments.contains("-Xuse-javac")) {
-            File toolsJar = getJdkToolsJar();
-            if (toolsJar != null) {
-                instrumenters.add(toolsJar);
-            }
-        }
 
         if (instrumenters.isEmpty()) return parent;
 

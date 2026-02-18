@@ -43,10 +43,12 @@ import java.net.URLClassLoader
 @RunWith(Parameterized::class)
 abstract class AbstractCompilerTest(val useFir: Boolean) {
     companion object {
+        fun isCI() = env("CI")
+
         @JvmStatic
         @Parameterized.Parameters(name = "useFir = {0}")
         fun data() =
-            if (env("CI")) {
+            if (isCI()) {
                 // todo(b/458234821): K1 tests are disabled because of flaking classpath issues
                 arrayOf(true)
             } else {
@@ -120,6 +122,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
                 ApiVersion.createByLanguageVersion(languageVersion),
                 analysisFlags
             )
+            ComposePluginRegistrar.setupJvmConfiguration(this)
             updateConfiguration()
             additionalConfigurationParameters(this)
             addJvmClasspathRoots(additionalPaths)
@@ -136,11 +139,8 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
                 with(ComposePluginRegistrar.Companion) {
                     registerCommonExtensions()
                 }
+                IrGenerationExtension.registerExtension(ComposePluginRegistrar.createComposeIrExtension(configuration))
             }
-            IrGenerationExtension.registerExtension(
-                this,
-                ComposePluginRegistrar.createComposeIrExtension(configuration)
-            )
         }
     )
 

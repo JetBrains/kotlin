@@ -1,3 +1,4 @@
+// FILE: lib.kt
 class A {
     companion object {
         val s = "OK"
@@ -11,6 +12,7 @@ class A {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     val a = A()
     if (a.f() != "OK") return "FAIL0"

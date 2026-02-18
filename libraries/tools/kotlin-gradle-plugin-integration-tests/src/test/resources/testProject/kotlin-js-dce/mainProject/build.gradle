@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectKt
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 
 plugins {
-    id("org.jetbrains.kotlin.js")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 repositories {
@@ -10,9 +10,15 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation project(":libraryProject")
-    implementation "org.mozilla:rhino:1.7.7.1"
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation project(":libraryProject")
+                implementation "org.mozilla:rhino:1.7.7.1"
+            }
+        }
+    }
 }
 
 kotlin {
@@ -27,7 +33,7 @@ kotlin {
             def mainCompilation = compilations["main"]
 
             tasks.register("runWebpack", Exec) {
-                dependsOn(tasks.named('browserProductionWebpack'))
+                dependsOn(tasks.named('jsBrowserProductionWebpack'))
 
                 workingDir = "${rootProject.buildDir}/js/packages/kotlin-js-dce-mainProject"
 

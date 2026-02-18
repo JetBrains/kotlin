@@ -318,7 +318,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
 
             // TODO should we throw error if there is no `number` argument or there is evaluation error
             val argument = annotation.findArgumentByName(Name.identifier("number")) ?: return@forEachIndexed
-            val literal = argument.evaluateAs<FirLiteralExpression>(session) ?: return@forEachIndexed
+            val literal = argument as? FirLiteralExpression ?: return@forEachIndexed
             val customNumber = literal.value as? Long ?: return@forEachIndexed
 
             // use +1 to follow the rule that fields are numbered from 1

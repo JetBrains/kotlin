@@ -37,12 +37,12 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.DISABLE_OPTIMIZATION
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENABLE_DEBUG_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ENHANCED_COROUTINES_DEBUGGING
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.IGNORED_ANNOTATIONS_FOR_BRIDGES
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.LAMBDAS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.PROVIDE_JAVA_AS_BINARIES
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SAM_CONVERSIONS
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SERIALIZE_IR
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.STRING_CONCAT
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
@@ -75,7 +75,7 @@ import java.io.File
 
 open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
-        val TEST_CONFIGURATION_KIND_KEY = CompilerConfigurationKey.create<ConfigurationKind>("ConfigurationKind")
+        val TEST_CONFIGURATION_KIND_KEY = CompilerConfigurationKey.create<ConfigurationKind>("TEST_CONFIGURATION_KIND_KEY")
 
         private val DEFAULT_JVM_TARGET_FROM_PROPERTY: String? = System.getProperty("kotlin.test.default.jvm.target")
         const val DEFAULT_JVM_VERSION_PROPERTY: String = "kotlin.test.default.jvm.version"
@@ -100,7 +100,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
         fun extractJdkKind(registeredDirectives: RegisteredDirectives): TestJdkKind {
             val fullJdkEnabled = JvmEnvironmentConfigurationDirectives.FULL_JDK in registeredDirectives
-            val jdkKinds = registeredDirectives[JvmEnvironmentConfigurationDirectives.JDK_KIND]
+            val jdkKinds = registeredDirectives[JDK_KIND]
 
             if (fullJdkEnabled) {
                 if (jdkKinds.isNotEmpty()) {
@@ -191,7 +191,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         register(NO_UNIFIED_NULL_CHECKS, JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS)
         register(PARAMETERS_METADATA, JVMConfigurationKeys.PARAMETERS_METADATA)
         register(JVM_TARGET, JVMConfigurationKeys.JVM_TARGET)
-        register(SERIALIZE_IR, JVMConfigurationKeys.SERIALIZE_IR)
         register(JDK_RELEASE, JVMConfigurationKeys.JDK_RELEASE)
         register(USE_TYPE_TABLE, JVMConfigurationKeys.USE_TYPE_TABLE)
         register(ENABLE_DEBUG_MODE, JVMConfigurationKeys.ENABLE_DEBUG_MODE)
@@ -261,6 +260,10 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
         if (ENABLE_FOREIGN_ANNOTATIONS in module.directives) {
             configuration.addJavaBinaryRootsByCompiledJavaModulesFromModuleDependencies(configurationKind, module)
+        }
+
+        if (IGNORED_ANNOTATIONS_FOR_BRIDGES in module.directives) {
+            configuration.put(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES, module.directives[IGNORED_ANNOTATIONS_FOR_BRIDGES])
         }
 
         setupK2CliConfiguration(module, configuration)

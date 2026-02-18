@@ -160,6 +160,7 @@ internal fun runToolInSeparateProcess(
     readErrThread.join()
 
     val exitCode = process.waitFor()
+    @Suppress("DEPRECATION")
     logger.logFinish(KotlinCompilerExecutionStrategy.OUT_OF_PROCESS)
     return exitCodeFromProcessExitCode(logger, exitCode)
 }

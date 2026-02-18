@@ -26,6 +26,16 @@ inline var inlineProperty: Unit
     get() = Unit
     set(value) {}
 
+var inlineGetter: Unit
+    inline get() = Unit
+    set(value) {}
+
+var inlineSetter: Unit
+    get() = Unit
+    inline set(value) {}
+
+class Ctor
+
 fun box(): String {
     assertTrue(::inline.isInline)
     assertFalse(::inline.isExternal)
@@ -67,6 +77,20 @@ fun box(): String {
     assertTrue(::inlineProperty.setter.isInline)
     assertFalse(::inlineProperty.isSuspend)
 
+    assertTrue(::inlineGetter.getter.isInline)
+    assertFalse(::inlineGetter.setter.isInline)
+    assertFalse(::inlineSetter.getter.isInline)
+    assertTrue(::inlineSetter.setter.isInline)
+
+    for (p in listOf(::externalGetter, ::inlineProperty, ::inlineGetter, ::inlineSetter)) {
+        assertFalse(p.getter.isOperator)
+        assertFalse(p.setter.isOperator)
+        assertFalse(p.getter.isInfix)
+        assertFalse(p.setter.isInfix)
+        assertFalse(p.getter.isSuspend)
+        assertFalse(p.setter.isSuspend)
+    }
+
     assertFalse(::J.isInline)
     assertFalse(::J.isExternal)
     assertFalse(::J.isOperator)
@@ -79,6 +103,12 @@ fun box(): String {
     assertFalse(J::external.isInfix)
     assertFalse(J::external.isSuspend)
     assertTrue(JImpl::external.isExternal)
+
+    assertFalse(::Ctor.isInline)
+    assertFalse(::Ctor.isExternal)
+    assertFalse(::Ctor.isOperator)
+    assertFalse(::Ctor.isInfix)
+    assertFalse(::Ctor.isSuspend)
 
     return "OK"
 }

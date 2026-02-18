@@ -40,7 +40,7 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
     /**
      * Instance which is used to perform a call "by name", i.e. `callBy`.
      */
-    val defaultCaller: Caller<*>?
+    val callerWithDefaults: Caller<*>?
 
     /**
      * Returns an array that contains default values of all parameter types, which is copied and filled on every `callBy`.
@@ -154,7 +154,7 @@ internal fun <R> ReflectKCallable<R>.callDefaultMethod(args: Map<KParameter, Any
         }
     }
 
-    val caller = defaultCaller ?: throw KotlinReflectionInternalError("This callable does not support a default call: $this")
+    val caller = callerWithDefaults ?: throw KotlinReflectionInternalError("This callable does not support a default call: $this")
 
     @Suppress("UNCHECKED_CAST")
     return reflectionCall {
@@ -174,7 +174,7 @@ internal fun <R> ReflectKCallable<R>.callAnnotationConstructor(args: Map<KParame
         }
     }
 
-    val caller = defaultCaller ?: throw KotlinReflectionInternalError("This callable does not support a default call: $this")
+    val caller = callerWithDefaults ?: throw KotlinReflectionInternalError("This callable does not support a default call: $this")
 
     @Suppress("UNCHECKED_CAST")
     return reflectionCall {

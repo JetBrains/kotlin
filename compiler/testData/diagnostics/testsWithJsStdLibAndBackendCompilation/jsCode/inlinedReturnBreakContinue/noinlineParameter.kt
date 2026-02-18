@@ -3,6 +3,6 @@
 // LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization +IrCrossModuleInlinerBeforeKlibSerialization
 inline fun foo1(bar: () -> Unit, noinline baz: () -> Unit) = js("baz()")
 
-inline fun foo2(bar: () -> Unit, noinline baz: () -> Unit) = js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"baz(); bar()"<!>)
+inline fun foo2(bar: () -> Unit, noinline baz: () -> Unit) = js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_ERROR!>"baz(); bar()"<!>)
 
-inline fun foo3(bar: () -> Unit, noinline baz: () -> Unit) = js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"baz(bar())"<!>)
+inline fun foo3(bar: () -> Unit, noinline baz: () -> Unit) = js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_ERROR!>"baz(bar())"<!>)

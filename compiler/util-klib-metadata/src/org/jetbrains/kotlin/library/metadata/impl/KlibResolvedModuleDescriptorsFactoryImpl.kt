@@ -58,7 +58,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 
         // Build module descriptors.
         resolvedLibraries.forEach { library, packageAccessHandler ->
-            profile("Loading ${library.libraryName}") {
+            profile("Loading ${library.location}") {
 
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
                 val moduleDescriptor = createDescriptorOptionalBuiltsIns(

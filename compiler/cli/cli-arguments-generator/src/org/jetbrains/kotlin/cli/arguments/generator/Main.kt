@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
+import org.jetbrains.kotlin.arguments.dsl.types.StringType
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -177,6 +178,7 @@ private fun SmartPrinter.generateArgumentsClass(
                 } && argument.releaseVersionsMetadata.removedVersion != null
             ) continue
             validateDeprecationConsistency(argument)
+            validateLanguageFeaturesConsistency(argument)
             generateGradleAnnotations(argument)
             generateArgumentAnnotation(argument, level)
             generateFeatureAnnotations(argument)
@@ -235,7 +237,7 @@ private fun SmartPrinter.generateArgumentAnnotation(
         println("""value = "-${argument.name}",""")
         argument.shortName?.let { println("""shortName = "-$it",""") }
         argument.deprecatedName?.let { println("""deprecatedName = "-$it",""") }
-        argument.valueDescription.current?.let { println("""valueDescription = "$it",""") }
+        argument.argumentTypeDescription.current?.let { println("""valueDescription = "$it",""") }
         val rawDescription = argument.description.current.replace("\"", """\"""")
         val description = if ("\n" in rawDescription) {
             "$tripleQuote$rawDescription$tripleQuote"
@@ -270,6 +272,50 @@ private fun validateDeprecationConsistency(argument: KotlinCompilerArgument) {
         }
         deprecatedVersion != null && deprecatedAnnotation == null -> {
             error("Argument ${argument.name} is deprecated but has no @Deprecated annotation")
+        }
+    }
+}
+
+private fun validateLanguageFeaturesConsistency(argument: KotlinCompilerArgument) {
+    if (argument.additionalAnnotations.none { it is Enables || it is Disables }) return
+    when (val valueType = argument.argumentType) {
+        is BooleanType -> {
+            valueType.defaultValue.current.let {
+                if (it != false) {
+                    error("Argument '${argument.name}' has Boolean type and changes language features. Expected default value is 'false', but actual is '$it'.")
+                }
+            }
+            for (additionalAnn in argument.additionalAnnotations) {
+                val ifValueIs = when (additionalAnn) {
+                    is Enables -> additionalAnn.ifValueIs
+                    is Disables -> additionalAnn.ifValueIs
+                    else -> null
+                }
+                if (ifValueIs?.isNotEmpty() == true) {
+                    error("Argument '${argument.name}' has Boolean type and changes language features. It's expected that 'ifValueIs' isn't set, but actually it's '$ifValueIs'.")
+                }
+            }
+        }
+        is StringType -> {
+            valueType.defaultValue.current?.let {
+                error("Argument '${argument.name}' has String type and changes language features. Expected default value is 'null', but actual is '$it'")
+            }
+            for (additionalAnn in argument.additionalAnnotations) {
+                val ifValueIs = when (additionalAnn) {
+                    is Enables -> additionalAnn.ifValueIs
+                    is Disables -> additionalAnn.ifValueIs
+                    else -> null
+                }
+                if (ifValueIs?.isEmpty() == true) {
+                    error("Argument '${argument.name}' has String type and changes language features. It's expected that 'ifValueIs' isn't empty, but actually it's empty.")
+                }
+            }
+        }
+        else -> {
+            error(
+                "Unexpected type for argument '${argument.name}' that changes language features: ${valueType::class.simpleName}. " +
+                        "Allowed types: ${BooleanType::class.simpleName}, ${StringType::class.simpleName}."
+            )
         }
     }
 }
@@ -333,7 +379,7 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
 
 private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
     val name = argument.calculateName()
-    val type = when (val type = argument.valueType) {
+    val type = when (val type = argument.argumentType) {
         is BooleanType -> when (type.isNullable.current) {
             true -> "Boolean?"
             false -> "Boolean"
@@ -417,12 +463,15 @@ private fun SmartPrinter.generateFreeArgsAndErrors() {
     println("@Transient")
     println("var errors: ArgumentParseErrors? = null")
     println()
+    println("@Transient")
+    println("var explicitArguments: Map<ArgumentField, List<Any>> = emptyMap()")
+    println()
 }
 
 private val KotlinCompilerArgument.defaultValueInArgs: String
     get() {
         @Suppress("UNCHECKED_CAST")
-        val valueType = valueType as KotlinArgumentValueType<Any>
+        val valueType = argumentType as KotlinArgumentValueType<Any>
         return valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
     }
 

@@ -10,6 +10,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Ref
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
@@ -27,7 +28,7 @@ class LightTreeParsingTest : KtPlatformLiteFixture() {
     override fun setUp() {
         super.setUp()
         myEnvironment = createForTests(
-            testRootDisposable, CompilerConfiguration.EMPTY,
+            testRootDisposable, CompilerConfiguration.create(),
             EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
         myProject = myEnvironment!!.project as MockProject

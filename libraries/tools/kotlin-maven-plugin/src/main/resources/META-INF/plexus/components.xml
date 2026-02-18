@@ -196,5 +196,11 @@
         </lifecycles>
       </configuration>
     </component>
+
+    <component>
+      <role>org.apache.maven.AbstractMavenLifecycleParticipant</role>
+      <role-hint>kotlin</role-hint>
+      <implementation>org.jetbrains.kotlin.maven.KotlinLifecycleParticipant</implementation>
+    </component>
   </components>
 </component-set>

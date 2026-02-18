@@ -3,63 +3,69 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        0: (in ROOT) class AA(abc: kotlin.String)
-        1: (in AA) constructor(abc: kotlin.String)
+        (in ROOT) class AA(abc: kotlin.String)
 
 <caret_2>:
-  KDocName(29,32): 'abc'
+  KDocName(13,16): 'abc'
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in AA) var abc: kotlin.String
 
 <caret_3>:
-  KDocName(69,71): 'AA'
+  KDocName(35,37): 'AA'
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        0: (in ROOT) class AA(abc: kotlin.String)
-        1: (in AA) constructor(abc: kotlin.String)
+        (in ROOT) class AA(abc: kotlin.String)
 
 <caret_4>:
-  KDocName(90,93): 'abc'
+  KDocName(40,43): 'abc'
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in AA) var abc: kotlin.String
 
 <caret_5>:
-  KDocName(162,164): 'AA'
+  KDocName(130,132): 'AA'
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        (in AA) constructor(some: kotlin.Int)
+        (in ROOT) class AA(abc: kotlin.String)
 
 <caret_6>:
-  KDocName(183,187): 'some'
+  KDocName(135,139): 'some'
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         some: kotlin.Int
 
 <caret_7>:
-  KDocName(223,225): 'AA'
+  KDocName(162,164): 'AA'
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
-        (in AA) constructor(some: kotlin.Int)
+        (in ROOT) class AA(abc: kotlin.String)
 
 <caret_8>:
-  KDocName(244,248): 'some'
+  KDocName(167,171): 'some'
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         some: kotlin.Int

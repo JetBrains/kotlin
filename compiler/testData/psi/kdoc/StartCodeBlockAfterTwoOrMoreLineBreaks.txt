@@ -169,9 +169,8 @@ KtFile: StartCodeBlockAfterTwoOrMoreLineBreaks.kt
         KDOC_NAME
           PsiElement(IDENTIFIER)('D')
         PsiElement(RBRACKET)(']')
-      PsiElement(KDOC_TEXT)(' when invoking `.doIt')
-      PsiElement(KDOC_LPAR)('(')
-      PsiElement(KDOC_RPAR)(')')
+      PsiElement(KDOC_TEXT)(' when invoking `')
+      PsiElement(KDOC_CODE_SPAN_TEXT)('.doIt()')
       PsiElement(KDOC_TEXT)('`')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')

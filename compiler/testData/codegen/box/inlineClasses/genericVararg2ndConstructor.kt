@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // KT-41771
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Polynomial<T : Any>(val coefficients: List<T>) {

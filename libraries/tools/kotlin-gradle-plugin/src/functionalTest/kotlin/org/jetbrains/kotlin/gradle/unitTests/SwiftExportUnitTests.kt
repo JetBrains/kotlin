@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
-import org.junit.Assume
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions
+import kotlin.test.Test
 import kotlin.test.*
 
 class SwiftExportUnitTests {
     @BeforeTest
     fun runOnMacOSOnly() {
-        Assume.assumeTrue("macOS host required for this test", HostManager.hostIsMac)
+        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
     }
 
     @Test

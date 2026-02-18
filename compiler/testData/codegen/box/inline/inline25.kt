@@ -1,7 +1,6 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 inline fun foo(block: String.() -> Unit) {
     "Ok".block()
 }
@@ -13,6 +12,9 @@ inline fun bar(block: (String) -> Unit) {
 inline fun baz(block: String.() -> Unit) {
     block("Ok")
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun box(): String {
     bar {

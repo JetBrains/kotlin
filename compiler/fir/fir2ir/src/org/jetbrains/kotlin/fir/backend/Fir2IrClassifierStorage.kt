@@ -139,31 +139,23 @@ class Fir2IrClassifierStorage(
     ): IrTypeParameterSymbol {
         val firTypeParameter = firTypeParameterSymbol.fir
 
-        val cachedSymbol = getCachedIrTypeParameter(firTypeParameter, typeOrigin)?.symbol
-            ?: typeParameterCache[firTypeParameter]?.symbol // We can try to use default cache because setter can use parent type parameters
-
-        if (cachedSymbol != null) {
-            return cachedSymbol
+        fun getCachedIrTypeParameterIfAny(): IrTypeParameterSymbol? {
+            return getCachedIrTypeParameter(firTypeParameter, typeOrigin)?.symbol
+                ?: typeParameterCache[firTypeParameter]?.symbol // We can try to use default cache because setter can use parent type parameters
         }
 
+        getCachedIrTypeParameterIfAny()?.let { return it }
+
         if (c.configuration.allowNonCachedDeclarations) {
-            return createIrTypeParameterForNonCachedDeclaration(firTypeParameter)
+            when (val containerSymbol = firTypeParameter.containingDeclarationSymbol) {
+                is FirRegularClassSymbol -> getIrClassSymbol(containerSymbol)
+                is FirNamedFunctionSymbol -> declarationStorage.getIrFunctionSymbol(containerSymbol)
+                is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(containerSymbol)
+            }
+            getCachedIrTypeParameterIfAny()?.let { return it }
         }
 
         error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name} of the owner: ${firTypeParameter.containingDeclarationSymbol}")
-    }
-
-    private fun createIrTypeParameterForNonCachedDeclaration(firTypeParameter: FirTypeParameter): IrTypeParameterSymbol {
-        val firTypeParameterOwnerSymbol = firTypeParameter.containingDeclarationSymbol
-        val firTypeParameterOwner = firTypeParameterOwnerSymbol.fir as FirTypeParameterRefsOwner
-        val index = firTypeParameterOwner.typeParameters.indexOf(firTypeParameter).also { check(it >= 0) }
-
-        val isSetter = firTypeParameterOwner is FirPropertyAccessor && firTypeParameterOwner.isSetter
-        val conversionTypeOrigin = if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
-
-        return createAndCacheIrTypeParameter(firTypeParameter, index, conversionTypeOrigin).also {
-            classifiersGenerator.initializeTypeParameterBounds(firTypeParameter, it)
-        }.symbol
     }
 
     // ------------------------------------ classes ------------------------------------

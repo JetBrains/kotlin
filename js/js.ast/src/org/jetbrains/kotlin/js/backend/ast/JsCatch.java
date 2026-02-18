@@ -16,20 +16,20 @@ public class JsCatch extends SourceInfoAwareJsNode {
     private JsBlock body;
     private JsParameter param;
 
-    public JsCatch(@NotNull JsName name) {
-        param = new JsParameter(name);
+    public JsCatch(@NotNull JsAssignable assignable) {
+        param = new JsParameter(assignable);
         scope = null;
     }
 
-    public JsCatch(JsScope parent, @NotNull String ident) {
+    public JsCatch(JsScope parent, @NotNull JsAssignable assignable) {
         super();
         assert (parent != null);
-        scope = new JsCatchScope(parent, ident);
-        param = new JsParameter(scope.findName(ident));
+        scope = new JsCatchScope(parent, assignable);
+        param = new JsParameter(assignable);
     }
 
-    public JsCatch(JsScope parent, @NotNull String ident, @NotNull JsStatement catchBody) {
-        this(parent, ident);
+    public JsCatch(JsScope parent, @NotNull JsAssignable assignable, @NotNull JsStatement catchBody) {
+        this(parent, assignable);
         if (catchBody instanceof JsBlock) {
             body = (JsBlock) catchBody;
         } else {

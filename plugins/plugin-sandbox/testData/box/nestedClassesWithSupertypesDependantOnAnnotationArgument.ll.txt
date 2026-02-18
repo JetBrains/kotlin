@@ -5,7 +5,7 @@ FILE: nestedClassesWithSupertypesDependantOnAnnotationArgument.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/plugin/sandbox/AddNestedClassesBasedOnArgument|(kClass = <getClass>(Q|A|)) public abstract interface Some : R|kotlin/Any| {
+    @R|org/jetbrains/kotlin/plugin/sandbox/AddNestedClassesBasedOnArgument|(kClass = <getClass>(Q|A|) [evaluated = <getClass>(Q|A|)]) public abstract interface Some : R|kotlin/Any| {
         public abstract interface Generated : R|kotlin/Any| {
         }
 

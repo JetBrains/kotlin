@@ -40,44 +40,48 @@ public class FirStandaloneNormalAnalysisSourceModuleKaDefaultImportsProviderTest
     );
   }
 
+  private void run(String fileName) {
+    runTest("analysis/analysis-api/testData/imports/defaultImportProvider/" + fileName);
+  }
+
   @Test
-  public void testAllFilesPresentInDefaultImportProvider() {
+  void testAllFilesPresentInDefaultImportProvider() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/imports/defaultImportProvider"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
 
   @Test
   @TestMetadata("common.kt")
-  public void testCommon() {
-    runTest("analysis/analysis-api/testData/imports/defaultImportProvider/common.kt");
+  void testCommon() {
+    run("common.kt");
   }
 
   @Test
   @TestMetadata("js.kt")
-  public void testJs() {
-    runTest("analysis/analysis-api/testData/imports/defaultImportProvider/js.kt");
+  void testJs() {
+    run("js.kt");
   }
 
   @Test
   @TestMetadata("jvm.kt")
-  public void testJvm() {
-    runTest("analysis/analysis-api/testData/imports/defaultImportProvider/jvm.kt");
+  void testJvm() {
+    run("jvm.kt");
   }
 
   @Test
   @TestMetadata("native.kt")
-  public void testNative() {
-    runTest("analysis/analysis-api/testData/imports/defaultImportProvider/native.kt");
+  void testNative() {
+    run("native.kt");
   }
 
   @Test
   @TestMetadata("wasmJs.kt")
-  public void testWasmJs() {
-    runTest("analysis/analysis-api/testData/imports/defaultImportProvider/wasmJs.kt");
+  void testWasmJs() {
+    run("wasmJs.kt");
   }
 
   @Test
   @TestMetadata("wasmWasi.kt")
-  public void testWasmWasi() {
-    runTest("analysis/analysis-api/testData/imports/defaultImportProvider/wasmWasi.kt");
+  void testWasmWasi() {
+    run("wasmWasi.kt");
   }
 }

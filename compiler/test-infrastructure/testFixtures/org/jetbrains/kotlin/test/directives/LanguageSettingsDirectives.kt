@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.test.directives
 
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.ExplicitApiMode
-import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.ReturnValueCheckerMode
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
@@ -83,10 +79,6 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
 
     val ALLOW_KOTLIN_PACKAGE by directive(
         description = "Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info (AnalysisFlags.allowKotlinPackage)"
-    )
-
-    val EXPECT_BUILTINS_AS_PART_OF_STDLIB by directive(
-        description = "Emulate kotlin-stdlib compilation"
     )
 
     val PREFER_IN_TEST_OVER_STDLIB by directive(

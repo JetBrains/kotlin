@@ -1,0 +1,6 @@
+KtArrayAccessExpression(100,118): 'c[1, "foo", false]'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /C.get(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String): kotlin.Boolean
+    ]
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun get(a: Int, b: String): Boolean'.>

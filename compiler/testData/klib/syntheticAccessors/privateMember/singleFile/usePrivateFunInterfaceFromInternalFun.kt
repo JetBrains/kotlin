@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 private fun interface I {
     fun foo(): Int
 }

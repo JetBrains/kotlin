@@ -1,0 +1,5 @@
+KtCallExpression(104,109): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/TopLevelObject.Nested.foo(<dispatch receiver>: one.two.TopLevelObject.Nested): kotlin.Unit
+    ]

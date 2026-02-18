@@ -17,15 +17,15 @@ import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.gradle.testing.*
 import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent.Variant
 import org.jetbrains.kotlin.gradle.util.buildProject
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ResolutionTestingTests {
 
-    @get:Rule
-    val temporaryFolder = TemporaryFolder()
+    @field:TempDir
+    lateinit var temporaryFolder: File
 
     @Test
     fun `single artifact resolution`() {

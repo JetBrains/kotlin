@@ -1,20 +1,19 @@
 KtNameReferenceExpression(91,97): 'action'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = foo
+        isSafeNavigation = false
+        type = test.Foo
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = foo
-          isSafeNavigation = false
-          type = test.Foo
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = () -> kotlin.Unit
-          symbol = val action: () -> kotlin.Unit
-          contextParameters = []
-          callableId = test/Foo.action
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = action
+        receiverType = null
+        returnType = () -> kotlin.Unit
+        symbol = val action: () -> kotlin.Unit
+        contextParameters = []
+        callableId = test/Foo.action
       typeArgumentsMapping = {}

@@ -191,6 +191,7 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
 
         renderVisibilityModifiers(method.access)
         renderModalityModifiers(method.access)
+        renderOtherMethodModifiers(method.access)
         val (returnType, parameterTypes) = with(Type.getMethodType(method.desc)) { returnType to argumentTypes }
         append(returnType.className).append(' ')
         append(method.name)
@@ -200,6 +201,9 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
             "${type.className} $name"
         }.joinTo(this, prefix = "(", postfix = ")")
 
+        if (!method.exceptions.isNullOrEmpty()) {
+            method.exceptions?.joinTo(this, prefix = "\n    throws ")
+        }
         if (renderAnnotations) {
             val textifier = Textifier()
             val visitor = TraceMethodVisitor(textifier)
@@ -358,6 +362,11 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
         if ((access and Opcodes.ACC_FINAL) != 0) append("final ")
         if ((access and Opcodes.ACC_ABSTRACT) != 0) append("abstract ")
         if ((access and Opcodes.ACC_STATIC) != 0) append("static ")
+    }
+
+    private fun StringBuilder.renderOtherMethodModifiers(access: Int) {
+        if ((access and Opcodes.ACC_SYNCHRONIZED) != 0) append("synchronized ")
+        if ((access and Opcodes.ACC_STRICT) != 0) append("strictfp ")
     }
 
     private class LabelMappings {

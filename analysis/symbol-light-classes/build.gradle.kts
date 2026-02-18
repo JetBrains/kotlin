@@ -4,6 +4,8 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-data-manager")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -42,12 +44,27 @@ sourceSets {
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)) {
-        dependsOn(":dist")
-        dependsOn(":plugins:plugin-sandbox:plugin-annotations:distAnnotations")
-        workingDir = rootDir
+        extensions.configure<TestInputsCheckExtension> {
+            allowFlightRecorder = true
+        }
     }
 
+    testGenerator("org.jetbrains.kotlin.light.classes.symbol.TestGeneratorKt")
+
     withJvmStdlibAndReflect()
+    withStdlibCommon()
+    withJsRuntime()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+    withScriptRuntime()
+    withPluginSandboxAnnotations()
+
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
+
+    testData(project.isolated, "testData")
+    testData(project(":compiler").isolated, "testData/asJava/lightClasses")
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
@@ -55,6 +72,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
         "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction",
         "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
         "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+        "org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint",
     )
 }
 

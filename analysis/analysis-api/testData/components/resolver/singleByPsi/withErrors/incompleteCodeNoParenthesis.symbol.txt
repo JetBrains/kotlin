@@ -1,0 +1,6 @@
+KtCallExpression(64,75): 'ALE<String>'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(): ALE<T>
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

@@ -7,26 +7,35 @@ package kotlin.math
 
 // region ================ Double Math ========================================
 
-/** Computes the sine of the angle [x] given in radians.
+/**
+ * Computes the sine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.sin
  */
 @SinceKotlin("1.2")
 public actual fun sin(x: Double): Double = kotlin.math.fdlibm.sin(x)
 
-/** Computes the cosine of the angle [x] given in radians.
+/**
+ * Computes the cosine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.cos
  */
 @SinceKotlin("1.2")
 public actual fun cos(x: Double): Double = kotlin.math.fdlibm.cos(x)
 
-/** Computes the tangent of the angle [x] given in radians.
+/**
+ * Computes the tangent of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.tan
  */
 @SinceKotlin("1.2")
 public actual fun tan(x: Double): Double = kotlin.math.fdlibm.tan(x)
@@ -37,6 +46,8 @@ public actual fun tan(x: Double): Double = kotlin.math.fdlibm.tan(x)
  *
  * Special cases:
  *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.asin
  */
 @SinceKotlin("1.2")
 public actual fun asin(x: Double): Double = kotlin.math.fdlibm.__ieee754_asin(x)
@@ -47,6 +58,8 @@ public actual fun asin(x: Double): Double = kotlin.math.fdlibm.__ieee754_asin(x)
  *
  * Special cases:
  *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.acos
  */
 @SinceKotlin("1.2")
 public actual fun acos(x: Double): Double = kotlin.math.fdlibm.__ieee754_acos(x)
@@ -57,6 +70,8 @@ public actual fun acos(x: Double): Double = kotlin.math.fdlibm.__ieee754_acos(x)
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.atan
  */
 @SinceKotlin("1.2")
 public actual fun atan(x: Double): Double = kotlin.math.fdlibm.atan(x)
@@ -66,6 +81,11 @@ public actual fun atan(x: Double): Double = kotlin.math.fdlibm.atan(x)
  * to the rectangular coordinates `(x, y)` by computing the arc tangent of the value [y] / [x];
  * the returned value is an angle in the range from `-PI` to `PI` radians.
  *
+ * In other words, this function returns an angle in radians between the positive x-axis and
+ * a ray from the origin (`(0, 0)`) to the point `(x, y)` confined to the interval `(-π, π]`.
+ *
+ * The `r` component (the distance) of the polar coordinates `(r, theta)` could be calculated as `hypot(x, y)`.
+ *
  * Special cases:
  *   - `atan2(0.0, 0.0)` is `0.0`
  *   - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
@@ -73,9 +93,12 @@ public actual fun atan(x: Double): Double = kotlin.math.fdlibm.atan(x)
  *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for `-Inf < y < 0`
  *   - `atan2(y, -Inf)` is `PI` for `0 < y < +Inf` and `-PI` for `-Inf < y < 0`
  *   - `atan2(y, 0.0)` is `PI/2` for `y > 0` and `-PI/2` for `y < 0`
- *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
+ *   - `atan2(+Inf, x)` is `PI/2` for finite `x`
  *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
+ *
+ * @see hypot function.
+ * @sample samples.math.MathSamples.Doubles.atan2
  */
 @SinceKotlin("1.2")
 public actual fun atan2(y: Double, x: Double): Double = kotlin.math.fdlibm.__ieee754_atan2(y, x)
@@ -158,6 +181,8 @@ public actual fun atanh(x: Double): Double = kotlin.math.fdlibm.__ieee754_atanh(
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.MathSamples.Doubles.hypot
  */
 @SinceKotlin("1.2")
 public actual fun hypot(x: Double, y: Double): Double = kotlin.math.fdlibm.__ieee754_hypot(x, y)
@@ -182,6 +207,8 @@ public actual fun sqrt(x: Double): Double = kotlin.wasm.internal.wasm_f64_sqrt(x
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Doubles.exp
  */
 @SinceKotlin("1.2")
 public actual fun exp(x: Double): Double = kotlin.math.fdlibm.__ieee754_exp(x)
@@ -197,6 +224,8 @@ public actual fun exp(x: Double): Double = kotlin.math.fdlibm.__ieee754_exp(x)
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ * @see [ln1p] function.
+ * @sample samples.math.MathSamples.Doubles.expm1
  */
 @SinceKotlin("1.2")
 public actual fun expm1(x: Double): Double = kotlin.math.fdlibm.expm1(x)
@@ -406,6 +435,8 @@ public actual fun cbrt(x: Double): Double = kotlin.math.fdlibm.__ieee754_cbrt(x)
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Doubles.powDouble
  */
 @SinceKotlin("1.2")
 public actual fun Double.pow(x: Double): Double = kotlin.math.fdlibm.__ieee754_pow(this, x)
@@ -414,6 +445,8 @@ public actual fun Double.pow(x: Double): Double = kotlin.math.fdlibm.__ieee754_p
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
+ *
+ * @sample samples.math.MathSamples.Doubles.powInt
  */
 @SinceKotlin("1.2")
 public actual fun Double.pow(n: Int): Double = kotlin.math.fdlibm.__ieee754_pow(this, n.toDouble())
@@ -555,26 +588,35 @@ public actual fun Double.roundToLong(): Long = when {
 
 // region ================ Float Math ========================================
 
-/** Computes the sine of the angle [x] given in radians.
+/**
+ * Computes the sine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.sin
  */
 @SinceKotlin("1.2")
 public actual fun sin(x: Float): Float = kotlin.math.fdlibm.sin(x.toDouble()).toFloat()
 
-/** Computes the cosine of the angle [x] given in radians.
+/**
+ * Computes the cosine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.cos
  */
 @SinceKotlin("1.2")
 public actual fun cos(x: Float): Float = kotlin.math.fdlibm.cos(x.toDouble()).toFloat()
 
-/** Computes the tangent of the angle [x] given in radians.
+/**
+ * Computes the tangent of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.tan
  */
 @SinceKotlin("1.2")
 public actual fun tan(x: Float): Float = kotlin.math.fdlibm.tan(x.toDouble()).toFloat()
@@ -585,6 +627,8 @@ public actual fun tan(x: Float): Float = kotlin.math.fdlibm.tan(x.toDouble()).to
  *
  * Special cases:
  *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.asin
  */
 @SinceKotlin("1.2")
 public actual fun asin(x: Float): Float = kotlin.math.fdlibm.__ieee754_asin(x.toDouble()).toFloat()
@@ -595,6 +639,8 @@ public actual fun asin(x: Float): Float = kotlin.math.fdlibm.__ieee754_asin(x.to
  *
  * Special cases:
  *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.acos
  */
 @SinceKotlin("1.2")
 public actual fun acos(x: Float): Float = kotlin.math.fdlibm.__ieee754_acos(x.toDouble()).toFloat()
@@ -605,6 +651,8 @@ public actual fun acos(x: Float): Float = kotlin.math.fdlibm.__ieee754_acos(x.to
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.atan
  */
 @SinceKotlin("1.2")
 public actual fun atan(x: Float): Float = kotlin.math.fdlibm.atan(x.toDouble()).toFloat()
@@ -614,6 +662,11 @@ public actual fun atan(x: Float): Float = kotlin.math.fdlibm.atan(x.toDouble()).
  * to the rectangular coordinates `(x, y)` by computing the arc tangent of the value [y] / [x];
  * the returned value is an angle in the range from `-PI` to `PI` radians.
  *
+ * In other words, this function returns an angle in radians between the positive x-axis and
+ * a ray from the origin (`(0, 0)`) to the point `(x, y)` confined to the interval `(-π, π]`.
+ *
+ * The `r` component (the distance) of the polar coordinates `(r, theta)` could be calculated as `hypot(x, y)`.
+ *
  * Special cases:
  *   - `atan2(0.0, 0.0)` is `0.0`
  *   - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
@@ -621,9 +674,12 @@ public actual fun atan(x: Float): Float = kotlin.math.fdlibm.atan(x.toDouble()).
  *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for `-Inf < y < 0`
  *   - `atan2(y, -Inf)` is `PI` for `0 < y < +Inf` and `-PI` for `-Inf < y < 0`
  *   - `atan2(y, 0.0)` is `PI/2` for `y > 0` and `-PI/2` for `y < 0`
- *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
+ *   - `atan2(+Inf, x)` is `PI/2` for finite `x`
  *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
+ *
+ * @see hypot function.
+ * @sample samples.math.MathSamples.Floats.atan2
  */
 @SinceKotlin("1.2")
 public actual fun atan2(y: Float, x: Float): Float = kotlin.math.fdlibm.__ieee754_atan2(y.toDouble(), x.toDouble()).toFloat()
@@ -706,6 +762,8 @@ public actual fun atanh(x: Float): Float = kotlin.math.fdlibm.__ieee754_atanh(x.
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.MathSamples.Floats.hypot
  */
 @SinceKotlin("1.2")
 public actual fun hypot(x: Float, y: Float): Float = kotlin.math.fdlibm.__ieee754_hypot(x.toDouble(), y.toDouble()).toFloat()
@@ -730,6 +788,8 @@ public actual fun sqrt(x: Float): Float = kotlin.wasm.internal.wasm_f32_sqrt(x)
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Floats.exp
  */
 @SinceKotlin("1.2")
 public actual fun exp(x: Float): Float = kotlin.math.fdlibm.__ieee754_exp(x.toDouble()).toFloat()
@@ -745,6 +805,8 @@ public actual fun exp(x: Float): Float = kotlin.math.fdlibm.__ieee754_exp(x.toDo
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ * @see [ln1p] function.
+ * @sample samples.math.MathSamples.Floats.expm1
  */
 @SinceKotlin("1.2")
 public actual fun expm1(x: Float): Float = kotlin.math.fdlibm.expm1(x.toDouble()).toFloat()
@@ -954,6 +1016,8 @@ public actual fun cbrt(x: Float): Float = kotlin.math.fdlibm.__ieee754_cbrt(x.to
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Floats.powFloat
  */
 @SinceKotlin("1.2")
 public actual fun Float.pow(x: Float): Float = kotlin.math.fdlibm.__ieee754_pow(this.toDouble(), x.toDouble()).toFloat()
@@ -962,6 +1026,8 @@ public actual fun Float.pow(x: Float): Float = kotlin.math.fdlibm.__ieee754_pow(
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
+ *
+ * @sample samples.math.MathSamples.Floats.powInt
  */
 @SinceKotlin("1.2")
 public actual fun Float.pow(n: Int): Float = kotlin.math.fdlibm.__ieee754_pow(this.toDouble(), n.toDouble()).toFloat()

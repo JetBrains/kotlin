@@ -35,6 +35,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
@@ -414,7 +415,6 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                 configurations.create("${originalConfiguration.name}$FIXED_CONFIGURATION_SUFFIX") {
                     isCanBeResolved = originalConfiguration.isCanBeResolved
                     isCanBeConsumed = originalConfiguration.isCanBeConsumed
-                    isVisible = originalConfiguration.isVisible
                     setExtendsFrom(originalConfiguration.extendsFrom)
 
                     artifacts {
@@ -479,7 +479,12 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                     originalConfiguration.attributes {
                         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("no-op"))
                     }
-                    originalConfiguration.isVisible = false
+
+                    @Suppress("DEPRECATION")
+                    if(GradleVersion.current() < GradleVersion.version("9.0.0")) {
+                        originalConfiguration.isVisible = false
+                    }
+
                     javaComponent.withVariantsFromConfiguration(originalConfiguration) {
                         skip()
                     }
@@ -784,10 +789,10 @@ fun Project.registerValidatePluginTasks(
         outputFile.set(project.layout.buildDirectory.file("reports/plugin-development/validation-report-${sourceSet.name}.txt"))
         classes.from({ sourceSet.output.classesDirs })
         classpath.from({ sourceSet.compileClasspath })
-
-        val javaPluginExtension = project.extensions.getByType<JavaPluginExtension>()
         val toolchainService = project.extensions.getByType<JavaToolchainService>()
-        launcher.convention(toolchainService.launcherFor(javaPluginExtension.toolchain))
+        launcher.set(toolchainService.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        })
     }
 
     tasks.named(JavaBasePlugin.CHECK_TASK_NAME) {

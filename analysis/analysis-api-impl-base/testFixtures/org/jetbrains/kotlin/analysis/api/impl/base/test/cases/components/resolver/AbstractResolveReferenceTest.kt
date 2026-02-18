@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceService
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
+import org.jetbrains.kotlin.analysis.api.components.resolveToSymbols
+import org.jetbrains.kotlin.analysis.api.components.tryResolveSymbols
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.renderFrontendIndependentKClassNameOf
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.TestReferenceResolveResultRenderer.renderResolvedTo
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaRendererAnnotationsFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
@@ -17,6 +22,9 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.KaDecla
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.renderers.KaModifierListRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KaTypeParameterRendererFilter
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KaPropertyAccessorsRenderer
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionError
+import org.jetbrains.kotlin.analysis.api.resolution.symbols
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
@@ -34,6 +42,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfTypeInPreorder
+import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -113,31 +122,105 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
         val reference = context.element ?: return "no references found"
 
         return analyzeReferenceElement(reference.element, module) {
-            val symbols = reference.resolveToSymbols()
-            val symbolsAgain = reference.resolveToSymbols()
-            testServices.assertions.assertEquals(symbols, symbolsAgain)
+            val symbolsResult = resolveSymbolsAsResolvable(reference)
+            val symbolsAgainResult = resolveSymbolsAsResolvable(reference)
 
+            val symbolsResultAsReferences = resolveSymbolsAsReferences(reference)
+            val symbolsAgainResultAsReferences = resolveSymbolsAsReferences(reference)
+            val symbolsAsReferences = symbolsResultAsReferences.symbols
+            ignoreStabilityIfNeeded {
+                if (symbolsResult != null) {
+                    assertStableResult(
+                        testServices = testServices,
+                        firstAttempt = symbolsResult.attempt,
+                        secondAttempt = symbolsAgainResult!!.attempt,
+                    )
+                }
+
+                testServices.assertions.assertEquals(symbolsAsReferences, symbolsAgainResultAsReferences.symbols)
+            }
+
+            val symbols = symbolsResult?.symbols ?: symbolsAsReferences
             val isImplicitReferenceToCompanion = reference.isImplicitReferenceToCompanion()
 
-            val resolvesByNamesViolations = resolvesByNamesViolations(file, reference, symbols, isImplicitReferenceToCompanion)
+            val resolvesByNamesViolations = resolvesByNamesViolations(
+                file = file,
+                reference = reference,
+                symbols = symbolsAsReferences,
+                isImplicitReferenceToCompanion = isImplicitReferenceToCompanion,
+            )
 
             val renderPsiClassName = Directives.RENDER_PSI_CLASS_NAME in module.testModule.directives
             val options = createRenderingOptions(renderPsiClassName)
+
+            fun renderSymbols(symbols: Collection<KaSymbol>): String = renderResolvedTo(
+                symbols = symbols,
+                renderer = options,
+                sortRenderedDeclarations = reference !is KDocReference,
+            ) { getAdditionalSymbolInfo(it) }
+
             prettyPrint {
                 appendLine("isImplicitReferenceToCompanion: $isImplicitReferenceToCompanion")
                 appendLine("usesContextSensitiveResolution: ${reference.usesContextSensitiveResolution}")
                 resolvesByNamesViolations?.let(::appendLine)
+                if (symbolsResult != null) {
+                    val attempt = symbolsResult.attempt
+
+                    // This call mustn't be suppressed as this is the API contracts
+                    @OptIn(KtExperimentalApi::class)
+                    assertSpecificResolutionApi(testServices, attempt, reference as KtResolvable)
+
+                    append("attempt: ")
+                    appendLine(attempt?.let(::renderFrontendIndependentKClassNameOf) ?: "null")
+                    if (attempt is KaSymbolResolutionError) {
+                        appendLine("diagnostic: ${stringRepresentation(attempt.diagnostic)}")
+                    }
+                }
+
+                val renderedSymbols = renderSymbols(symbols)
                 appendLine("symbols:")
                 withIndent {
-                    val resolvedSymbolsInfo = renderResolvedTo(
-                        symbols = symbols,
-                        renderer = options,
-                        sortRenderedDeclarations = reference !is KDocReference,
-                    ) { getAdditionalSymbolInfo(it) }
+                    append(renderedSymbols)
+                }
 
-                    append(resolvedSymbolsInfo)
+                if (symbolsResult != null) {
+                    val renderedSymbolsAsReferences = renderSymbols(symbolsAsReferences)
+                    if (renderedSymbolsAsReferences != renderedSymbols) {
+                        appendLine()
+                        appendLine("resolveToSymbols:")
+                        withIndent {
+                            append(renderedSymbolsAsReferences)
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    private sealed class ResolveResult {
+        abstract val symbols: Collection<KaSymbol>
+
+        class Attempt(val attempt: KaSymbolResolutionAttempt?) : ResolveResult() {
+            override val symbols: Collection<KaSymbol>
+                get() = attempt?.symbols.orEmpty()
+        }
+
+        class Symbols(override val symbols: Collection<KaSymbol>) : ResolveResult()
+    }
+
+    @OptIn(KtExperimentalApi::class)
+    context(_: KaSession)
+    private fun resolveSymbolsAsReferences(reference: KtReference): ResolveResult.Symbols {
+        return ResolveResult.Symbols(reference.resolveToSymbols())
+    }
+
+    @OptIn(KtExperimentalApi::class)
+    context(_: KaSession)
+    private fun resolveSymbolsAsResolvable(reference: KtReference): ResolveResult.Attempt? {
+        return if (reference is KtResolvable) {
+            ResolveResult.Attempt(reference.tryResolveSymbols())
+        } else {
+            null
         }
     }
 

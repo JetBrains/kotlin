@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 private fun privateFun(s: String) = s
 
 internal inline fun internalInlineFunction() = ::privateFun

@@ -162,6 +162,7 @@ class ValueParameter(
                 isOverride = modifiers.hasOverride()
                 isConst = modifiers.hasConst()
                 isLateInit = modifiers.hasLateinit()
+                isExternal = modifiers.hasExternal()
             }
             isLocal = context.inLocalContext
 

@@ -1,0 +1,76 @@
+<T1:Ljava/lang/Object;T2:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface A : java/lang/Object {
+    (TT2;)V
+    public abstract void testExposeBoxed(java.lang.Object p0)
+
+    (TT1;)V
+    public abstract void testJvmName(java.lang.Object p0)
+
+    (TT1;)V
+    public abstract void testOverloads(java.lang.Object p0)
+        @Lorg/jetbrains/annotations/Nullable;([]) // invisible, parameter 0
+
+    (TT1;)V
+    public abstract void testSynchronized(java.lang.Object p0)
+
+    (TT1;)V
+    public abstract void testThrows(java.lang.Object p0)
+        throws java/lang/NullPointerException
+      @LOverriddenAnno;([])
+}
+
+public class B : java/lang/Object {
+    public void <init>()
+
+    public final void customName(java.lang.String t)
+      @Lkotlin/jvm/JvmName;([name="customName"]) // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    public final void testExposeBoxed-WZ4Q5Ns(int t)
+
+    public final void testExposeBoxedBoxed(kotlin.UInt t)
+      @Lkotlin/jvm/JvmExposeBoxed;([jvmName="testExposeBoxedBoxed"]) // invisible
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    public void testOverloads(java.lang.String t)
+      @Lkotlin/jvm/JvmOverloads;([]) // invisible
+        @Lorg/jetbrains/annotations/Nullable;([]) // invisible, parameter 0
+
+    public final void testOverloads()
+      @Lkotlin/jvm/JvmOverloads;([]) // invisible
+
+    public static void testOverloads$default(B p0, java.lang.String p1, int p2, java.lang.Object p3)
+
+    public final synchronized void testSynchronized(java.lang.String t)
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+
+    public final void testThrows(java.lang.String t)
+        throws java/lang/Exception
+      @LTargetAnno;([])
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}
+
+LB;LA<Ljava/lang/String;Lkotlin/UInt;>;
+public final class J : B, A {
+    public void <init>()
+
+    public void testExposeBoxed(java.lang.Object t)
+
+    public void testJvmName(java.lang.Object t)
+
+    public void testOverloads(java.lang.Object t)
+
+    public void testSynchronized(java.lang.Object t)
+
+    public void testThrows(java.lang.Object t)
+        throws java/lang/NullPointerException
+      @LTargetAnno;([])
+}
+
+public abstract interface OverriddenAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface TargetAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}

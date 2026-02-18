@@ -149,8 +149,8 @@ class ConstructAnnotationTest {
             return makeFailureResult(messageCollector.diagnostics)
         }
 
-        val data = getScriptCollectedData(ktFile, configuration, environment.project, null)
-        val annotations = data[ScriptCollectedData.foundAnnotations] ?: emptyList()
+        val data = getScriptCollectedData(ktFile, configuration, null)
+        val annotations = data[ScriptCollectedData.collectedAnnotations]?.map { it.annotation } ?: emptyList()
 
         annotations
             .filterIsInstance(InvalidScriptResolverAnnotation::class.java)

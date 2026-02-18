@@ -58,10 +58,12 @@ declare namespace JS_TESTS {
         interface HolderOfSum {
             sum(x: number, y: number): Promise<number>;
             sumNullable(x: Nullable<number>, y: Nullable<number>): Promise<number>;
+            defaultSum(x: number, y: number): Promise<number>;
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.HolderOfSum": unique symbol;
             };
         }
+        function acceptHolderOfSum(test: foo.HolderOfSum): Promise<void>;
         class Test implements foo.HolderOfSum {
             constructor();
             sum(x: number, y: number): Promise<number>;
@@ -76,6 +78,7 @@ declare namespace JS_TESTS {
             genericWithConstraint<T extends string>(x: T): Promise<T>;
             genericWithMultipleConstraints<T extends unknown/* kotlin.Comparable<T> */ & foo.SomeExternalInterface & Error>(x: T): Promise<T>;
             generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Promise<Nullable<E>>;
+            defaultSum(x: number, y: number): Promise<number>;
             readonly __doNotUseOrImplementIt: foo.HolderOfSum["__doNotUseOrImplementIt"];
         }
         namespace Test {
@@ -88,7 +91,7 @@ declare namespace JS_TESTS {
             constructor();
             varargInt(x: Int32Array): Promise<number>;
             sumNullable(x: Nullable<number>, y: Nullable<number>): Promise<number>;
-            generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Promise<Nullable<E>>;
+            generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Promise<E>;
         }
         namespace TestChild {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -98,9 +101,18 @@ declare namespace JS_TESTS {
         }
         function generateOneMoreChildOfTest(): foo.Test;
         function acceptTest(test: foo.Test): Promise<void>;
-        class ExportedChild /* extends foo.NotExportedParent */ {
+        interface HolderOfParentSuspendFun1<T> {
+            parentSuspendFun1(someValue?: string): Promise<T>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.HolderOfParentSuspendFun1": unique symbol;
+            };
+        }
+        function getHolderOfParentSuspendFun1(): foo.HolderOfParentSuspendFun1<string>;
+        class ExportedChild /* extends foo.NotExportedParent */ implements foo.HolderOfParentSuspendFun1<string> {
             constructor();
             childSuspendFun(): Promise<string>;
+            parentSuspendFun1(someValue?: string): Promise<string>;
+            readonly __doNotUseOrImplementIt: foo.HolderOfParentSuspendFun1<any>["__doNotUseOrImplementIt"];
         }
         namespace ExportedChild {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -109,5 +121,6 @@ declare namespace JS_TESTS {
             }
         }
         function acceptExportedChild(child: foo.ExportedChild): Promise<void>;
+        function acceptHolderOfParentSuspendFun1(holder: foo.HolderOfParentSuspendFun1<string>): Promise<void>;
     }
 }

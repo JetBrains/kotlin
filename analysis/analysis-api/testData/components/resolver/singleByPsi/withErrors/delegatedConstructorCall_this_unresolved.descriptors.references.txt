@@ -2,6 +2,10 @@ KtConstructorDelegationReferenceExpression(115,119): 'this'
   KtConstructorDelegationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
+    public constructor Sub(p: Int) defined in Sub
+    public constructor Sub(i: Int, j: Int) defined in Sub>
     symbols:
       0: (in Sub) constructor(i: kotlin.Int, j: kotlin.Int)
       1: (in Sub) constructor(p: kotlin.Int)

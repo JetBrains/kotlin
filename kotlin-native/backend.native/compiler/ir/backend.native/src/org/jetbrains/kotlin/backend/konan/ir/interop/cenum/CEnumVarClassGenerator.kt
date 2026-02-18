@@ -5,7 +5,7 @@
 package org.jetbrains.kotlin.backend.konan.ir.interop.cenum
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -34,7 +34,7 @@ private val typeSizeAnnotation = FqName("kotlinx.cinterop.internal.CEnumVarTypeS
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CEnumVarClassGenerator(
         context: GeneratorContext,
-        private val symbols: KonanSymbols
+        private val symbols: BackendNativeSymbols
 ) : DescriptorToIrTranslationMixin {
 
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns

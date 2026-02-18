@@ -6,8 +6,19 @@ declare namespace JS_TESTS {
         let _var: number;
         const _valCustomWithField: number;
         let _varCustomWithField: number;
+        const valWithExplicitBackingField: any;
         const _const_val: number;
         const _valCustom: number;
         let _varCustom: number;
+        class A {
+            constructor();
+            get valWithExplicitBackingField(): any;
+        }
+        namespace A {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => A;
+            }
+        }
     }
 }

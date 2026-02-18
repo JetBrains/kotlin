@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.analysis.api.platform.lifetime
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import kotlin.reflect.KClass
 
+@KaPlatformInterface
 public interface KotlinLifetimeTokenFactory : KotlinPlatformComponent {
     public val identifier: KClass<out KaLifetimeToken>
 
@@ -22,6 +24,7 @@ public interface KotlinLifetimeTokenFactory : KotlinPlatformComponent {
      */
     public fun create(project: Project, modificationTracker: ModificationTracker): KaLifetimeToken
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinLifetimeTokenFactory = project.service()
     }

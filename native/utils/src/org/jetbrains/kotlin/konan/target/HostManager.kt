@@ -182,6 +182,9 @@ open class HostManager() {
         val regularJvmArgs = defaultJvmArgs + "-Xmx3G"
 
         @JvmStatic
+        val hostIsSupported: Boolean get() = hostOrNull != null
+
+        @JvmStatic
         val hostIsMac get() = hostOrNull?.family == Family.OSX
 
         @JvmStatic

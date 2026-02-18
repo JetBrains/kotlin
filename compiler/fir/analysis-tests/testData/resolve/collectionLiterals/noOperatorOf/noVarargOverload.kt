@@ -4,19 +4,19 @@
 
 class MyList {
     companion object {
-        operator fun of(): MyList = MyList()
-        operator fun of(s: String): MyList = MyList()
-        operator fun of(s: String, s2: String): MyList = MyList()
-        operator fun of(s: String, s2: String, s3: String): MyList = MyList()
+        <!NO_VARARG_OVERLOAD_OF_OPERATOR_OF!>operator fun of(): MyList<!> = MyList()
+        <!NO_VARARG_OVERLOAD_OF_OPERATOR_OF!>operator fun of(s: String): MyList<!> = MyList()
+        <!NO_VARARG_OVERLOAD_OF_OPERATOR_OF!>operator fun of(s: String, s2: String): MyList<!> = MyList()
+        <!NO_VARARG_OVERLOAD_OF_OPERATOR_OF!>operator fun of(s: String, s2: String, s3: String): MyList<!> = MyList()
     }
 }
 
 class MyGenericList<T> {
     companion object {
-        operator fun <T1> of(): MyGenericList<T1> = MyGenericList<T1>()
-        operator fun <T1> of(t: T1): MyGenericList<T1> = MyGenericList<T1>()
-        operator fun <T1> of(t: T1, t2: T1): MyGenericList<T1> = MyGenericList<T1>()
-        operator fun <T1> of(t: T1, t2: T1, t3: T1): MyGenericList<T1> = MyGenericList<T1>()
+        <!NO_VARARG_OVERLOAD_OF_OPERATOR_OF!>operator fun <T1> of(): MyGenericList<T1><!> = MyGenericList<T1>()
+        <!NO_VARARG_OVERLOAD_OF_OPERATOR_OF!>operator fun <T1> of(t: T1): MyGenericList<T1><!> = MyGenericList<T1>()
+        <!NO_VARARG_OVERLOAD_OF_OPERATOR_OF!>operator fun <T1> of(t: T1, t2: T1): MyGenericList<T1><!> = MyGenericList<T1>()
+        <!NO_VARARG_OVERLOAD_OF_OPERATOR_OF!>operator fun <T1> of(t: T1, t2: T1, t3: T1): MyGenericList<T1><!> = MyGenericList<T1>()
     }
 }
 

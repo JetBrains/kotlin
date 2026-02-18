@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.regressionTests.KTIJ25227CompilerArgumentsIde
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.main
-import org.junit.Test
+import kotlin.test.Test
 import java.lang.reflect.Method
 import kotlin.test.fail
 
@@ -85,4 +85,3 @@ class KTIJ25227CompilerArgumentsIdeCompatibilityTest {
         }
     }
 }
-

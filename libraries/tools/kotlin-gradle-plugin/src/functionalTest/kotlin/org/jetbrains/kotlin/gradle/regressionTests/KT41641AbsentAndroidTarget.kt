@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.android.findAndroidTarget
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 
@@ -44,7 +44,7 @@ class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
 
         // Present android target -> expect no warning message anymore
         project.evaluate()
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.NonKmpAgpIsDeprecated)
+        project.assertNoDiagnostics()
     }
 
     @Test

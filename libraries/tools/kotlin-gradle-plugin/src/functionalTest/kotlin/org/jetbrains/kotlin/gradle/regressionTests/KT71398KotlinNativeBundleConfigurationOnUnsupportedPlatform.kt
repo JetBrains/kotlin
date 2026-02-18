@@ -12,15 +12,15 @@ import org.jetbrains.kotlin.gradle.plugin.KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAM
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Assume
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions
+import kotlin.test.Test
 import kotlin.test.assertNull
 
 class KT71398KotlinNativeBundleConfigurationOnUnsupportedPlatform {
 
     @Test
     fun `KT-71398 - project with multiplatform plugin should not add kotlinNativeBundleConfiguration`() {
-        Assume.assumeTrue(!HostManager.hostIsMac)
+        Assumptions.assumeTrue(!HostManager.hostIsMac)
         val project = buildProjectWithMPP(preApplyCode = {
             project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", "true")
             project.extraProperties.set("kotlin.native.toolchain.enabled", "true")

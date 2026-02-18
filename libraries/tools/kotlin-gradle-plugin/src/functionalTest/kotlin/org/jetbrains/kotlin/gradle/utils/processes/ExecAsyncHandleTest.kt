@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.gradle.utils.processes
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.process.ExecOperations
 import org.gradle.process.ExecSpec
-import org.gradle.process.internal.ExecException
+import org.gradle.process.ProcessExecutionException
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.util.assertContains
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle.Companion.execAsync
@@ -133,7 +133,7 @@ class ExecAsyncHandleTest {
 
         assertEquals(123, result?.exitValue)
 
-        val exception = assertThrows<ExecException> { result?.assertNormalExitValue() }
+        val exception = assertThrows<ProcessExecutionException> { result?.assertNormalExitValue() }
 
         assertNotNull(exception.message) { message ->
             assertContains("finished with non-zero exit value 123", message)
@@ -195,7 +195,7 @@ class ExecAsyncHandleTest {
 
         assertEquals(99, result?.exitValue)
 
-        val exception = assertThrows<ExecException> {
+        val exception = assertThrows<ProcessExecutionException> {
             result?.assertNormalExitValue()
         }
         assertNotNull(exception.message) { message ->

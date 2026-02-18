@@ -54,7 +54,7 @@ var KCallable<*>.isAccessible: Boolean
                         javaMethod?.isAccessible ?: true
             is KFunction ->
                 javaMethod?.isAccessible ?: true &&
-                        (this.asReflectCallable()?.defaultCaller?.member as? AccessibleObject)?.isAccessible ?: true &&
+                        (this.asReflectCallable()?.callerWithDefaults?.member as? AccessibleObject)?.isAccessible ?: true &&
                         this.javaConstructor?.isAccessible ?: true
             else -> throw UnsupportedOperationException("Unknown callable: $this ($javaClass)")
         }
@@ -80,7 +80,7 @@ var KCallable<*>.isAccessible: Boolean
             }
             is KFunction -> {
                 javaMethod?.isAccessible = value
-                (this.asReflectCallable()?.defaultCaller?.member as? AccessibleObject)?.isAccessible = true
+                (this.asReflectCallable()?.callerWithDefaults?.member as? AccessibleObject)?.isAccessible = true
                 this.javaConstructor?.isAccessible = value
             }
             else -> throw UnsupportedOperationException("Unknown callable: $this ($javaClass)")

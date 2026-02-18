@@ -4,13 +4,16 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResour
 plugins {
     kotlin("jvm")
     id("generated-sources")
+    id("test-inputs-check")
 }
 
 dependencies {
     api(project(":compiler:build-tools:kotlin-build-tools-api"))
     implementation(kotlinStdlib())
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:cli-jvm"))
     compileOnly(project(":compiler:cli-js"))
+    compileOnly(project(":compiler:cli-metadata"))
     compileOnly(project(":kotlin-build-common"))
     compileOnly(project(":daemon-common"))
     compileOnly(project(":kotlin-daemon-client"))

@@ -12,11 +12,11 @@ suspend fun foo(data: Data, body: suspend Long.(String, Data, Int) -> Unit) {
 }
 
 // METHOD : ParametersKt$test$2.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
-// VARIABLE : NAME=<destruct> TYPE=LData; INDEX=*
-// VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=*
-// VARIABLE : NAME=$this$foo TYPE=J INDEX=*
-// VARIABLE : NAME=i TYPE=I INDEX=*
-// VARIABLE : NAME=str TYPE=Ljava/lang/String; INDEX=*
-// VARIABLE : NAME=this TYPE=LParametersKt$test$2; INDEX=*
-// VARIABLE : NAME=x TYPE=Ljava/lang/String; INDEX=*
-// VARIABLE : NAME=z TYPE=I INDEX=*
+// VARIABLE : NAME=$result TYPE=Ljava/lang/Object;
+// VARIABLE : NAME=$this$foo TYPE=J
+// VARIABLE : NAME=<destruct> TYPE=LData;
+// VARIABLE : NAME=i TYPE=I
+// VARIABLE : NAME=str TYPE=Ljava/lang/String;
+// VARIABLE : NAME=this TYPE=LParametersKt$test$2;
+// VARIABLE : NAME=x TYPE=Ljava/lang/String;
+// VARIABLE : NAME=z TYPE=I

@@ -37,16 +37,11 @@ open class CodeOwnersArgumentProviders @Inject constructor(
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val virtualTeamMappingFile: ConfigurableFileCollection = objectFactory.fileCollection()
-
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
     val githubCodeOwnersFile: ConfigurableFileCollection = objectFactory.fileCollection()
 
     override fun asArguments(): Iterable<String> = listOf(
         "-DcodeOwnersTest.scriptFile=${scriptFile.singleFile.absolutePath}",
         "-DcodeOwnersTest.spaceCodeOwnersFile=${spaceCodeOwnersFile.singleFile.absolutePath}",
-        "-DcodeOwnersTest.virtualTeamMappingFile=${virtualTeamMappingFile.singleFile.absolutePath}",
         "-DcodeOwnersTest.githubCodeOwnersFile=${githubCodeOwnersFile.singleFile.absolutePath}"
     )
 }
@@ -61,7 +56,6 @@ projectTests {
         jvmArgumentProviders.add(objects.newInstance<CodeOwnersArgumentProviders>().apply {
             scriptFile.from(rootDir.resolve(".space/generate-github-codeowners.sh"))
             spaceCodeOwnersFile.from(rootDir.resolve(".space/CODEOWNERS"))
-            virtualTeamMappingFile.from(rootDir.resolve(".space/codeowners-virtual-team-mapping.json"))
             githubCodeOwnersFile.from(rootDir.resolve(".github/CODEOWNERS"))
         })
     }

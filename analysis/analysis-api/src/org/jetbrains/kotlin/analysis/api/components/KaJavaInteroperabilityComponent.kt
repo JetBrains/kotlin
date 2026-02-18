@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -159,7 +159,7 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaType.asPsiType(
     useSitePosition: PsiElement,
     allowErrorTypes: Boolean,
@@ -169,7 +169,7 @@ public fun KaType.asPsiType(
     preserveAnnotations: Boolean = true,
     allowNonJvmPlatforms: Boolean = false,
 ): PsiType? {
-    return with(s) {
+    return with(session) {
         asPsiType(
             useSitePosition = useSitePosition,
             allowErrorTypes = allowErrorTypes,
@@ -195,9 +195,9 @@ public fun KaType.asPsiType(
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun PsiType.asKaType(useSitePosition: PsiElement): KaType? {
-    return with(s) {
+    return with(session) {
         asKaType(
             useSitePosition = useSitePosition,
         )
@@ -212,9 +212,9 @@ public fun PsiType.asKaType(useSitePosition: PsiElement): KaType? {
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type {
-    return with(s) {
+    return with(session) {
         mapToJvmType(
             mode = mode,
         )
@@ -227,9 +227,9 @@ public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT):
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaType.isPrimitiveBacked: Boolean
-    get() = with(s) { isPrimitiveBacked }
+    get() = with(session) { isPrimitiveBacked }
 
 /**
  * A [KaNamedClassSymbol] for the given [PsiClass], or `null` for anonymous classes, local classes, type parameters (which are also
@@ -237,18 +237,18 @@ public val KaType.isPrimitiveBacked: Boolean
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
-    get() = with(s) { namedClassSymbol }
+    get() = with(session) { namedClassSymbol }
 
 /**
  * A [KaCallableSymbol] for the given [PsiMember] method or field, or `null` for local declarations and Kotlin light classes.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val PsiMember.callableSymbol: KaCallableSymbol?
-    get() = with(s) { callableSymbol }
+    get() = with(session) { callableSymbol }
 
 /**
  * The containing JVM class name for the given [KaCallableSymbol].
@@ -262,9 +262,9 @@ public val PsiMember.callableSymbol: KaCallableSymbol?
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaCallableSymbol.containingJvmClassName: String?
-    get() = with(s) { containingJvmClassName }
+    get() = with(session) { containingJvmClassName }
 
 /**
  * The JVM getter method name for the given [KaPropertySymbol].
@@ -273,9 +273,9 @@ public val KaCallableSymbol.containingJvmClassName: String?
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaPropertySymbol.javaGetterName: Name
-    get() = with(s) { javaGetterName }
+    get() = with(session) { javaGetterName }
 
 /**
  * The JVM setter method name for the given [KaPropertySymbol].
@@ -284,6 +284,6 @@ public val KaPropertySymbol.javaGetterName: Name
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaPropertySymbol.javaSetterName: Name?
-    get() = with(s) { javaSetterName }
+    get() = with(session) { javaSetterName }

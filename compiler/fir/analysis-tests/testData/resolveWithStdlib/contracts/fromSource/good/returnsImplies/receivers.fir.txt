@@ -3,7 +3,7 @@ FILE: receivers.kt
     }
     public final fun R|A|.foo(): R|kotlin/Unit| {
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun R|kotlin/Any?|.myRequireNotNull(): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun R|kotlin/Any?|.myRequireNotNull(): R|kotlin/Unit|
         [R|Contract description]
          <
             Returns(WILDCARD) -> this != null

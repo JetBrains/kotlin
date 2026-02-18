@@ -56,7 +56,6 @@ class KlibReadStrictLenientTest {
         val metadata = KlibModuleMetadata(
             name = "klib",
             fragments = listOf(KmModuleFragment().apply { fqName = "klib" }),
-            annotations = emptyList(),
             metadataVersion = version,
         ).write()
         val provider = object : KlibModuleMetadata.MetadataLibraryProvider {

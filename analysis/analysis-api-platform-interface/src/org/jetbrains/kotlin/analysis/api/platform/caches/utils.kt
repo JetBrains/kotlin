@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.analysis.api.platform.caches
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.stats.StatsCounter
-import kotlin.collections.getOrPut
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 
 /**
  * Returns the value for the given [key] if it's contained in the cache, or computes the value with [compute] *outside the cache's
  * computation lock* and adds it to the cache.
  */
+@KaPlatformInterface
 public fun <K : Any, V : Any> Cache<K, V>.getOrPut(key: K, compute: (K) -> V): V =
     asMap().getOrPut(key) { compute(key) }
 
@@ -22,6 +23,7 @@ public fun <K : Any, V : Any> Cache<K, V>.getOrPut(key: K, compute: (K) -> V): V
  *
  * [withStatsCounter] exists because [Caffeine.recordStats] itself doesn't handle `null` stats counters.
  */
+@KaPlatformInterface
 public fun <K, V> Caffeine<K, V>.withStatsCounter(statsCounter: StatsCounter?): Caffeine<K, V> {
     return if (statsCounter != null) {
         recordStats { statsCounter }

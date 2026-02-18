@@ -9,7 +9,7 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.internal.boxedLong.BoxedLongApi
 
 internal external interface Ctor {
-    var `$imask$`: BitMask?
+    var Symbol: dynamic
     var `$metadata$`: Metadata
     var constructor: Ctor?
     val prototype: dynamic
@@ -42,15 +42,9 @@ internal fun calculateErrorInfo(proto: dynamic): Int {
 
 private fun getPrototypeOf(obj: dynamic) = JsObject.getPrototypeOf(obj)
 
-private fun isInterfaceImpl(obj: dynamic, iface: Int): Boolean {
-    val mask: BitMask = obj.`$imask$`.unsafeCast<BitMask?>() ?: return false
-    return mask.isBitSet(iface)
-}
-
 @UsedFromCompilerGeneratedCode
-internal fun isInterface(obj: dynamic, iface: dynamic): Boolean {
-    return isInterfaceImpl(obj, iface.`$metadata$`.iid)
-}
+internal fun isInterface(obj: dynamic, iface: dynamic): Boolean =
+    obj[iface.Symbol] === true
 
 @UsedFromCompilerGeneratedCode
 internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
@@ -111,6 +105,9 @@ internal fun isFloatArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float32Arra
 @UsedFromCompilerGeneratedCode
 internal fun isDoubleArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float64Array"))
 
+@UsedFromCompilerGeneratedCode
+internal fun jsIsFunction(a: dynamic): Boolean = jsTypeOf(a) === "function"
+
 // TODO: Remove after bootstrap update
 @BoxedLongApi
 @Deprecated("Moved to kotlin.js.internal.boxedLong package", level = DeprecationLevel.HIDDEN)
@@ -135,8 +132,7 @@ internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
     val klassMetadata = constructor.`$metadata$`
 
     if (klassMetadata?.kind === METADATA_KIND_INTERFACE) {
-        val iid = klassMetadata.iid.unsafeCast<Int?>() ?: return false
-        return isInterfaceImpl(obj, iid)
+        return isInterface(obj, constructor)
     }
 
     return jsInstanceOf(obj, constructor)

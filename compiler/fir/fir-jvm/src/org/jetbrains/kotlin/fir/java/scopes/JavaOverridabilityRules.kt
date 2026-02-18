@@ -39,23 +39,11 @@ class JavaOverridabilityRules(private val session: FirSession) : PlatformSpecifi
                 // Known influenced tests: supertypeDifferentParameterNullability.kt became partially green without it
                 !javaOverrideChecker.isOverriddenFunction(overrideCandidate, baseDeclaration) -> false
                 standardOverrideChecker.isOverriddenFunction(overrideCandidate, baseDeclaration) -> true
-                shouldDoReverseCheck(overrideCandidate) -> standardOverrideChecker.isOverriddenFunction(baseDeclaration, overrideCandidate)
                 else -> false
             }
         } else {
             null
         }
-    }
-
-    /**
-     * [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] makes this check not necessary as
-     * getTypePreservingFlexibilityWrtTypeVariable does not work anymore.
-     *
-     * See compiler/testData/diagnostics/tests/j+k/overrideWithTypeParameter.kt
-     */
-    private fun shouldDoReverseCheck(overrideCandidate: FirNamedFunction): Boolean {
-        return !session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible) &&
-                overrideCandidate.typeParameters.isNotEmpty()
     }
 
     override fun isOverriddenProperty(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirProperty): Boolean? {

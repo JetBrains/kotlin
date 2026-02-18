@@ -26,3 +26,26 @@ abstract class Money<T : Money<T>> protected constructor() {
 
 @JsExport
 class Euro(override val amount: Float) : Money<Euro>()
+
+@JsExport
+abstract class AbstractClassWithProtected {
+    protected abstract fun protectedAbstractFun(): Int
+    protected abstract val protectedAbstractVal: Int
+
+    class N : AbstractClassWithProtected {
+        override fun protectedAbstractFun(): Int = 42
+        override val protectedAbstractVal: Int
+            get() = 42
+    }
+}
+
+@JsExport
+abstract class AbstractInheritorOfAbstractClass : AbstractClassWithProtected {
+    override fun protectedAbstractFun(): Int = 42
+}
+
+@JsExport
+class InheritorOfAbstractClass : AbstractInheritorOfAbstractClass {
+    override val protectedAbstractVal: Int
+        get() = 42
+}

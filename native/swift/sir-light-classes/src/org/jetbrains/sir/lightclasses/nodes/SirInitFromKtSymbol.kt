@@ -93,9 +93,10 @@ internal sealed class SirInitFromKtSymbol(
     protected val isBridged: Boolean
         get() = withSessions {
             (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>()?.let {
-                !it.modality.isAbstract() && !it.defaultType.isArrayOrPrimitiveArray
+                !it.modality.isAbstract() && !it.defaultType.isArrayOrPrimitiveArray && !it.hasFBoundedTypeParameters()
             } ?: false
         }
+
 }
 
 private inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.getOuterParameterOfInnerClass(): SirParameter? {

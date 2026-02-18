@@ -1,0 +1,2 @@
+KtPrefixExpression(191,200): '-variable'
+  null

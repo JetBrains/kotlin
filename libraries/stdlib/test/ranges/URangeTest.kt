@@ -231,6 +231,28 @@ public class URangeTest {
         assertEquals((1UL downTo 2uL).hashCode(), (2UL downTo 3UL).hashCode())
     }
 
+    @Test
+    fun nonEmptyRangeHashCode() {
+        fun <N : Comparable<N>> checkHashCode(range: ClosedRange<N>) {
+            assertEquals(31 * range.start.hashCode() + range.endInclusive.hashCode(), range.hashCode())
+        }
+        checkHashCode(1u..10u)
+        checkHashCode(1uL..10uL)
+    }
+
+    @Test
+    fun nonEmptyProgressionHashCode() {
+        fun checkHashCode(progression: Any, first: Any, last: Any, step: Any) {
+            assertEquals(31 * 31 * first.hashCode() + 31 * last.hashCode() + step.hashCode(), progression.hashCode())
+        }
+        (1U..10U step 1).let { checkHashCode(it, it.first, it.last, it.step) }
+        (1U..10U step 2).let { checkHashCode(it, it.first, it.last, it.step) }
+        (10U downTo 1U).let { checkHashCode(it, it.first, it.last, it.step) }
+        (1UL..10UL step 1).let { checkHashCode(it, it.first, it.last, it.step) }
+        (1UL..10UL step 2).let { checkHashCode(it, it.first, it.last, it.step) }
+        (10UL downTo 1UL).let { checkHashCode(it, it.first, it.last, it.step) }
+    }
+
     private fun assertFailsWithIllegalArgument(f: () -> Unit) = assertFailsWith<IllegalArgumentException> { f() }
 
     @Test

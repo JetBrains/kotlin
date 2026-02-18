@@ -1,0 +1,5 @@
+KtCallExpression(102,105): 'c()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Container.c(<dispatch receiver>: Container): kotlin.Unit
+    ]

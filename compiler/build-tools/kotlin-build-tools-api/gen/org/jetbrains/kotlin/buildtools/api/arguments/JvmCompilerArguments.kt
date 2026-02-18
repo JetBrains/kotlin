@@ -3,8 +3,10 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
+import java.nio.`file`.Path
 import kotlin.Array
 import kotlin.Boolean
+import kotlin.Deprecated
 import kotlin.Int
 import kotlin.String
 import kotlin.jvm.JvmField
@@ -12,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
+import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 
 /**
  * @since 2.3.0
@@ -28,6 +31,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
   /**
    * Set the [value] for option specified by [key], overriding any previous value for that option.
    */
+  @Deprecated(message = "Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
   public operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V)
 
   /**
@@ -40,7 +44,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean
 
   /**
-   * Base class for [JvmCompilerArguments] options.
+   * An option for configuring [JvmCompilerArguments].
    *
    * @see get
    * @see set    
@@ -49,6 +53,40 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     public val id: String,
     public val availableSinceVersion: KotlinReleaseVersion,
   )
+
+  /**
+   * A builder for [JvmCompilerArguments].
+   *
+   * @since 2.3.20
+   */
+  public interface Builder : CommonCompilerArguments.Builder {
+    /**
+     * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+     *
+     * @return the previously set value for an option
+     * @throws IllegalStateException if the option was not set and has no default value
+     */
+    public operator fun <V> `get`(key: JvmCompilerArgument<V>): V
+
+    /**
+     * Set the [value] for option specified by [key], overriding any previous value for that option.
+     */
+    public operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V)
+
+    /**
+     * Check if an option specified by [key] has a value set.
+     *
+     * Note: trying to read an option (by using [get]) that has not been set will result in an exception.
+     *
+     * @return true if the option has a value set, false otherwise
+     */
+    public operator fun contains(key: JvmCompilerArgument<*>): Boolean
+
+    /**
+     * Constructs a new immutable [JvmCompilerArguments] instance with the options set in this builder.
+     */
+    public fun build(): JvmCompilerArguments
+  }
 
   public companion object {
     /**
@@ -135,9 +173,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Enable behaviour needed to compile builtins as part of JVM stdlib
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.3.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_COMPILE_BUILTINS_AS_PART_OF_STDLIB: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_COMPILE_BUILTINS_AS_PART_OF_STDLIB", KotlinReleaseVersion(2, 1, 20))
 
@@ -223,6 +264,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_GENERATE_STRICT_METADATA_VERSION: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_GENERATE_STRICT_METADATA_VERSION", KotlinReleaseVersion(1, 3, 0))
+
+    /**
+     * Do not copy these annotations to the bridge methods from their targets.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_IGNORED_ANNOTATIONS_FOR_BRIDGES: JvmCompilerArgument<Array<String>?> =
+        JvmCompilerArgument("X_IGNORED_ANNOTATIONS_FOR_BRIDGES", KotlinReleaseVersion(2, 3, 20))
 
     /**
      * Allow using 'invokedynamic' for lambda expressions with annotations
@@ -521,14 +572,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     /**
      * Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
      * `profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.
-     * If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.
-     * Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>
+     * If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath. 
+     * Individual parameter values are separated by the system path separator.
+     * Example (Unix/Linux): -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>
+     * Example (Windows): -Xprofile=<PATH_TO_ASYNC_PROFILER>\async-profiler\build\libasyncProfiler.so;event=cpu,interval=1ms,threads,start;<SNAPSHOT_DIR_PATH>
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_PROFILE: JvmCompilerArgument<String?> =
+    public val X_PROFILE: JvmCompilerArgument<ProfileCompilerCommand?> =
         JvmCompilerArgument("X_PROFILE", KotlinReleaseVersion(1, 4, 20))
 
     /**
@@ -570,9 +623,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Save the IR to metadata (Experimental).
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.4.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_SERIALIZE_IR: JvmCompilerArgument<String> =
         JvmCompilerArgument("X_SERIALIZE_IR", KotlinReleaseVersion(1, 6, 0))
 
@@ -750,7 +806,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Include a custom JDK from the specified location in the classpath instead of the default 'JAVA_HOME'.
      */
     @JvmField
-    public val JDK_HOME: JvmCompilerArgument<String?> =
+    public val JDK_HOME: JvmCompilerArgument<Path?> =
         JvmCompilerArgument("JDK_HOME", KotlinReleaseVersion(1, 0, 3))
 
     /**

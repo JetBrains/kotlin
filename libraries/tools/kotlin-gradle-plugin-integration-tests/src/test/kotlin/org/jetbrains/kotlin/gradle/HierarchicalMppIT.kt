@@ -45,9 +45,8 @@ import kotlin.test.fail
 open class HierarchicalMppIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
-        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         get() = super.defaultBuildOptions
-            .copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+            .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     private val String.withPrefix get() = "hierarchical-mpp-published-modules/$this"
 
@@ -300,41 +299,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
                     transformedArtifacts().toSortedSet()
                 )
             }
-        }
-    }
-
-    @GradleTest
-    @DisplayName("Works with published JS library")
-    fun testHmppWithPublishedJsIrDependency(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
-        publishThirdPartyLib(
-            projectName = "hierarchical-mpp-with-js-published-modules/third-party-lib",
-            gradleVersion = gradleVersion,
-            localRepoDir = tempDir
-        )
-
-        with(
-            nativeProject(
-                "hierarchical-mpp-with-js-published-modules/my-lib-foo",
-                gradleVersion,
-                localRepoDir = tempDir,
-                buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions())
-            )
-        ) {
-            build("publish", "assemble")
-        }
-    }
-
-    @GradleTest
-    @DisplayName("Works with project dependency on JS library")
-    fun testHmppWithProjectJsIrDependency(gradleVersion: GradleVersion) {
-        with(
-            nativeProject(
-                projectName = "hierarchical-mpp-with-js-project-dependency",
-                gradleVersion = gradleVersion,
-                buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions())
-            )
-        ) {
-            build("assemble")
         }
     }
 

@@ -1,3 +1,5 @@
+// LANGUAGE: -OverloadResolutionSpecificityForEnhancedJvmPrimitiveWrappers
+
 // MODULE: lib
 
 // FILE: lib/Checks.java

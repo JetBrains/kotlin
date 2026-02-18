@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.testLibraryAKlibFile
 import org.jetbrains.kotlin.konan.test.testLibraryKotlinxSerializationCore
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
@@ -21,7 +21,7 @@ import java.io.File
 
 @TestMetadata("native/swift/swift-export-standalone-integration-tests/external/testData/generation")
 @TestDataPath("\$PROJECT_ROOT")
-@UseStandardTestCaseGroupProvider
+@UseExtTestCaseGroupProvider
 class ExternalProjectGenerationTests : AbstractSwiftExportWithBinaryCompilationTest(), SwiftExportValidator {
 
     private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)

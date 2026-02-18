@@ -1,0 +1,53 @@
+FILE: divide.kt
+    @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.RUNTIME|]) public final annotation class Ann : R|kotlin/Annotation| {
+        public [ContainingClassKey=Ann] constructor([CorrespondingProperty=/Ann.b] b: R|kotlin/Byte|, [CorrespondingProperty=/Ann.s] s: R|kotlin/Short|, [CorrespondingProperty=/Ann.i] i: R|kotlin/Int|, [CorrespondingProperty=/Ann.l] l: R|kotlin/Long|): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val b: R|kotlin/Byte| = R|<local>/b|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Byte|
+
+        public final [IsFromPrimaryConstructor=true] val s: R|kotlin/Short| = R|<local>/s|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Short|
+
+        public final [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Int|
+
+        public final [IsFromPrimaryConstructor=true] val l: R|kotlin/Long| = R|<local>/l|
+            public [ContainingClassKey=Ann] get(): R|kotlin/Long|
+
+    }
+    @R|Ann|(b = Int(1).R|kotlin/Int.div|(Int(1)) [evaluated = Int(1)], s = Int(1).R|kotlin/Int.div|(Int(1)) [evaluated = Int(1)], i = Int(1).R|kotlin/Int.div|(Int(1)) [evaluated = Int(1)], l = Int(1).R|kotlin/Int.div|(Int(1)).R|kotlin/Int.toLong|() [evaluated = Long(1)]) public final class MyClass : R|kotlin/Any| {
+        public [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval annotation: R|Ann| = <getClass>(Q|MyClass|).R|kotlin/jvm/java|<R|MyClass|>.R|SubstitutionOverride<java/lang/Class.getAnnotation: R|A!|>|<R|Ann!|>(<getClass>(Q|Ann|).R|kotlin/jvm/java|<R|Ann|>)!!
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.b|, Int(1).R|kotlin/Int.toByte|()) ->  {
+                ^box String(fail 1)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.s|, Int(1).R|kotlin/Int.toShort|()) ->  {
+                ^box String(fail 2)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.i|, Int(1)) ->  {
+                ^box String(fail 3)
+            }
+        }
+
+        when () {
+            !=(R|<local>/annotation|.R|/Ann.l|, Int(1).R|kotlin/Int.toLong|()) ->  {
+                ^box String(fail 4)
+            }
+        }
+
+        ^box String(OK)
+    }

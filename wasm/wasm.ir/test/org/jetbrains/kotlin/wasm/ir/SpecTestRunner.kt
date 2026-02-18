@@ -233,8 +233,8 @@ fun WasmModule.toBinaryFormat(): WasmBinaryData {
 }
 
 fun WasmModule.toTextFormat(): String {
-    val builder = WasmIrToText()
-    builder.appendWasmModule(this)
+    val builder = WasmIrToText(this)
+    builder.appendWasmModule()
     return builder.toString()
 }
 

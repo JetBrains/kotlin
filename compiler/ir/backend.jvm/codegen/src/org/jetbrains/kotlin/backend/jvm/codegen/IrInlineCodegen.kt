@@ -16,14 +16,17 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.genThrow
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.coroutines.withInstructionAdapter
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -44,6 +47,7 @@ class IrInlineCodegen(
     private val typeParameterMappings: TypeParameterMappings<IrType>,
     private val sourceCompiler: SourceCompilerForInline,
     private val reifiedTypeInliner: ReifiedTypeInliner<IrType>,
+    private val markInlinedSuspensionPointAsUnitReturning: Boolean,
 ) : IrInlineCallGenerator {
 
     private val inlineArgumentsInPlace = canInlineArgumentsInPlace()
@@ -276,6 +280,34 @@ class IrInlineCodegen(
                     val param = invocationParamBuilder.addCapturedParam(captured, captured.fieldName, false)
                     param.remapValue = StackValue.Local(codegen.frameMap.enterTemp(param.type), param.type, null)
                     param.isSynthetic = true
+                }
+            }
+        }
+
+        if (codegen.irFunction.isSuspend) {
+            val suspendGenericCallMarkers = node.instructions.filter { isBeforeSuspendGenericCallMarker(it) }
+            suspendGenericCallMarkers.forEach {
+                require(expression.typeArguments.size == 1) { "Expected single type argument for inlined suspend function's with INLINE_MARKER_BEFORE_SUSPEND_GENERIC_CALL" }
+                if (expression.typeArguments.single()!!.isUnit()) {
+                    // replace inlined INLINE_MARKER_BEFORE_SUSPEND_GENERIC_CALL with INLINE_MARKER_BEFORE_SUSPEND_UNIT_CALL
+                    node.instructions.insert(it, withInstructionAdapter {
+                        addBeforeSuspendUnitCallMarker(this)
+                    })
+                    node.instructions.remove(it.previous)
+                    node.instructions.remove(it)
+                } else if (!expression.isGenericCallWithCallersSingleTypeParameter(codegen.irFunction)) {
+                    // delete the marker
+                    node.instructions.remove(it.previous)
+                    node.instructions.remove(it)
+                } // else keep the marker
+            }
+
+            if (suspendGenericCallMarkers.isEmpty() && markInlinedSuspensionPointAsUnitReturning) {
+                // the old version of "suspendCoroutine" TCO support, to be removed soon
+                node.instructions.firstOrNull { isBeforeSuspendMarker(it) }?.let {
+                    node.instructions.insert(it, withInstructionAdapter {
+                        addBeforeSuspendUnitCallMarker(this)
+                    })
                 }
             }
         }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.utils.named
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.fail
 
 class KT37051CInteropArtifactTest {

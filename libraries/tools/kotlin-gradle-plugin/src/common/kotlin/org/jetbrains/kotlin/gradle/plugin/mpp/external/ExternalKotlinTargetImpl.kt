@@ -90,7 +90,7 @@ internal class ExternalKotlinTargetImpl internal constructor(
     }
 
     override val compilations: NamedDomainObjectContainer<DecoratedExternalKotlinCompilation> by lazy {
-        project.container(DecoratedExternalKotlinCompilation::class.java)
+        project.objects.domainObjectContainer(DecoratedExternalKotlinCompilation::class.java)
     }
 
     @Suppress("unchecked_cast")
@@ -106,7 +106,7 @@ internal class ExternalKotlinTargetImpl internal constructor(
         mavenPublicationActions.all { action -> action.execute(publication) }
     }
 
-    private val attributeContainer = HierarchyAttributeContainer(parent = null)
+    private val attributeContainer = HierarchyAttributeContainer(parent = null, project.objects)
 
     override fun getAttributes(): AttributeContainer = attributeContainer
 

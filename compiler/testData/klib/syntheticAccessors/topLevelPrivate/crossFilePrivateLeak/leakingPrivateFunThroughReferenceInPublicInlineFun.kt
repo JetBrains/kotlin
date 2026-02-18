@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 // FILE: A.kt
 private fun privateFun() = "OK"
 

@@ -89,7 +89,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                     completionNeeded = true
                 }
             }
-            val exhaustivenessStatus = FirWhenExhaustivenessComputer.computeExhaustivenessStatus(whenExpression, session, context.file)
+            val exhaustivenessStatus = FirWhenExhaustivenessComputer.computeExhaustivenessStatus(whenExpression, context.file)
             whenExpression.replaceExhaustivenessStatus(exhaustivenessStatus)
 
             // This is necessary to perform outside the place where the synthetic call is created because

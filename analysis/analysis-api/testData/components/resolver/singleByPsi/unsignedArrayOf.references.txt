@@ -9,5 +9,6 @@ KtCallExpression(31,56): 'println(uintArrayOf(42u))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

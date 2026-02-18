@@ -1,7 +1,6 @@
 import org.gradle.kotlin.dsl.support.serviceOf
-import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
+import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
-import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
 
 plugins {
     kotlin("jvm")
@@ -21,7 +20,6 @@ val kotlinNativeEmbeddedClasspath = configurations.resolvable("kotlinNativeEmbed
 }
 
 val kotlinNativeSources by configurations.creating {
-    isVisible = false
     isCanBeConsumed = false
     isCanBeResolved = true
 
@@ -32,7 +30,6 @@ val kotlinNativeSources by configurations.creating {
 }
 
 val kotlinNativeJavadoc by configurations.creating {
-    isVisible = false
     isCanBeConsumed = false
     isCanBeResolved = true
 
@@ -107,7 +104,9 @@ open class ProjectTestArgumentProvider @Inject constructor(
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val nativeDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+    val nativeDistributionRoot: DirectoryProperty = objectFactory.directoryProperty()
+
+    private val nativeDistribution = nativeDistributionRoot.asNativeDistribution()
 
     override fun asArguments(): Iterable<String> = listOf(
             "-DcompilerClasspath=${compilerClasspath.files.joinToString(separator = File.pathSeparator) { it.absolutePath }}",
@@ -125,7 +124,7 @@ projectTests {
 
             // The tests run the compiler and try to produce an executable on host.
             // So, distribution with stdlib and runtime for host is required.
-            nativeDistribution.set(project.nativeDistribution)
+            nativeDistributionRoot.set(project.nativeDistribution.map { it.root })
             dependsOn(":kotlin-native:distRuntime")
         })
     }

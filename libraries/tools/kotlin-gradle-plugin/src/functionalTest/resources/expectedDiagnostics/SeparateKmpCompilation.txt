@@ -1,8 +1,3 @@
-[NonKmpAgpIsDeprecated | WARNING] The 'org.jetbrains.kotlin.multiplatform' plugin deprecated compatibility with Android Gradle plugin: 'com.android.library'
-The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with 'com.android.library' starting with Android Gradle Plugin 9.0.0.
-Please use the 'com.android.kotlin.multiplatform.library' plugin instead of 'com.android.library'.
-See https://kotl.in/gradle/agp-new-kmp for more details.
-----
 [ExperimentalFeatureWarning_060c2426 | WARNING] Experimental Feature Notice
 Separate KMP compilation is an experimental feature and subject to change in any future releases.
 It may not function as you expect and you may encounter bugs. Use it at your own risk.

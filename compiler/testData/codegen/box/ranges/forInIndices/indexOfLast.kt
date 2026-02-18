@@ -1,7 +1,5 @@
 // WITH_STDLIB
-
-import kotlin.test.assertEquals
-
+// FILE: lib.kt
 inline fun <T> Array<out T>.indexOfLast(predicate: (T) -> Boolean): Int {
     for (index in indices.reversed()) {
         if (predicate(this[index])) {
@@ -10,6 +8,9 @@ inline fun <T> Array<out T>.indexOfLast(predicate: (T) -> Boolean): Int {
     }
     return -1
 }
+
+// FILE: main.kt
+import kotlin.test.assertEquals
 
 val ints = arrayOf(1, 2, 3, 2, 1)
 

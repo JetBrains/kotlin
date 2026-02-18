@@ -50,7 +50,7 @@ declare namespace JS_TESTS {
         }
         class D implements foo.NonExportedInterface, foo.ExportedInterface {
             constructor();
-            readonly __doNotUseOrImplementIt: foo.NonExportedInterface["__doNotUseOrImplementIt"] & foo.ExportedInterface["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.ExportedInterface["__doNotUseOrImplementIt"] & foo.NonExportedInterface["__doNotUseOrImplementIt"];
         }
         namespace D {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -60,7 +60,7 @@ declare namespace JS_TESTS {
         }
         class E implements foo.NonExportedType, foo.ExportedInterface {
             constructor();
-            readonly __doNotUseOrImplementIt: foo.NonExportedType["__doNotUseOrImplementIt"] & foo.ExportedInterface["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.ExportedInterface["__doNotUseOrImplementIt"] & foo.NonExportedType["__doNotUseOrImplementIt"];
         }
         namespace E {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -70,7 +70,7 @@ declare namespace JS_TESTS {
         }
         class F extends foo.A.$metadata$.constructor implements foo.NonExportedInterface {
             constructor();
-            readonly __doNotUseOrImplementIt: foo.A["__doNotUseOrImplementIt"] & foo.NonExportedInterface["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.NonExportedInterface["__doNotUseOrImplementIt"] & foo.NonExportedParent.NonExportedSecond.NonExportedUsedChild["__doNotUseOrImplementIt"];
         }
         namespace F {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -80,7 +80,7 @@ declare namespace JS_TESTS {
         }
         class G implements foo.NonExportedGenericInterface<foo.NonExportedType> {
             constructor();
-            readonly __doNotUseOrImplementIt: foo.NonExportedGenericInterface<foo.NonExportedType>["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.NonExportedGenericInterface<any>["__doNotUseOrImplementIt"];
         }
         namespace G {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -90,7 +90,7 @@ declare namespace JS_TESTS {
         }
         class H implements foo.NonExportedGenericType<foo.NonExportedType> {
             constructor();
-            readonly __doNotUseOrImplementIt: foo.NonExportedGenericType<foo.NonExportedType>["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.NonExportedGenericType<any>["__doNotUseOrImplementIt"];
         }
         namespace H {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -110,7 +110,7 @@ declare namespace JS_TESTS {
         }
         class J implements foo.NotExportedChildGenericClass<foo.NonExportedType> {
             constructor();
-            readonly __doNotUseOrImplementIt: foo.NotExportedChildGenericClass<foo.NonExportedType>["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.NotExportedChildGenericClass<any>["__doNotUseOrImplementIt"];
         }
         namespace J {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -140,7 +140,7 @@ declare namespace JS_TESTS {
         }
         class Sixth extends /* foo.Fifth */ foo.Third.$metadata$.constructor implements foo.Forth, foo.IC {
             constructor();
-            readonly __doNotUseOrImplementIt: foo.Forth["__doNotUseOrImplementIt"] & foo.IC["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.IC["__doNotUseOrImplementIt"] & foo.Forth["__doNotUseOrImplementIt"];
         }
         namespace Sixth {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -171,7 +171,7 @@ declare namespace JS_TESTS {
         }
         class SomeServiceRequest implements foo.Service<any/* foo.SomeService */, foo.Event<any/* foo.SomeService */>/* foo.SomeEvent */> {
             constructor();
-            readonly __doNotUseOrImplementIt: foo.Service<any/* foo.SomeService */, foo.Event<any/* foo.SomeService */>/* foo.SomeEvent */>["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.Service<any, any>["__doNotUseOrImplementIt"];
         }
         namespace SomeServiceRequest {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -239,12 +239,12 @@ declare namespace JS_TESTS {
         interface NotExportedChildClass extends foo.NonExportedInterface, foo.NonExportedType {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.NotExportedChildClass": unique symbol;
-            } & foo.NonExportedInterface["__doNotUseOrImplementIt"] & foo.NonExportedType["__doNotUseOrImplementIt"];
+            } & foo.NonExportedType["__doNotUseOrImplementIt"] & foo.NonExportedInterface["__doNotUseOrImplementIt"];
         }
         interface NotExportedChildGenericClass<T> extends foo.NonExportedInterface, foo.NonExportedGenericInterface<T>, foo.NonExportedGenericType<T> {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.NotExportedChildGenericClass": unique symbol;
-            } & foo.NonExportedInterface["__doNotUseOrImplementIt"] & foo.NonExportedGenericInterface<T>["__doNotUseOrImplementIt"] & foo.NonExportedGenericType<T>["__doNotUseOrImplementIt"];
+            } & foo.NonExportedGenericType<any>["__doNotUseOrImplementIt"] & foo.NonExportedGenericInterface<any>["__doNotUseOrImplementIt"] & foo.NonExportedInterface["__doNotUseOrImplementIt"];
         }
         interface IB extends foo.IA {
             readonly __doNotUseOrImplementIt: {
@@ -259,7 +259,7 @@ declare namespace JS_TESTS {
         interface Forth extends foo.Third, foo.IB, foo.IC {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.Forth": unique symbol;
-            } & foo.IB["__doNotUseOrImplementIt"] & foo.IC["__doNotUseOrImplementIt"];
+            } & foo.IC["__doNotUseOrImplementIt"] & foo.IB["__doNotUseOrImplementIt"];
         }
     }
 }

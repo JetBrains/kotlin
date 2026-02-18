@@ -6,23 +6,27 @@
 package org.jetbrains.kotlin.cli.common
 
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.isFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
-import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.forAllFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.allSourceFilesSequence
+import org.jetbrains.kotlin.cli.jvm.compiler.findFileByPath
 import org.jetbrains.kotlin.cli.jvm.compiler.getSourceRootsCheckingForDuplicates
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.cli.jvm.compiler.report
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.dontSortSourceFiles
+import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
+import org.jetbrains.kotlin.extensions.PreprocessedFileCreator
+import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
+import java.io.File
 import java.util.TreeSet
-
-private const val kotlinFileExtensionWithDot = ".${KotlinFileType.EXTENSION}"
-private const val javaFileExtensionWithDot = ".${JavaFileType.DEFAULT_EXTENSION}"
 
 data class GroupedKtSources(
     val platformSources: Collection<KtSourceFile>,
@@ -35,14 +39,6 @@ data class GroupedKtSources(
 val GroupedKtSources.allFiles: List<KtSourceFile>
     get() = platformSources + commonSources
 
-fun collectSources(
-    compilerConfiguration: CompilerConfiguration,
-    projectEnvironment: VfsBasedProjectEnvironment,
-    messageCollector: MessageCollector
-): GroupedKtSources {
-    return collectSources(compilerConfiguration, projectEnvironment.project, messageCollector)
-}
-
 private val ktSourceFileComparator = Comparator<KtSourceFile> { o1, o2 ->
     val path1 = o1.path ?: error("Expected a file with a well-defined path")
     val path2 = o2.path ?: error("Expected a file with a well-defined path")
@@ -51,7 +47,7 @@ private val ktSourceFileComparator = Comparator<KtSourceFile> { o1, o2 ->
 
 fun collectSources(
     compilerConfiguration: CompilerConfiguration,
-    project: Project,
+    projectEnvironment: VfsBasedProjectEnvironment,
     messageCollector: MessageCollector
 ): GroupedKtSources {
     fun createSet(): MutableSet<KtSourceFile> = if (compilerConfiguration.dontSortSourceFiles) {
@@ -64,40 +60,84 @@ fun collectSources(
     val commonSources = createSet()
     val sourcesByModuleName = mutableMapOf<String, MutableSet<KtSourceFile>>()
 
-    // TODO: the scripts checking should be part of the scripting plugin functionality, as it is implemented now in ScriptingProcessSourcesBeforeCompilingExtension
-    // TODO: implement in the next round of K2 scripting support (https://youtrack.jetbrains.com/issue/KT-55728)
-    val skipScriptsInLtMode = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
-            compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
-    var skipScriptsInLtModeWarning = false
+    val virtualFileCreator = PreprocessedFileCreator(projectEnvironment.project)
 
-    getSourceRootsCheckingForDuplicates(compilerConfiguration, messageCollector).forAllFiles(
-        compilerConfiguration,
-        project
-    ) { virtualFile, isCommon, moduleName ->
-        val file = KtVirtualFileSourceFile(virtualFile)
-        when {
-            file.path.endsWith(javaFileExtensionWithDot) -> {}
-            file.path.endsWith(kotlinFileExtensionWithDot) || !skipScriptsInLtMode -> {
-                if (isCommon) commonSources.add(file)
-                else platformSources.add(file)
-
-                if (moduleName != null) {
-                    sourcesByModuleName.getOrPut(moduleName) { mutableSetOf() }.add(file)
-                }
+    var pluginsConfigured = false
+    fun ensurePluginsConfigured() {
+        if (!pluginsConfigured) {
+            for (extension in CompilerConfigurationExtension.getInstances(projectEnvironment.project)) {
+                extension.updateFileRegistry()
             }
-            else -> {
-                // temporarily assume it is a script, see the TODO above
-                skipScriptsInLtModeWarning = true
-            }
+            pluginsConfigured = true
         }
     }
 
-    if (skipScriptsInLtModeWarning) {
-        // TODO: remove then Scripts are supported in LT (probably different K2 extension should be written for handling the case properly)
-        messageCollector.report(
-            CompilerMessageSeverity.STRONG_WARNING,
-            "Scripts are not yet supported with K2 in LightTree mode, consider using K1 or disable LightTree mode with -Xuse-fir-lt=false"
-        )
-    }
+    fun findVirtualFile(file: File): VirtualFile? =
+        projectEnvironment.knownFileSystems.findFileByPath(file.normalize().path, StandardFileSystems.FILE_PROTOCOL)
+
+    getSourceRootsCheckingForDuplicates(compilerConfiguration, messageCollector)
+        .allSourceFilesSequence(
+            compilerConfiguration,
+            reportLocation = null,
+            findVirtualFile = ::findVirtualFile,
+            filter = { virtualFile, isExplicit ->
+                when (virtualFile.extension) {
+                    JavaFileType.DEFAULT_EXTENSION -> false
+                    KotlinFileType.EXTENSION -> true
+                    else -> {
+                        if (virtualFile.isFile) {
+                            ensurePluginsConfigured()
+                            val isKotlin = virtualFile.fileType == KotlinFileType.INSTANCE
+                            if (isExplicit && !isKotlin)
+                                compilerConfiguration.report(
+                                    CompilerMessageSeverity.ERROR,
+                                    "Source entry is not a Kotlin file: ${virtualFile.path}"
+                                )
+                            isKotlin
+                        } else false
+                    }
+                }
+            },
+            convertToSourceFiles = {
+                val sources = listOf(KtVirtualFileSourceFile(virtualFileCreator.create(it)))
+                if (it.extension == KotlinFileType.EXTENSION) sources
+                else {
+                    // currently applying the extension only to non-kt files, e.g. scripts
+                    applyFirProcessSourcesExtension(projectEnvironment, compilerConfiguration, ::findVirtualFile, sources) ?: sources
+                }
+            }
+        ).forEach { fileInfo ->
+            fileInfo.sourceFiles.forEach { file ->
+                if (fileInfo.isCommon) commonSources.add(file)
+                else platformSources.add(file)
+
+                fileInfo.moduleName?.let {
+                    sourcesByModuleName.getOrPut(it) { mutableSetOf() }.add(file)
+                }
+            }
+        }
+
     return GroupedKtSources(platformSources, commonSources, sourcesByModuleName)
+}
+
+/**
+ * Applies [CollectAdditionalSourceFilesExtension] instances to the set of initial sources
+ * @param environment the project environment
+ * @param configuration compiler configuration
+ * @param findVirtualFile a function to find a virtual file by a file
+ * @param sources sources to process
+ * @return null if no applicable extensions were found or no processing was performed, otherwise returns the updated list of recursively processed sources
+ *
+ * @see CollectAdditionalSourceFilesExtension.isApplicable
+ * @see CollectAdditionalSourceFilesExtension.collectSources
+ */
+private fun applyFirProcessSourcesExtension(
+    environment: VfsBasedProjectEnvironment,
+    configuration: CompilerConfiguration,
+    findVirtualFile: (File) -> VirtualFile?,
+    sources: Iterable<KtSourceFile>,
+): Iterable<KtSourceFile>? {
+    val extensions = configuration.getCompilerExtensions(CollectAdditionalSourceFilesExtension).filter { it.isApplicable(configuration) }
+    return if (extensions.isEmpty()) sources
+    else extensions.fold(sources) { res, ext -> ext.collectSources(environment, configuration, findVirtualFile, res) }
 }

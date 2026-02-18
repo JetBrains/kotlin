@@ -29,7 +29,8 @@ class PowerAssertIrGenerationExtension(
 ) : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         for (file in moduleFragment.files) {
-            PowerAssertCallTransformer(SourceFile(file), pluginContext, configuration)
+            val source = SourceFile.findSource(file) ?: continue
+            PowerAssertCallTransformer(source, pluginContext, configuration)
                 .visitFile(file)
         }
     }

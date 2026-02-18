@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 // MODULE: lib
 // FILE: A.kt
 class A constructor(val s: String) {

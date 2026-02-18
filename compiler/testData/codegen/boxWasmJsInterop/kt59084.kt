@@ -1,4 +1,4 @@
-// TARGET_BACKEND: WASM
+// WITH_STDLIB
 
 inline class JsDynamic(val value: JsAny?)
 

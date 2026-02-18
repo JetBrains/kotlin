@@ -2,22 +2,21 @@
   KtNameReferenceExpression(309,312): 'foo'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = kotlinClass
+          isSafeNavigation = false
+          type = KotlinClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = kotlinClass
-            isSafeNavigation = false
-            type = KotlinClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = foo
-            receiverType = null
-            returnType = Foo<kotlin.Any>
-            symbol = var foo: Foo<kotlin.Any>
-            contextParameters = []
-            callableId = /KotlinClass.foo
-        simpleAccess = Read
+        kind = Read
+        signature = KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = Foo<kotlin.Any>
+          symbol = var foo: Foo<kotlin.Any>
+          contextParameters = []
+          callableId = /KotlinClass.foo
         typeArgumentsMapping = {}
       isInBestCandidates = true
 
@@ -25,23 +24,22 @@
   KtNameReferenceExpression(330,333): 'foo'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = kotlinClass
+          isSafeNavigation = false
+          type = KotlinClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = kotlinClass
-            isSafeNavigation = false
-            type = KotlinClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = foo
-            receiverType = null
-            returnType = Foo<kotlin.Any>
-            symbol = var foo: Foo<kotlin.Any>
-            contextParameters = []
-            callableId = /KotlinClass.foo
-        simpleAccess = Write:
+        kind = Write:
           value = foo
+        signature = KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = Foo<kotlin.Any>
+          symbol = var foo: Foo<kotlin.Any>
+          contextParameters = []
+          callableId = /KotlinClass.foo
         typeArgumentsMapping = {}
       isInBestCandidates = true
 
@@ -49,23 +47,22 @@
   KtNameReferenceExpression(442,445): 'foo'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaSmartCastedReceiverValue:
+          original = KaExplicitReceiverValue:
+            expression = javaClass
+            isSafeNavigation = false
+            type = JavaClass<T>
+          type = KotlinClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaSmartCastedReceiverValue:
-            original = KaExplicitReceiverValue:
-              expression = javaClass
-              isSafeNavigation = false
-              type = JavaClass<T>
-            type = KotlinClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = foo
-            receiverType = null
-            returnType = Foo<kotlin.Any>
-            symbol = var foo: Foo<kotlin.Any>
-            contextParameters = []
-            callableId = /KotlinClass.foo
-        simpleAccess = Read
+        kind = Read
+        signature = KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = Foo<kotlin.Any>
+          symbol = var foo: Foo<kotlin.Any>
+          contextParameters = []
+          callableId = /KotlinClass.foo
         typeArgumentsMapping = {}
       isInBestCandidates = true

@@ -1,4 +1,5 @@
-// TARGET_BACKEND: JVM_IR, WASM
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ^ KT-83349 Wrong hashCode values in instantiated annotations
 
 enum class E { A, B, C }
 

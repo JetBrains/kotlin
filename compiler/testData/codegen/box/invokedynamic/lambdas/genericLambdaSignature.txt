@@ -1,0 +1,8 @@
+@kotlin.Metadata
+public final class<null>  GenericLambdaSignatureKt {
+    // source: 'genericLambdaSignature.kt'
+    public final static <<T1:Ljava/lang/Object;R:Ljava/lang/Object;>(TT1;Lkotlin/jvm/functions/Function1<-TT1;+TR;>;)TR;> method call(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): java.lang.Object
+    public final static <<T2:Ljava/lang/Object;>(TT2;)TT2;> method test(p0: java.lang.Object): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull <null> method box(): java.lang.String
+    private final static <null> method test$lambda$0(p0: java.lang.Object): java.lang.Object
+}

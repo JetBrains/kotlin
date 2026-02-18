@@ -17,17 +17,13 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClassBuilder
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.types.constructType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.SuperBuilder
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.ClassId
@@ -36,8 +32,9 @@ import org.jetbrains.kotlin.types.Variance
 
 class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<SuperBuilder>(session) {
     companion object {
-        const val CLASS_TYPE_PARAMETER_INDEX = 0
-        const val BUILDER_TYPE_PARAMETER_INDEX = 1
+        const val CLASS_TYPE_PARAMETER_INDEX_FROM_END = 2
+        const val BUILDER_TYPE_PARAMETER_INDEX_FROM_END = 1
+        private val startProjectionsList = listOf(ConeStarProjection, ConeStarProjection)
     }
 
     override val builderModality: Modality = Modality.ABSTRACT
@@ -46,15 +43,16 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
 
     override fun getBuilder(symbol: FirBasedSymbol<*>): SuperBuilder? {
         // There is also a build impl class, but it's private, and it's used only for internal purposes. Not relevant for API.
+        if (lombokService.getBuilder(symbol) != null) return null
         return lombokService.getSuperBuilder(symbol)
     }
 
-    override fun constructBuilderType(builderClassId: ClassId): ConeClassLikeType {
-        return builderClassId.constructClassLikeType(arrayOf(ConeStarProjection, ConeStarProjection), isMarkedNullable = false)
+    override fun getExtraTypeArguments(): List<ConeTypeProjection> {
+        return startProjectionsList
     }
 
     override fun getBuilderType(builderSymbol: FirClassSymbol<*>): ConeKotlinType? {
-        return builderSymbol.typeParameterSymbols.elementAtOrNull(BUILDER_TYPE_PARAMETER_INDEX)?.defaultType
+        return builderSymbol.typeParameterSymbols.elementAtOrNull(builderSymbol.typeParameterSymbols.size - BUILDER_TYPE_PARAMETER_INDEX_FROM_END)?.defaultType
     }
 
     override fun MutableMap<Name, FirJavaMethod>.addSpecialBuilderMethods(
@@ -66,7 +64,9 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         // Don't care about manually written builder classes without specified type parameters
         // Because they are anyway incorrect, Lombok reports Java errors on them and doesn't generate corresponding code
         val builderType = getBuilderType(builderSymbol) ?: return
-        val classType = builderSymbol.typeParameterSymbols.elementAtOrNull(CLASS_TYPE_PARAMETER_INDEX)?.defaultType ?: return
+        val classType =
+            builderSymbol.typeParameterSymbols.elementAtOrNull(builderSymbol.typeParameterSymbols.size - CLASS_TYPE_PARAMETER_INDEX_FROM_END)?.defaultType
+                ?: return
 
         addIfNonClashing(Name.identifier("self"), existingFunctionNames) {
             builderSymbol.createJavaMethod(
@@ -94,6 +94,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
     ) {
         val classTypeParameterSymbol = FirTypeParameterSymbol()
         val builderTypeParameterSymbol = FirTypeParameterSymbol()
+        val builderTypeArguments = typeParameters.map { it.toConeType() as ConeTypeProjection }.toTypedArray()
 
         typeParameters += buildTypeParameter {
             moduleData = session.moduleData
@@ -105,7 +106,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
             variance = Variance.INVARIANT
             isReified = false
             bounds += buildResolvedTypeRef {
-                coneType = classSymbol.defaultType()
+                coneType = classSymbol.constructType(builderTypeArguments)
             }
         }
         typeParameters += buildTypeParameter {
@@ -120,27 +121,37 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
             bounds += buildResolvedTypeRef {
                 coneType = builderSymbol.constructType(
                     typeArguments = arrayOf(
+                        *builderTypeArguments,
                         classTypeParameterSymbol.defaultType,
                         builderTypeParameterSymbol.defaultType,
-                    ),
-                    isMarkedNullable = false
+                    )
                 )
             }
         }
 
-        val superBuilderClass = classSymbol.resolvedSuperTypeRefs.mapNotNull { superTypeRef ->
+        val superBuilderClassAndTypeRef = classSymbol.resolvedSuperTypeRefs.mapNotNull { superTypeRef ->
             val superTypeSymbol = superTypeRef.toRegularClassSymbol(session) ?: return@mapNotNull null
             val superBuilders = builderClassesCache.getValue(superTypeSymbol) ?: return@mapNotNull null
             require(superBuilders.size <= 1) { "@SuperBuilder is only supported on types -> not more than one super type is possible" }
-            superBuilders.firstNotNullOfOrNull { it.component2() }
+            val superBuilder = superBuilders.firstNotNullOfOrNull { it.component2() }
+            return@mapNotNull if (superBuilder != null)
+                superBuilder.symbol to superTypeRef
+            else
+                null
         }.singleOrNull()
-        val superBuilderTypeRef = superBuilderClass?.symbol?.constructType(
-            typeArguments = arrayOf(
-                classTypeParameterSymbol.defaultType,
-                builderTypeParameterSymbol.defaultType,
-            ),
-            isMarkedNullable = false
-        )?.toFirResolvedTypeRef() ?: session.builtinTypes.anyType
+
+        val superBuilderTypeRef = if (superBuilderClassAndTypeRef != null) {
+            val (symbol, superTypeRef) = superBuilderClassAndTypeRef
+            symbol.constructType(
+                typeArguments = arrayOf(
+                    *superTypeRef.coneType.typeArguments,
+                    classTypeParameterSymbol.defaultType,
+                    builderTypeParameterSymbol.defaultType,
+                )
+            ).toFirResolvedTypeRef()
+        } else {
+            session.builtinTypes.anyType
+        }
 
         superTypeRefs += listOf(superBuilderTypeRef)
     }

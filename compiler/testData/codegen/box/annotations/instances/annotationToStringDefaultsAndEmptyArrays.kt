@@ -1,5 +1,12 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR, WASM
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ^ KT-83349 Wrong hashCode values in instantiated annotations
+
+// This test fails on Native with test grouping and package renaming enabled,
+// because the latter doesn't yet handle annotation toString implementations properly.
+// Disable test grouping as a workaround:
+// NATIVE_STANDALONE
+
 // IGNORE_BACKEND: ANDROID
 
 annotation class A(val t: String = "d")

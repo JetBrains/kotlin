@@ -46,7 +46,10 @@ internal class KTypeParameterImpl private constructor(
         isReified: Boolean,
     ) : this(descriptor = null, container, name, variance, isReified)
 
-    constructor(container: KTypeParameterOwnerImpl, descriptor: TypeParameterDescriptor) : this(
+    constructor(
+        container: KTypeParameterOwnerImpl,
+        descriptor: TypeParameterDescriptor,
+    ) : this(
         descriptor,
         container,
         descriptor.name.asString(),

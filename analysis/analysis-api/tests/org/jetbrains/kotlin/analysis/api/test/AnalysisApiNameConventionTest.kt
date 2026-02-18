@@ -31,6 +31,9 @@ class AnalysisApiNameConventionTest : AbstractAnalysisApiSurfaceCodebaseValidati
             if (!declaration.hasModifier(KtTokens.PUBLIC_KEYWORD)) continue
 
             if (declaration.name?.startsWith("Ka") == false && declaration.fqName?.asString() !in ignoredFqNames) {
+                // No need to check deprecated declarations
+                if (declaration.hasDeprecatedAnnotation()) continue
+
                 error("All top-level classes have to have 'Ka' prefix. '${declaration.name}' from (${file.path}) violates this rule")
             }
         }
@@ -43,10 +46,6 @@ class AnalysisApiNameConventionTest : AbstractAnalysisApiSurfaceCodebaseValidati
          * The list of fully qualified names that violate the naming convention and have to be renamed.
          */
         private val ignoredFqNames = listOf(
-            "org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds", // KT-82438
-
-            "org.jetbrains.kotlin.analysis.api.components.DebuggerExtension", // KT-82439
-
             // KT-82440
             "org.jetbrains.kotlin.analysis.api.components.ShortenOptions",
             "org.jetbrains.kotlin.analysis.api.components.ShortenStrategy",
@@ -54,12 +53,6 @@ class AnalysisApiNameConventionTest : AbstractAnalysisApiSurfaceCodebaseValidati
             "org.jetbrains.kotlin.analysis.api.components.QualifierToShortenInfo",
             "org.jetbrains.kotlin.analysis.api.components.ThisLabelToShortenInfo",
             "org.jetbrains.kotlin.analysis.api.components.ShortenCommand",
-
-            "org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue", // KT-82441
-
-            "org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider", // KT-82442
-
-            "org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer", // KT-82443
         )
     }
 }

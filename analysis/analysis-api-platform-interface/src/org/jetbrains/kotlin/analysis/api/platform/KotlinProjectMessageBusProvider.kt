@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform
 
 import com.intellij.openapi.project.Project
 import com.intellij.util.messages.MessageBus
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 
 /**
  * Provides the [project]'s [MessageBus] as the Analysis API message bus. This is the default implementation for both the standalone and the
@@ -15,6 +16,7 @@ import com.intellij.util.messages.MessageBus
  * [KotlinMessageBusProvider] exists so that this default may change in the future without breaking the API. Hence, it should not be assumed
  * that the message bus provided by [KotlinMessageBusProvider] will always be equal to the project's message bus.
  */
+@KaPlatformInterface
 public class KotlinProjectMessageBusProvider(private val project: Project) : KotlinMessageBusProvider {
     override fun getMessageBus(): MessageBus = project.messageBus
 }

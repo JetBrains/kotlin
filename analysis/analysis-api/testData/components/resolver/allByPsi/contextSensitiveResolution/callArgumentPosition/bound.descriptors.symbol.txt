@@ -1,0 +1,226 @@
+KtFile: 'bound.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,115): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(96,115): '{'
+  null
+
+KtEnumEntry(102,113): 'EnumValue1;'
+  null
+
+KtNamedFunction(117,158): 'fun <T: MyEnum> boundHolder(arg: T) = arg'
+  null
+
+KtTypeParameterList(121,132): '<T: MyEnum>'
+  null
+
+KtTypeParameter(122,131): 'T: MyEnum'
+  null
+
+KtTypeReference(125,131): 'MyEnum'
+  null
+
+KtUserType(125,131): 'MyEnum'
+  null
+
+KtNameReferenceExpression(125,131): 'MyEnum'
+  null
+
+KtParameterList(144,152): '(arg: T)'
+  null
+
+KtParameter(145,151): 'arg: T'
+  null
+
+KtTypeReference(150,151): 'T'
+  null
+
+KtUserType(150,151): 'T'
+  null
+
+KtNameReferenceExpression(150,151): 'T'
+  null
+
+KtNameReferenceExpression(155,158): 'arg'
+  null
+
+KtNamedFunction(160,210): 'fun testFunBound() {'
+  null
+
+KtParameterList(176,178): '()'
+  null
+
+KtBlockExpression(179,210): '{'
+  null
+
+KtCallExpression(185,208): 'boundHolder(EnumValue1)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /boundHolder(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with boundHolder>
+
+KtNameReferenceExpression(185,196): 'boundHolder'
+  null
+
+KtValueArgumentList(196,208): '(EnumValue1)'
+  null
+
+KtValueArgument(197,207): 'EnumValue1'
+  null
+
+KtNameReferenceExpression(197,207): 'EnumValue1'
+  null
+
+KtNamedFunction(212,271): 'fun testFunBound2() {'
+  null
+
+KtParameterList(229,231): '()'
+  null
+
+KtBlockExpression(232,271): '{'
+  null
+
+KtCallExpression(238,269): 'boundHolder<MyEnum>(EnumValue1)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /boundHolder(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with boundHolder>
+
+KtNameReferenceExpression(238,249): 'boundHolder'
+  null
+
+KtTypeArgumentList(249,257): '<MyEnum>'
+  null
+
+KtTypeProjection(250,256): 'MyEnum'
+  null
+
+KtTypeReference(250,256): 'MyEnum'
+  null
+
+KtUserType(250,256): 'MyEnum'
+  null
+
+KtNameReferenceExpression(250,256): 'MyEnum'
+  null
+
+KtValueArgumentList(257,269): '(EnumValue1)'
+  null
+
+KtValueArgument(258,268): 'EnumValue1'
+  null
+
+KtNameReferenceExpression(258,268): 'EnumValue1'
+  null
+
+KtNamedFunction(273,352): 'inline fun <T: MyEnum> testInlineFunBound(value: T) {'
+  null
+
+KtDeclarationModifierList(273,279): 'inline'
+  null
+
+KtTypeParameterList(284,295): '<T: MyEnum>'
+  null
+
+KtTypeParameter(285,294): 'T: MyEnum'
+  null
+
+KtTypeReference(288,294): 'MyEnum'
+  null
+
+KtUserType(288,294): 'MyEnum'
+  null
+
+KtNameReferenceExpression(288,294): 'MyEnum'
+  null
+
+KtParameterList(314,324): '(value: T)'
+  null
+
+KtParameter(315,323): 'value: T'
+  null
+
+KtTypeReference(322,323): 'T'
+  null
+
+KtUserType(322,323): 'T'
+  null
+
+KtNameReferenceExpression(322,323): 'T'
+  null
+
+KtBlockExpression(325,352): '{'
+  null
+
+KtBinaryExpression(331,350): 'value == EnumValue1'
+  null
+
+KtNameReferenceExpression(331,336): 'value'
+  null
+
+KtOperationReferenceExpression(337,339): '=='
+  null
+
+KtNameReferenceExpression(340,350): 'EnumValue1'
+  null
+
+KtNamedFunction(354,420): 'fun <T: MyEnum> testFunBound(value: T) {'
+  null
+
+KtTypeParameterList(358,369): '<T: MyEnum>'
+  null
+
+KtTypeParameter(359,368): 'T: MyEnum'
+  null
+
+KtTypeReference(362,368): 'MyEnum'
+  null
+
+KtUserType(362,368): 'MyEnum'
+  null
+
+KtNameReferenceExpression(362,368): 'MyEnum'
+  null
+
+KtParameterList(382,392): '(value: T)'
+  null
+
+KtParameter(383,391): 'value: T'
+  null
+
+KtTypeReference(390,391): 'T'
+  null
+
+KtUserType(390,391): 'T'
+  null
+
+KtNameReferenceExpression(390,391): 'T'
+  null
+
+KtBlockExpression(393,420): '{'
+  null
+
+KtBinaryExpression(399,418): 'value == EnumValue1'
+  null
+
+KtNameReferenceExpression(399,404): 'value'
+  null
+
+KtOperationReferenceExpression(405,407): '=='
+  null
+
+KtNameReferenceExpression(408,418): 'EnumValue1'
+  null

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
@@ -92,7 +93,7 @@ sealed class TestModule {
         val directRegularDependencySymbols: Set<String>,
         val directFriendDependencySymbols: Set<String>,
         val directDependsOnDependencySymbols: Set<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
-        val directives: MutableList<RegisteredDirectivesParser.ParsedDirective> = mutableListOf()
+        var directives: RegisteredDirectives = RegisteredDirectives.Empty,
     ) : TestModule() {
         init {
             val intersection = buildSet {
@@ -233,7 +234,7 @@ class TestCase(
     val expectedFailure: Boolean = false,
 ) {
     val checks = when (kind) {
-        TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> checks
+        TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> checks
         TestKind.REGULAR, TestKind.STANDALONE -> checks.copy(
             // With these two kinds tests will be run with `--ktest_no_exit_code`, so there must be a TCTestOutputFilter present.
             testFiltering = TestRunCheck.TestFiltering(TCTestOutputFilter)
@@ -246,7 +247,7 @@ class TestCase(
 
     init {
         when (kind) {
-            TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> assertTrue(extras is NoTestRunnerExtras)
+            TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> assertTrue(extras is NoTestRunnerExtras)
             TestKind.REGULAR, TestKind.STANDALONE -> assertTrue(extras is WithTestRunnerExtras)
         }
     }

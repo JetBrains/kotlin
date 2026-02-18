@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,6 +18,21 @@ interface KtAnonymousInitializer : KtDeclaration, KtStatementExpression {
     val body: KtExpression?
 }
 
+/**
+ * Represents an init block in a class that executes during instance initialization.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * class Foo {
+ *     init {
+ *         println("initialized")
+ *     }
+ * //  ^________________________^
+ * //  The entire 'init' block
+ * }
+ * ```
+ */
 class KtClassInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitializer>>, KtAnonymousInitializer {
     constructor(node: ASTNode) : super(node)
 
@@ -38,6 +53,17 @@ class KtClassInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitia
         get() = getParentOfType<KtClassOrObject>(true).sure { "Should only be present in class or object" }
 }
 
+/**
+ * Represents an initializer expression in a script. Effectively, it is a wrapper for top-level expressions
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * // In a .kts file:
+ *    println("Hello")
+ * // ^______________^
+ * ```
+ */
 class KtScriptInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtScriptInitializer>>, KtAnonymousInitializer {
     constructor(node: ASTNode) : super(node)
 

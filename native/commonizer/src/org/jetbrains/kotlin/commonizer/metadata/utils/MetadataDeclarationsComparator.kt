@@ -372,7 +372,6 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
 
         val moduleContext = rootContext.next(PathElement.Module(metadataA, metadataB))
 
-        compareAnnotationLists(moduleContext, metadataA.annotations, metadataB.annotations)
         compareModuleFragmentLists(moduleContext, metadataA.fragments, metadataB.fragments)
 
         return toResult()

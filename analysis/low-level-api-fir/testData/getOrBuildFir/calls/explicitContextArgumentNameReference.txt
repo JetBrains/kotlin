@@ -1,0 +1,26 @@
+KT element: KtNameReferenceExpression
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] explicitContextArgumentNameReference.kt
+    public final [ResolvedTo(STATUS)] class Implicit : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Implicit] constructor(): R|Implicit| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class Explicit : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Explicit] constructor(): R|Explicit| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    context([ResolvedTo(CONTRACTS)] <unused var>: R|Implicit|, [ResolvedTo(CONTRACTS)] explicit: R|Explicit|)
+    public final [ResolvedTo(CONTRACTS)] fun unnamed([ResolvedTo(CONTRACTS)] regular: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|Implicit|.receiverUsage(): R|kotlin/Unit| {
+        context(this@R|/receiverUsage|, R|/Explicit.Explicit|()) R|/unnamed|(String(str))
+    }

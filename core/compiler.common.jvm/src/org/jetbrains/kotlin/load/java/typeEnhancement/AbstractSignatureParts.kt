@@ -28,6 +28,12 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
     abstract val skipRawTypeArguments: Boolean
     abstract val typeSystem: TypeSystemContext
 
+    /**
+     * Enforces computing only the head type constructor (top-level type/main qualifier type), leaving type arguments as is.
+     *
+     * Currently, it is only true for a part of a second round of type parameter bounds enhancement.
+     * See [org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement.enhanceTypeParameterBoundsSecondRound]
+     */
     open val forceOnlyHeadTypeConstructor: Boolean
         get() = false
 
@@ -225,22 +231,32 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         val indexedThisType = toIndexed()
         val indexedFromSupertypes = overrides.map { it.toIndexed() }
 
-        // The covariant case may be hard, e.g. in the superclass the return may be Super<T>, but in the subclass it may be Derived, which
-        // is declared to extend Super<T>, and propagating data here is highly non-trivial, so we only look at the head type constructor
-        // (outermost type), unless the type in the subclass is interchangeable with the all the types in superclasses:
-        // e.g. we have (Mutable)List<String!>! in the subclass and { List<String!>, (Mutable)List<String>! } from superclasses
-        // Note that `this` is flexible here, so it's equal to it's bounds
-        val onlyHeadTypeConstructor = forceOnlyHeadTypeConstructor ||
-                (isCovariant && overrides.any { !this@computeIndexedQualifiers.isEqual(it) })
+        val isCovariantlyOverriddenWithDifferentTypeConstructor =
+            isCovariant && overrides.any { !this@computeIndexedQualifiers.isEqual(it) }
 
         val computedResult = Array(if (forceOnlyHeadTypeConstructor) 1 else indexedThisType.size) { index ->
-            // Specifically, for JSpecify, when the return type is covariant, a default qualifier should be used to determine
-            // nullity rather than the override's types. This is true in general for JSpecify, but that is not working yet (KT-71441).
             val defaultQualifier by lazy(mode = LazyThreadSafetyMode.NONE) { indexedThisType[index].extractDefaultQualifier() }
-            if (isK2 && defaultQualifier?.preferQualifierOverSupertype == true) {
-                return@Array indexedThisType[index].extractQualifiersFromAnnotations(defaultQualifier)
-            } else if (index > 0 && onlyHeadTypeConstructor) {
-                return@Array JavaTypeQualifiers.NONE
+
+            if (index > 0 && isCovariantlyOverriddenWithDifferentTypeConstructor) {
+                return@Array when {
+                    isK2 && defaultQualifier?.preferQualifierOverSupertype == true ->
+                        // Specifically, for JSpecify, when the return type is covariant, declaration-site qualifiers are used to determine
+                        // nullity, so we just ignore the overridden's types.
+                        // This is true in general for JSpecify, but that is not working yet (KT-71441).
+                        //
+                        // Generally, it's controversial because the argument might contradict to overridden type
+                        // (see the comment at the else branch below) but it's been requested by the JSpecify team at KT-78541.
+                        // TODO: Let's reconsider this behavior at some point (KT-83384)
+                        indexedThisType[index].extractQualifiersFromAnnotations(defaultQualifier)
+                    else ->
+                        // The covariant case may be hard, e.g., in the superclass the return may be Super<T>,
+                        // but in the subclass it may be Derived, which is declared to extend Super<T>, and propagating
+                        // data here is highly non-trivial. So we only look at the head type constructor
+                        // (outermost type), unless the type in the subclass is interchangeable with all the types in superclasses:
+                        // e.g., we have (Mutable)List<String!>! in the subclass and { List<String!>, (Mutable)List<String>! },
+                        // from superclasses.
+                        JavaTypeQualifiers.NONE
+                }
             }
 
             val qualifiers = indexedThisType[index].extractQualifiersFromAnnotations(defaultQualifier)

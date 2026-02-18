@@ -64,7 +64,7 @@ class KlibAnnotationsTest {
     }
 
     private fun writeModule(module: KmModuleFragment, metadataVersion: KlibMetadataVersion): KlibModuleMetadata.SerializedKlibMetadata =
-        KlibModuleMetadata("klib", listOf(module), emptyList(), metadataVersion).write()
+        KlibModuleMetadata("klib", listOf(module), metadataVersion).write()
 
     private fun readModule(metadata: KlibModuleMetadata.SerializedKlibMetadata): KmModuleFragment =
         KlibModuleMetadata.readLenient(object : KlibModuleMetadata.MetadataLibraryProvider {

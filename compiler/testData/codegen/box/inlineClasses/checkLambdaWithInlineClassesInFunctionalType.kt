@@ -1,14 +1,17 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
+// FILE: lib.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class UInt(val value: Int)
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class ULong(val value: Long)
 
-fun foo(u: UInt, f: (UInt) -> ULong): ULong = f(u)
 inline fun inlinedFoo(u: UInt, f: (UInt) -> ULong): ULong = f(u)
+
+// FILE: main.kt
+fun foo(u: UInt, f: (UInt) -> ULong): ULong = f(u)
 
 fun mapUIntToULong(u: UInt): ULong = ULong(u.value.toLong())
 

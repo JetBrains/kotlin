@@ -34,8 +34,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>2.3.2</version>
                     <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
+                        <source>1.8</source>
+                        <target>1.8</target>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -61,7 +61,6 @@
                         <configuration>
                             <args>
                                 <arg>-Xallow-any-scripts-in-source-roots</arg>
-                                <arg>-Xuse-fir-lt=false</arg>
                             </args>
                         </configuration>
                     </execution>

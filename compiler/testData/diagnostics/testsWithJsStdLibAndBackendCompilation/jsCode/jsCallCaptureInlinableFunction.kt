@@ -18,9 +18,9 @@ inline fun firstTest(
     crossinline crossInlineOne: () -> String,
     noinline noInlineOne: () -> List<Int>
 ) {
-    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>JS_CODE<!>)
-    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"console.log('The second is: ' + secondFunction());"<!>)
-    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"console.log('The third results is: ' + crossInlineOne());"<!>)
+    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_ERROR!>JS_CODE<!>)
+    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_ERROR!>"console.log('The second is: ' + secondFunction());"<!>)
+    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_ERROR!>"console.log('The third results is: ' + crossInlineOne());"<!>)
     js("""
         var thirdWhichWillBeShadowed = 44;
         console.log("The valid result should be: " + noInlineOne() + ", " + thirdWhichWillBeShadowed());
@@ -58,8 +58,8 @@ inline fun theOnlyFunction(
         var usageOfTheFirstValue = value + 4;
         var usageOfTheComplexValue = complexValue[4];
     """)
-    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"console.log('The first result is: ' + firstFunction());"<!>)
-    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_WARNING!>"console.log('The third results is: ' + crossInlineOne());"<!>)
+    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_ERROR!>"console.log('The first result is: ' + firstFunction());"<!>)
+    js(<!JS_CODE_CAPTURES_INLINABLE_FUNCTION_ERROR!>"console.log('The third results is: ' + crossInlineOne());"<!>)
     js("""
         var thirdWhichWillBeShadowed = 44;
         console.log("The valid result should be: " + noInlineOne() + ", " + thirdWhichWillBeShadowed());

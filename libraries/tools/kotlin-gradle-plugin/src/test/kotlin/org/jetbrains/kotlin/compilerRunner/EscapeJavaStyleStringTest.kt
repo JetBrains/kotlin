@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.DefaultAsserter.assertEquals
 
 class EscapeJavaStyleStringTest {

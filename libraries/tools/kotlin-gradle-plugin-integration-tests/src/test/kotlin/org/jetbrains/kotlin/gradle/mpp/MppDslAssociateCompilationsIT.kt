@@ -27,7 +27,7 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
             projectName = "new-mpp-associate-compilations",
             gradleVersion = gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             val tasks = arrayOf(
                 ":compileIntegrationTestKotlinJvm",
@@ -113,7 +113,7 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
             projectName = "new-mpp-associate-compilations",
             gradleVersion = gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build(
                 buildArguments = testTasks.toTypedArray(),
@@ -133,12 +133,21 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                     )
                 }
 
-                val testReportFile = "build/reports/tests/${targetName}Test/classes/com.example.HelloTest.html"
+                val testReportFile = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+                    "build/reports/tests/${targetName}Test/classes/com.example.HelloTest.html"
+                } else {
+                    val prefix = if (targetName == "jvm") "" else "${targetName}Test."
+                    "build/reports/tests/${targetName}Test/${prefix}com.example.HelloTest/index.html"
+                }
 
                 assertFileInProjectDoesNotContain(testReportFile, "secondTest")
 
-                val integrationTestReportFile =
+                val integrationTestReportFile = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
                     "build/reports/tests/${targetName}IntegrationTest/classes/com.example.HelloIntegrationTest.html"
+                } else {
+                    val prefix = if (targetName == "jvm") "" else "${targetName}IntegrationTest."
+                    "build/reports/tests/${targetName}IntegrationTest/${prefix}com.example.HelloIntegrationTest/index.html"
+                }
 
                 assertFileInProjectContains(integrationTestReportFile, "test[$targetName]")
                 assertFileInProjectDoesNotContain(integrationTestReportFile, "secondTest")

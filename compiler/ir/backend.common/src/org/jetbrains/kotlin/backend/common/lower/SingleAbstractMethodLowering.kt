@@ -25,9 +25,12 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
@@ -166,15 +169,18 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         val superFqName = superClass.fqNameWhenAvailable!!.asString().replace('.', '_')
         val inlinePrefix = if (wrapperVisibility == DescriptorVisibilities.PUBLIC) "\$i" else ""
         val wrapperName = Name.identifier("sam$inlinePrefix\$$superFqName$SAM_WRAPPER_SUFFIX")
-        val transformedSuperMethod = superClass.functions.single { it.modality == Modality.ABSTRACT }
-        val originalSuperMethod = getSuspendFunctionWithoutContinuation(transformedSuperMethod)
+        // We need to have a view on the class before transformations made later in pipeline.
+        // The generated class should override the original method, and further lowerings would transformation correctly, if needed.
+        // Super class can be already transformed in case it is located in one of already processed files.
+        val superClassDeclarations = superClass.declarationsAtFunctionReferenceLowering ?: superClass.declarations
+        val superMethod = superClassDeclarations.filterIsInstance<IrSimpleFunction>().single { it.modality == Modality.ABSTRACT }
         // TODO: have psi2ir cast the argument to the correct function type. Also see the TODO
         //       about type parameters in `visitTypeOperator`.
         val wrappedFunctionClass =
-            if (originalSuperMethod.isSuspend)
-                context.symbols.suspendFunctionN(originalSuperMethod.nonDispatchParameters.size).owner
+            if (superMethod.isSuspend)
+                context.irBuiltIns.suspendFunctionN(superMethod.nonDispatchParameters.size)
             else
-                context.symbols.functionN(originalSuperMethod.nonDispatchParameters.size).owner
+                context.irBuiltIns.functionN(superMethod.nonDispatchParameters.size)
         val wrappedFunctionType = getWrappedFunctionType(wrappedFunctionClass)
 
         val subclass = context.irFactory.buildClass {
@@ -217,22 +223,27 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         }
 
         subclass.addFunction {
-            name = originalSuperMethod.name
-            returnType = originalSuperMethod.returnType
-            visibility = originalSuperMethod.visibility
+            name = superMethod.name
+            returnType = superMethod.returnType
+            visibility = superMethod.visibility
             modality = Modality.FINAL
             origin = IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION
-            isSuspend = originalSuperMethod.isSuspend
+            isSuspend = superMethod.isSuspend
             setSourceRange(createFor)
         }.apply {
-            overriddenSymbols = listOf(originalSuperMethod.symbol)
-            parameters = (listOf(subclass.thisReceiver!!) + originalSuperMethod.nonDispatchParameters)
+            val overriddenMethodOfAny = superMethod.findOverriddenMethodOfAny()
+            overriddenSymbols = if (overriddenMethodOfAny == null)
+                listOf(superMethod.symbol)
+            else subclass.superTypes.mapNotNull { superType ->
+                superType.classOrFail.owner.functions.firstOrNull { it.overrides(overriddenMethodOfAny) }?.symbol
+            }
+            parameters = (listOf(subclass.thisReceiver!!) + superMethod.nonDispatchParameters)
                 .memoryOptimizedMap { it.copyTo(this) }
             body = context.createIrBuilder(symbol).irBlockBody {
                 +irReturn(
                     irCall(
                         getSuspendFunctionWithoutContinuation(wrappedFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }).symbol,
-                        originalSuperMethod.returnType
+                        superMethod.returnType
                     ).apply {
                         dispatchReceiver = irGetField(irGet(dispatchReceiverParameter!!), field)
                         nonDispatchParameters.forEachIndexed { index, parameter ->
@@ -247,10 +258,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 
         subclass.addFakeOverrides(
             context.typeSystem,
-            // Built function overrides the originalSuperMethod, while, if the parent class is already lowered, it would
-            // transformedSuperMethod in its declaration list. We need not fake override in that case.
-            // Later lowerings will fix it and replace the function with one overriding transformedSuperMethod.
-            mapOf(superClass to (superClass.declarationsAtFunctionReferenceLowering ?: superClass.declarations.filter { it !== transformedSuperMethod }))
+            mapOf(superClass to superClassDeclarations)
         )
 
         postprocessCreatedObjectProxy(subclass)

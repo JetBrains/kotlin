@@ -3,17 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation
+package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.COMPILER_PLUGINS
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertClassDeclarationsContain
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsPatterns
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertClassDeclarationsContain
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
@@ -44,7 +44,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                     }
                 }.joinToString(","))
             }
-            it.compilerArguments.applyArgumentStrings(it.compilerArguments.toArgumentStrings() + compilerPluginArgs)
+            it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
         }
     }
 
@@ -73,7 +73,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                     }"
                 )
             }
-            it.compilerArguments.applyArgumentStrings(it.compilerArguments.toArgumentStrings() + compilerPluginArgs)
+            it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
         }
     }
 
@@ -92,7 +92,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                 }.joinToString(","))
             }
             it.compilerArguments[COMPILER_PLUGINS] = listOf(ASSIGNMENT_PLUGIN)
-            it.compilerArguments.applyArgumentStrings(it.compilerArguments.toArgumentStrings() + compilerPluginArgs)
+            it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
         }
     }
 
@@ -115,7 +115,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                     )
                 }
                 it.compilerArguments[COMPILER_PLUGINS] = listOf(ASSIGNMENT_PLUGIN)
-                it.compilerArguments.applyArgumentStrings(it.compilerArguments.toArgumentStrings() + compilerPluginArgs)
+                it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
             }) {
                 // BTA currently transforms the structured way to the "default way", such a combination is considered illegal
                 expectFail()
@@ -154,7 +154,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                         }"
                     )
                 }
-                it.compilerArguments.applyArgumentStrings(it.compilerArguments.toArgumentStrings() + legacyArgs + modernArgs)
+                it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + legacyArgs + modernArgs)
             }) {
                 expectFail()
                 assertLogContainsPatterns(
@@ -218,7 +218,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
 
     private fun smokeTest(
         strategyConfig: CompilerExecutionStrategyConfiguration,
-        pluginsConfiguration: (JvmCompilationOperation) -> Unit,
+        pluginsConfiguration: (JvmCompilationOperation.Builder) -> Unit,
     ) {
         project(strategyConfig) {
             val module = module("compiler-plugins")

@@ -19,7 +19,7 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
 
     override val defaultBuildOptions: BuildOptions
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+        get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     override fun defaultProject(
         gradleVersion: GradleVersion,
@@ -36,8 +36,17 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
         test()
     }
 
-    override val additionalLibDependencies: String =
-        "implementation \"org.jetbrains.kotlin:kotlin-test-js:${'$'}kotlin_version\""
+    override val additionalLibDependencies: String = """
+        kotlin {
+            sourceSets {
+                jsMain {
+                    dependencies {
+                        implementation "org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version"
+                    }           
+                }
+            }
+        }
+    """.trimIndent()
 
     override val compileKotlinTaskName: String
         get() = "compileKotlinJs"
@@ -156,8 +165,11 @@ class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProj
 
 @JvmGradlePluginTests
 abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
-    override val additionalLibDependencies: String =
-        "implementation \"org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version\""
+    override val additionalLibDependencies: String = """
+        dependencies {
+            implementation "org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version"
+        }
+    """.trimIndent()
 
     override val compileKotlinTaskName: String
         get() = "compileKotlin"
@@ -465,9 +477,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             """
             $it
 
-            dependencies {
-                $additionalLibDependencies
-            }
+            $additionalLibDependencies
             """.trimIndent()
         }
     }

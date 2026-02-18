@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.gradle.regressionTests
 
 import org.gradle.api.internal.provider.MissingValueException
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.junit.jupiter.api.Assumptions
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -44,6 +46,8 @@ class KT67636JvmWithJavaSetSrcDirsTest {
     // FIXME: withJava forces providers in resources to be eagerly evaluated. See KT-67636
     @Test
     fun `jvm withJava target - provider in compilation's resources - fails project evaluation`() {
+        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
+
         assertFailsWith(MissingValueException::class) {
             buildProjectWithMPP {
                 kotlin {

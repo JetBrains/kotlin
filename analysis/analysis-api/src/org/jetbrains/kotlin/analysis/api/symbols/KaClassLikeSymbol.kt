@@ -76,6 +76,7 @@ public abstract class KaTypeParameterSymbol : KaClassifierSymbol(), KaNamedSymbo
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
+    final override val isExternal: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
@@ -106,6 +107,8 @@ public sealed class KaClassLikeSymbol : KaClassifierSymbol() {
 public abstract class KaTypeAliasSymbol : KaClassLikeSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol {
     final override val modality: KaSymbolModality
         get() = withValidityAssertion { KaSymbolModality.FINAL }
+
+    final override val isExternal: Boolean get() = withValidityAssertion { false }
 
     /**
      * The type this type alias expands to, which is the right-hand side of the `typealias` declaration. The type alias's [typeParameters]
@@ -180,6 +183,7 @@ public abstract class KaAnonymousObjectSymbol : KaClassSymbol() {
 
     final override val isExpect: Boolean get() = withValidityAssertion { false }
     final override val isActual: Boolean get() = withValidityAssertion { false }
+    final override val isExternal: Boolean get() = withValidityAssertion { false }
 
     final override val name: Name? get() = withValidityAssertion { null }
 
@@ -222,12 +226,6 @@ public abstract class KaNamedClassSymbol : KaClassSymbol(),
      * @see org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.samConstructor
      */
     public abstract val isFun: Boolean
-
-    /**
-     * Whether the class is implemented outside of Kotlin (accessible through [JNI](https://kotlinlang.org/docs/java-interop.html#using-jni-with-kotlin)
-     * or [JavaScript](https://kotlinlang.org/docs/js-interop.html#external-modifier)).
-     */
-    public abstract val isExternal: Boolean
 
     /**
      * The nested companion object, or `null` if there is no companion object.

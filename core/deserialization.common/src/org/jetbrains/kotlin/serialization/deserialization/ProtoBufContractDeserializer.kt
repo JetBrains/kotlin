@@ -62,6 +62,11 @@ abstract class ProtoBufContractDeserializer<Type, Diagnostic, Owner> {
                     EventOccurrencesRange.UNKNOWN
                 KtCallsEffectDeclaration(callable, invocationKind)
             }
+            ProtoBuf.Effect.EffectType.RETURNS_RESULT_OF -> {
+                val argument = proto.effectConstructorArgumentList.firstOrNull() ?: return null
+                val callable = extractVariable(argument, owner) ?: return null
+                KtReturnsResultOfDeclaration(callable)
+            }
         }
     }
 

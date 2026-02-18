@@ -1,13 +1,15 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
-val sb = StringBuilder()
-
+// FILE: lib.kt
 @Suppress("NOTHING_TO_INLINE")
 inline fun foo(i3: Int, i4: Int): Int {
     return i3 + i3 + i4
 }
+
+// FILE: main.kt
+import kotlin.test.*
+
+val sb = StringBuilder()
 
 fun quiz(i: Int) : Int {
     sb.appendLine("hello")

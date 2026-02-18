@@ -216,6 +216,20 @@ class FunctionReferenceTests {
             }
         }
     }
+
+    @Test
+    fun lambda() = compositionTest {
+        compose {
+            val lambda = @Composable { Text("test") }
+            Linear(lambda::invoke)
+        }
+
+        validate {
+            Linear {
+                Text("test")
+            }
+        }
+    }
 }
 
 @Composable

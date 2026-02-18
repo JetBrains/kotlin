@@ -1,0 +1,2 @@
+KtPrefixExpression(31,34): '++i'
+  null

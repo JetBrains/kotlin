@@ -2,5 +2,6 @@ KDocName(22,26): 'b.bb'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in b) fun bb()

@@ -12,6 +12,10 @@ FILE: simpleLazy.kt
             ^ String(Bye)
         }
         )
+            local get(): R|kotlin/String| {
+                ^ D|<local>/y|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|<local>/y|)
+            }
+
         R|<local>/y|.R|kotlin/String.length|
     }
     public final class Some : R|kotlin/Any| {

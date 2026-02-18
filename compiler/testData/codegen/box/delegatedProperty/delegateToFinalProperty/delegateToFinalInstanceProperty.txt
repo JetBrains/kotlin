@@ -3,10 +3,10 @@ public final class C {
     // source: 'delegateToFinalInstanceProperty.kt'
     synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final field impl: int
-    private final field s$delegate: int
     static method <clinit>(): void
     public method <init>(): void
     public final method getImpl(): int
+    private static method getS$delegate(p0: C): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
 }
 

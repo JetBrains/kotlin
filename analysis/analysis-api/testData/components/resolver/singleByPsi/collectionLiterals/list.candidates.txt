@@ -1,0 +1,74 @@
+KtCollectionLiteralExpression(40,42): '[]'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.List<kotlin.Boolean>
+        symbol = kotlin/collections/listOf(): kotlin.collections.List<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/collections/listOf
+      typeArgumentsMapping = {
+        T -> (kotlin.Boolean)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.List<kotlin.Boolean>
+        symbol = kotlin/collections/listOf(element: T): kotlin.collections.List<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = element: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/listOf
+      typeArgumentsMapping = {
+        T -> (kotlin.Boolean)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'element'.>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.List<kotlin.Boolean>
+        symbol = kotlin/collections/listOf(vararg elements: T): kotlin.collections.List<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/listOf
+      typeArgumentsMapping = {
+        T -> (kotlin.Boolean)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = false

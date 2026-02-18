@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -72,7 +73,10 @@ open class KotlinNativeCompilation @Inject internal constructor(
         get() = super.compilerOptions as NativeCompilerOptions
 
     // Interop DSL.
-    val cinterops = compilation.project.container(DefaultCInteropSettings::class.java, DefaultCInteropSettingsFactory(compilation))
+    val cinterops: NamedDomainObjectContainer<DefaultCInteropSettings> = compilation.project.objects.domainObjectContainer(
+        DefaultCInteropSettings::class.java,
+        DefaultCInteropSettingsFactory(compilation)
+    )
 
     fun cinterops(action: Action<NamedDomainObjectContainer<DefaultCInteropSettings>>) = action.execute(cinterops)
 
@@ -82,6 +86,16 @@ open class KotlinNativeCompilation @Inject internal constructor(
 
     val binariesTaskName: String
         get() = lowerCamelCaseName(target.disambiguationClassifier, compilation.compilationName, "binaries")
+
+    /**
+     * Indicates whether cross-compilation is supported for the given binary's target.
+     *
+     * Cross-compilation is supported if the target is enabled by the host manager
+     * or if none of the target's compilations involve C interop dependencies.
+     */
+    val crossCompilationSupported: Provider<Boolean> = project.provider {
+        crossCompilationOnCurrentHostSupported && crossCompilationSharedData.dataForAllDependencies.all { it.crossCompilationSupported }
+    }
 }
 
 @Suppress("DEPRECATION")

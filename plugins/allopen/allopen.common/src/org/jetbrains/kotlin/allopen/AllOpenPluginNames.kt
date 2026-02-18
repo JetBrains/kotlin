@@ -24,6 +24,14 @@ object AllOpenPluginNames {
             "io.micronaut.aop.Introduction",
             "io.micronaut.aop.InterceptorBinding",
             "io.micronaut.aop.InterceptorBindingDefinitions"
+        ),
+        "jpa" to listOf(
+            "javax.persistence.Entity",
+            "javax.persistence.Embeddable",
+            "javax.persistence.MappedSuperclass",
+            "jakarta.persistence.Entity",
+            "jakarta.persistence.Embeddable",
+            "jakarta.persistence.MappedSuperclass"
         )
     )
 

@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.opentest4j.TestAbortedException
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 @Tag("sanity")
-class CustomJsCompilerFirstStageSanity : AbstractCustomJsCompilerFirstStageTest() {
-    private val testDataRoot = "compiler/testData/klib/klib-compatibility/sanity/"
+@Tag("aggregate")
+class CustomJsCompilerFirstStageSanity :
+    AbstractCustomJsCompilerFirstStageTest(testDataRoot = "compiler/testData/klib/klib-compatibility/sanity/") {
 
     @Test
     fun checkPassed() {
@@ -55,6 +55,14 @@ class CustomJsCompilerFirstStageSanity : AbstractCustomJsCompilerFirstStageTest(
     fun checkMutedDueToFrontendErrorWithCustom1stStage() {
         val exception = assertThrows<TestAbortedException> {
             runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
+        }
+        assertEquals(null, exception.message)
+    }
+
+    @Test
+    fun checkRecompileIgnored() {
+        val exception = assertThrows<TestAbortedException> {
+            runTest(testDataRoot + "recompile.kt")
         }
         assertEquals(null, exception.message)
     }

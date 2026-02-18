@@ -3,23 +3,28 @@ FILE: propertyDeclaration.kt
         public get(): R|kotlin/String|
     public final val b: R|kotlin/String|
         public get(): R|kotlin/String|
-    public final fun foo(): R|kotlin/String|
+    public final fun foo(): R|kotlin/String| {
+    }
     public final val c: R|kotlin/String|
-        public get(): R|kotlin/String|
+        public get(): R|kotlin/String| {
+        }
     public final val d: R|kotlin/Boolean|
         public get(): R|kotlin/Boolean|
     public final val e: R|kotlin/String|
         public get(): R|kotlin/String|
     public final var f: R|kotlin/Int|
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+        public set(value: R|kotlin/Int|): R|kotlin/Unit| {
+        }
     public final val g: R|kotlin/Int|
-        public get(): R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+        }
     public final val h: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
         ^ String(H)
     }
     )
-        public get(): R|kotlin/String|
+        public get(): R|kotlin/String| {
+        }
     public final const val i: R|kotlin/Int| = Int(123)
         public get(): R|kotlin/Int|
     public final val j: R|kotlin/Any| = object : R|kotlin/Any| {

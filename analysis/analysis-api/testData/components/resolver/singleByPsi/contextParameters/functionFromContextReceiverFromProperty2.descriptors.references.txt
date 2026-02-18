@@ -9,5 +9,6 @@ KtNameReferenceExpression(120,121): 'c'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

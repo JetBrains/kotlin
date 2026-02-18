@@ -4,19 +4,10 @@
 // ^^^ Source code is not compiled in JS.
 // WITH_STDLIB
 
+// FILE: lib.kt
 package codegen.kclass.kclass1
 
 import kotlin.test.*
-
-val sb = StringBuilder()
-
-fun box(): String {
-    App(testQualified = true)
-    return sb.toString()
-}
-
-// Taken from:
-// https://github.com/SalomonBrys/kmffkn/blob/master/shared/main/kotlin/com/github/salomonbrys/kmffkn/app.kt
 
 @DslMarker
 annotation class MyDsl
@@ -34,6 +25,21 @@ class KClassDsl {
 fun <T: Any> dsl(block: DslMain.() -> T): T = DslMain().block()
 
 class TestClass
+
+// FILE: main.kt
+package codegen.kclass.kclass1
+
+import kotlin.test.*
+
+val sb = StringBuilder()
+
+fun box(): String {
+    App(testQualified = true)
+    return sb.toString()
+}
+
+// Taken from:
+// https://github.com/SalomonBrys/kmffkn/blob/master/shared/main/kotlin/com/github/salomonbrys/kmffkn/app.kt
 
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 class App(testQualified: Boolean) {

@@ -1,21 +1,20 @@
 KtNameReferenceExpression(74,77): 'foo'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = declSite
+        isSafeNavigation = false
+        type = DeclSite
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = declSite
-          isSafeNavigation = false
-          type = DeclSite
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = foo
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = var foo: kotlin.Int
-          contextParameters = []
-          callableId = /DeclSite.foo
-      simpleAccess = Write:
+      kind = Write:
         value = 0
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var foo: kotlin.Int
+        contextParameters = []
+        callableId = /DeclSite.foo
       typeArgumentsMapping = {}

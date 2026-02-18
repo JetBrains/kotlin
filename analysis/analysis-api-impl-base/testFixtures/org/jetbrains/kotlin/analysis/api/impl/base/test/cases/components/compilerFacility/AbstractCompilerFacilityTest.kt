@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility
 
-import com.intellij.openapi.extensions.LoadingOrder
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
@@ -20,9 +19,13 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -85,6 +88,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         super.doTestByMainModuleAndOptionalMainFile(mainFile, mainModule, testServices)
     }
 
+    @OptIn(ExperimentalCompilerApi::class)
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val testFile = mainModule.testModule.files.single { it.name == mainFile.name }
 
@@ -92,10 +96,12 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         val irCollector = CollectingIrGenerationExtension(annotationToCheckCalls)
 
         val project = mainFile.project
-        project.extensionArea.getExtensionPoint(IrGenerationExtension.extensionPointName)
-            .registerExtension(irCollector, LoadingOrder.LAST, project)
+        with(CompilerPluginRegistrar.ExtensionStorage()) {
+            IrGenerationExtension.registerExtension(irCollector)
+            registerInProject(project)
+        }
 
-        val compilerConfiguration = CompilerConfiguration().apply {
+        val compilerConfiguration = CompilerConfiguration.create().apply {
             put(CommonConfigurationKeys.MODULE_NAME, mainModule.testModule.name)
             put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, mainModule.testModule.languageVersionSettings)
 
@@ -122,7 +128,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             val target = KaCompilerTarget.Jvm(
                 isTestMode = true,
                 compiledClassHandler = null,
-                debuggerExtension = DebuggerExtension(callStack.asSequence())
+                debuggerExtension = KaDebuggerExtension(callStack.asSequence())
             )
 
             val exceptionExpected = mainModule.testModule.directives.contains(Directives.CODE_COMPILATION_EXCEPTION)
@@ -266,6 +272,7 @@ internal object TestAllowedErrorFilter : (KaDiagnostic) -> Boolean {
             FirErrors.INVISIBLE_SETTER,
             FirErrors.DEPRECATION_ERROR,
             FirErrors.DIVISION_BY_ZERO,
+            FirErrors.TRIM_MARGIN_BLANK_PREFIX,
             FirErrors.OPT_IN_USAGE_ERROR,
             FirErrors.OPT_IN_TO_INHERITANCE_ERROR,
             FirErrors.OPT_IN_OVERRIDE_ERROR,

@@ -69,7 +69,7 @@ class FirReplSnippetConfiguratorExtensionImpl(
     }
 
     override fun FirReplSnippetBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>) {
-        val configuration = getOrLoadConfiguration(session, sourceFile!!) ?: run {
+        val configuration = getOrLoadConfiguration(session, sourceFile!!)?.valueOrNull() ?: run {
             // TODO: add error or log, if necessary (see implementation for scripts) (KT-74742)
             return
         }
@@ -89,7 +89,7 @@ class FirReplSnippetConfiguratorExtensionImpl(
     }
 
     override fun MutableList<FirStatement>.configure(sourceFile: KtSourceFile?, scriptSource: KtSourceElement, context: Context<*>) {
-        val configuration = getOrLoadConfiguration(session, sourceFile!!) ?: run {
+        val configuration = getOrLoadConfiguration(session, sourceFile!!)?.valueOrNull() ?: run {
             // TODO: add error or log, if necessary (see implementation for scripts) (KT-74742)
             return
         }

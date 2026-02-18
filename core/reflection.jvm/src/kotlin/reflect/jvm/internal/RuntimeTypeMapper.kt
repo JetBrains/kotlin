@@ -74,12 +74,11 @@ internal sealed class JvmFunctionSignature {
     }
 
     class JavaMethod(val method: Method) : JvmFunctionSignature() {
-        override fun asString(): String = method.signature
+        override fun asString(): String = method.jvmSignature
     }
 
     class JavaConstructor(val constructor: Constructor<*>) : JvmFunctionSignature() {
-        override fun asString(): String =
-            constructor.parameterTypes.joinToString(separator = "", prefix = "<init>(", postfix = ")V") { it.desc }
+        override fun asString(): String = constructor.jvmSignature
     }
 
     class FakeJavaAnnotationConstructor(val jClass: Class<*>) : JvmFunctionSignature() {
@@ -136,7 +135,7 @@ internal sealed class JvmPropertySignature {
     }
 
     class JavaMethodProperty(val getterMethod: Method, val setterMethod: Method?) : JvmPropertySignature() {
-        override fun asString(): String = getterMethod.signature
+        override fun asString(): String = getterMethod.jvmSignature
     }
 
     class JavaField(val field: Field) : JvmPropertySignature() {
@@ -152,7 +151,10 @@ internal sealed class JvmPropertySignature {
     }
 }
 
-private val Method.signature: String
+internal val Constructor<*>.jvmSignature: String
+    get() = parameterTypes.joinToString(separator = "", prefix = "<init>(", postfix = ")V") { it.desc }
+
+internal val Method.jvmSignature: String
     get() = name +
             parameterTypes.joinToString(separator = "", prefix = "(", postfix = ")") { it.desc } +
             returnType.desc
@@ -201,11 +203,7 @@ internal object RuntimeTypeMapper {
             }
         }
 
-        if (isKnownBuiltInFunction(function)) {
-            return mapJvmFunctionSignature(function)
-        }
-
-        throw KotlinReflectionInternalError("Unknown origin of $function (${function.javaClass})")
+        return mapJvmFunctionSignature(function)
     }
 
     fun mapPropertySignature(possiblyOverriddenProperty: PropertyDescriptor): JvmPropertySignature {
@@ -234,14 +232,6 @@ internal object RuntimeTypeMapper {
             property.getter!!.let(this::mapJvmFunctionSignature),
             property.setter?.let(this::mapJvmFunctionSignature)
         )
-    }
-
-    private fun isKnownBuiltInFunction(descriptor: FunctionDescriptor): Boolean {
-        if (DescriptorFactory.isEnumValueOfMethod(descriptor) || DescriptorFactory.isEnumValuesMethod(descriptor)) return true
-
-        if (descriptor.name == CloneableClassScope.CLONE_NAME && descriptor.valueParameters.isEmpty()) return true
-
-        return false
     }
 
     private fun mapJvmFunctionSignature(descriptor: FunctionDescriptor): JvmFunctionSignature.KotlinFunction =

@@ -12,11 +12,8 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.IdeaKotlinDependencyMatcher
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
-import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
@@ -26,7 +23,7 @@ import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.kotlin
 import kotlin.test.Test
-import kotlin.test.Ignore
+import org.junit.jupiter.api.Disabled
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -114,7 +111,7 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
     }
 
     @Test
-    @Ignore("TODO: KT-66375")
+    @Disabled("TODO: KT-66375")
     fun jvmMainWithHigherVersion() {
         assertSourceSetDependenciesResolution("leafSourceSetWithHigherVersion.txt") { project ->
             project.defaultTargets()
@@ -130,7 +127,7 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
     }
 
     @Test
-    @Ignore("TODO: KT-66375")
+    @Disabled("TODO: KT-66375")
     fun nativeMainWithHigherVersion() {
         assertSourceSetDependenciesResolution("leafSourceSetWithHigherVersion.txt") { project ->
             project.defaultTargets()
@@ -143,7 +140,7 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
     }
 
     @Test
-    @Ignore("TODO: KT-66375")
+    @Disabled("TODO: KT-66375")
     fun jsMainWithHigherVersion() {
         assertSourceSetDependenciesResolution("leafSourceSetWithHigherVersion.txt") { project ->
             project.defaultTargets()
@@ -169,7 +166,7 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
     }
 
     @Test
-    @Ignore("TODO: KT-66375")
+    @Disabled("TODO: KT-66375")
     fun leafSourceSetsDependsOnDifferentVersionsAndCommonCodeDoesNot() {
         assertSourceSetDependenciesResolution("leafSourceSetsDependsOnDifferentVersionsAndCommonCodeDoesNot.txt") { project ->
             project.defaultTargets()

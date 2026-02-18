@@ -8,15 +8,15 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifact
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.*
@@ -463,14 +463,14 @@ private class DebugDiagnosticConsumer(
                 factory.severity,
                 factory,
                 factory.defaultPositioningStrategy,
-                DiagnosticBaseContext.Default,
+                DiagnosticContext.Default,
             )
             is KtLightSourceElement -> KtLightSimpleDiagnostic(
                 sourceElement,
                 factory.severity,
                 factory,
                 factory.defaultPositioningStrategy,
-                DiagnosticBaseContext.Default,
+                DiagnosticContext.Default,
             )
         }
 
@@ -500,7 +500,7 @@ private class DebugDiagnosticConsumer(
                 factory.severity,
                 factory,
                 factory.defaultPositioningStrategy,
-                DiagnosticBaseContext.Default,
+                DiagnosticContext.Default,
             )
             is KtLightSourceElement -> KtLightDiagnosticWithParameters1(
                 positionedElement,
@@ -508,7 +508,7 @@ private class DebugDiagnosticConsumer(
                 factory.severity,
                 factory,
                 factory.defaultPositioningStrategy,
-                DiagnosticBaseContext.Default,
+                DiagnosticContext.Default,
             )
         }
 
@@ -629,7 +629,7 @@ enum class KmpCompilationMode {
 }
 
 open class FirDiagnosticCollectorService(val testServices: TestServices) : TestService {
-    val reporterForLTSyntaxErrors = SimpleDiagnosticsCollector()
+    val reporterForLTSyntaxErrors = DiagnosticsCollectorImpl()
 
     private val cache: MutableMap<FirOutputArtifact, DiagnosticsMap> = mutableMapOf()
 
@@ -655,7 +655,6 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         lazyDeclarationResolver.disableLazyResolveContractChecksInside {
             val configuration =
                 testServices.compilerConfigurationProvider.getCompilerConfiguration(platformPart.module, CompilationStage.FIRST)
-            val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
             fun processDiagnosticsFromCliPhase(diagnosticsCollector: BaseDiagnosticsCollector, mode: KmpCompilationMode) {
                 val diagnosticsPerFirFile = buildMap {
@@ -670,7 +669,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
 
             when (info) {
                 is FirCliBasedOutputArtifact<*> -> {
-                    val diagnosticsCollector = info.cliArtifact.diagnosticCollector
+                    val diagnosticsCollector = info.cliArtifact.configuration.diagnosticsCollector
                     val mode = if (info.cliArtifact is MetadataFrontendPipelineArtifact) {
                         KmpCompilationMode.METADATA
                     } else {
@@ -683,7 +682,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                         result += platformPart.session.runCheckers(
                             platformPart.scopeSession,
                             allFiles,
-                            DiagnosticReporterFactory.createPendingReporter(),
+                            DiagnosticsCollectorImpl(),
                             mppCheckerKind = MppCheckerKind.Platform
                         ).convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
                     }
@@ -693,7 +692,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                             result += part.session.runCheckers(
                                 part.scopeSession,
                                 part.firFilesByTestFile.values,
-                                DiagnosticReporterFactory.createPendingReporter(),
+                                DiagnosticsCollectorImpl(),
                                 mppCheckerKind = MppCheckerKind.Common
                             ).convertToTestDiagnostics(KmpCompilationMode.PLATFORM)
                         }
@@ -711,7 +710,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                         result += part.session.runCheckers(
                             part.scopeSession,
                             part.firFilesByTestFile.values,
-                            DiagnosticReporterFactory.createPendingReporter(),
+                            DiagnosticsCollectorImpl(),
                             mppCheckerKind = MppCheckerKind.Platform
                         ).convertToTestDiagnostics(KmpCompilationMode.METADATA)
                     }
@@ -725,7 +724,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                     platformPart.session.collectLostDiagnosticsOnFile(
                         platformPart.scopeSession,
                         file,
-                        DiagnosticReporterFactory.createPendingReporter()
+                        DiagnosticsCollectorImpl()
                     ).forEach { lostDiagnostics.put(file, DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.PLATFORM)) }
                 }
             }
@@ -760,7 +759,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
                         KtRealPsiSourceElement(it),
                         it.errorDescription,
                         positioningStrategy = null,
-                        DiagnosticBaseContext.Default, // syntax errors couldn't be suppressed anyway
+                        DiagnosticContext.Default, // syntax errors couldn't be suppressed anyway
                     )!!
                 }
             } else {

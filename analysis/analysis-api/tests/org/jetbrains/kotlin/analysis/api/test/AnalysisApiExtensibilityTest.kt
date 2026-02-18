@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.test
 
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
+import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -21,7 +21,7 @@ import java.io.File
 /**
  * The test verifies that all extensible endpoints are intentionally extensible.
  *
- * All extensible endpoints have to be annotated with `@KaExtensibleApi` annotation.
+ * All extensible endpoints have to be annotated with `@KaSpi` annotation.
  */
 class AnalysisApiExtensibilityTest : AbstractAnalysisApiSurfaceCodebaseValidationTest() {
     @Test
@@ -36,7 +36,7 @@ class AnalysisApiExtensibilityTest : AbstractAnalysisApiSurfaceCodebaseValidatio
     }
 
     private fun assertExtensibility(file: File, classOrObject: KtClassOrObject) {
-        if (classOrObject.hasAnnotation(KA_EXTENSIBLE_API) || classOrObject.isInheritanceLimited) return
+        if (classOrObject.hasAnnotation(KA_SPI) || classOrObject.isInheritanceLimited) return
 
         val actualText = fileTextWithNewAnnotation(classOrObject, SUBCLASS_OPT_IN_ANNOTATION)
         TestDataAssertions.assertEqualsToFile(
@@ -44,7 +44,7 @@ class AnalysisApiExtensibilityTest : AbstractAnalysisApiSurfaceCodebaseValidatio
             """
                 The inheritance has to be limited to not guarantee its compatibility by default.
                 It can be limited by `sealed` modifier (if applicable) or by `@$SUBCLASS_OPT_IN` annotation.
-                If the API is designed to be extensible, add `@$KA_EXTENSIBLE_API` annotation to it.
+                If the API is designed to be extensible, add `@$KA_SPI` annotation to it.
             """.trimIndent(),
             /* expectedFile = */ file,
             /* actual = */ actualText,
@@ -70,7 +70,7 @@ class AnalysisApiExtensibilityTest : AbstractAnalysisApiSurfaceCodebaseValidatio
         }
 
     private companion object {
-        val KA_EXTENSIBLE_API: String = KaExtensibleApi::class.simpleName!!
+        val KA_SPI: String = KaSpi::class.simpleName!!
         val SUBCLASS_OPT_IN: String = SubclassOptInRequired::class.simpleName!!
         val SUBCLASS_OPT_IN_ANNOTATION = "@$SUBCLASS_OPT_IN(KaImplementationDetail::class)"
     }

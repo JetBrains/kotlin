@@ -135,6 +135,7 @@ KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -170,6 +171,7 @@ KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -205,6 +207,7 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 
 /*
  * This is needed to prevent ClassNotFoundExceptions in IDE plugin built on FE 1.0
@@ -14,10 +14,13 @@ import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
  *   it in KotlinCoreEnvironment (where all extension points are registered) then we
  *   need to have all FIR compiler on classpath. And in IDE plugin we don't depend
  *   on FIR to reduce plugin size.
+ *
+ * Please prefer using [org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar]
+ * instead of this class.
  */
 abstract class FirExtensionRegistrarAdapter {
-    companion object : ProjectExtensionDescriptor<FirExtensionRegistrarAdapter>(
+    companion object : ExtensionPointDescriptor<FirExtensionRegistrarAdapter>(
         name = "org.jetbrains.kotlin.fir.extensions.firExtensionRegistrar",
-        extensionClass = FirExtensionRegistrarAdapter::class.java
+        extensionClass = FirExtensionRegistrarAdapter::class.java,
     )
 }

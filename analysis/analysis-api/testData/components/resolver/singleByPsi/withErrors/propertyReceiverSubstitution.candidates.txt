@@ -1,22 +1,21 @@
 KtDotQualifiedExpression(77,82): 'f.foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = f
+        isSafeNavigation = false
+        type = Foo<kotlin.String>
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = f
-          isSafeNavigation = false
-          type = Foo<kotlin.String>
-        signature = KaVariableSignature:
-          name = foo
-          receiverType = Foo<kotlin.String>
-          returnType = kotlin.Int
-          symbol = val foo: kotlin.Int
-          contextParameters = []
-          callableId = /foo
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = Foo<kotlin.String>
+        returnType = kotlin.Int
+        symbol = val foo: kotlin.Int
+        contextParameters = []
+        callableId = /foo
       typeArgumentsMapping = {
         A -> (kotlin.String)
       }

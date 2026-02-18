@@ -1,13 +1,13 @@
 FILE: callableReferences.kt
     public final? class A : R|kotlin/Any| {
-        public? constructor(): R|A| {
+        public? [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
         public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? val bar: <implicit> = LAZY_EXPRESSION
-            public? get(): <implicit>
+            public? [ContainingClassKey=A] get(): <implicit>
 
     }
     public? final? fun A.qux(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -10,6 +10,8 @@ import java.io.File
 /**
  * Wrapper around [File] to be able to mark [store] storage as used by calling [use]`()`.
  */
+@Deprecated("Scheduled for removal in Kotlin 2.4")
+@Suppress("DEPRECATION")
 class DownloadedFile internal constructor(
     private val store: CleanableStore,
     private val file: File,

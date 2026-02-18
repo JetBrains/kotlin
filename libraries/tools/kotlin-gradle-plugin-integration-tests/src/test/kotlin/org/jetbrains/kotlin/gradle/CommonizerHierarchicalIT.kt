@@ -95,7 +95,7 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
                 "assemble",
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
                 buildOptions = defaultBuildOptions
-                    .disableIsolatedProjects(),
+                    .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             ) {
                 assertTasksExecuted(":p1:commonizeCInterop")
                 assertTasksExecuted(":p2:commonizeCInterop")

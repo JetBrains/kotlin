@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Label
@@ -215,9 +216,13 @@ class CoroutineTransformerMethodVisitor(
                 var cursor: AbstractInsnNode? = suspensionPoint.suspensionCallBegin.previous
                 for (argType in methodType.argumentTypes.reversed()) {
                     if (argType == CONTINUATION_ASM_TYPE) break
-                    cursor = cursor?.previous
+                    cursor = cursor?.findPreviousOrNull { it.isMeaningful }
                 }
                 if (cursor != null) {
+                    require(cursor.opcode == Opcodes.ALOAD) {
+                        "Expected ALOAD opcode for continuation load before ${suspendCall.insnText} in method " +
+                                "$containingClassInternalName.$name, found ${cursor.insnText}"
+                    }
                     val continuationLoad = cursor
                     cursor = cursor.previous
                     instructions.remove(continuationLoad)
@@ -256,7 +261,7 @@ class CoroutineTransformerMethodVisitor(
         continuationIndex: Int,
         visibleLocals: List<LocalVariableNode>
     ) {
-        aconst(containingClassInternalName)
+        aconst(Type.getObjectType(containingClassInternalName).className)
         aconst(name)
         aconst(sourceFile)
         iconst(lineNumber)
@@ -432,7 +437,9 @@ class CoroutineTransformerMethodVisitor(
         }
     }
 
-    /* Put { POP, GETSTATIC Unit } after suspension point if suspension point is a call of suspend function, that returns Unit.
+    /* NOTE: Obsolete! No INLINE_MARKER_RETURNS_UNIT are added anymore. This processing code is left for the backward compatibility only.
+     *
+     * Put { POP, GETSTATIC Unit } after suspension point if suspension point is a call of suspend function, that returns Unit.
      *
      * Otherwise, upon resume, the function would seem to not return Unit, despite being declared as returning Unit.
      *
@@ -748,7 +755,9 @@ class CoroutineTransformerMethodVisitor(
 
     private fun dropSuspensionMarkers(methodNode: MethodNode) {
         // Drop markers, including ones, which we ignored in recognizing phase
-        for (marker in methodNode.instructions.asSequence().filter { isBeforeSuspendMarker(it) || isAfterSuspendMarker(it) }.toList()) {
+        fun isSuspensionMarkerToRemove(insn: AbstractInsnNode) =
+            isBeforeSuspendMarker(insn) || isAfterSuspendMarker(insn) || isBeforeSuspendUnitCallMarker(insn) || isBeforeSuspendGenericCallMarker(insn)
+        for (marker in methodNode.instructions.asSequence().filter { isSuspensionMarkerToRemove(it) }.toList()) {
             methodNode.instructions.removeAll(listOf(marker.previous, marker))
         }
     }
@@ -782,7 +791,6 @@ class CoroutineTransformerMethodVisitor(
         if (suspensionPoints.isEmpty()) return emptyList()
 
         val frames: Array<out Frame<BasicValue>?> = performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
-        val afterResumeFrames = performUninitializedAfterResumeVariablesAnalysis(suspensionPoints, methodNode, containingClassInternalName)
 
         val suspendLambdaParameters =
             if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) methodNode.collectSuspendLambdaParameterSlots()
@@ -847,8 +855,12 @@ class CoroutineTransformerMethodVisitor(
 
         // for each suspension point, check if there are some dead non-spilled variables that will be spilled on further points
         // but could be unitialized there if resumed on this point
-        val varilablesForReinitializationBySuspensionPointIndex =
-            calculateVariablesToReinitialize(suspensionPoints, afterResumeFrames, methodNode, variablesToSpillBySuspensionPointIndex)
+        val varilablesForReinitializationBySuspensionPointIndex = calculateVariablesToReinitializeBySuspensionPoint(
+            suspensionPoints,
+            methodNode,
+            containingClassInternalName,
+            variablesToSpillBySuspensionPointIndex
+        )
 
         // Mutate method node
         for (suspensionPointIndex in suspensionPoints.indices) {
@@ -888,37 +900,6 @@ class CoroutineTransformerMethodVisitor(
         }
 
         return spilledToVariableMapping
-    }
-
-    private fun calculateVariablesToReinitialize(
-        suspensionPoints: List<SuspensionPoint>,
-        afterResumeFrames: Array<out Frame<ResumeDependentValue>?>,
-        methodNode: MethodNode,
-        variablesToSpillBySuspensionPointIndex: MutableList<List<SpillableVariable>>,
-    ): Array<MutableList<SpillableVariable>> {
-        val varilablesForReinitializationBySuspensionPointIndex = Array(suspensionPoints.size) { mutableListOf<SpillableVariable>() }
-        for ((spIndex, suspensionPoint) in suspensionPoints.withIndex()) {
-            val resumeDependentFrame = afterResumeFrames[methodNode.instructions.indexOf(suspensionPoint.suspensionCallEnd)]
-                ?: error(
-                    "Missing 'after resume' analysis data for ${suspensionPoint.suspensionCallEnd} " +
-                            "at ${containingClassInternalName}::${methodNode.name}"
-                )
-            for (variable in variablesToSpillBySuspensionPointIndex[spIndex]) {
-                val resumeDependentValue = resumeDependentFrame.getLocal(variable.slot)
-                    ?: error("Missing 'after resume' analysis data for slot ${variable.slot}")
-                resumeDependentValue.states.withIndex().filter { it.value.isUnitialized() }.forEach {
-                    val otherSpIndex = it.index
-                    // it was deduced by analysis that there is a path between suspension points (otherSpIndex -> spIndex) with no
-                    // STOREs to the variable's slot
-                    if (variablesToSpillBySuspensionPointIndex[otherSpIndex].all { it.slot != variable.slot }) {
-                        // .. and the variable is not spilled on preceding (other) SP, so we need to additionally initialize it
-                        // with some value (e.g. default one) on unspill block
-                        varilablesForReinitializationBySuspensionPointIndex[otherSpIndex].add(variable)
-                    }
-                }
-            }
-        }
-        return varilablesForReinitializationBySuspensionPointIndex
     }
 
     private fun generateSpillAndUnspill(
@@ -1117,6 +1098,9 @@ class CoroutineTransformerMethodVisitor(
             if (slot == continuationIndex || slot == dataIndex) continue
             // Do not spill $completion
             if (isForNamedFunction && slot == completionSlot) continue
+            // Do not spill fake inliner variables - they are always zero, initialized for each state by initializeFakeInlinerVariables()
+            if (methodNode.isFakeInlinerVariable(slot, suspensionCallBeginIndex)) continue
+
             val value = frame.getLocal(slot)
             if (value.type == null) continue
             val visibleByDebugger = methodNode.localVariables.any {
@@ -1152,6 +1136,17 @@ class CoroutineTransformerMethodVisitor(
             )
         }
         return variablesToSpill
+    }
+
+    private fun MethodNode.isFakeInlinerVariable(slot: Int, suspensionCallBeginIndex: Int): Boolean {
+        for (record in this.localVariables.filter { it.index == slot }) {
+            if (instructions.indexOf(record.start) <= suspensionCallBeginIndex &&
+                suspensionCallBeginIndex < instructions.indexOf(record.end)
+            ) {
+                return JvmAbi.isFakeLocalVariableForInline(record.name)
+            }
+        }
+        return false
     }
 
     // When suspension point is inside finally block, its LVT record is split, but there is no store for the second half
@@ -1522,7 +1517,7 @@ private fun MethodNode.extendSuspendLambdaParameterRanges() {
     }
 }
 
-private class SpillableVariable(
+internal class SpillableVariable(
     val value: BasicValue,
     val type: Type,
     val normalizedType: Type,
@@ -1603,6 +1598,8 @@ fun Type.normalize(): Type =
  * Suspension call may consists of several instructions:
  * ICONST_0
  * INVOKESTATIC InlineMarker.mark()
+ * BIPUSH 11                        // \
+ * INVOKESTATIC InlineMarker.mark() // -- optional: if suspensionMethod is originally Unit-returning
  * INVOKEVIRTUAL suspensionMethod()Ljava/lang/Object; // actually it could be some inline method instead of plain call
  * CHECKCAST Type
  * ICONST_1

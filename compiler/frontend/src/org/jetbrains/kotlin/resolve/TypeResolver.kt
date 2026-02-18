@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -471,7 +471,8 @@ class TypeResolver(
                 }
             }
 
-            override fun visitSelfType(type: KtSelfType) {
+            @Deprecated("Deprecated in Java")
+            override fun visitSelfType(type: @Suppress("DEPRECATION") KtSelfType) {
                 c.trace.report(UNSUPPORTED.on(type, "Self-types are not supported"))
             }
 

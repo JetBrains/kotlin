@@ -76,16 +76,18 @@ abstract class AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
 }
 
 class JsFirstStageEnvironmentConfiguratorForSeparateKmpCompilation(
-    testServices: TestServices
-) : DelegatingEnvironmentConfiguratorForSeparateKmpCompilation(testServices, ::JsFirstStageEnvironmentConfigurator) {
+    testServices: TestServices,
+) : DelegatingEnvironmentConfiguratorForSeparateKmpCompilation(testServices, ::JsFirstStageEnvironmentConfigurator),
+    KlibBasedEnvironmentConfigurator {
     override fun shouldApply(module: TestModule): Boolean {
         return module.isLeafModuleInMppGraph(testServices)
     }
 }
 
 class JsSecondStageEnvironmentConfiguratorForSeparateKmpCompilation(
-    testServices: TestServices
-) : DelegatingEnvironmentConfiguratorForSeparateKmpCompilation(testServices, ::JsSecondStageEnvironmentConfigurator) {
+    testServices: TestServices,
+) : DelegatingEnvironmentConfiguratorForSeparateKmpCompilation(testServices, ::JsSecondStageEnvironmentConfigurator),
+    KlibBasedEnvironmentConfigurator {
     override fun shouldApply(module: TestModule): Boolean {
         return module.isLeafModuleInMppGraph(testServices)
     }

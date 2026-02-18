@@ -2,6 +2,8 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION_WITH_DOT
 import org.jetbrains.kotlin.library.SearchPathResolver.LookupResult
 import org.jetbrains.kotlin.library.SearchPathResolver.SearchRoot
 import org.jetbrains.kotlin.util.Logger
@@ -258,7 +260,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 // such as abi version.
 // JS and Native resolvers are inherited from this one.
 abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
-    directLibs: List<String>,
+    val directLibs: List<String>,
     distributionKlib: String?,
     skipCurrentDir: Boolean,
     logger: Logger,

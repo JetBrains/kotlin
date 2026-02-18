@@ -1,5 +1,5 @@
-// LANGUAGE: +NestedTypeAliases
-// TARGET_BACKEND: WASM
+// LANGUAGE: +NestedTypeAliases +AllowAnyAsAnActualTypeForExpectInterface
+// WITH_STDLIB
 
 external interface I : JsAny {
     val x: String

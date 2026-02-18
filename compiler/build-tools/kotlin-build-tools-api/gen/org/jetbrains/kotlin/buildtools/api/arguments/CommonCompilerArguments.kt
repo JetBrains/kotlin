@@ -5,12 +5,14 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Array
 import kotlin.Boolean
+import kotlin.Deprecated
 import kotlin.String
 import kotlin.collections.List
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.HeaderMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
 
@@ -29,6 +31,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
   /**
    * Set the [value] for option specified by [key], overriding any previous value for that option.
    */
+  @Deprecated(message = "Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
   public operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V)
 
   /**
@@ -41,7 +44,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
   public operator fun contains(key: CommonCompilerArgument<*>): Boolean
 
   /**
-   * Base class for [CommonCompilerArguments] options.
+   * An option for configuring [CommonCompilerArguments].
    *
    * @see get
    * @see set    
@@ -50,6 +53,35 @@ public interface CommonCompilerArguments : CommonToolArguments {
     public val id: String,
     public val availableSinceVersion: KotlinReleaseVersion,
   )
+
+  /**
+   * A builder for [CommonCompilerArguments].
+   *
+   * @since 2.3.20
+   */
+  public interface Builder : CommonToolArguments.Builder {
+    /**
+     * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+     *
+     * @return the previously set value for an option
+     * @throws IllegalStateException if the option was not set and has no default value
+     */
+    public operator fun <V> `get`(key: CommonCompilerArgument<V>): V
+
+    /**
+     * Set the [value] for option specified by [key], overriding any previous value for that option.
+     */
+    public operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V)
+
+    /**
+     * Check if an option specified by [key] has a value set.
+     *
+     * Note: trying to read an option (by using [get]) that has not been set will result in an exception.
+     *
+     * @return true if the option has a value set, false otherwise
+     */
+    public operator fun contains(key: CommonCompilerArgument<*>): Boolean
+  }
 
   public companion object {
     /**
@@ -316,17 +348,14 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_EXPLICIT_BACKING_FIELDS", KotlinReleaseVersion(2, 3, 0))
 
     /**
-     * Declare common klib friend dependencies for the specific fragment.
-     * This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
-     * The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-     *
+     * Enable explicit passing of context arguments using named argument syntax.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_FRAGMENT_FRIEND_DEPENDENCY: CommonCompilerArgument<Array<String>?> =
-        CommonCompilerArgument("X_FRAGMENT_FRIEND_DEPENDENCY", KotlinReleaseVersion(2, 3, 0))
+    public val X_EXPLICIT_CONTEXT_ARGUMENTS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_EXPLICIT_CONTEXT_ARGUMENTS", KotlinReleaseVersion(2, 4, 0))
 
     /**
      * Enable header compilation mode.
@@ -342,6 +371,18 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_HEADER_MODE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_HEADER_MODE", KotlinReleaseVersion(2, 3, 20))
+
+    /**
+     * Generates output based on what it is used for:
+     * -Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.
+     * -Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_HEADER_MODE_TYPE: CommonCompilerArgument<HeaderMode> =
+        CommonCompilerArgument("X_HEADER_MODE_TYPE", KotlinReleaseVersion(2, 4, 0))
 
     /**
      * Ignore all compilation exceptions while optimizing some constant expressions.
@@ -525,6 +566,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_PHASES_TO_VALIDATE_BEFORE: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("X_PHASES_TO_VALIDATE_BEFORE", KotlinReleaseVersion(1, 3, 40))
+
+    /**
+     * Print compiler configuration.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_PRINT_CONFIGURATION: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_PRINT_CONFIGURATION", KotlinReleaseVersion(2, 4, 0))
 
     /**
      * Profile backend phases.

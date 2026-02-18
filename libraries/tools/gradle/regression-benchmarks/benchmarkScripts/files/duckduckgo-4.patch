@@ -1,0 +1,14 @@
+<+>UTF-8
+===================================================================
+diff --git a/versions.properties b/versions.properties
+--- a/versions.properties
++++ b/versions.properties	(date 1769099760399)
+@@ -95,7 +95,7 @@
+
+ version.google.android.material=1.12.0
+
+-version.google.dagger=2.55
++version.google.dagger=2.59
+
+ version.io.jsonwebtoken..jjwt-api=0.12.6
+

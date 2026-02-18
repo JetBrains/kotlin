@@ -117,7 +117,7 @@ class SubpluginsIT : KGPBaseTest() {
     }
 
     @OtherGradlePluginTests
-    @DisplayName("Jpa plugin generates no-arg constructor")
+    @DisplayName("Jpa plugin generates no-arg constructor with open class")
     @GradleTest
     fun testKotlinJpaPlugin(gradleVersion: GradleVersion) {
         project("noArgJpa", gradleVersion) {
@@ -128,6 +128,7 @@ class SubpluginsIT : KGPBaseTest() {
                     val testClass = classesDir.resolve("test/$name.class")
                     assertFileExists(testClass)
                     checkBytecodeContains(testClass.toFile(), "public <init>()V")
+                    checkBytecodeContains(testClass.toFile(), "public class test/$name {")
                 }
 
                 checkClass("Test")

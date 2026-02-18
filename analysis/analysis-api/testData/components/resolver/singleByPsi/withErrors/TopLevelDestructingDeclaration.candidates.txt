@@ -1,2 +1,50 @@
 KtDestructuringDeclarationEntry(120,124): 'val1'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR CLASS: Symbol not found for Pair<kotlin.String, kotlin.Int>
+        symbol = /createTuple(a: T, b: Z & Any): ERROR CLASS: Symbol not found for Pair<T, Z & Any>
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.String
+            symbol = a: T
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = b: Z & Any
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /createTuple
+      typeArgumentsMapping = {
+        T -> (kotlin.String),
+        Z -> (kotlin.Int?)
+      }
+      valueArgumentMapping = {
+        "a" -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.String
+          symbol = a: T
+          contextParameters = []
+          callableId = null),
+        1 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: Z & Any
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true

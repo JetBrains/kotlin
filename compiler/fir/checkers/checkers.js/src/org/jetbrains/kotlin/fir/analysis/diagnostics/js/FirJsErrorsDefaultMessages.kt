@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,11 +10,14 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_ALL_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.DELEGATION_BY_DYNAMIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXPOSED_NOT_EXPORTED_SUPER_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_ENUM_ENTRY_WITH_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE
@@ -32,6 +35,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_ON_P
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NAME_PROHIBITED_FOR_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_FORBIDDEN_AS_CAST
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_FORBIDDEN_IS_CHECK
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_WRONG_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_STATIC_NOT_IN_CLASS_COMPANION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_STATIC_ON_CONST
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_STATIC_ON_NON_PUBLIC_MEMBER
@@ -39,6 +48,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_SYMBOL_ON
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_SYMBOL_PROHIBITED_FOR_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NAMED_COMPANION_IN_EXPORTED_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_ACTUAL_EXTERNAL_INTERFACE_WHILE_EXPECT_WITHOUT_JS_NO_RUNTIME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_NO_RUNTIME_ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS
@@ -47,11 +58,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_INDEX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_SETTER_WRONG_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_CONSUMABLE_EXPORTED_IDENTIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_EXPORTABLE_TYPE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.PROPERTY_DELEGATION_BY_DYNAMIC
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.RUNTIME_ANNOTATION_NOT_SUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.SPREAD_OPERATOR_IN_DYNAMIC_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_EXPORTED_DECLARATION
@@ -95,10 +105,6 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.SYMBOL
         )
         map.put(RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION, "Runtime annotation cannot be put on external declaration.")
-        map.put(
-            RUNTIME_ANNOTATION_NOT_SUPPORTED,
-            "Reflection is not supported in JavaScript target; therefore, annotations cannot be read at runtime."
-        )
         map.put(EXTERNAL_ENUM_ENTRY_WITH_BODY, "Entry of external enum class cannot have a body.")
         map.put(
             INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING,
@@ -189,11 +195,54 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(NAMED_COMPANION_IN_EXPORTED_INTERFACE, "Named companions are not allowed inside exported interfaces.")
         map.put(
-            NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED,
+            NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED,
             "The corresponding expect declaration is marked as exported, but the actual one is not.\nTo fix it, mark the actual declaration with '@JsExport' as well, remove @JsExport.Ignore if there is one, or remove the '@JsExport' annotation from the expect declaration."
         )
         map.put(JS_STATIC_NOT_IN_CLASS_COMPANION, "Only members of class companion objects can be annotated with '@JsStatic'.")
         map.put(JS_STATIC_ON_NON_PUBLIC_MEMBER, "Only public members of class companion objects can be annotated with '@JsStatic'.")
         map.put(JS_STATIC_ON_CONST, "'@JsStatic' annotation is useless for const.")
+
+        map.put(
+            EXPOSED_NOT_EXPORTED_SUPER_INTERFACE,
+            "Exported sub-interface exposes its non-exported supertype ''{0}''.",
+            DECLARATION_NAME,
+        )
+
+        map.put(
+            JS_NO_RUNTIME_WRONG_TARGET,
+            "'@JsNoRuntime' is only allowed on interfaces."
+        )
+        map.put(
+            JS_NO_RUNTIME_FORBIDDEN_IS_CHECK,
+            "Runtime type checks ('is'/'!is') are forbidden for '@JsNoRuntime' interfaces."
+        )
+        map.put(
+            JS_NO_RUNTIME_FORBIDDEN_AS_CAST,
+            "Runtime type casts ('as'/'as?') are forbidden for '@JsNoRuntime' interfaces. Consider using `unsafeCast` instead."
+        )
+        map.put(
+            JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE,
+            "Class references are forbidden for '@JsNoRuntime' interfaces."
+        )
+        map.put(
+            JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE,
+            "'@JsNoRuntime' on external interface has no effect."
+        )
+
+        map.put(
+            JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT,
+            "Cannot pass ''@JsNoRuntime'' interface ''{0}'' for reified type parameter.",
+            FirDiagnosticRenderers.RENDER_TYPE
+        )
+
+        map.put(
+            JS_ACTUAL_EXTERNAL_INTERFACE_WHILE_EXPECT_WITHOUT_JS_NO_RUNTIME,
+            "This 'actual' external interface corresponds to an 'expect' interface with runtime. Consider adding '@JsNoRuntime' to the 'expect' interface.",
+        )
+
+        map.put(
+            JS_NO_RUNTIME_ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
+            "@JsNoRuntime annotations from expect must either be present with on actual as well, or the actual interface must be external.",
+        )
     }
 }

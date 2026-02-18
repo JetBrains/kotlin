@@ -1,0 +1,12 @@
+FILE: complexBooleanConstant.kt
+    public final const [EvaluatedValue=Boolean(true)] val BOOL: R|kotlin/Boolean| = Boolean(true)
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(false)] val BOOL_OR: R|kotlin/Boolean| = Boolean(false) && R|/BOOL|
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val BOOL_AND: R|kotlin/Boolean| = Boolean(true) || R|/BOOL|
+        public get(): R|kotlin/Boolean|
+    public final const [EvaluatedValue=Boolean(true)] val BOOL_AND_OR: R|kotlin/Boolean| = Boolean(true) || Boolean(false) && R|/BOOL|
+        public get(): R|kotlin/Boolean|
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 // NO_CHECK_LAMBDA_INLINING
 // MODULE: lib
 // FILE: a.kt

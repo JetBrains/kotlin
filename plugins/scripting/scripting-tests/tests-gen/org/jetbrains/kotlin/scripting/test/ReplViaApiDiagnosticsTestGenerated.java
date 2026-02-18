@@ -18,6 +18,10 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/scripting/scripting-tests/testData/diagnostics/repl")
 @TestDataPath("$PROJECT_ROOT")
 public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagnosticsTest {
+  private void run(String fileName) {
+    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInRepl() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/diagnostics/repl"), Pattern.compile("^(.+)\\.kts$"), null, true);
@@ -26,78 +30,90 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   @Test
   @TestMetadata("delegated_extension_property.repl.kts")
   public void testDelegated_extension_property_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/delegated_extension_property.repl.kts");
+    run("delegated_extension_property.repl.kts");
   }
 
   @Test
   @TestMetadata("function_returns_anonymous_object.repl.kts")
   public void testFunction_returns_anonymous_object_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/function_returns_anonymous_object.repl.kts");
+    run("function_returns_anonymous_object.repl.kts");
   }
 
   @Test
   @TestMetadata("import_visible_in_next_snippet.repl.kts")
   public void testImport_visible_in_next_snippet_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/import_visible_in_next_snippet.repl.kts");
+    run("import_visible_in_next_snippet.repl.kts");
   }
 
   @Test
   @TestMetadata("mixed1.repl.kts")
   public void testMixed1_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/mixed1.repl.kts");
+    run("mixed1.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("property_constant_initializer.kts")
+  public void testProperty_constant_initializer() {
+    run("property_constant_initializer.kts");
   }
 
   @Test
   @TestMetadata("property_type_anonymous_object.kts")
   public void testProperty_type_anonymous_object() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/property_type_anonymous_object.kts");
+    run("property_type_anonymous_object.kts");
   }
 
   @Test
   @TestMetadata("property_visibility.kts")
   public void testProperty_visibility() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/property_visibility.kts");
+    run("property_visibility.kts");
   }
 
   @Test
   @TestMetadata("sealed_hierarchies.repl.kts")
   public void testSealed_hierarchies_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/sealed_hierarchies.repl.kts");
+    run("sealed_hierarchies.repl.kts");
   }
 
   @Test
   @TestMetadata("separate_snippets_use_before_define.repl.kts")
   public void testSeparate_snippets_use_before_define_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/separate_snippets_use_before_define.repl.kts");
+    run("separate_snippets_use_before_define.repl.kts");
   }
 
   @Test
   @TestMetadata("simple_class.repl.kts")
   public void testSimple_class_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/simple_class.repl.kts");
+    run("simple_class.repl.kts");
   }
 
   @Test
   @TestMetadata("simple_property.repl.kts")
   public void testSimple_property_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/simple_property.repl.kts");
+    run("simple_property.repl.kts");
   }
 
   @Test
   @TestMetadata("single_snippet.repl.kts")
   public void testSingle_snippet_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/single_snippet.repl.kts");
+    run("single_snippet.repl.kts");
   }
 
   @Test
   @TestMetadata("single_snippet_use_before_define.repl.kts")
   public void testSingle_snippet_use_before_define_repl() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/single_snippet_use_before_define.repl.kts");
+    run("single_snippet_use_before_define.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("unsafe_cast_assignment.kts")
+  public void testUnsafe_cast_assignment() {
+    run("unsafe_cast_assignment.kts");
   }
 
   @Test
   @TestMetadata("unsafe_cast_in_loop.kts")
   public void testUnsafe_cast_in_loop() {
-    runTest("plugins/scripting/scripting-tests/testData/diagnostics/repl/unsafe_cast_in_loop.kts");
+    run("unsafe_cast_in_loop.kts");
   }
 }

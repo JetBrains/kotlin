@@ -8,16 +8,19 @@ import kotlin.native.internal.NativePtr
 import kotlin.native.internal.isPermanent
 import kotlin.native.internal.ref.*
 import kotlin.native.runtime.GC
+import kotlin.native.NoInline
 import kotlin.test.*
 
 typealias Id = Int
 typealias Ref = Pair<Id, ExternalRCRef>
 
+@NoInline
 fun createLocal() : Ref {
     val obj = Any()
     return obj.identityHashCode() to createRetainedExternalRCRef(obj)
 }
 
+@NoInline
 fun createLocalUnretained() : Ref {
     val obj = Any()
     return obj.identityHashCode() to createUnretainedExternalRCRef(obj)

@@ -1,6 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
-// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
 // invalid, depends on local class
 fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>() = run {
     class A

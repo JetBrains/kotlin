@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.Fir2IrReplSnippetConfiguratorExtensionImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplSnippetConfiguratorExtensionImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplSnippetResolveExtensionImpl
@@ -30,7 +30,7 @@ class FirReplCompilerExtensionRegistrar(
 class ReplCompilerPluginRegistrar(val hostConfiguration: ScriptingHostConfiguration) : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         with(this) {
-            FirExtensionRegistrarAdapter.registerExtension(FirReplCompilerExtensionRegistrar(hostConfiguration))
+            FirExtensionRegistrar.registerExtension(FirReplCompilerExtensionRegistrar(hostConfiguration))
         }
     }
 

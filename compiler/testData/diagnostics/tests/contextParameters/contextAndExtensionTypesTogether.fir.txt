@@ -1,0 +1,30 @@
+FILE: contextAndExtensionTypesTogether.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval c: R|@ContextFunctionTypeParams(2) context(kotlin/Int, kotlin/String) () -> kotlin/Unit| = context(<unused var>: R|kotlin/Int|, <unused var>: R|kotlin/String|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^ Unit
+        }
+
+        lval d: R|kotlin/Int.(kotlin/String) -> kotlin/Unit| = fun R|kotlin/Int|.<anonymous>(it: R|kotlin/String|): R|kotlin/Unit| <inline=NoInline>  {
+            ^ Unit
+        }
+
+        lval x: R|MyList<context(kotlin/Int, kotlin/String) () -> kotlin/Unit>| = R|/merge|<R|@ContextFunctionTypeParams(2) context(kotlin/Int, kotlin/String) () -> kotlin/Unit|>(vararg(R|<local>/c|, R|<local>/d|))
+        lval y: R|MyList<kotlin/Int.(kotlin/String) -> kotlin/Unit>| = R|/merge|<R|kotlin/Int.(kotlin/String) -> kotlin/Unit|>(vararg(R|<local>/d|, R|<local>/c|))
+        R|/consumeContextualFunctionList|(R|<local>/x|)
+        R|/consumeContextualFunctionList|(R|<local>/y|)
+        R|/consumeExtensionFunctionList|(R|<local>/x|)
+        R|/consumeExtensionFunctionList|(R|<local>/y|)
+    }
+    public final class MyList<T> : R|kotlin/Any| {
+        public constructor<T>(): R|MyList<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <T> merge(vararg values: R|kotlin/Array<out T>|): R|MyList<T>| {
+        ^merge R|/MyList.MyList|<R|T|>()
+    }
+    public final fun consumeContextualFunctionList(obj: R|MyList<context(kotlin/Int, kotlin/String) () -> kotlin/Unit>|): R|kotlin/Unit| {
+    }
+    public final fun consumeExtensionFunctionList(obj: R|MyList<kotlin/Int.(kotlin/String) -> kotlin/Unit>|): R|kotlin/Unit| {
+    }

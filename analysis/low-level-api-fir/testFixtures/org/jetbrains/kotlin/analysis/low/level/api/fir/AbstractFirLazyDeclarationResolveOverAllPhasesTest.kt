@@ -54,24 +54,12 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
     ) {
         val resultBuilder = StringBuilder()
         val renderer = lazyResolveRenderer(resultBuilder)
+        val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
+
+        preresolveElements(allKtFiles, testServices)
 
         withResolutionFacade(ktFile) { resolutionFacade ->
             checkResolutionFacade(resolutionFacade)
-            val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
-
-            val preresolvedElementCarets = testServices.expressionMarkerProvider.getBottommostElementsOfTypeAtCarets<KtDeclaration>(
-                files = allKtFiles,
-                qualifier = "preresolved",
-            )
-
-            val phase = testServices.moduleStructure.allDirectives.singleOrZeroValue(PRE_RESOLVED_PHASE)
-            if (preresolvedElementCarets.isEmpty() && phase != null) {
-                error("$PRE_RESOLVED_PHASE is declared, but there is not any pre-resolved carets")
-            }
-
-            preresolvedElementCarets.forEach { (declaration, _) ->
-                declaration.resolveToFirSymbol(resolutionFacade, phase ?: FirResolvePhase.BODY_RESOLVE)
-            }
 
             val (elementToResolve, resolver) = resolverProvider(resolutionFacade)
             val filesToRender = when (outputRenderingMode) {
@@ -130,6 +118,29 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             resultBuilder.toString(),
             extension = outputExtension,
         )
+    }
+
+    private fun preresolveElements(allKtFiles: List<KtFile>, testServices: TestServices) {
+        val preresolvedElementCarets = testServices.expressionMarkerProvider.getBottommostElementsOfTypeAtCarets<KtDeclaration>(
+            files = allKtFiles,
+            qualifier = "preresolved",
+        )
+
+        val phase = testServices.moduleStructure.allDirectives.singleOrZeroValue(PRE_RESOLVED_PHASE)
+        if (preresolvedElementCarets.isEmpty() && phase != null) {
+            error("$PRE_RESOLVED_PHASE is declared, but there are no pre-resolved carets.")
+        }
+
+        preresolvedElementCarets.forEach { (declaration, _) ->
+            val containingFile = declaration.containingKtFile
+
+            // We should preresolve the declaration with its own resolution facade instead of the main file's facade, as the preresolved
+            // element might not be in the scope of the main module (for example, it might be a dependent).
+            withResolutionFacade(containingFile) { resolutionFacade ->
+                checkResolutionFacade(resolutionFacade)
+                declaration.resolveToFirSymbol(resolutionFacade, phase ?: FirResolvePhase.BODY_RESOLVE)
+            }
+        }
     }
 
     override val additionalDirectives: List<DirectivesContainer>

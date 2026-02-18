@@ -26,5 +26,5 @@ internal fun createFunctionKmClass(arity: Int): KmClass = KmClass().apply {
         }))
     })
 
-    // TODO (KT-80710): `invoke` function (note that even though it's created in the old reflection, it causes a failure KT-42199.)
+    // TODO (KT-80710): `invoke` function.
 }

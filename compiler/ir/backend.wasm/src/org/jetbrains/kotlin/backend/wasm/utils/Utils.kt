@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrTry
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isFunctionMarker
@@ -51,6 +52,10 @@ internal fun WasmExpressionBuilder.buildUnreachableAfterNothingType() {
                     "execution doesn't come here (or it fails fast if so). It also might be required for wasm verifier."
         )
     )
+}
+
+internal fun redefinitionError(signature: IdSignature, info: String): Nothing {
+    error("Symbol $signature cannot be redefined for $info")
 }
 
 internal val String.hasUnpairedSurrogates: Boolean

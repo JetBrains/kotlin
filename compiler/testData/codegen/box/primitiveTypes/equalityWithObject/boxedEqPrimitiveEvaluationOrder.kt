@@ -1,3 +1,4 @@
+// FILE: lib.kt
 var order: String = ""
 
 fun a(i: Int): Int? {
@@ -19,6 +20,7 @@ inline fun evaluateAndCheckOrder(marker: String, expectedValue: Boolean, expecte
 
 val nn: Int? = null
 
+// FILE: main.kt
 fun box(): String {
     evaluateAndCheckOrder("1 == 1", true, "ab") { a(1) == b(1) }
     evaluateAndCheckOrder("1 == 2", false, "ab") { a(1) == b(2) }

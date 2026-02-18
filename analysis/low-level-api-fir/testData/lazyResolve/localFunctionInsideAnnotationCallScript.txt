@@ -14,7 +14,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -62,7 +62,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -86,7 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -158,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -182,7 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -206,7 +206,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -230,7 +230,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -254,7 +254,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -278,7 +278,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -302,7 +302,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -326,7 +326,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideAnnotationCallScript.kts
 
         }
 
-        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
+        @R|one/Anno|[Types](s = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|() [evaluated = ERROR_EXPR(Inapplicable(INAPPLICABLE): _synthetic/ACCEPT_SPECIFIC_TYPE_CALL).R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] class TopLevelClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
                 super<R|kotlin/Any|>()
             }

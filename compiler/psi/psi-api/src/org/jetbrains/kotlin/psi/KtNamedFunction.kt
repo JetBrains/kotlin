@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.psi
@@ -19,6 +19,18 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.getTypeReference
 import org.jetbrains.kotlin.psi.typeRefHelpers.setTypeReference
 
 /**
+ * Represents a named function declaration.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ *    fun greet(name: String): String {
+ *        return "Hello, $name"
+ *    }
+ * // ^_______________________________^
+ * // The entire function
+ * ```
+ *
  * Note: this class is not intended to be extended and is marked `open` solely for backward compatibility.
  */
 open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, KtFunction, KtDeclarationWithInitializer {

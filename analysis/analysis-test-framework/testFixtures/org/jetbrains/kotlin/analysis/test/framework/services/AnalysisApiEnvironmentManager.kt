@@ -1,22 +1,27 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.test.framework.services
 
+import com.intellij.diagnostic.LoadingState
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBuiltinsModuleImpl
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.test.services.*
@@ -60,15 +65,29 @@ class AnalysisApiEnvironmentManagerImpl(
                 }
             }
         }
+
+        /**
+         * This loading state modification is required to ensure that
+         * application components (e.g., Registry service) can be fully used in AA.
+         *
+         * This must be run right after the environment is initialized since the registry might
+         * be accessed during the model construction
+         */
+        @Suppress("UnstableApiUsage")
+        run {
+            Registry.markAsLoaded()
+            LoadingState.setCurrentState(LoadingState.COMPONENTS_LOADED)
+        }
     }
 
-    @OptIn(KaImplementationDetail::class)
+    @OptIn(KaImplementationDetail::class, ExperimentalCompilerApi::class)
     override fun initializeProjectStructure() {
         val ktTestModuleStructure = testServices.ktTestModuleStructure
         val useSiteModule = testServices.moduleStructure.modules.first()
         val useSiteCompilerConfiguration =
             testServices.compilerConfigurationProvider.getCompilerConfiguration(useSiteModule, CompilationStage.FIRST)
-        val builtinsModule = KaBuiltinsModuleImpl(useSiteModule.targetPlatform(testServices), getProject())
+        val project = getProject()
+        val builtinsModule = KaBuiltinsModuleImpl(useSiteModule.targetPlatform(testServices), project)
 
         val globalLanguageVersionSettings = useSiteModule.languageVersionSettings
 
@@ -78,8 +97,10 @@ class AnalysisApiEnvironmentManagerImpl(
             useSiteCompilerConfiguration.languageVersionSettings,
             useSiteCompilerConfiguration.get(JVMConfigurationKeys.JDK_HOME)?.toPath(),
         )
-
-        testServices.compilerConfigurationProvider.registerCompilerExtensions(getProject(), useSiteModule, useSiteCompilerConfiguration)
+        val extensionStorage = useSiteCompilerConfiguration.extensionsStorage ?: error("Extensions storage is not registered")
+        testServices.compilerConfigurationProvider.registerCompilerExtensions(extensionStorage, useSiteModule, useSiteCompilerConfiguration)
+        extensionStorage.registerInProject(project) { "Error during registering compiler extensions: $it" }
+        testServices.compilerConfigurationProvider.configureProject(project, useSiteModule, useSiteCompilerConfiguration)
     }
 
     override fun getProjectEnvironment(): KotlinCoreProjectEnvironment =

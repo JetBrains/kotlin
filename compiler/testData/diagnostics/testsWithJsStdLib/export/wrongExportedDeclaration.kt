@@ -8,8 +8,8 @@ package foo
 <!WRONG_EXPORTED_DECLARATION("inline function with reified type parameters")!>@JsExport
 inline fun <reified T> inlineReifiedFun(x: Any)<!> = x is T
 
-<!WRONG_EXPORTED_DECLARATION("suspend function")!>@JsExport
-suspend fun suspendFun()<!> { }
+@JsExport
+suspend fun suspendFun() { }
 
 <!WRONG_EXPORTED_DECLARATION("extension property")!>@JsExport
 val String.extensionProperty<!>
@@ -57,6 +57,13 @@ inline class <!WRONG_EXPORTED_DECLARATION("value class")!>B(val b: Int)<!>
 
 @JsExport
 external interface ExternalInterface
+
+@JsExport
+external interface ExternalInterfaceWithCompanion {
+    companion <!WRONG_EXPORTED_DECLARATION("external companion object")!>object<!> {
+        fun foo(): String
+    }
+}
 
 <!MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE!>@JsExport.Default
 external interface DefaultExternalInterface<!>

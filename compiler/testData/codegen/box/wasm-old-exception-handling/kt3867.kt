@@ -1,6 +1,6 @@
 // TARGET_BACKEND: WASM
 // USE_OLD_EXCEPTION_HANDLING_PROPOSAL
-// WASM_FAILS_IN: Wasmtime
+// WASM_FAILS_IN: Wasmtime, WasmEdge
 
 fun fail() = if (true) throw RuntimeException() else 1
 

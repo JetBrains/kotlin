@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.libraryProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
@@ -36,7 +37,7 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
                     File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode) + ".js.map")
                 if (!sourceMapFile.exists()) continue
 
-                val dependencies = JsEnvironmentConfigurator.getDependencyModulesFor(module, testServices)
+                val dependencies = testServices.klibEnvironmentConfigurator.getDependencyModulesFor(module, testServices)
                 SourceMap.replaceSources(sourceMapFile) { path ->
                     tryToMapTestFile(allTestFiles, path)
                         ?: tryToMapLibrarySourceFile(dependencies, path)

@@ -8,15 +8,16 @@ package org.jetbrains.kotlin.cli.pipeline.web
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
@@ -29,12 +30,13 @@ import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectExportedNames
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectJsExportNames
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.incrementalDataProvider
 import org.jetbrains.kotlin.js.config.wasmCompilation
-import org.jetbrains.kotlin.library.unresolvedDependencies
+import org.jetbrains.kotlin.library.isJsStdlib
+import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir2IrPipelineArtifact>(
@@ -42,8 +44,9 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
     preActions = setOf(PerformanceNotifications.TranslationToIrStarted),
     postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    override fun executePhase(input: WebFrontendPipelineArtifact): JsFir2IrPipelineArtifact? {
-        val (firResult, configuration, diagnosticsReporter, moduleStructure, hasErrors) = input
+    override fun executePhase(input: WebFrontendPipelineArtifact): JsFir2IrPipelineArtifact {
+        val (firResult, configuration, moduleStructure, hasErrors) = input
+        val diagnosticsReporter = configuration.diagnosticsCollector
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, firResult.outputs, diagnosticsReporter)
         if (!configuration.wasmCompilation)
             runJsKlibCallCheckers(diagnosticsReporter, configuration, firResult.outputs, fir2IrActualizedResult)
@@ -52,7 +55,6 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
             fir2IrActualizedResult,
             firResult,
             configuration,
-            diagnosticsReporter,
             moduleStructure,
             hasErrors = hasErrors || configuration.messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
         )
@@ -82,7 +84,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
             dependencies += moduleDescriptor
             moduleDescriptor.setDependencies(ArrayList(dependencies))
 
-            val isBuiltIns = resolvedLibrary.unresolvedDependencies.isEmpty()
+            val isBuiltIns = resolvedLibrary.isJsStdlib || resolvedLibrary.isWasmStdlib
             if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
 
             moduleDescriptor
@@ -92,7 +94,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
         return firResult.convertToIrAndActualize(
             fir2IrExtensions,
             Fir2IrConfiguration.forKlibCompilation(moduleStructure.compilerConfiguration, diagnosticsReporter),
-            IrGenerationExtension.getInstances(moduleStructure.project),
+            moduleStructure.compilerConfiguration.getCompilerExtensions(IrGenerationExtension),
             irMangler = JsManglerIr,
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
@@ -112,8 +114,7 @@ private fun runJsKlibCallCheckers(
     firOutputs: List<SingleModuleFrontendOutput>,
     fir2IrActualizedResult: Fir2IrActualizedResult,
 ) {
-    val irDiagnosticReporter =
-        KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
+    val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
 
     val fir2KlibMetadataSerializer = Fir2KlibMetadataSerializer(
         configuration,
@@ -133,7 +134,7 @@ private fun runJsKlibCallCheckers(
             doCheckCalls = true,
             doModuleLevelChecks = true,
             cleanFiles = cleanFilesIrData,
-            exportedNames = irModuleFragment.collectExportedNames(),
+            exportedNames = irModuleFragment.collectJsExportNames(),
         )
     )
 }

@@ -1,4 +1,5 @@
 // TARGET_BACKEND: WASM
+// ^^ KT-83093
 
 // FILE: main.kt
 fun throwSomeJsPrimitive(): Int = js("{ throw 'Test'; }")

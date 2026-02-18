@@ -1,0 +1,5 @@
+expression: foo
+expected type: KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: kotlin/String

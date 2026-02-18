@@ -19,7 +19,7 @@ class IncrementalFirJvmCompilerTestRunner(
     classpathChanges: ClasspathChanges,
     kotlinSourceFilesExtensions: Set<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
-    val testLookupTracker: TestLookupTracker
+    override val lookupTrackerDelegate: TestLookupTracker
 ) : IncrementalFirJvmCompilerRunner(
     workingDir,
     testReporter,
@@ -33,9 +33,8 @@ class IncrementalFirJvmCompilerTestRunner(
             icContext,
             args,
             cacheDirectory,
-            testLookupTracker,
+            lookupTrackerDelegate,
             testReporter,
         )
 
-    override fun getLookupTrackerDelegate() = testLookupTracker
 }

@@ -286,7 +286,8 @@ internal class KaFe10SymbolRelationProvider(
                     ClassicTypeSystemContextForCS(
                         analysisContext.builtIns,
                         analysisContext.kotlinTypeRefiner
-                    )
+                    ),
+                    analysisContext.languageVersionSettings,
                 )
                 else -> TypeSpecificityComparator.NONE
             }

@@ -1,2 +1,2 @@
 // WITH_STDLIB
-val x: Int <caret>by lazy {1}
+val x: Int <expr>by lazy {1}</expr>

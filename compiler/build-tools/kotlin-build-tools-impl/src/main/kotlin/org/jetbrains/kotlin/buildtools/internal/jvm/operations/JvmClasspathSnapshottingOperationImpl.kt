@@ -16,11 +16,23 @@ import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import java.nio.file.Path
 
-internal class JvmClasspathSnapshottingOperationImpl(
-    private val classpathEntry: Path,
-) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation {
+internal class JvmClasspathSnapshottingOperationImpl private constructor(
+    override val options: Options = Options(JvmClasspathSnapshottingOperation::class),
+    override val classpathEntry: Path,
+) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation, JvmClasspathSnapshottingOperation.Builder,
+    DeepCopyable<JvmClasspathSnapshottingOperation> {
 
-    private val options: Options = Options(JvmClasspathSnapshottingOperation::class)
+    constructor(classpathEntry: Path) : this(
+        options = Options(JvmClasspathSnapshottingOperation::class),
+        classpathEntry = classpathEntry
+    )
+
+    override fun toBuilder(): JvmClasspathSnapshottingOperation.Builder = deepCopy()
+
+    override fun build(): JvmClasspathSnapshottingOperation = deepCopy()
+
+    override fun deepCopy(): JvmClasspathSnapshottingOperationImpl =
+        JvmClasspathSnapshottingOperationImpl(options.deepCopy(), classpathEntry)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = options[key]
@@ -30,9 +42,9 @@ internal class JvmClasspathSnapshottingOperationImpl(
         options[key] = value
     }
 
-    override fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): ClasspathEntrySnapshot {
-        val granularity: ClassSnapshotGranularity = options["GRANULARITY"]
-        val parseInlinedLocalClasses: Boolean = options["PARSE_INLINED_LOCAL_CLASSES"]
+    override fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): ClasspathEntrySnapshot {
+        val granularity: ClassSnapshotGranularity = get(GRANULARITY)
+        val parseInlinedLocalClasses: Boolean = get(PARSE_INLINED_LOCAL_CLASSES)
         val origin = ClasspathEntrySnapshotter.snapshot(
             classpathEntry.toFile(), ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses), getMetricsReporter()
         )

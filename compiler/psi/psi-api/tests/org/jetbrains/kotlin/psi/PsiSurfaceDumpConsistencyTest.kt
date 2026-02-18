@@ -11,7 +11,7 @@ import java.nio.file.Paths
 
 class PsiSurfaceDumpConsistencyTest : AbstractSurfaceDumpConsistencyTest() {
     private companion object {
-        private val API_SURFACE_PATH = Paths.get("compiler/psi/psi-api/api/psi-api.api")
+        private val API_SURFACE_PATH = Paths.get("api/psi-api.api")
     }
 
     @Test

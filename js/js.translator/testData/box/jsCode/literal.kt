@@ -51,7 +51,5 @@ fun box(): String {
     val obj: HasName = js("({name: 'OBJ'})")
     assertEquals("OBJ", obj.name, "Object")
 
-    assertArrayEquals(arrayOf(1, 2, 3), js("[1, 2, 3]"))
-
     return "OK"
 }

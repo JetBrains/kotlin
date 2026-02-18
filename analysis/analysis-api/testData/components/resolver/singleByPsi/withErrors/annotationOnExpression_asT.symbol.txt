@@ -1,0 +1,5 @@
+KtAnnotationEntry(69,96): '@Suppress("UNCHECKED_CAST")'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg names: kotlin.String): kotlin.Suppress
+    ]

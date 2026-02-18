@@ -1,6 +1,6 @@
 FILE: annotationOnProperty.kt
     public final? annotation class Ann : R|kotlin/Annotation| {
-        public? constructor(): R|Ann| {
+        public? [ContainingClassKey=Ann] constructor(): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -12,29 +12,29 @@ FILE: annotationOnProperty.kt
     @Ann() public? final? val z: Int = LAZY_EXPRESSION
         public? get(): Int
     public final? class Some : R|kotlin/Any| {
-        public? constructor(x: Int, y: Int, @CONSTRUCTOR_PARAMETER:Ann() z: Int, w: Int): R|Some| {
+        public? [ContainingClassKey=Some] constructor([CorrespondingProperty=/Some.x] x: Int, [CorrespondingProperty=/Some.y] y: Int, [CorrespondingProperty=/Some.z] @CONSTRUCTOR_PARAMETER:Ann() z: Int, [CorrespondingProperty=/Some.w] w: Int): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        field:@FIELD:Ann() public? final? val x: Int = R|<local>/x|
-            public? get(): Int
+        field:@FIELD:Ann() public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ContainingClassKey=Some] get(): Int
 
-        @PROPERTY:Ann() public? final? val y: Int = R|<local>/y|
-            public? get(): Int
+        @PROPERTY:Ann() public? final? [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ContainingClassKey=Some] get(): Int
 
-        public? final? val z: Int = R|<local>/z|
-            public? get(): Int
+        public? final? [IsFromPrimaryConstructor=true] val z: Int = R|<local>/z|
+            public? [ContainingClassKey=Some] get(): Int
 
-        public? final? val w: Int = R|<local>/w|
-            public? get(): Int
+        public? final? [IsFromPrimaryConstructor=true] val w: Int = R|<local>/w|
+            public? [ContainingClassKey=Some] get(): Int
 
         field:@FIELD:Ann() public? final? val a: Int = LAZY_EXPRESSION
-            public? get(): Int
+            public? [ContainingClassKey=Some] get(): Int
 
         @PROPERTY:Ann() public? final? val b: Int = LAZY_EXPRESSION
-            public? get(): Int
+            public? [ContainingClassKey=Some] get(): Int
 
         @Ann() public? final? val c: Int = LAZY_EXPRESSION
-            public? get(): Int
+            public? [ContainingClassKey=Some] get(): Int
 
     }

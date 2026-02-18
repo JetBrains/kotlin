@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,11 +34,8 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.service
-import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.exists
 
 // Same as LightProjectDescriptor.TEST_MODULE_NAME
 private const val TEST_MODULE_NAME = "light_idea_test_case"
@@ -90,9 +87,9 @@ abstract class AbstractSymbolLightClassesTestBase(
 
     protected fun compareResults(module: KtTestModule, testServices: TestServices, computeActual: () -> String) {
         val actual = computeActual().cleanup()
-        compareResults(testServices, actual)
+
+        testServices.assertions.assertEqualsToTestOutputFile(actual, extension = ".java")
         removeIgnoreDirectives(module)
-        removeDuplicatedFirJava(testServices)
     }
 
     private fun String.cleanup(): String {
@@ -122,14 +119,6 @@ abstract class AbstractSymbolLightClassesTestBase(
 
             throw e
         }
-    }
-
-    private fun compareResults(
-        testServices: TestServices,
-        actual: String,
-    ) {
-        val path: Path = currentResultPath().takeIf { it.exists() } ?: javaPath()
-        testServices.assertions.assertEqualsToFile(path, actual)
     }
 
     private fun removeIgnoreDirectives(module: KtTestModule) {
@@ -179,43 +168,7 @@ abstract class AbstractSymbolLightClassesTestBase(
         }?.toLightClass()
     }
 
-    private fun removeDuplicatedFirJava(testServices: TestServices) {
-        val java = javaPath()
-        val firJava = currentResultPath()
-        if (!firJava.exists()) return
-        val identicalCheckerHelper = IdenticalCheckerHelper(testServices)
-        if (identicalCheckerHelper.contentsAreEquals(java.toFile(), firJava.toFile(), trimLines = true)) {
-            identicalCheckerHelper.deleteFirFileToCompareAndAssertIfExists(java.toFile())
-        }
-    }
-
-    private inner class IdenticalCheckerHelper(testServices: TestServices) : FirIdenticalCheckerHelper(testServices) {
-        override fun getClassicFileToCompare(testDataFile: File): File {
-            return if (testDataFile.name.endsWith(EXTENSIONS.FIR_JAVA))
-                testDataFile.resolveSibling(testDataFile.name.removeSuffix(currentExtension) + EXTENSIONS.JAVA)
-            else testDataFile
-        }
-
-        override fun getFirFileToCompare(testDataFile: File): File {
-            return if (testDataFile.name.endsWith(EXTENSIONS.FIR_JAVA))
-                testDataFile
-            else testDataFile.resolveSibling(testDataFile.name.removeSuffix(EXTENSIONS.JAVA) + currentExtension)
-        }
-    }
-
-    private fun javaPath() = getTestOutputFile(EXTENSIONS.JAVA)
-    private fun currentResultPath() = getTestOutputFile(currentExtension)
-
-    protected abstract val currentExtension: String
     protected abstract val isTestAgainstCompiledCode: Boolean
-
-    object EXTENSIONS {
-        const val JAVA = ".java"
-        const val FIR_JAVA = ".fir.java"
-        const val KMP_JAVA = ".kmp.java"
-        const val LIB_JAVA = ".lib.java"
-        const val KMP_LIB_JAVA = ".kmp.lib.java"
-    }
 
     private object Directives : SimpleDirectivesContainer() {
         val IGNORE_FIR by directive(

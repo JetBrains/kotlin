@@ -7,8 +7,10 @@
 
 package kotlin
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.*
 
+@UsedFromCompilerGeneratedCode
 internal actual fun WasmCharArray.createString(): String {
     val size = this.len()
     return String(jsFromCharCodeArray(this, 0, size).unsafeCast())

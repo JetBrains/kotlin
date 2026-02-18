@@ -1,3 +1,5 @@
+// LANGUAGE: -OverloadResolutionSpecificityForEnhancedJvmPrimitiveWrappers
+
 // MODULE: lib
 // MODULE_KIND: LibraryBinary
 

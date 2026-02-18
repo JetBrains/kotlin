@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.analysis.api.platform
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 
 /**
  * [KotlinPlatformSettings] allow the Analysis API platform to control the behavior of the Analysis API engine.
  */
+@KaPlatformInterface
 public interface KotlinPlatformSettings : KotlinPlatformComponent {
     /**
      * @see KotlinDeserializedDeclarationsOrigin
@@ -27,6 +29,7 @@ public interface KotlinPlatformSettings : KotlinPlatformComponent {
     public val allowUseSiteLibraryModuleAnalysis: Boolean
         get() = true
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinPlatformSettings = project.service()
     }
@@ -41,6 +44,7 @@ public interface KotlinPlatformSettings : KotlinPlatformComponent {
  *
  * Internally, the Analysis API engine has to use different implementations of symbol providers for [BINARIES] and [STUBS].
  */
+@KaPlatformInterface
 public enum class KotlinDeserializedDeclarationsOrigin {
     /**
      * Library content is deserialized from `.class` files, KLIBs, and metadata.

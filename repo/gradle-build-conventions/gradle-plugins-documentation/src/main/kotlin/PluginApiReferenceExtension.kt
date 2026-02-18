@@ -2,11 +2,7 @@ import gradle.GradlePluginVariant
 import gradle.publishGradlePluginsJavadoc
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.kotlin.dsl.named
-import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
-import org.gradle.kotlin.dsl.withType
-import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
-import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import org.jetbrains.dokka.gradle.DokkaExtension
 import javax.inject.Inject
 
 /*
@@ -15,7 +11,7 @@ import javax.inject.Inject
  */
 
 abstract class PluginApiReferenceExtension @Inject constructor(
-    private val project: Project
+    private val project: Project,
 ) {
     fun enableForAllGradlePluginVariants() {
         val variants = GradlePluginVariant.values()
@@ -26,27 +22,20 @@ abstract class PluginApiReferenceExtension @Inject constructor(
         }
     }
 
-    fun additionalDokkaConfiguration(configuration: GradleDokkaSourceSetBuilder.() -> Unit) {
-        project.tasks.withType<AbstractDokkaLeafTask>().configureEach {
-            dokkaSourceSets.configureEach(configuration)
-        }
+    fun additionalDokkaConfiguration(configuration: DokkaExtension.() -> Unit) {
+        project.dokkaExtension?.run(configuration)
     }
 
-    fun enableKotlinlangDocumentation() {
-        project.configureTaskForKotlinlang()
-    }
 
     fun moduleName(name: String) {
         if (!project.kotlinBuildProperties.publishGradlePluginsJavadoc) return
-
-        project.tasks.named<DokkaTaskPartial>("dokkaHtmlPartial").configure {
-            moduleName.set(name)
+        project.dokkaExtension?.apply {
+            this.moduleName.set(name)
         }
     }
 
     fun embeddedProject(embedProject: ProjectDependency) {
         if (!project.kotlinBuildProperties.publishGradlePluginsJavadoc) return
-
         project.consumeEmbeddedSources(embedProject)
     }
 
@@ -54,9 +43,10 @@ abstract class PluginApiReferenceExtension @Inject constructor(
     var failOnWarning: Boolean
         get() = _failOnWarning
         set(value) {
-            project.tasks.withType<AbstractDokkaLeafTask>().configureEach {
-                failOnWarning.set(value)
+            project.dokkaExtension?.run {
+                this.dokkaPublications.configureEach {
+                    this.failOnWarning.set(value)
+                }
             }
-            _failOnWarning = value
         }
 }

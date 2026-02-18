@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 private fun Int.privateExtensionFun() = "OK"
 
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")

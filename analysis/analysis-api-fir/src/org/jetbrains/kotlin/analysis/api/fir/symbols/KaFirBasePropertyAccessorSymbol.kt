@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.psiUtil.hasExternalModifier
 import org.jetbrains.kotlin.psi.psiUtil.isExpectDeclaration
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
@@ -127,6 +128,11 @@ internal sealed interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<K
 
     val hasStableParameterNamesImpl: Boolean
         get() = withValidityAssertion { true }
+
+    val isExternalImpl: Boolean
+        get() = withValidityAssertion {
+            backingPsi?.hasExternalModifier() == true || owningKaProperty.isExternal
+        }
 
     private val annotationUseSiteTarget: AnnotationUseSiteTarget
         get() = if (isGetter) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER

@@ -3,7 +3,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // IGNORE_BACKEND: ANDROID
 // ^ KT-52706
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class KoneArray<E>(val array: Array<out E>)

@@ -11,7 +11,7 @@ projectTests {
 
         dependsOnKotlinGradlePluginInstall()
 
-        if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
+        if (project.kotlinBuildProperties.isKotlinNativeEnabled.get()) {
             // Build full Kotlin Native bundle
             dependsOn(":kotlin-native:install")
         }

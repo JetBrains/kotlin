@@ -10,11 +10,13 @@ package org.jetbrains.kotlin.gradle.regressionTests
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.util.assertNoCircularTaskDependencies
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.junit.jupiter.api.Assumptions
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,6 +24,8 @@ class KT31459JvmMainClassesTest {
 
     @Test
     fun `jvmMainClasses should depend on compileJava`() {
+        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
+
         val project = buildProjectWithMPP {
             kotlin {
                 jvm {

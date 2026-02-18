@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.psi.stubs.elements
 
+import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
@@ -24,6 +25,11 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
     /* psiClass = */ KtClass::class.java,
     /* stubClass = */ KotlinClassStub::class.java,
 ) {
+    /**
+     * All classes should have stubs since we want to index even local ones
+     */
+    override fun shouldCreateStub(node: ASTNode?): Boolean = true
+
     override fun createStub(psi: KtClass, parentStub: StubElement<*>): KotlinClassStubImpl {
         val fqName = psi.safeFqNameForLazyResolve()?.asString()
         val classId = createNestedClassId(parentStub, psi)

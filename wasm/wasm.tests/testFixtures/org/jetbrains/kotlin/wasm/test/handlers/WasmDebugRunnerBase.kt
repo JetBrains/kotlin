@@ -55,7 +55,7 @@ abstract class WasmDebugRunnerBase(testServices: TestServices) :
 
     override fun runSavedCode(outputDir: File): String {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val collectedJsArtifacts = collectJsArtifacts(originalFile)
+        val collectedJsArtifacts = collectJsArtifacts(originalFile, outputDir.name)
         val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(outputDir)
 
         return WasmVM.V8.run(

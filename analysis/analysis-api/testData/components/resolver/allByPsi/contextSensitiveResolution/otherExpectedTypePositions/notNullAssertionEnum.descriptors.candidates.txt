@@ -154,7 +154,29 @@ KtNameReferenceExpression(407,413): 'MyEnum'
 KtPostfixExpression(416,425): 'Option1!!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KaVariableSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = MyEnum?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
+      }
+      valueArgumentMapping = {
         Option1 -> (KaVariableSignature:
           name = baseExpr
           receiverType = null
@@ -162,29 +184,6 @@ KtPostfixExpression(416,425): 'Option1!!'
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = MyEnum?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
       }
     isInBestCandidates = true
 
@@ -194,7 +193,29 @@ KtNameReferenceExpression(416,423): 'Option1'
 KtOperationReferenceExpression(423,425): '!!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KaVariableSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = MyEnum?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
+      }
+      valueArgumentMapping = {
         Option1 -> (KaVariableSignature:
           name = baseExpr
           receiverType = null
@@ -202,29 +223,6 @@ KtOperationReferenceExpression(423,425): '!!'
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = MyEnum?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
       }
     isInBestCandidates = true
 
@@ -243,7 +241,29 @@ KtNameReferenceExpression(439,445): 'MyEnum'
 KtPostfixExpression(448,458): 'enumProp!!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KaVariableSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = MyEnum?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
+      }
+      valueArgumentMapping = {
         enumProp -> (KaVariableSignature:
           name = baseExpr
           receiverType = null
@@ -251,29 +271,6 @@ KtPostfixExpression(448,458): 'enumProp!!'
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = MyEnum?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
       }
     isInBestCandidates = true
 
@@ -283,7 +280,29 @@ KtNameReferenceExpression(448,456): 'enumProp'
 KtOperationReferenceExpression(456,458): '!!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KaVariableSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = MyEnum?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
+      }
+      valueArgumentMapping = {
         enumProp -> (KaVariableSignature:
           name = baseExpr
           receiverType = null
@@ -291,29 +310,6 @@ KtOperationReferenceExpression(456,458): '!!'
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = MyEnum?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
       }
     isInBestCandidates = true
 
@@ -332,7 +328,29 @@ KtNameReferenceExpression(472,478): 'MyEnum'
 KtPostfixExpression(481,493): 'stringProp!!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KaVariableSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = MyEnum?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
+      }
+      valueArgumentMapping = {
         stringProp -> (KaVariableSignature:
           name = baseExpr
           receiverType = null
@@ -340,29 +358,6 @@ KtPostfixExpression(481,493): 'stringProp!!'
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = MyEnum?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
       }
     isInBestCandidates = true
 
@@ -372,7 +367,29 @@ KtNameReferenceExpression(481,491): 'stringProp'
 KtOperationReferenceExpression(491,493): '!!'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KaVariableSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = MyEnum?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
+      }
+      valueArgumentMapping = {
         stringProp -> (KaVariableSignature:
           name = baseExpr
           receiverType = null
@@ -381,35 +398,34 @@ KtOperationReferenceExpression(491,493): '!!'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = MyEnum?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (MyEnum)
-      }
     isInBestCandidates = true
 
 KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyEnum
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+      valueArgumentMapping = {
         Option1!! -> (KaVariableSignature:
           name = e
           receiverType = null
@@ -417,36 +433,35 @@ KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
           symbol = e: T
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyEnum
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyEnum)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(499,506): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyEnum
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+      valueArgumentMapping = {
         Option1!! -> (KaVariableSignature:
           name = e
           receiverType = null
@@ -454,29 +469,6 @@ KtNameReferenceExpression(499,506): 'receive'
           symbol = e: T
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyEnum
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyEnum)
       }
     isInBestCandidates = true
 
@@ -504,7 +496,29 @@ KtValueArgument(515,524): 'Option1!!'
 KtPostfixExpression(515,524): 'Option1!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KaVariableSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = ERROR_TYPE?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
         Option1 -> (KaVariableSignature:
           name = baseExpr
           receiverType = null
@@ -512,29 +526,6 @@ KtPostfixExpression(515,524): 'Option1!!'
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = ERROR_TYPE?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true
@@ -545,7 +536,29 @@ KtNameReferenceExpression(515,522): 'Option1'
 KtOperationReferenceExpression(522,524): '!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KaVariableSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = ERROR_TYPE?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
         Option1 -> (KaVariableSignature:
           name = baseExpr
           receiverType = null
@@ -554,36 +567,35 @@ KtOperationReferenceExpression(522,524): '!!'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = ERROR_TYPE?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true
 
 KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyEnum
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+      valueArgumentMapping = {
         enumProp!! -> (KaVariableSignature:
           name = e
           receiverType = null
@@ -591,36 +603,35 @@ KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
           symbol = e: T
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyEnum
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyEnum)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(530,537): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyEnum
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+      valueArgumentMapping = {
         enumProp!! -> (KaVariableSignature:
           name = e
           receiverType = null
@@ -628,29 +639,6 @@ KtNameReferenceExpression(530,537): 'receive'
           symbol = e: T
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyEnum
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyEnum)
       }
     isInBestCandidates = true
 
@@ -678,7 +666,29 @@ KtValueArgument(546,556): 'enumProp!!'
 KtPostfixExpression(546,556): 'enumProp!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KaVariableSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = ERROR_TYPE?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
         enumProp -> (KaVariableSignature:
           name = baseExpr
           receiverType = null
@@ -686,29 +696,6 @@ KtPostfixExpression(546,556): 'enumProp!!'
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = ERROR_TYPE?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true
@@ -719,7 +706,29 @@ KtNameReferenceExpression(546,554): 'enumProp'
 KtOperationReferenceExpression(554,556): '!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KaVariableSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = ERROR_TYPE?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
         enumProp -> (KaVariableSignature:
           name = baseExpr
           receiverType = null
@@ -728,36 +737,35 @@ KtOperationReferenceExpression(554,556): '!!'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = ERROR_TYPE?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
-      }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true
 
 KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyEnum
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+      valueArgumentMapping = {
         stringProp!! -> (KaVariableSignature:
           name = e
           receiverType = null
@@ -765,36 +773,35 @@ KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
           symbol = e: T
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyEnum
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyEnum)
       }
     isInBestCandidates = true
 
 KtNameReferenceExpression(562,569): 'receive'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyEnum
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+      typeArgumentsMapping = {
+        T -> (MyEnum)
+      }
+      valueArgumentMapping = {
         stringProp!! -> (KaVariableSignature:
           name = e
           receiverType = null
@@ -802,29 +809,6 @@ KtNameReferenceExpression(562,569): 'receive'
           symbol = e: T
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyEnum
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyEnum)
       }
     isInBestCandidates = true
 
@@ -852,7 +836,29 @@ KtValueArgument(578,590): 'stringProp!!'
 KtPostfixExpression(578,590): 'stringProp!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KaVariableSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = ERROR_TYPE?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
         stringProp -> (KaVariableSignature:
           name = baseExpr
           receiverType = null
@@ -860,29 +866,6 @@ KtPostfixExpression(578,590): 'stringProp!!'
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = ERROR_TYPE?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true
@@ -893,7 +876,29 @@ KtNameReferenceExpression(578,588): 'stringProp'
 KtOperationReferenceExpression(588,590): '!!'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ERROR_TYPE
+        symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
+        valueParameters = [
+          KaVariableSignature:
+            name = baseExpr
+            receiverType = null
+            returnType = ERROR_TYPE?
+            symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
+      typeArgumentsMapping = {
+        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
+      }
+      valueArgumentMapping = {
         stringProp -> (KaVariableSignature:
           name = baseExpr
           receiverType = null
@@ -901,29 +906,6 @@ KtOperationReferenceExpression(588,590): '!!'
           symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
           contextParameters = []
           callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ERROR_TYPE
-          symbol = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>(baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?): `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`
-          valueParameters = [
-            KaVariableSignature:
-              name = baseExpr
-              receiverType = null
-              returnType = ERROR_TYPE?
-              symbol = baseExpr: `<TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE>`?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /<SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>
-      typeArgumentsMapping = {
-        <TYPE-PARAMETER-FOR-EXCLEXCL-RESOLVE> -> (ERROR_TYPE)
       }
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <SPECIAL-FUNCTION-FOR-EXCLEXCL-RESOLVE>>
     isInBestCandidates = true

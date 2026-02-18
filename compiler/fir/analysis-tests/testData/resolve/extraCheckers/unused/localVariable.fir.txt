@@ -31,6 +31,10 @@ FILE: localVariable.kt
     }
     public final fun foo(v: R|kotlin/Int|): R|kotlin/Unit| {
         lval d: R|kotlin/Int|by Q|Delegate|
+            local get(): R|kotlin/Int| {
+                ^ D|<local>/d|.R|/Delegate.getValue|(Null(null), ::R|<local>/d|)
+            }
+
         lval a: R|kotlin/Int|
         lval b: R|kotlin/Int| = Int(1)
         lval c: R|kotlin/Int| = Int(2)
@@ -50,7 +54,7 @@ FILE: localVariable.kt
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|)) public final annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|)]) public final annotation class Anno : R|kotlin/Annotation| {
         public constructor(): R|Anno| {
             super<R|kotlin/Any|>()
         }

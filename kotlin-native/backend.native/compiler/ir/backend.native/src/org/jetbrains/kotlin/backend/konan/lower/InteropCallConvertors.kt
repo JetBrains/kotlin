@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.*
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 
 private class InteropCallContext(
-        val symbols: KonanSymbols,
+        val symbols: BackendNativeSymbols,
         val builder: IrBuilderWithScope,
         val failCompilation: (String) -> Nothing
 ) {
@@ -36,7 +36,7 @@ private class InteropCallContext(
 }
 
 private inline fun <T> generateInteropCall(
-        symbols: KonanSymbols,
+        symbols: BackendNativeSymbols,
         builder: IrBuilderWithScope,
         noinline failCompilation: (String) -> Nothing,
         block: InteropCallContext.() -> T
@@ -284,7 +284,7 @@ private fun InteropCallContext.readObjectiveCReferenceFromMemory(
  */
 internal fun tryGenerateInteropMemberAccess(
         callSite: IrCall,
-        symbols: KonanSymbols,
+        symbols: BackendNativeSymbols,
         builder: IrBuilderWithScope,
         failCompilation: (String) -> Nothing
 ): IrExpression? = when {

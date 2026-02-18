@@ -5,10 +5,11 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.name.SpecialNames
+import kotlin.metadata.KmType
+import kotlin.metadata.KmValueParameter
 import kotlin.metadata.Modality
 import kotlin.reflect.KParameter
-import kotlin.reflect.jvm.internal.calls.Caller
-import kotlin.reflect.jvm.internal.calls.ThrowingCaller
 
 internal abstract class KotlinKCallable<out R> : ReflectKCallableImpl<R>() {
     abstract val modality: Modality
@@ -23,44 +24,44 @@ internal abstract class KotlinKCallable<out R> : ReflectKCallableImpl<R>() {
     final override val isAbstract: Boolean
         get() = modality == Modality.ABSTRACT
 
-    override val parameters: List<KParameter>
-        get() {
-            checkLocalDelegatedPropertyOrAccessor()
-            require(allParameters.all { it.kind == KParameter.Kind.VALUE }) {
-                "Local delegated properties and their accessors can only have value parameters"
-            }
-            return allParameters
-        }
-
     abstract override val annotations: List<Annotation>
-
-    override val caller: Caller<*>
-        get() {
-            checkLocalDelegatedPropertyOrAccessor()
-            return ThrowingCaller
-        }
-
-    override val defaultCaller: Caller<*>?
-        get() {
-            checkLocalDelegatedPropertyOrAccessor()
-            return ThrowingCaller
-        }
-
-    override fun callBy(args: Map<KParameter, Any?>): R {
-        checkLocalDelegatedPropertyOrAccessor()
-        return callDefaultMethod(args, null)
-    }
 }
 
-internal fun KotlinKCallable<*>.checkLocalDelegatedPropertyOrAccessor() {
-    require(isLocalDelegatedPropertyOrAccessor) {
-        "Only local delegated properties can be descriptor-less for now"
+private val KotlinKCallable<*>.isLocalDelegatedProperty: Boolean
+    get() = this is KotlinKProperty<*> && isLocalDelegated
+
+internal fun KotlinKCallable<*>.computeParameters(
+    contextParameters: List<KmValueParameter>,
+    receiverParameterType: KmType?,
+    valueParameters: List<KmValueParameter>,
+    typeParameterTable: TypeParameterTable,
+    includeReceivers: Boolean,
+): List<KParameter> = buildList {
+    val callable = this@computeParameters
+    if (includeReceivers) {
+        val container = container
+        if (container is KClassImpl<*>) {
+            if (isConstructor) {
+                if (container.isInner) {
+                    add(InstanceParameter(callable, container.java.declaringClass.kotlin))
+                }
+            } else {
+                require(isLocalDelegatedProperty) {
+                    "Only top-level callables are supported for now: ${this@computeParameters}"
+                }
+            }
+        }
+        for (contextParameter in contextParameters) {
+            add(KotlinKParameter(callable, contextParameter, size, KParameter.Kind.CONTEXT, typeParameterTable))
+        }
+        if (receiverParameterType != null) {
+            // The name below is only used to create an instance of `KmValueParameter`. It should not leak to the user, because
+            // `KotlinKParameter.name` returns null if the name is special (starts with a `<`).
+            val kmParameter = KmValueParameter(SpecialNames.THIS.asString()).apply { type = receiverParameterType }
+            add(KotlinKParameter(callable, kmParameter, size, KParameter.Kind.EXTENSION_RECEIVER, typeParameterTable))
+        }
+    }
+    for (valueParameter in valueParameters) {
+        add(KotlinKParameter(callable, valueParameter, size, KParameter.Kind.VALUE, typeParameterTable))
     }
 }
-
-private val KotlinKCallable<*>.isLocalDelegatedPropertyOrAccessor: Boolean
-    get() = when (this) {
-        is KotlinKProperty<*> -> isLocalDelegated
-        is KotlinKProperty.Accessor<*, *> -> property.isLocalDelegated
-        else -> false
-    }

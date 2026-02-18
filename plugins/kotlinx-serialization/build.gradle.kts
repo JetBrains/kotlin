@@ -76,7 +76,7 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
-    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-compiler-tests")))
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
@@ -191,15 +191,16 @@ projectTests {
 }
 
 fun Test.setUpJsIrBoxTests() {
-    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+    useJsIrBoxTests(buildDir = layout.buildDirectory)
 
-    val localJsCoreRuntimeForTests: FileCollection = coreJsIrRuntimeForTests
-    val localJsJsonRuntimeForTests: FileCollection = jsonJsIrRuntimeForTests
-
-    doFirst {
-        systemProperty("serialization.core.path", localJsCoreRuntimeForTests.asPath)
-        systemProperty("serialization.json.path", localJsJsonRuntimeForTests.asPath)
-    }
+    jvmArgumentProviders.add(objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(coreJsIrRuntimeForTests)
+        property.set("serialization.core.path")
+    })
+    jvmArgumentProviders.add(objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(jsonJsIrRuntimeForTests)
+        property.set("serialization.json.path")
+    })
 }
 
 //region Workaround for KT-76495 and KTIJ-33877

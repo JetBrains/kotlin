@@ -5,6 +5,7 @@ KaAnonymousObjectSymbol:
   compilerVisibility: Local
   isActual: false
   isExpect: false
+  isExternal: false
   location: LOCAL
   modality: FINAL
   name: null

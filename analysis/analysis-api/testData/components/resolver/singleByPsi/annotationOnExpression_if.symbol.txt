@@ -1,0 +1,5 @@
+KtAnnotationEntry(40,49): '@Suppress'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg names: kotlin.String): kotlin.Suppress
+    ]

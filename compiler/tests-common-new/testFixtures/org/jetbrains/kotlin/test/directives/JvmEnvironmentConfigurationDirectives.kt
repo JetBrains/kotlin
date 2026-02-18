@@ -22,8 +22,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val WITH_REFLECT by directive("Add Kotlin reflect to classpath")
     val NO_RUNTIME by directive("Don't add any runtime libs to classpath")
 
-    val WITH_FOREIGN_ANNOTATIONS by directive("Add foreign nullability annotations to classpath")
-
     val WITH_JSR305_TEST_ANNOTATIONS by directive(
         description = """
             Add test nullability annotations based on JSR-305 annotations
@@ -67,11 +65,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Enable old mangling scheme for inline classes"
     )
 
-    val SERIALIZE_IR by enumDirective(
-        description = "Enable serialization of JVM IR",
-        additionalParser = JvmSerializeIrMode.Companion::fromString
-    )
-
     val ENABLE_DEBUG_MODE by directive("Enable debug mode for compilation")
 
     val ENHANCED_COROUTINES_DEBUGGING by directive("Mark compiler generated code in coroutines")
@@ -84,4 +77,8 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     )
 
     val USE_LEGACY_REFLECTION_IMPLEMENTATION by directive("Use legacy reflection implementation")
+
+    val USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION by directive("Use new reflection fake override implementation")
+
+    val IGNORED_ANNOTATIONS_FOR_BRIDGES by stringDirective("Ignored annotations for bridges")
 }

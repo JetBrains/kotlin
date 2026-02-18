@@ -36,9 +36,7 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
         get() = super.defaultBuildOptions.copy(
             // Continuous build requires file watching is enabled.
             fileSystemWatchEnabled = true,
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-        )
+        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @GradleTest
     @TestMetadata("js-run-continuous")

@@ -6,8 +6,8 @@ FILE: TypeVariablesInWrappedSamCall.kt
                 Null(null)
             }
             else ->  {
-                select@fun <anonymous>(num: <ERROR TYPE REF: Cannot infer type for parameter num>): R|kotlin/Unit| <inline=Unknown>  {
-                    R|<local>/num|.<Ambiguity: dec, [kotlin/dec, kotlin/dec]>#()
+                select@fun <anonymous>(num: <ERROR TYPE REF: Cannot infer lambda parameter type>): <ERROR TYPE REF: Ambiguity: dec, [kotlin/dec, kotlin/dec]> <inline=Unknown>  {
+                    ^ R|<local>/num|.<Ambiguity: dec, [kotlin/dec, kotlin/dec]>#()
                 }
 
             }

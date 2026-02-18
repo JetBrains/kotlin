@@ -46,8 +46,8 @@ import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getDependencies
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 
 class NativeDeserializerFacade(
     testServices: TestServices,
@@ -80,7 +80,7 @@ class NativeDeserializerFacade(
 
         return getIrModuleInfoForKlib(
             moduleDescriptor,
-            sortDependencies(NativeEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)) + mainModuleLib,
+            sortDependencies(testServices.klibEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)) + mainModuleLib,
             friendModules,
             configuration,
             symbolTable,

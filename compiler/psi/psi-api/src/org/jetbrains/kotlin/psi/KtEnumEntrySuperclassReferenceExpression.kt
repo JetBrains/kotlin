@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,11 +13,24 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub
+import org.jetbrains.kotlin.resolution.KtResolvableCall
 
-// This node represents "fake" reference expression for ENUM_ENTRY(arguments) constructor syntax
-// It uses the superclass enum node to provide access to the real constructor name
-class KtEnumEntrySuperclassReferenceExpression :
-    KtExpressionImplStub<KotlinEnumEntrySuperclassReferenceExpressionStub>, KtSimpleNameExpression {
+/**
+ * Represents a synthetic reference to the enum class constructor in an enum entry initializer.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * enum class EnumWithConstructor(val i: Int) {
+ *     Entry(1)
+ * //      ^
+ * }
+ * ```
+ */
+@OptIn(KtExperimentalApi::class)
+class KtEnumEntrySuperclassReferenceExpression : KtExpressionImplStub<KotlinEnumEntrySuperclassReferenceExpressionStub>,
+    KtSimpleNameExpression,
+    KtResolvableCall {
 
     constructor(node: ASTNode) : super(node)
 

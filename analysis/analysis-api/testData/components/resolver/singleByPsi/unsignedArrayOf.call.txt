@@ -1,7 +1,27 @@
 KtCallExpression(39,55): 'uintArrayOf(42u)'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.UIntArray
+        symbol = kotlin/uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.UInt
+            symbol = vararg elements: kotlin.UInt
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/uintArrayOf
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         42u -> (KaVariableSignature:
           name = elements
           receiverType = null
@@ -10,24 +30,3 @@ KtCallExpression(39,55): 'uintArrayOf(42u)'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.UIntArray
-          symbol = kotlin/uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.UInt
-              symbol = vararg elements: kotlin.UInt
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/uintArrayOf
-      typeArgumentsMapping = {}

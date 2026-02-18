@@ -21,7 +21,6 @@ private val jvmModulePhases1 = createModulePhases(
     ::ProcessOptionalAnnotations,
     ::JvmExpectDeclarationRemover,
     ::ConstEvaluationLowering,
-    ::SerializeIrPhase,
     ::FileClassLowering,
     ::JvmStaticInObjectLowering,
     ::RepeatedAnnotationLowering,
@@ -43,11 +42,11 @@ private val jvmFilePhases = createFilePhases(
     ::JvmLateinitLowering,
     ::JvmInventNamesForLocalClasses,
 
-    ::JvmInlineCallableReferenceToLambdaPhase,
+    ::JvmUpgradeCallableReferences,
+    ::PrepareCallableReferencesForInlining,
     ::DirectInvokeLowering,
     ::FunctionReferenceLowering,
 
-    ::JvmUpgradeCallableReferences,
     ::SuspendLambdaLowering,
     ::PropertyReferenceDelegationLowering,
     ::SingletonOrConstantDelegationLowering,
@@ -67,7 +66,7 @@ private val jvmFilePhases = createFilePhases(
     ::ForLoopsLowering,
     ::CollectionStubMethodLowering,
     ::JvmSingleAbstractMethodLowering,
-    ::JvmMultiFieldValueClassLowering,
+    ::JvmInlineMultiFieldValueClassLowering,
     ::JvmInlineClassLowering,
     ::JvmTailrecLowering,
 
@@ -110,6 +109,7 @@ private val jvmFilePhases = createFilePhases(
     ::EnumClassLowering,
     ::EnumExternalEntriesLowering,
     ::ObjectClassLowering,
+    ::IndyLambdaMetafactoryLowering,
     ::StaticInitializersLowering,
     ::UniqueLoopLabelsLowering,
     ::JvmInitializersLowering,

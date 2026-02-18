@@ -17,6 +17,7 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.platformLibsDir
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -33,7 +34,7 @@ import kotlin.collections.filterIsInstance
 import kotlin.collections.orEmpty
 import kotlin.io.resolve
 
-@CacheableTask
+@DisableCachingByDefault(because = "Task output contains file with kotlin native location, this file should not be restore from the cache as it could lead to a wrong location")
 abstract class KotlinNativeDownloadTask : DefaultTask(), UsesKotlinNativeBundleBuildService {
 
     @get:Nested

@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/propertyTypeNarrowing.kt
         correspondingProperty: PROPERTY name:it visibility:public modality:FINAL [val]
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-it> (): kotlin.Number declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:it type:kotlin.Int visibility:private [final]' type=kotlin.Number origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:it type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-it>' type=<root>.A origin=null
     PROPERTY name:p visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [final]

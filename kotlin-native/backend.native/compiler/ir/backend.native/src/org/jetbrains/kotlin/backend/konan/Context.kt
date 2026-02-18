@@ -37,13 +37,13 @@ private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefa
 
 // TODO: Can be renamed or merged with KonanBackendContext
 internal class Context(
-        config: KonanConfig,
+        config: NativeSecondStageCompilationConfig,
         val sourcesModules: Set<ModuleDescriptor>,
         override val builtIns: KonanBuiltIns,
         override val irBuiltIns: IrBuiltIns,
         val irModules: Map<String, IrModuleFragment>,
         val irLinker: KonanIrLinker,
-        override val symbols: KonanSymbols,
+        override val symbols: BackendNativeSymbols,
         val symbolTable: ReferenceSymbolTable,
 ) : KonanBackendContext(config) {
     override val configuration get() = config.configuration
@@ -51,7 +51,7 @@ internal class Context(
     override val optimizeLoopsOverUnsignedArrays = true
 
     override val innerClassesSupport: NativeInnerClassesSupport by lazy { NativeInnerClassesSupport(irFactory) }
-    val bridgesSupport by lazy { BridgesSupport(irBuiltIns, irFactory) }
+    val bridgesSupport by lazy { BridgesSupport(irBuiltIns, symbols, irFactory) }
     val enumsSupport by lazy { EnumsSupport(irBuiltIns, irFactory) }
     val cachesAbiSupport by lazy { CachesAbiSupport(irFactory) }
 

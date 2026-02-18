@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 // Synthetic accessors are generated only to allow "calling" a declaration, they are not quite sufficient to provide
 // reflection information (such as .name). So a request for it is supposed to fail at runtime with a PL linage error.
 // However, because of techical limitation, the original declaration (with a correct information) may still slip

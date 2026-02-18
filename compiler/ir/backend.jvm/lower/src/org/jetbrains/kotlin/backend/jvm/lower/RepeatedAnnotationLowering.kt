@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
@@ -77,14 +77,14 @@ internal class RepeatedAnnotationLowering(private val context: JvmBackendContext
         super.visitClass(declaration)
     }
 
-    private fun transformAnnotations(annotations: List<IrConstructorCall>): List<IrConstructorCall> {
+    private fun transformAnnotations(annotations: List<IrAnnotation>): List<IrAnnotation> {
         if (!context.state.classBuilderMode.generateBodies) return annotations
         if (annotations.size < 2) return annotations
 
         val annotationsByClass = annotations.groupByTo(mutableMapOf()) { it.symbol.owner.constructedClass }
         if (annotationsByClass.values.none { it.size > 1 }) return annotations
 
-        val result = mutableListOf<IrConstructorCall>()
+        val result = mutableListOf<IrAnnotation>()
         for (annotation in annotations) {
             val annotationClass = annotation.symbol.owner.constructedClass
             val grouped = annotationsByClass.remove(annotationClass) ?: continue
@@ -117,8 +117,8 @@ internal class RepeatedAnnotationLowering(private val context: JvmBackendContext
     private fun wrapAnnotationEntriesInContainer(
         annotationClass: IrClass,
         containerClass: IrClass,
-        entries: List<IrConstructorCall>,
-    ): IrConstructorCall {
+        entries: List<IrAnnotation>,
+    ): IrAnnotation {
         val annotationType = annotationClass.typeWith()
         return IrAnnotationImpl.fromSymbolOwner(containerClass.defaultType, containerClass.primaryConstructor!!.symbol).apply {
             arguments[0] = IrVarargImpl(

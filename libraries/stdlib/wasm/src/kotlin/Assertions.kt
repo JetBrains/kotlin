@@ -5,11 +5,14 @@
 
 package kotlin
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 // Note: codegen for these functions must be explicitly enabled with the -Xwasm-enable-asserts command line flag.
 
 /**
  * Throws an [AssertionError] if the [value] is false.
  */
+@UsedFromCompilerGeneratedCode
 internal actual fun assert(value: Boolean) {
     assert(value) { "Assertion failed" }
 }
@@ -17,6 +20,7 @@ internal actual fun assert(value: Boolean) {
 /**
  * Throws an [AssertionError] calculated by [lazyMessage] if the [value] is false.
  */
+@UsedFromCompilerGeneratedCode
 internal actual fun assert(value: Boolean, lazyMessage: () -> Any) {
     if (!value) {
         val message = lazyMessage()

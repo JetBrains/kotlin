@@ -1,5 +1,5 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnTypeParameterInWhereClause.kt
-    @R|kotlin/annotation/Repeatable|[Types]() @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class TypeParameterAnn : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Repeatable|[Types]() @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class TypeParameterAnn : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeParameterAnn] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/TypeParameterAnn.name] name: R|kotlin/String|): R|TypeParameterAnn| {
             super<R|kotlin/Any|>()
         }
@@ -8,8 +8,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnTypeParameterInWhereClause.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeParameterAnn] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class Foo<@R|TypeParameterAnn|[Types](name = String(T)) @R|TypeParameterAnn|[Types](name = String(Prohibit me!!!)) [ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any|> : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<@R|TypeParameterAnn|[Types](name = String(T)) @R|TypeParameterAnn|[Types](name = String(Prohibit me!!!)) [ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any|>(): R|Foo<T>| {
+    public final [ResolvedTo(BODY_RESOLVE)] class Foo<@R|TypeParameterAnn|[Types](name = String(T) [evaluated = String(T)]) @R|TypeParameterAnn|[Types](name = String(Prohibit me!!!) [evaluated = String(Prohibit me!!!)]) [ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any|> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<@R|TypeParameterAnn|[Types](name = String(T) [evaluated = String(T)]) @R|TypeParameterAnn|[Types](name = String(Prohibit me!!!) [evaluated = String(Prohibit me!!!)]) [ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any|>(): R|Foo<T>| {
             super<R|kotlin/Any|>()
         }
 

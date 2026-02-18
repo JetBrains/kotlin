@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -48,7 +49,7 @@ fun IrSimpleType.withNullability(newNullability: Boolean): IrSimpleType {
         }
 }
 
-fun IrType.addAnnotations(newAnnotations: List<IrConstructorCall>): IrType =
+fun IrType.addAnnotations(newAnnotations: List<IrAnnotation>): IrType =
     if (newAnnotations.isEmpty())
         this
     else when (this) {

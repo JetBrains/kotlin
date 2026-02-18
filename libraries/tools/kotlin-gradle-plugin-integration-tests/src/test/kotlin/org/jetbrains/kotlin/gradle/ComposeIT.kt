@@ -11,6 +11,7 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue.ENABLED
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -641,6 +642,7 @@ class ComposeIT : KGPBaseTest() {
     @DisplayName("Minified app contains Compose mapping file")
     @AndroidGradlePluginTests
     @GradleAndroidTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_9_0)
     @DisabledOnOs(
         OS.WINDOWS, disabledReason = "AGP contains a bug that prevents test output files from being cleaned up on Windows. " +
                 "See: https://issuetracker.google.com/issues/445967244"
@@ -655,15 +657,22 @@ class ComposeIT : KGPBaseTest() {
             projectName = "AndroidSimpleComposeApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, buildCacheEnabled = true, configurationCache = ENABLED)
         ) {
             buildScriptInjection {
                 val appExtension = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
                 appExtension.beforeVariants {
                     if (it.name == "release") {
                         it.isMinifyEnabled = true
+                        it.shrinkResources = true
                     }
                 }
+                // Known dependency that is compiled with JDK 25
+                // Tests for CMP-9459
+                dependencies.add(
+                    "implementation",
+                    "org.bouncycastle:bcprov-jdk18on:1.83"
+                )
             }
 
             build("assembleRelease") {
@@ -677,18 +686,35 @@ class ComposeIT : KGPBaseTest() {
 
                 assertTasksExecuted(":mergeReleaseComposeMapping")
 
-                // validate mapping is present
+                // validate all mapping files are present
+                val expectedOutputFiles = listOf(
+                    "mapping.txt",
+                    "seeds.txt",
+                    "configuration.txt",
+                    "usage.txt",
+                    "resources.txt",
+                )
+                for (name in expectedOutputFiles) {
+                    val file = projectPath.resolve(Path("build/outputs/mapping/release/$name")).toFile()
+                    assertFileExists(file, "Missing $name from R8 outputs")
+                }
                 val outputMapping = projectPath.resolve(Path("build/outputs/mapping/release/mapping.txt")).toFile()
                 var hasComposeMapping = false
+                var hasAppFrames = false
                 outputMapping.useLines { lines ->
                     for (line in lines) {
                         if (line == $$"ComposeStackTrace -> \$$compose:") {
                             hasComposeMapping = true
+                        }
+
+                        if (hasComposeMapping && line.contains("org.jetbrains.kotlin.android.example.MainActivityKt")) {
+                            hasAppFrames = true
                             break
                         }
                     }
                 }
                 assertTrue(hasComposeMapping, "Expected compose mapping added to the mapping.txt")
+                assertTrue(hasAppFrames, "Expected app-specific mapping added to the mapping.txt")
 
                 // validate mapping hash recorded in the file
                 var recordedHash = ""
@@ -771,7 +797,7 @@ class ComposeIT : KGPBaseTest() {
                 ),
                 isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
             ),
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://maven.pkg.jetbrains.space/public/p/compose/dev")),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://redirector.kotlinlang.org/maven/compose-dev")),
             enableGradleDaemonMemoryLimitInMb = 2048,
             enableKotlinDaemonMemoryLimitInMb = 2048,
         ) {

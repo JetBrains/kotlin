@@ -48,14 +48,14 @@ internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>
         private val compilationIdCounter = AtomicInt(0)
     }
 
-    abstract fun executeImpl(
+    abstract fun executeCancellableImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
     ): R
 
-    final override fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): R {
-        val returnValue = executeImpl(projectId, executionPolicy, logger)
+    final override fun executeImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): R {
+        val returnValue = executeCancellableImpl(projectId, executionPolicy, logger)
         return if (isCancelled.load()) {
             throw OperationCancelledException()
         } else {

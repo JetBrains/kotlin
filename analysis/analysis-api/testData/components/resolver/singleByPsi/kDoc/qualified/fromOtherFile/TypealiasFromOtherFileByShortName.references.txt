@@ -2,5 +2,6 @@ KDocName(35,37): 'BB'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in b) typealias BB = kotlin.Int

@@ -57,7 +57,7 @@ private fun IrSimpleFunction.createMainFunctionWrapper(
         visibility = visibility,
         isInline = false,
         isExpect = false,
-        returnType = returnType,
+        returnType = backendContext.irBuiltIns.unitType,
         modality = modality,
         symbol = IrSimpleFunctionSymbolImpl(),
         isTailrec = false,

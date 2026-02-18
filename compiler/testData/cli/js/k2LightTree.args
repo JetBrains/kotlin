@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/k2.kt
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+k2
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main

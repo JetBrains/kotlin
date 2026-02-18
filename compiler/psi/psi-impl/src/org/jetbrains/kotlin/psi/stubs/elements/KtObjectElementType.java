@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -27,6 +28,14 @@ import java.util.List;
 public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl, KtObjectDeclaration> {
     public KtObjectElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtObjectDeclaration.class, KotlinObjectStub.class);
+    }
+
+    /**
+     * All objects should have stubs since we want to index even local ones
+     */
+    @Override
+    public boolean shouldCreateStub(ASTNode node) {
+        return true;
     }
 
     @NotNull

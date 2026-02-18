@@ -9,21 +9,19 @@ import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class BuildFinishBuildServiceTest {
 
-    @Rule
-    @JvmField
-    var tmpFolder = TemporaryFolder()
+    @field:TempDir
+    lateinit var tmpFolder: File
 
     @Test
     fun testFusMetricAggregation() {
-        val fusDir = tmpFolder.newFolder("fus-dir")
-        fusDir.mkdirs()
+        val fusDir = tmpFolder.resolve("fus-dir").also { it.mkdirs() }
 
         val buildId = "build-id"
         val logger = TestLogger(LogLevel.DEBUG)

@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.report
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics.ERROR_SEVERITY_CHANGED
-import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics.MISSING_DIAGNOSTIC_NAME
-import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliFrontendDiagnostics.ERROR_SEVERITY_CHANGED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliFrontendDiagnostics.MISSING_DIAGNOSTIC_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.registeredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.fir.languageVersionSettings
 
 object FirSuppressedDiagnosticsCheckers : FirLanguageVersionSettingsChecker() {
@@ -21,7 +21,7 @@ object FirSuppressedDiagnosticsCheckers : FirLanguageVersionSettingsChecker() {
         val warningLevelMap = context.session.languageVersionSettings.getFlag(AnalysisFlags.warningLevels)
         if (warningLevelMap.isEmpty()) return
 
-        val allDiagnosticFactories = context.session.diagnosticRendererFactory.allDiagnosticFactories.associateBy { it.name }
+        val allDiagnosticFactories = context.session.registeredDiagnosticFactoriesStorage.allDiagnosticFactories.associateBy { it.name }
 
         for (diagnosticName in warningLevelMap.keys) {
             val diagnosticFactory = allDiagnosticFactories[diagnosticName]

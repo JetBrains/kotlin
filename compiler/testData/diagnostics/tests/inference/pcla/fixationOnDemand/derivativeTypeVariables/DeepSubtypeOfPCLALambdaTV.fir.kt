@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// DUMP_INFERENCE_LOGS: FIXATION, MARKDOWN
 fun test() {
     val resultA = pcla { otvOwner ->
         // ContravariantContainer<OTv> <: ContravariantContainer<PNTv>  =>  PNTv <: OTv

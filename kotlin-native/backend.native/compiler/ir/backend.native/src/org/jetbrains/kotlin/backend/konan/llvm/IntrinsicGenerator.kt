@@ -131,7 +131,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.INTEROP_READ_BITS -> emitReadBits(args)
                 IntrinsicType.INTEROP_WRITE_BITS -> emitWriteBits(args)
                 IntrinsicType.INTEROP_READ_PRIMITIVE -> emitReadPrimitive(callSite, args)
-                IntrinsicType.INTEROP_WRITE_PRIMITIVE -> emitWritePrimitive(callSite, args)
+                IntrinsicType.INTEROP_WRITE_PRIMITIVE -> emitWritePrimitive(args)
                 IntrinsicType.INTEROP_GET_POINTER_SIZE -> emitGetPointerSize()
                 IntrinsicType.CREATE_UNINITIALIZED_INSTANCE -> emitCreateUninitializedInstance(callSite, resultSlot)
                 IntrinsicType.CREATE_UNINITIALIZED_ARRAY -> emitCreateUninitializedArray(callSite, resultSlot, args)
@@ -183,14 +183,14 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             }
 
     fun evaluateConstantConstructorFields(constant: IrConstantObject, args: List<ConstValue>) : List<ConstValue> {
-        return when (val intrinsicType = getConstantConstructorIntrinsicType(constant.constructor)) {
+        return when (getConstantConstructorIntrinsicType(constant.constructor)) {
             ConstantConstructorIntrinsicType.KCLASS_IMPL -> {
                 require(args.isEmpty())
                 val typeArgument = constant.typeArguments[0]
                 val typeArgumentClass = typeArgument.getClass()!!
                 require(!typeArgumentClass.isExternalObjCClass())
                 val typeInfo = codegen.typeInfoValue(typeArgumentClass)
-                listOf(constPointer(typeInfo).bitcast(codegen.llvm.int8PtrType))
+                listOf(constPointer(typeInfo))
             }
             ConstantConstructorIntrinsicType.OBJC_KCLASS_IMPL -> {
                 require(args.isEmpty())
@@ -327,7 +327,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitGetNativeNullPtr(): LLVMValueRef =
-            llvm.kNullInt8Ptr
+            llvm.kNull
 
     private fun FunctionGenerationContext.emitNativePtrPlusLong(args: List<LLVMValueRef>): LLVMValueRef =
         gep(llvm.int8Type, args[0], args[1])
@@ -363,7 +363,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitIsSubtype(callSite: IrCall, args: List<LLVMValueRef>) =
             with(VirtualTablesLookup) {
                 checkIsSubtype(
-                        objTypeInfo = bitcast(pointerType(llvm.kTypeInfo), args.single()),
+                        objTypeInfo = args.single(),
                         dstClass = callSite.typeArguments[0]!!.classOrNull!!.owner
                 )
             }
@@ -371,25 +371,17 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitGetPointerSize(): LLVMValueRef =
             llvm.int32(LLVMPointerSize(codegen.llvmTargetData))
 
-    private fun FunctionGenerationContext.emitReadPrimitive(callSite: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
-        val pointerType = pointerType(callSite.llvmReturnType)
-        val rawPointer = args.last()
-        val pointer = bitcast(pointerType, rawPointer)
-        return load(callSite.llvmReturnType, pointer)
-    }
+    private fun FunctionGenerationContext.emitReadPrimitive(callSite: IrCall, args: List<LLVMValueRef>): LLVMValueRef =
+            load(callSite.llvmReturnType, args.last())
 
-    private fun FunctionGenerationContext.emitWritePrimitive(callSite: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
-        val function = callSite.symbol.owner
-        val pointerType = pointerType(function.parameters.last().type.toLLVMType(llvm))
-        val rawPointer = args[1]
-        val pointer = bitcast(pointerType, rawPointer)
-        store(args[2], pointer)
+    private fun FunctionGenerationContext.emitWritePrimitive(args: List<LLVMValueRef>): LLVMValueRef {
+        store(args[2], args[1])
         return codegen.theUnitInstanceRef.llvm
     }
 
     private fun FunctionGenerationContext.emitReadBits(args: List<LLVMValueRef>): LLVMValueRef {
         val ptr = args[0]
-        assert(ptr.type == llvm.int8PtrType)
+        assert(ptr.type == llvm.pointerType)
 
         val offset = extractConstUnsignedInt(args[1])
         val size = extractConstUnsignedInt(args[2]).toInt()
@@ -403,7 +395,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val bitsWithPaddingNum = prefixBitsNum + size + suffixBitsNum
         val bitsWithPaddingType = LLVMIntTypeInContext(llvm.llvmContext, bitsWithPaddingNum)!!
 
-        val bitsWithPaddingPtr = bitcast(pointerType(bitsWithPaddingType), gep(llvm.int8Type, ptr, llvm.int64(offset / 8)))
+        val bitsWithPaddingPtr = gep(llvm.int8Type, ptr, llvm.int64(offset / 8))
         val bitsWithPadding = load(bitsWithPaddingType, bitsWithPaddingPtr).setUnaligned()
 
         val bits = shr(
@@ -419,7 +411,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitWriteBits(args: List<LLVMValueRef>): LLVMValueRef {
         val ptr = args[0]
-        assert(ptr.type == llvm.int8PtrType)
+        assert(ptr.type == llvm.pointerType)
 
         val offset = extractConstUnsignedInt(args[1])
         val size = extractConstUnsignedInt(args[2]).toInt()
@@ -446,7 +438,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
         val preservedBitsMask = not(discardBitsMask)
 
-        val bitsWithPaddingPtr = bitcast(pointerType(bitsWithPaddingType), gep(llvm.int8Type, ptr, llvm.int64(offset / 8)))
+        val bitsWithPaddingPtr = gep(llvm.int8Type, ptr, llvm.int64(offset / 8))
 
         val bits = trunc(value, bitsType)
 
@@ -468,11 +460,11 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val receiver = args[0]
         val superClass = args[1]
 
-        val structType = llvm.structType(llvm.int8PtrType, llvm.int8PtrType)
+        val structType = llvm.structType(llvm.pointerType, llvm.pointerType)
         val ptr = alloca(structType, false)
         store(receiver, structGep(structType, ptr, 0, ""))
         store(superClass, structGep(structType, ptr, 1, ""))
-        return bitcast(llvm.int8PtrType, ptr)
+        return ptr
     }
 
     private fun FunctionGenerationContext.emitGetObjCClass(callSite: IrCall): LLVMValueRef {
@@ -483,8 +475,8 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitObjCGetMessenger(args: List<LLVMValueRef>, isStret: Boolean): LLVMValueRef {
         val messengerNameSuffix = if (isStret) "_stret" else ""
 
-        val functionReturnType = LlvmRetType(llvm.int8PtrType, isObjectType = false)
-        val functionParameterTypes = listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType))
+        val functionReturnType = LlvmRetType(llvm.pointerType, isObjectType = false)
+        val functionParameterTypes = listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType))
 
         val normalMessenger = codegen.llvm.externalNativeRuntimeFunction(
                 "objc_msgSend$messengerNameSuffix",
@@ -501,13 +493,13 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
         val superClass = args.single()
         val messenger = LLVMBuildSelect(builder,
-                If = icmpEq(superClass, llvm.kNullInt8Ptr),
+                If = icmpEq(superClass, llvm.kNull),
                 Then = normalMessenger.toConstPointer().llvm,
                 Else = superMessenger.toConstPointer().llvm,
                 Name = ""
         )!!
 
-        return bitcast(llvm.int8PtrType, messenger)
+        return messenger
     }
 
     private fun FunctionGenerationContext.emitAreEqualByValue(args: List<LLVMValueRef>): LLVMValueRef {

@@ -20,7 +20,7 @@ public final class FooClass$bar$1 {
     synthetic final field this$0: FooClass
     inner (anonymous) class FooClass$bar$1
     method <init>(p0: FooClass): void
-    public final @org.jetbrains.annotations.NotNull method run(): java.lang.String
+    public final method run(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -28,7 +28,7 @@ public final class FooClass {
     // source: 'superCall.kt'
     inner (anonymous) class FooClass$bar$1
     public method <init>(): void
-    public synthetic final static method access$bar$s414358642(p0: FooClass): java.lang.String
+    public synthetic final static method access$bar$s70822(p0: FooClass): java.lang.String
     public @org.jetbrains.annotations.NotNull method bar(): java.lang.String
 }
 

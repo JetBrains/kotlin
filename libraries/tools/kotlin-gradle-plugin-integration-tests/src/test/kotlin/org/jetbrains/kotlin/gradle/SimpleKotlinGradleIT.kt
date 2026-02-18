@@ -30,7 +30,13 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         ) {
             build("compileDeployKotlin", "build") {
                 assertOutputContains("Finished executing kotlin compiler using ${KotlinCompilerExecutionStrategy.DAEMON} strategy")
-                assertFileInProjectExists("build/reports/tests/test/classes/demo.TestSource.html")
+                assertFileInProjectExists(
+                    if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+                        "build/reports/tests/test/classes/demo.TestSource.html"
+                    } else {
+                        "build/reports/tests/test/index.html"
+                    }
+                )
                 assertTasksExecuted(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
             }
 

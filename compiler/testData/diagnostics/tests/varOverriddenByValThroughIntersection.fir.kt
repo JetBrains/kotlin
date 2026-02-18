@@ -55,7 +55,7 @@ abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class CC3<
 abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class CC4<!> : ClassWithDefaultVal(), InterfaceWithDefaultVar
 
 abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>CD1<!> : ClassWithDefaultVar(), InterfaceWithAbstractVal
-abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>CD2<!> : ClassWithDefaultVar(), InterfaceWithAbstractVar
+abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, CANNOT_WEAKEN_ACCESS_PRIVILEGE!>CD2<!> : ClassWithDefaultVar(), InterfaceWithAbstractVar
 abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class CD3<!> : ClassWithDefaultVar(), InterfaceWithDefaultVal
 abstract <!CANNOT_INFER_VISIBILITY, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class CD4<!> : ClassWithDefaultVar(), InterfaceWithDefaultVar
 

@@ -772,9 +772,11 @@ private class ElementsToShortenCollector(
      * symbol.
      */
     private fun importDirectiveForDifferentSymbolWithSameNameIsPresent(classId: ClassId): Boolean {
-        val importDirectivesWithSameImportedFqName = containingFile.collectDescendantsOfType { importedDirective: KtImportDirective ->
-            importedDirective.importedFqName?.shortName() == classId.shortClassName
+        val shortClassName = classId.shortClassName
+        val importDirectivesWithSameImportedFqName = containingFile.importDirectives.filter {
+            it.importedFqName?.shortName() == shortClassName
         }
+
         return importDirectivesWithSameImportedFqName.isNotEmpty() &&
                 importDirectivesWithSameImportedFqName.all { it.importedFqName != classId.asSingleFqName() }
     }
@@ -813,12 +815,10 @@ private class ElementsToShortenCollector(
     }
 
     private fun shortenIfAlreadyImportedAsAlias(referenceExpression: KtElement, referencedSymbolFqName: FqName?): ElementToShorten? {
-        val importDirectiveForReferencedSymbol = containingFile.importDirectives.firstOrNull {
-            it.importedFqName == referencedSymbolFqName && it.alias != null
-        } ?: return null
+        if (referencedSymbolFqName == null) return null
 
-        val aliasedName = importDirectiveForReferencedSymbol.alias?.name
-        return createElementToShorten(referenceExpression, shortenedRef = aliasedName)
+        val alias = containingFile.findAliasByFqName(referencedSymbolFqName) ?: return null
+        return createElementToShorten(referenceExpression, shortenedRef = alias.name)
     }
 
     private fun shortenClassifierQualifier(

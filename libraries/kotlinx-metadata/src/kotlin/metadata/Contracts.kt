@@ -131,6 +131,14 @@ public enum class KmEffectType {
      * a situation when a function returns normally with any value that is not null.
      */
     RETURNS_NOT_NULL,
+
+    /**
+     * Represents `returnsResultOf` contract effect:
+     * a situation when a function returns the result of calling the specified lambda parameter.
+     *
+     * Referenced lambda is stored in the [KmEffect.constructorArguments].
+     */
+    RETURNS_RESULT_OF,
 }
 
 /**

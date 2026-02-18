@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.ir.annotations.Escapes
 import org.jetbrains.kotlin.backend.konan.ir.annotations.PointsTo
 import org.jetbrains.kotlin.backend.konan.ir.annotations.PointsToKind
+import org.jetbrains.kotlin.backend.konan.ir.hasFinalizer
 import org.jetbrains.kotlin.backend.konan.ir.isBuiltInOperator
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
@@ -1678,8 +1679,12 @@ internal object EscapeAnalysis {
                         }
                     }
 
+                    val isAllocOfFinalizedClass = node is DataFlowIR.Node.Alloc && node.type.irClass?.hasFinalizer == true
+                    if (lifetime == Lifetime.STACK && isAllocOfFinalizedClass)
+                        lifetime = Lifetime.GLOBAL
+
                     if (lifetime != computedLifetime) {
-                        if (propagateExiledToHeapObjects && node is DataFlowIR.Node.Alloc) {
+                        if (node is DataFlowIR.Node.Alloc && (propagateExiledToHeapObjects || isAllocOfFinalizedClass)) {
                             context.log { "Forcing node ${nodeToString(node)} to escape" }
                             escapeOrigins += ptgNode
                             propagateEscapeOrigin(ptgNode)

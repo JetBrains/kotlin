@@ -1,0 +1,7 @@
+KtPropertyDelegate(74,109): 'by GenericDelegate<String>("hello")'
+  KtPropertyDelegationMethodsReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in myPack.GenericDelegate) operator fun getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T

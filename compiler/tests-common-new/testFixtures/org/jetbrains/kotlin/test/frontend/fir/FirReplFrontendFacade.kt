@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.ProjectScope.getLibrariesScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
@@ -63,7 +64,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val project = testServices.compilerConfigurationProvider.getProject(testModule)
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(testModule)
         val libraryList = createLibraryListForJvm("repl", configuration, emptyList())
-        val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
+        val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(testModule)
         val librariesSearchScope = PsiBasedProjectFileSearchScope(getLibrariesScope(project))
 

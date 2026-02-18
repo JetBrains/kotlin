@@ -8,6 +8,8 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
+    isNotDefault: false
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -36,6 +38,7 @@ KaKotlinPropertySymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -60,6 +63,7 @@ KaKotlinPropertySymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -75,9 +79,9 @@ KaKotlinPropertySymbol:
                 psi: KtAnnotationEntry
             ]
             typeArguments: []
-            type: @R|Anno|(position = String(str))  kotlin/Int
+            type: @R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int
         ]
-        type: kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>
+        type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>
       visibility: PUBLIC
       getContainingFileSymbol: KaFileSymbol(propertyWithContextReceivers.kt)
       getContainingJvmClassName: PropertyWithContextReceiversKt
@@ -103,9 +107,9 @@ KaKotlinPropertySymbol:
                 psi: KtAnnotationEntry
             ]
             typeArguments: []
-            type: @R|Anno|(position = String(str))  kotlin/Int
+            type: @R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int
         ]
-        type: kotlin/collections/List<@R|Anno|(position = String(str))  kotlin/Int>
+        type: kotlin/collections/List<@R|Anno|(position = String(str) [evaluated = String(str)])  kotlin/Int>
   ]
   getter: KaPropertyGetterSymbol:
     annotations: []
@@ -116,6 +120,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: true
     isOverride: false
@@ -165,9 +170,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: PropertyWithContextReceiversKt
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getFoo
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: foo

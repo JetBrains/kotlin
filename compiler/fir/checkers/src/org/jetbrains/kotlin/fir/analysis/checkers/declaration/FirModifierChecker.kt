@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.Companion.classActualTargets
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -34,8 +32,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.lexer.KtTokens.DATA_KEYWORD
-import org.jetbrains.kotlin.lexer.KtTokens.INLINE_KEYWORD
 import org.jetbrains.kotlin.resolve.*
 
 object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
@@ -113,25 +109,20 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         parent: FirBasedSymbol<*>?,
     ): Boolean {
         fun checkModifier(factory: KtDiagnosticFactory2<KtModifierKeywordToken, String>): Boolean {
-            val map = when (factory) {
-                FirErrors.WRONG_MODIFIER_TARGET -> possibleTargetMap
-                FirErrors.DEPRECATED_MODIFIER_FOR_TARGET -> deprecatedTargetMap
-                else -> redundantTargetMap
-            }
-            val set = map[modifierToken] ?: emptySet()
-            val checkResult = if (factory == FirErrors.WRONG_MODIFIER_TARGET) {
-                actualTargets.none { it in set }
-                        || (modifierToken == DATA_KEYWORD
-                        && actualTargets.contains(KotlinTarget.STANDALONE_OBJECT)
-                        && !LanguageFeature.DataObjects.isEnabled())
-                        || (modifierToken == INLINE_KEYWORD
-                        && actualTargets.contains(KotlinTarget.ENUM_ENTRY)
-                        && LanguageFeature.ForbidInlineEnumEntries.isEnabled())
-            } else {
-                actualTargets.any { it in set }
-                        || (modifierToken == INLINE_KEYWORD
-                        && actualTargets.contains(KotlinTarget.ENUM_ENTRY)
-                        && !LanguageFeature.ForbidInlineEnumEntries.isEnabled())
+            val checkResult = when (factory) {
+                FirErrors.WRONG_MODIFIER_TARGET -> actualTargets.none {
+                    possibleTargetPredicateMap[modifierToken]?.isAllowed(
+                        it,
+                        context.session.languageVersionSettings
+                    ) == true
+                }
+                FirErrors.DEPRECATED_MODIFIER_FOR_TARGET -> actualTargets.any {
+                    deprecatedTargetPredicateMap[modifierToken]?.isAllowed(
+                        it,
+                        context.session.languageVersionSettings
+                    ) == true
+                }
+                else -> actualTargets.any { it in (redundantTargetMap[modifierToken] ?: emptySet()) }
             }
             if (checkResult) {
                 reporter.reportOn(

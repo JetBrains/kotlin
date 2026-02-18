@@ -3,4 +3,4 @@
 
 context(a: kotlin.Boolean) public inline fun conditionInContext(block: () -> kotlin.Int): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
 
-context(a: () -> kotlin.Int) public inline fun lambdaInContext(condition: kotlin.Boolean): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
+context(noinline a: () -> kotlin.Int) public inline fun lambdaInContext(condition: kotlin.Boolean): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }

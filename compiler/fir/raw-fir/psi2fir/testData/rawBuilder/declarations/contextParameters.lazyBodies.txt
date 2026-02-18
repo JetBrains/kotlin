@@ -2,7 +2,7 @@ FILE: contextParameters.kt
     context(s: String)
     public final? class C : R|kotlin/Any| {
         context(s: String)
-        public? constructor(): R|C| { LAZY_BLOCK }
+        public? [ContainingClassKey=C] constructor(): R|C| { LAZY_BLOCK }
 
     }
     context(s: String)

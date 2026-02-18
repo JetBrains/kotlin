@@ -1,6 +1,5 @@
 // WITH_STDLIB
-import kotlin.test.*
-
+// FILE: lib.kt
 inline fun runAndThrow(action: () -> Unit): Nothing {
     action()
     throw Exception()
@@ -9,6 +8,9 @@ inline fun runAndThrow(action: () -> Unit): Nothing {
 inline fun foo(): Int = runAndThrow {
     return 1
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun box(): String {
     val result: Any = foo()

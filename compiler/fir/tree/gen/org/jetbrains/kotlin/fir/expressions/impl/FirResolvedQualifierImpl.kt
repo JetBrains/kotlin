@@ -39,6 +39,7 @@ internal class FirResolvedQualifierImpl(
     override val symbol: FirClassLikeSymbol<*>?,
     override var explicitParent: FirResolvedQualifier?,
     override var isNullableLHSForCallableReference: Boolean,
+    override var resolvedLHSTypeForCallableReferenceOrNull: ConeKotlinType?,
     override var resolvedToCompanionObject: Boolean,
     override var canBeValue: Boolean,
     override val isFullyQualified: Boolean,
@@ -84,6 +85,10 @@ internal class FirResolvedQualifierImpl(
 
     override fun replaceIsNullableLHSForCallableReference(newIsNullableLHSForCallableReference: Boolean) {
         isNullableLHSForCallableReference = newIsNullableLHSForCallableReference
+    }
+
+    override fun replaceResolvedLHSTypeForCallableReferenceOrNull(newResolvedLHSTypeForCallableReferenceOrNull: ConeKotlinType?) {
+        resolvedLHSTypeForCallableReferenceOrNull = newResolvedLHSTypeForCallableReferenceOrNull
     }
 
     override fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean) {

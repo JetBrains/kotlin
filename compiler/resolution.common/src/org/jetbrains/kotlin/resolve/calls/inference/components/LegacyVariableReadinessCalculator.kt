@@ -66,7 +66,7 @@ class LegacyVariableReadinessCalculator(
     ): TypeVariableFixationReadiness {
         return when {
             !c.notFixedTypeVariables.contains(this) || dependencyProvider.isVariableRelatedToTopLevelType(this) ||
-                    hasUnprocessedConstraintsInForks() ->
+                    hasUnprocessedConstraintsInForks() || dependencyProvider.isRelatedToCollectionLiteral(this) ->
                 TypeVariableFixationReadiness.FORBIDDEN
 
             // Pre-2.2: might be fixed, but this condition should come earlier than the next one,

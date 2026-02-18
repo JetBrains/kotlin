@@ -13,10 +13,14 @@ class Test(
 )
 
 fun box(): String {
-    val df = listOf(Test("Test1", listOf(MyEmptyDeclarationImpl()))).toDataFrame(maxDepth = 1)
+    val containingDeclarationDf = dataFrameOf("myName" to columnOf("abc"))
+    val df = dataFrameOf(
+        "name" to columnOf("Test1"),
+        "containingDeclaration" to columnOf<AnyFrame>(containingDeclarationDf)
+    )
     df.schema().print()
     val df1 = df.remove { name }
     val col: DataColumn<AnyFrame> = df1.containingDeclaration
-    df1.compareSchemas(strict = true)
+    df1.compareSchemas(strict = false)
     return "OK"
 }

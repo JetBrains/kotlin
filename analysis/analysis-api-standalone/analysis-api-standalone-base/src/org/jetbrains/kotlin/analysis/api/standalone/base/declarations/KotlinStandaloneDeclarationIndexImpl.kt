@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getImportedSimpleNameByImportAlias
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -160,7 +161,7 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
         is KotlinPropertyStubImpl -> indexProperty(stub.psi)
         is KotlinPlaceHolderStubImpl if (@Suppress("DEPRECATION") stub.stubType == KtStubElementTypes.CLASS_BODY) -> {
             stub.childrenStubs
-                .filterIsInstance<KotlinClassOrObjectStub<*>>()
+                .filter { it is KotlinClassOrObjectStub<*> || it is KotlinTypeAliasStub }
                 .forEach(::indexStubRecursively)
         }
 

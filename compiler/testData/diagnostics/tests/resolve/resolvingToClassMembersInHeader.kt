@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 
 class AList<T>() : List<T> by <!UNRESOLVED_REFERENCE!>inner<!> {
     private val inner = ArrayList<T>()

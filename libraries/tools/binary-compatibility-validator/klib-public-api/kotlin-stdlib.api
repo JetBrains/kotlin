@@ -85,6 +85,10 @@ open annotation class kotlin.js/ExperimentalJsFileName : kotlin/Annotation { // 
     constructor <init>() // kotlin.js/ExperimentalJsFileName.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin.js/ExperimentalJsNoRuntime : kotlin/Annotation { // kotlin.js/ExperimentalJsNoRuntime|null[0]
+    constructor <init>() // kotlin.js/ExperimentalJsNoRuntime.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin.js/ExperimentalJsReflectionCreateInstance : kotlin/Annotation { // kotlin.js/ExperimentalJsReflectionCreateInstance|null[0]
     constructor <init>() // kotlin.js/ExperimentalJsReflectionCreateInstance.<init>|<init>(){}[0]
 }
@@ -818,6 +822,7 @@ abstract interface kotlin.contracts/ContractBuilder { // kotlin.contracts/Contra
     abstract fun (kotlin/Boolean).implies(kotlin.contracts/ReturnsNotNull) // kotlin.contracts/ContractBuilder.implies|implies@kotlin.Boolean(kotlin.contracts.ReturnsNotNull){}[0]
     abstract fun <#A1: kotlin/Any?> (kotlin/Boolean).holdsIn(kotlin/Function<#A1>): kotlin.contracts/HoldsIn // kotlin.contracts/ContractBuilder.holdsIn|holdsIn@kotlin.Boolean(kotlin.Function<0:0>){0§<kotlin.Any?>}[0]
     abstract fun <#A1: kotlin/Any?> callsInPlace(kotlin/Function<#A1>, kotlin.contracts/InvocationKind = ...): kotlin.contracts/CallsInPlace // kotlin.contracts/ContractBuilder.callsInPlace|callsInPlace(kotlin.Function<0:0>;kotlin.contracts.InvocationKind){0§<kotlin.Any?>}[0]
+    abstract fun <#A1: kotlin/Any?> returnsResultOf(kotlin/Function<#A1>) // kotlin.contracts/ContractBuilder.returnsResultOf|returnsResultOf(kotlin.Function<0:0>){0§<kotlin.Any?>}[0]
     abstract fun returns(): kotlin.contracts/Returns // kotlin.contracts/ContractBuilder.returns|returns(){}[0]
     abstract fun returns(kotlin/Any?): kotlin.contracts/Returns // kotlin.contracts/ContractBuilder.returns|returns(kotlin.Any?){}[0]
     abstract fun returnsNotNull(): kotlin.contracts/ReturnsNotNull // kotlin.contracts/ContractBuilder.returnsNotNull|returnsNotNull(){}[0]
@@ -6228,6 +6233,7 @@ final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Iterable<#A>).k
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Iterable<#A>).kotlin.collections/zip(kotlin/Array<out #B>): kotlin.collections/List<kotlin/Pair<#A, #B>> // kotlin.collections/zip|zip@kotlin.collections.Iterable<0:0>(kotlin.Array<out|0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Iterable<kotlin/Pair<#A, #B>>).kotlin.collections/toMap(): kotlin.collections/Map<#A, #B> // kotlin.collections/toMap|toMap@kotlin.collections.Iterable<kotlin.Pair<0:0,0:1>>(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Iterable<kotlin/Pair<#A, #B>>).kotlin.collections/unzip(): kotlin/Pair<kotlin.collections/List<#A>, kotlin.collections/List<#B>> // kotlin.collections/unzip|unzip@kotlin.collections.Iterable<kotlin.Pair<0:0,0:1>>(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map.Entry<#A, #B>).kotlin.collections/copy(): kotlin.collections/Map.Entry<#A, #B> // kotlin.collections/copy|copy@kotlin.collections.Map.Entry<0:0,0:1>(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<#A, #B>).kotlin.collections/getOrImplicitDefault(#A): #B // kotlin.collections/getOrImplicitDefault|getOrImplicitDefault@kotlin.collections.Map<0:0,0:1>(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<#A, #B>).kotlin.collections/getValue(#A): #B // kotlin.collections/getValue|getValue@kotlin.collections.Map<0:0,0:1>(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<#A, #B>).kotlin.collections/withDefault(kotlin/Function1<#A, #B>): kotlin.collections/Map<#A, #B> // kotlin.collections/withDefault|withDefault@kotlin.collections.Map<0:0,0:1>(kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
@@ -8163,6 +8169,8 @@ final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map.Entr
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map.Entry<#A, #B>).kotlin.collections/toPair(): kotlin/Pair<#A, #B> // kotlin.collections/toPair|toPair@kotlin.collections.Map.Entry<0:0,0:1>(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<#A, #B>).kotlin.collections/containsValue(#B): kotlin/Boolean // kotlin.collections/containsValue|containsValue@kotlin.collections.Map<0:0,0:1>(0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<#A, #B>).kotlin.collections/getOrElse(#A, kotlin/Function0<#B>): #B // kotlin.collections/getOrElse|getOrElse@kotlin.collections.Map<0:0,0:1>(0:0;kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<#A, #B>).kotlin.collections/getOrElseIfMissing(#A, kotlin/Function0<#B>): #B // kotlin.collections/getOrElseIfMissing|getOrElseIfMissing@kotlin.collections.Map<0:0,0:1>(0:0;kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<#A, #B>).kotlin.collections/getOrElseIfNull(#A, kotlin/Function0<#B>): #B // kotlin.collections/getOrElseIfNull|getOrElseIfNull@kotlin.collections.Map<0:0,0:1>(0:0;kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<#A, #B>?).kotlin.collections/orEmpty(): kotlin.collections/Map<#A, #B> // kotlin.collections/orEmpty|orEmpty@kotlin.collections.Map<0:0,0:1>?(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<out #A, #B>).kotlin.collections/all(kotlin/Function1<kotlin.collections/Map.Entry<#A, #B>, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/all|all@kotlin.collections.Map<out|0:0,0:1>(kotlin.Function1<kotlin.collections.Map.Entry<0:0,0:1>,kotlin.Boolean>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<out #A, #B>).kotlin.collections/any(kotlin/Function1<kotlin.collections/Map.Entry<#A, #B>, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/any|any@kotlin.collections.Map<out|0:0,0:1>(kotlin.Function1<kotlin.collections.Map.Entry<0:0,0:1>,kotlin.Boolean>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
@@ -8193,6 +8201,8 @@ final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<out 
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<out #A, #B>).kotlin.collections/none(kotlin/Function1<kotlin.collections/Map.Entry<#A, #B>, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/none|none@kotlin.collections.Map<out|0:0,0:1>(kotlin.Function1<kotlin.collections.Map.Entry<0:0,0:1>,kotlin.Boolean>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Map<out #A, #B>?).kotlin.collections/isNullOrEmpty(): kotlin/Boolean // kotlin.collections/isNullOrEmpty|isNullOrEmpty@kotlin.collections.Map<out|0:0,0:1>?(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/MutableMap<#A, #B>).kotlin.collections/getOrPut(#A, kotlin/Function0<#B>): #B // kotlin.collections/getOrPut|getOrPut@kotlin.collections.MutableMap<0:0,0:1>(0:0;kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/MutableMap<#A, #B>).kotlin.collections/getOrPutIfMissing(#A, crossinline kotlin/Function0<#B>): #B // kotlin.collections/getOrPutIfMissing|getOrPutIfMissing@kotlin.collections.MutableMap<0:0,0:1>(0:0;kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/MutableMap<#A, #B>).kotlin.collections/getOrPutIfNull(#A, crossinline kotlin/Function0<#B>): #B // kotlin.collections/getOrPutIfNull|getOrPutIfNull@kotlin.collections.MutableMap<0:0,0:1>(0:0;kotlin.Function0<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/MutableMap<#A, #B>).kotlin.collections/iterator(): kotlin.collections/MutableIterator<kotlin.collections/MutableMap.MutableEntry<#A, #B>> // kotlin.collections/iterator|iterator@kotlin.collections.MutableMap<0:0,0:1>(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/MutableMap<#A, #B>).kotlin.collections/minusAssign(#A) // kotlin.collections/minusAssign|minusAssign@kotlin.collections.MutableMap<0:0,0:1>(0:0){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/MutableMap<#A, #B>).kotlin.collections/minusAssign(kotlin.collections/Iterable<#A>) // kotlin.collections/minusAssign|minusAssign@kotlin.collections.MutableMap<0:0,0:1>(kotlin.collections.Iterable<0:0>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
@@ -9066,6 +9076,11 @@ open annotation class kotlin.js/JsFileName : kotlin/Annotation { // kotlin.js/Js
 
     final val name // kotlin.js/JsFileName.name|{}name[1]
         final fun <get-name>(): kotlin/String // kotlin.js/JsFileName.name.<get-name>|<get-name>(){}[1]
+}
+
+// Targets: [native, wasmJs, wasmWasi]
+open annotation class kotlin.js/JsNoRuntime : kotlin/Annotation { // kotlin.js/JsNoRuntime|null[1]
+    constructor <init>() // kotlin.js/JsNoRuntime.<init>|<init>(){}[1]
 }
 
 // Targets: [native, wasmJs, wasmWasi]
@@ -12796,9 +12811,6 @@ final fun kotlin.native.internal/Kotlin_hashCode(kotlin/Any): kotlin/Int // kotl
 final fun kotlin.native.internal/Kotlin_toString(kotlin/Any): kotlin/String // kotlin.native.internal/Kotlin_toString|Kotlin_toString(kotlin.Any){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal/ThrowNullPointerException(): kotlin/Nothing // kotlin.native.internal/ThrowNullPointerException|ThrowNullPointerException(){}[0]
-
-// Targets: [native]
 final fun kotlin.native.internal/areEqualByValue(kotlin.native.internal/NativePtr, kotlin.native.internal/NativePtr): kotlin/Boolean // kotlin.native.internal/areEqualByValue|areEqualByValue(kotlin.native.internal.NativePtr;kotlin.native.internal.NativePtr){}[0]
 
 // Targets: [native]
@@ -14203,6 +14215,11 @@ open annotation class kotlin.js/JsNoDispatchReceiver : kotlin/Annotation { // ko
 }
 
 // Targets: [js]
+open annotation class kotlin.js/JsNoRuntime : kotlin/Annotation { // kotlin.js/JsNoRuntime|null[0]
+    constructor <init>() // kotlin.js/JsNoRuntime.<init>|<init>(){}[0]
+}
+
+// Targets: [js]
 open annotation class kotlin.js/JsNonModule : kotlin/Annotation { // kotlin.js/JsNonModule|null[0]
     constructor <init>() // kotlin.js/JsNonModule.<init>|<init>(){}[0]
 }
@@ -14292,6 +14309,9 @@ abstract interface kotlin.js/RegExpMatch { // kotlin.js/RegExpMatch|null[0]
     abstract val length // kotlin.js/RegExpMatch.length|{}length[0]
         abstract fun <get-length>(): kotlin/Int // kotlin.js/RegExpMatch.length.<get-length>|<get-length>(){}[0]
 }
+
+// Targets: [js]
+sealed interface <#A: out kotlin/Any> kotlin.js/JsReference // kotlin.js/JsReference|null[0]
 
 // Targets: [js]
 final class kotlin.js/Date { // kotlin.js/Date|null[0]
@@ -15117,7 +15137,10 @@ final inline fun (kotlin/Throwable).kotlin.js/asJsException(): kotlin/Throwable 
 final inline fun /withType(kotlin/String, dynamic): dynamic // /withType|withType(kotlin.String;<dynamic>){}[0]
 
 // Targets: [js]
-final inline fun <#A: kotlin/Any> (#A).kotlin.js/toJsReference(): kotlin/Any // kotlin.js/toJsReference|toJsReference@0:0(){0§<kotlin.Any>}[0]
+final inline fun <#A: kotlin/Any> (#A).kotlin.js/toJsReference(): kotlin.js/JsReference<#A> // kotlin.js/toJsReference|toJsReference@0:0(){0§<kotlin.Any>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any> (kotlin.js/JsReference<#A>).kotlin.js/get(): #A // kotlin.js/get|get@kotlin.js.JsReference<0:0>(){0§<kotlin.Any>}[0]
 
 // Targets: [js]
 final inline fun <#A: kotlin/Any> (kotlin/Any).kotlin.js/get(): #A // kotlin.js/get|get@kotlin.Any(){0§<kotlin.Any>}[0]

@@ -37,7 +37,7 @@ digraph whenSubjectExpression_kt {
                     15 [label="Smart cast: $subj$"];
                     16 [label="Exit $subj"];
                     17 [label="Const: Double(0.0)"];
-                    18 [label="Equality operator =="];
+                    18 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     19 [label="Exit when branch condition"];
                 }
                 subgraph cluster_6 {
@@ -153,7 +153,7 @@ digraph whenSubjectExpression_kt {
                     58 [label="Smart cast: $subj$"];
                     59 [label="Exit $subj"];
                     60 [label="Const: Double(0.0)"];
-                    61 [label="Equality operator =="];
+                    61 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     62 [label="Exit when branch condition"];
                 }
                 subgraph cluster_16 {

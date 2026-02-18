@@ -22,6 +22,7 @@ KtNameReferenceExpression(44,60): 'AnnotationTarget'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -35,6 +36,7 @@ KtNameReferenceExpression(61,69): 'PROPERTY'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -48,6 +50,7 @@ KtNameReferenceExpression(75,91): 'AnnotationTarget'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -61,6 +64,7 @@ KtNameReferenceExpression(92,106): 'TYPE_PARAMETER'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -74,6 +78,7 @@ KtNameReferenceExpression(112,128): 'AnnotationTarget'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -87,6 +92,7 @@ KtNameReferenceExpression(129,137): 'FUNCTION'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -100,6 +106,7 @@ KtNameReferenceExpression(143,159): 'AnnotationTarget'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -113,6 +120,7 @@ KtNameReferenceExpression(160,175): 'VALUE_PARAMETER'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -126,6 +134,7 @@ KtNameReferenceExpression(181,197): 'AnnotationTarget'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -139,6 +148,7 @@ KtNameReferenceExpression(198,213): 'PROPERTY_GETTER'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -152,6 +162,7 @@ KtNameReferenceExpression(219,235): 'AnnotationTarget'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -165,6 +176,7 @@ KtNameReferenceExpression(236,251): 'PROPERTY_SETTER'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -178,6 +190,7 @@ KtNameReferenceExpression(257,273): 'AnnotationTarget'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -191,6 +204,7 @@ KtNameReferenceExpression(274,278): 'TYPE'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -212,8 +226,9 @@ KtValueArgument(356,372): '"property $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      position: kotlin.String
 
 KtNameReferenceExpression(367,371): 'prop'
   KtSimpleNameReference:
@@ -225,6 +240,7 @@ KtNameReferenceExpression(367,371): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -239,8 +255,9 @@ KtValueArgument(385,407): '"type parameter $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      position: kotlin.String
 
 KtNameReferenceExpression(402,406): 'prop'
   KtSimpleNameReference:
@@ -252,6 +269,7 @@ KtNameReferenceExpression(402,406): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -266,8 +284,9 @@ KtValueArgument(419,432): '"bound $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      position: kotlin.String
 
 KtNameReferenceExpression(427,431): 'prop'
   KtSimpleNameReference:
@@ -279,6 +298,7 @@ KtNameReferenceExpression(427,431): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -300,8 +320,9 @@ KtValueArgument(445,465): '"nested bound $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      position: kotlin.String
 
 KtNameReferenceExpression(460,464): 'prop'
   KtSimpleNameReference:
@@ -328,8 +349,9 @@ KtValueArgument(491,507): '"receiver $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      position: kotlin.String
 
 KtNameReferenceExpression(502,506): 'prop'
   KtSimpleNameReference:
@@ -341,6 +363,7 @@ KtNameReferenceExpression(502,506): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -355,8 +378,9 @@ KtValueArgument(515,536): '"receiver type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      position: kotlin.String
 
 KtNameReferenceExpression(531,535): 'prop'
   KtSimpleNameReference:
@@ -368,6 +392,7 @@ KtNameReferenceExpression(531,535): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -389,8 +414,9 @@ KtValueArgument(549,577): '"nested receiver type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      position: kotlin.String
 
 KtNameReferenceExpression(572,576): 'prop'
   KtSimpleNameReference:
@@ -417,8 +443,9 @@ KtValueArgument(607,626): '"return type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      position: kotlin.String
 
 KtNameReferenceExpression(621,625): 'prop'
   KtSimpleNameReference:
@@ -430,6 +457,7 @@ KtNameReferenceExpression(621,625): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -451,8 +479,9 @@ KtValueArgument(645,671): '"nested return type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      position: kotlin.String
 
 KtNameReferenceExpression(666,670): 'prop'
   KtSimpleNameReference:
@@ -479,8 +508,9 @@ KtValueArgument(684,717): '"nested nested return type $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      position: kotlin.String
 
 KtNameReferenceExpression(712,716): 'prop'
   KtSimpleNameReference:
@@ -494,7 +524,7 @@ KtNameReferenceExpression(719,722): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(731,735): 'Anno'
   KtSimpleNameReference:
@@ -507,8 +537,9 @@ KtValueArgument(736,750): '"getter $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      position: kotlin.String
 
 KtNameReferenceExpression(745,749): 'prop'
   KtSimpleNameReference:
@@ -520,6 +551,7 @@ KtNameReferenceExpression(745,749): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -534,8 +566,9 @@ KtValueArgument(779,793): '"setter $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      position: kotlin.String
 
 KtNameReferenceExpression(788,792): 'prop'
   KtSimpleNameReference:
@@ -547,6 +580,7 @@ KtNameReferenceExpression(788,792): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -561,8 +595,9 @@ KtValueArgument(809,833): '"setter parameter $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      position: kotlin.String
 
 KtNameReferenceExpression(828,832): 'prop'
   KtSimpleNameReference:
@@ -574,6 +609,7 @@ KtNameReferenceExpression(828,832): 'prop'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -587,5 +623,6 @@ KtNameReferenceExpression(844,848): 'Unit'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

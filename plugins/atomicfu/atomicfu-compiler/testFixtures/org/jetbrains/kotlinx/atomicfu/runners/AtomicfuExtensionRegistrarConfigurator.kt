@@ -8,8 +8,9 @@ package org.jetbrains.kotlinx.atomicfu.runners
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
+import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.TestModule
@@ -45,7 +46,7 @@ class AtomicfuExtensionRegistrarConfigurator(testServices: TestServices) : Envir
     }
 
     override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
-        FirExtensionRegistrarAdapter.registerExtension(AtomicfuFirExtensionRegistrar())
+        FirExtensionRegistrar.registerExtension(AtomicfuFirExtensionRegistrar())
         IrGenerationExtension.registerExtension(AtomicfuLoweringExtension())
     }
 }

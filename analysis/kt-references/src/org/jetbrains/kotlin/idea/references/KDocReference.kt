@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,6 +29,9 @@ abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(ele
              * IDE will use [multiResolve] instead and show all the found results.
              * Otherwise, when some element is returned from [resolve],
              * the IDE considers it to be the primary result and just shows it as-is.
+             *
+             * This logic should only be used if both the K2 mode and the experimental resolution are enabled.
+             * See KT-76607.
              */
             resolvedResults.singleOrNull()
         } else {

@@ -8,6 +8,7 @@
 package kotlin.enums
 
 import kotlin.internal.ReadObjectParameterType
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.internal.throwReadObjectNotSupported
 
 /**
@@ -28,6 +29,9 @@ public sealed interface EnumEntries<E : Enum<E>> : List<E>
 
 /**
  * Returns [EnumEntries] list containing all enum entries for the given enum type [T].
+ *
+ * @see EnumEntries
+ * @sample samples.misc.Enums.enumEntriesSample
  */
 @WasExperimental(ExperimentalStdlibApi::class)
 @SinceKotlin("2.0")
@@ -43,6 +47,7 @@ internal fun <E : Enum<E>> enumEntries(entriesProvider: () -> Array<E>): EnumEnt
 
 @PublishedApi
 @SinceKotlin("1.8")
+@UsedFromCompilerGeneratedCode
 internal fun <E : Enum<E>> enumEntries(entries: Array<E>): EnumEntries<E> = EnumEntriesList(entries)
 
 @SinceKotlin("1.8")

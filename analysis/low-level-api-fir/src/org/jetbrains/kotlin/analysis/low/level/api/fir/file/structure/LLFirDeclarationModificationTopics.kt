@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.KtElement
  * */
 internal object LLFirDeclarationModificationTopics {
     /**
-     * @see ChangeType.InBlock
+     * @see org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationLocality.InBlock
      */
     val IN_BLOCK_MODIFICATION: Topic<LLFirInBlockModificationListener> = Topic(
         /* listenerClass = */ LLFirInBlockModificationListener::class.java,
@@ -27,7 +27,7 @@ internal object LLFirDeclarationModificationTopics {
 
 /**
  * @see LLFirDeclarationModificationTopics.IN_BLOCK_MODIFICATION
- * @see ChangeType.InBlock
+ * @see org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationLocality.InBlock
  */
 @KaImplementationDetail
 interface LLFirInBlockModificationListener {

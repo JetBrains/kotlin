@@ -1,12 +1,11 @@
-// LATEST_LV_DIFFERENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80109
 // RENDER_DIAGNOSTIC_ARGUMENTS
 
 fun main() {
     val x: Int? = 42
 
-    if (<!IMPOSSIBLE_IS_CHECK_WARNING("false")!>x is Byte?<!>) {}
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR("false")!>x is Byte?<!>) {}
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, isExpression, localProperty, nullableType,

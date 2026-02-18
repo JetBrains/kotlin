@@ -8,18 +8,17 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.permissions.forbidAnalysis
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.resolveExtensionFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionFile
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionNavigationTargetsProvider
-import org.jetbrains.kotlin.analysis.api.permissions.forbidAnalysis
-import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.analysisContextModule
-import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProvider
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.isGeneratedByResolveExtensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -254,7 +253,7 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
             .mapNotNullTo(mutableListOf()) { it.kotlinFile.script }
     }
 
-    override fun computePackageNames(): Set<String>? =
+    override fun computePackageNames(): Set<String> =
         buildSet {
             extensionProvider.extensions.forEach { extension ->
                 extension.getContainedPackages().forEach { fqName ->
@@ -292,7 +291,6 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
         }
     }
 
-
     private fun createKtFile(
         factory: KtPsiFactory,
         fileName: String,
@@ -301,12 +299,10 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
     ): KtFile {
         val ktFile = factory.createFile(fileName, fileText)
         val virtualFile = ktFile.virtualFile
-        virtualFile.analysisContextModule = ktModule
-        virtualFile.isGeneratedByResolveExtensions = true
+        virtualFile.resolveExtensionFileModule = ktModule
         virtualFile.navigationTargetsProvider = navigationTargetsProvider
         return ktFile
     }
-
 
     private inline fun <reified D : KtDeclaration> forEachDeclarationOfType(action: (D) -> Unit) {
         for (file in extensionProvider.getAllFiles()) {

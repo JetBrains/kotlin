@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
@@ -37,10 +36,7 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL by error<KtElement>()
         val INAPPLICABLE_THREAD_LOCAL by error<KtElement>()
         val INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL by error<KtElement>()
-        val INVALID_CHARACTERS_NATIVE by deprecationError<PsiElement>(
-            LanguageFeature.ProhibitInvalidCharsInNativeIdentifiers,
-            PositioningStrategy.NAME_IDENTIFIER
-        ) {
+        val INVALID_CHARACTERS_NATIVE_ERROR by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER) {
             parameter<String>("message")
         }
         val REDUNDANT_SWIFT_REFINEMENT by error<KtElement>()

@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenSymbolsSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.hasAnnotationOrInsideAnnotatedClass
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
@@ -19,6 +20,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationBooleanParameter
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.name.StandardClassIds
 
 private val FirBasedSymbol<*>.isExternal
     get() = when (this) {
@@ -47,6 +52,11 @@ fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
     return getContainingClassSymbol()?.isEffectivelyExternal(session) == true
 }
 
+context(context: CheckerContext)
+fun FirCallableSymbol<*>.isEffectivelyExternalOrOverridingExternal(): Boolean =
+    isEffectivelyExternal(context.session) || directOverriddenSymbolsSafe()
+        .any { it.isEffectivelyExternalOrOverridingExternal() }
+
 fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {
     if (hasAnnotationOrInsideAnnotatedClass(WebCommonStandardClassIds.Annotations.JsNative, session) || isEffectivelyExternal(session)) {
         return true
@@ -62,4 +72,12 @@ fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {
 
 fun FirBasedSymbol<*>.isNativeInterface(session: FirSession): Boolean {
     return isNativeObject(session) && (fir as? FirClass)?.isInterface == true
+}
+
+fun FirBasedSymbol<*>.isExplicitlyMarkedAsExported(session: FirSession): Boolean {
+    return when {
+        hasAnnotation(StandardClassIds.Annotations.jsExportIgnore, session) -> false
+        else -> hasAnnotation(StandardClassIds.Annotations.jsExport, session) ||
+                hasAnnotation(StandardClassIds.Annotations.jsExportDefault, session)
+    }
 }

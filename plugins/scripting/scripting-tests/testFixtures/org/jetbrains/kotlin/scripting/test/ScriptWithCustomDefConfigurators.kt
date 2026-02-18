@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.test
 
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -17,13 +18,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
 val testScriptDefinitionClasspath by lazy {
-    System.getProperty("kotlin.script.test.script.definition.classpath")!!.split(File.pathSeparator).map {
-        File(it).also {
-            require(it.exists()) {
-                "The file required for custom test script definition not found: $it"
-            }
-        }
-    }
+    ForTestCompileRuntime.testScriptDefinitionClasspathForTests()
 }
 
 class ScriptWithCustomDefEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {

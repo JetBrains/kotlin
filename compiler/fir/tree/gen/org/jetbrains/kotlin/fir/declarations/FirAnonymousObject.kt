@@ -67,6 +67,8 @@ abstract class FirAnonymousObject : FirClass() {
 
     abstract override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
+    abstract override fun replaceDeclarations(newDeclarations: List<FirDeclaration>)
+
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousObject

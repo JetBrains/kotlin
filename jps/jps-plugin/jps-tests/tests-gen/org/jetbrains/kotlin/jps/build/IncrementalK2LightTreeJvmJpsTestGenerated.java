@@ -963,11 +963,6 @@ public class IncrementalK2LightTreeJvmJpsTestGenerated extends AbstractIncrement
       runTest("jps/jps-plugin/testData/incremental/inlineFunCallSite/function/");
     }
 
-    @TestMetadata("functionIndirect")
-    public void testFunctionIndirect() {
-      runTest("jps/jps-plugin/testData/incremental/inlineFunCallSite/functionIndirect/");
-    }
-
     @TestMetadata("getter")
     public void testGetter() {
       runTest("jps/jps-plugin/testData/incremental/inlineFunCallSite/getter/");
@@ -1072,19 +1067,6 @@ public class IncrementalK2LightTreeJvmJpsTestGenerated extends AbstractIncrement
 
       public void testAllFilesPresentInFunction() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/inlineFunCallSite/function"), Pattern.compile("^([^.]+)$"), null, true);
-      }
-    }
-
-    @TestMetadata("jps/jps-plugin/testData/incremental/inlineFunCallSite/functionIndirect")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class FunctionIndirect extends AbstractIncrementalK2LightTreeJvmJpsTest {
-      private void runTest(String testDataFilePath) {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-      }
-
-      public void testAllFilesPresentInFunctionIndirect() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/inlineFunCallSite/functionIndirect"), Pattern.compile("^([^.]+)$"), null, true);
       }
     }
 

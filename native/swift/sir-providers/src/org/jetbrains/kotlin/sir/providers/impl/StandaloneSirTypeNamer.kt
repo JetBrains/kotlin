@@ -62,7 +62,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
     private fun kotlinFqName(type: SirType): String = when (type) {
         is SirNominalType -> kotlinFqName(type)
         is SirExistentialType -> kotlinFqName(type)
-        is SirFunctionalType -> "Function${type.parameterTypes.count()}<${(type.parameterTypes + type.returnType).joinToString { kotlinFqName(it) }}>"
+        is SirFunctionalType -> "${"kotlin.coroutines.Suspend".takeIf { type.isAsync } ?: ""}Function${type.parameterTypes.count()}<${(type.parameterTypes + type.returnType).joinToString { kotlinFqName(it) }}>"
         is SirErrorType, is SirUnsupportedType ->
             error("Type $type can not be named")
     }
@@ -86,6 +86,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
             KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
             KotlinRuntimeSupportModule.kotlinBridgeable -> "kotlin.Any"
             KotlinCoroutineSupportModule.swiftJob -> "SwiftJob"
+            KotlinCoroutineSupportModule.kotlinTypedFlowStruct -> "kotlinx.coroutines.flow.Flow<${type.typeArguments.firstOrNull()?.let { kotlinParametrizedName(it) } ?: "kotlin.Any?"}>"
             SirSwiftModule.anyHashable -> "kotlin.Any"
             SirSwiftModule.string -> "kotlin.String"
 
@@ -125,7 +126,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         val typesRendered = typeParameters.map { it.upperBounds.firstOrNull() }
             .map {
                 when (it?.symbol?.classId?.asFqNameString()) {
-                    fqname -> classId?.asFqNameString() + "<${typeParameters.joinToString { "*" }}>"
+                    fqname -> "*"
                     else -> it?.symbol?.parametrisedTypeName()
                 }
             }

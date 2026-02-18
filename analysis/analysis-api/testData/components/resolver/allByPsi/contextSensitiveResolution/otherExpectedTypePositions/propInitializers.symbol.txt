@@ -1,0 +1,338 @@
+KtFile: 'propInitializers.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,268): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(96,268): '{'
+  null
+
+KtEnumEntry(102,110): 'Option1,'
+  null
+
+KtEnumEntry(111,119): 'Option2,'
+  null
+
+KtEnumEntry(120,128): 'Option3;'
+  null
+
+KtObjectDeclaration(133,266): 'companion object {'
+  null
+
+KtDeclarationModifierList(133,142): 'companion'
+  null
+
+KtClassBody(150,266): '{'
+  null
+
+KtProperty(160,190): 'val enumProp: MyEnum = Option1'
+  null
+
+KtTypeReference(174,180): 'MyEnum'
+  null
+
+KtUserType(174,180): 'MyEnum'
+  null
+
+KtNameReferenceExpression(174,180): 'MyEnum'
+  null
+
+KtNameReferenceExpression(183,190): 'Option1'
+  null
+
+KtProperty(199,226): 'val stringProp: String = ""'
+  null
+
+KtTypeReference(215,221): 'String'
+  null
+
+KtUserType(215,221): 'String'
+  null
+
+KtNameReferenceExpression(215,221): 'String'
+  null
+
+KtStringTemplateExpression(224,226): '""'
+  null
+
+KtNamedFunction(235,260): 'fun getOption() = Option1'
+  null
+
+KtParameterList(248,250): '()'
+  null
+
+KtNameReferenceExpression(253,260): 'Option1'
+  null
+
+KtProperty(270,306): 'val EnumOptionAlias = MyEnum.Option1'
+  null
+
+KtDotQualifiedExpression(292,306): 'MyEnum.Option1'
+  null
+
+KtNameReferenceExpression(292,298): 'MyEnum'
+  null
+
+KtNameReferenceExpression(299,306): 'Option1'
+  null
+
+KtProperty(308,340): 'val OptionAlias = MyEnum.Option2'
+  null
+
+KtDotQualifiedExpression(326,340): 'MyEnum.Option2'
+  null
+
+KtNameReferenceExpression(326,332): 'MyEnum'
+  null
+
+KtNameReferenceExpression(333,340): 'Option2'
+  null
+
+KtProperty(342,375): 'val tlEnumProp1: MyEnum = Option1'
+  null
+
+KtTypeReference(359,365): 'MyEnum'
+  null
+
+KtUserType(359,365): 'MyEnum'
+  null
+
+KtNameReferenceExpression(359,365): 'MyEnum'
+  null
+
+KtNameReferenceExpression(368,375): 'Option1'
+  null
+
+KtProperty(376,413): 'val tlEnumProp2: MyEnum = OptionAlias'
+  null
+
+KtTypeReference(393,399): 'MyEnum'
+  null
+
+KtUserType(393,399): 'MyEnum'
+  null
+
+KtNameReferenceExpression(393,399): 'MyEnum'
+  null
+
+KtNameReferenceExpression(402,413): 'OptionAlias'
+  null
+
+KtProperty(414,448): 'val tlEnumProp3: MyEnum = enumProp'
+  null
+
+KtTypeReference(431,437): 'MyEnum'
+  null
+
+KtUserType(431,437): 'MyEnum'
+  null
+
+KtNameReferenceExpression(431,437): 'MyEnum'
+  null
+
+KtNameReferenceExpression(440,448): 'enumProp'
+  null
+
+KtProperty(449,487): 'val topLevelProp4: MyEnum = stringProp'
+  null
+
+KtTypeReference(468,474): 'MyEnum'
+  null
+
+KtUserType(468,474): 'MyEnum'
+  null
+
+KtNameReferenceExpression(468,474): 'MyEnum'
+  null
+
+KtNameReferenceExpression(477,487): 'stringProp'
+  null
+
+KtNamedFunction(489,598): 'fun testReassignment() {'
+  null
+
+KtParameterList(509,511): '()'
+  null
+
+KtBlockExpression(512,598): '{'
+  null
+
+KtProperty(518,541): 'var m: MyEnum = Option1'
+  null
+
+KtTypeReference(525,531): 'MyEnum'
+  null
+
+KtUserType(525,531): 'MyEnum'
+  null
+
+KtNameReferenceExpression(525,531): 'MyEnum'
+  null
+
+KtNameReferenceExpression(534,541): 'Option1'
+  null
+
+KtBinaryExpression(546,557): 'm = Option1'
+  null
+
+KtNameReferenceExpression(546,547): 'm'
+  null
+
+KtOperationReferenceExpression(548,549): '='
+  null
+
+KtNameReferenceExpression(550,557): 'Option1'
+  null
+
+KtBinaryExpression(562,577): 'm = OptionAlias'
+  null
+
+KtNameReferenceExpression(562,563): 'm'
+  null
+
+KtOperationReferenceExpression(564,565): '='
+  null
+
+KtNameReferenceExpression(566,577): 'OptionAlias'
+  null
+
+KtBinaryExpression(582,596): 'm = stringProp'
+  null
+
+KtNameReferenceExpression(582,583): 'm'
+  null
+
+KtOperationReferenceExpression(584,585): '='
+  null
+
+KtNameReferenceExpression(586,596): 'stringProp'
+  null
+
+KtNamedFunction(600,679): 'fun testCorrectDefaultParam(arg1: MyEnum = Option1, arg2: MyEnum = enumProp) {}'
+  null
+
+KtParameterList(627,676): '(arg1: MyEnum = Option1, arg2: MyEnum = enumProp)'
+  null
+
+KtParameter(628,650): 'arg1: MyEnum = Option1'
+  null
+
+KtTypeReference(634,640): 'MyEnum'
+  null
+
+KtUserType(634,640): 'MyEnum'
+  null
+
+KtNameReferenceExpression(634,640): 'MyEnum'
+  null
+
+KtNameReferenceExpression(643,650): 'Option1'
+  null
+
+KtParameter(652,675): 'arg2: MyEnum = enumProp'
+  null
+
+KtTypeReference(658,664): 'MyEnum'
+  null
+
+KtUserType(658,664): 'MyEnum'
+  null
+
+KtNameReferenceExpression(658,664): 'MyEnum'
+  null
+
+KtNameReferenceExpression(667,675): 'enumProp'
+  null
+
+KtBlockExpression(677,679): '{}'
+  null
+
+KtNamedFunction(680,734): 'fun testWrongDefaultParam(arg: MyEnum = stringProp) {}'
+  null
+
+KtParameterList(705,731): '(arg: MyEnum = stringProp)'
+  null
+
+KtParameter(706,730): 'arg: MyEnum = stringProp'
+  null
+
+KtTypeReference(711,717): 'MyEnum'
+  null
+
+KtUserType(711,717): 'MyEnum'
+  null
+
+KtNameReferenceExpression(711,717): 'MyEnum'
+  null
+
+KtNameReferenceExpression(720,730): 'stringProp'
+  null
+
+KtBlockExpression(732,734): '{}'
+  null
+
+KtClass(736,851): 'class PropOwner(val prop: MyEnum = Option2) {'
+  null
+
+KtPrimaryConstructor(751,779): '(val prop: MyEnum = Option2)'
+  null
+
+KtParameterList(751,779): '(val prop: MyEnum = Option2)'
+  null
+
+KtParameter(752,778): 'val prop: MyEnum = Option2'
+  null
+
+KtTypeReference(762,768): 'MyEnum'
+  null
+
+KtUserType(762,768): 'MyEnum'
+  null
+
+KtNameReferenceExpression(762,768): 'MyEnum'
+  null
+
+KtNameReferenceExpression(771,778): 'Option2'
+  null
+
+KtClassBody(780,851): '{'
+  null
+
+KtProperty(786,814): 'val prop2: MyEnum = enumProp'
+  null
+
+KtTypeReference(797,803): 'MyEnum'
+  null
+
+KtUserType(797,803): 'MyEnum'
+  null
+
+KtNameReferenceExpression(797,803): 'MyEnum'
+  null
+
+KtNameReferenceExpression(806,814): 'enumProp'
+  null
+
+KtProperty(819,849): 'val prop3: MyEnum = stringProp'
+  null
+
+KtTypeReference(830,836): 'MyEnum'
+  null
+
+KtUserType(830,836): 'MyEnum'
+  null
+
+KtNameReferenceExpression(830,836): 'MyEnum'
+  null
+
+KtNameReferenceExpression(839,849): 'stringProp'
+  null

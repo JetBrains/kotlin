@@ -47,7 +47,7 @@ digraph incorrectSmartcastToNothing_kt {
                     13 [label="Enter when branch condition "];
                     14 [label="Access variable R|<local>/cacheExtSetting|"];
                     15 [label="Const: Null(null)"];
-                    16 [label="Equality operator =="];
+                    16 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     17 [label="Exit when branch condition"];
                 }
                 subgraph cluster_7 {

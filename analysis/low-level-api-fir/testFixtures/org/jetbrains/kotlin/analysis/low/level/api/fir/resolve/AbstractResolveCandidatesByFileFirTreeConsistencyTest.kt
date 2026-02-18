@@ -29,10 +29,28 @@ abstract class AbstractResolveCandidatesByFileFirTreeConsistencyTest : AbstractR
     }
 }
 
+/**
+ * A workaround to mark the test as a non-golden one.
+ *
+ * It is fine to just add a synthetic prefix since [AbstractResolveCandidatesByFileFirTreeConsistencyTest] is not supposed to generate any outputs
+ */
+private fun List<String>.patched(): List<String> {
+    val original = this
+    return original + listOfNotNull(original.lastOrNull()?.let { "$it.consistency" })
+}
+
 abstract class AbstractSourceResolveCandidatesByFileFirTreeConsistencyTest : AbstractResolveCandidatesByFileFirTreeConsistencyTest() {
-    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+    override val configurator: AnalysisApiTestConfigurator =
+        object : AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false) {
+            override val testPrefixes: List<String>
+                get() = super.testPrefixes.patched()
+        }
 }
 
 abstract class AbstractScriptResolveCandidatesByFileFirTreeConsistencyTest : AbstractResolveCandidatesByFileFirTreeConsistencyTest() {
-    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
+    override val configurator: AnalysisApiTestConfigurator =
+        object : AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false) {
+            override val testPrefixes: List<String>
+                get() = super.testPrefixes.patched()
+        }
 }

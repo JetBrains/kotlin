@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.buildtools.api.jvm
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
@@ -19,6 +21,7 @@ import java.io.File
  * This interface is not intended to be implemented by the API consumers.
  */
 @ExperimentalBuildToolsApi
+@Deprecated("Use the new BTA API with entry points in KotlinToolchain instead", level = DeprecationLevel.ERROR)
 public interface JvmCompilationConfiguration {
     /**
      * A logger used during the compilation.
@@ -76,6 +79,7 @@ public interface JvmCompilationConfiguration {
  *
  * This interface is not intended to be implemented by the API consumers.
  */
+@Deprecated("Use the new BTA API with entry points in KotlinToolchain instead", level = DeprecationLevel.ERROR)
 @ExperimentalBuildToolsApi
 public interface IncrementalJvmCompilationConfiguration<P : IncrementalCompilationApproachParameters> {
 
@@ -185,6 +189,7 @@ public interface IncrementalJvmCompilationConfiguration<P : IncrementalCompilati
  *
  * This interface is not intended to be implemented by the API consumers.
  */
+@Deprecated("Use the new BTA API with entry points in KotlinToolchain instead", level = DeprecationLevel.ERROR)
 @ExperimentalBuildToolsApi
 public interface ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration :
     IncrementalJvmCompilationConfiguration<ClasspathSnapshotBasedIncrementalCompilationApproachParameters> {
@@ -231,12 +236,14 @@ public interface ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration :
  * Mandatory parameters for an incremental compilation approach
  */
 @ExperimentalBuildToolsApi
+@Deprecated("Use the new BTA API with entry points in KotlinToolchain instead", level = DeprecationLevel.ERROR)
 public sealed interface IncrementalCompilationApproachParameters
 
 /**
  * Mandatory parameters of the classpath snapshots based incremental compilation approach
  */
 @ExperimentalBuildToolsApi
+@Deprecated("Use the new BTA API with entry points in KotlinToolchain instead", level = DeprecationLevel.ERROR)
 public class ClasspathSnapshotBasedIncrementalCompilationApproachParameters(
     /**
      * The classpath snapshots files actual at the moment of compilation

@@ -1,7 +1,6 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 val sb = StringBuilder()
 
 @Suppress("NOTHING_TO_INLINE")
@@ -10,6 +9,9 @@ inline fun foo(body: () -> Unit) {
     body()
     sb.appendLine("hello4")
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun bar() {
     foo {

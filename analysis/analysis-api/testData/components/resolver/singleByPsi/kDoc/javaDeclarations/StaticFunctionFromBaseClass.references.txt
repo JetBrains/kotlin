@@ -2,5 +2,6 @@ KDocName(94,103): 'staticFun'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in dependency.JavaBase) open fun staticFun()

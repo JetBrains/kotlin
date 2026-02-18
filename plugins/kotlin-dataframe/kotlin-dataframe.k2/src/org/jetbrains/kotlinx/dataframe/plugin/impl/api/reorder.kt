@@ -31,6 +31,8 @@ class ByName : AbstractSchemaModificationInterpreter() {
     val Arguments.desc: Boolean by arg(defaultValue = Present(false))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return receiver.df.asDataFrame().reorder { receiver.selector }.byName(desc).toPluginDataFrameSchema()
+        return receiver.df.asDataFrame(impliedColumnsResolver = receiver.selector)
+            .reorder { receiver.selector }.byName(desc)
+            .toPluginDataFrameSchema()
     }
 }

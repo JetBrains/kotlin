@@ -6,6 +6,7 @@
 // but the behavior would probably not match the JVM backend even if
 // the test passed. Compare with kt46389_jvmDefault.
 
+// FILE: lib.kt
 interface I {
     fun h(x: String = "O"): Any
 }
@@ -18,6 +19,7 @@ open class A {
 
 class B : A(), I2
 
+// FILE: main.kt
 fun box(): String {
     return "${(B() as I).h()}${B().h()}"
 }

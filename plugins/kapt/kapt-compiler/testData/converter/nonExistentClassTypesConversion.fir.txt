@@ -97,6 +97,7 @@ import kotlin.reflect.KClass;
 
 @Anno(a = Blah.class, b = {NoFoo1.class, NoBar1.class}, c = {NoFoo2.class, java.lang.String.class}, d = {boolean.class, NoBar3.class})
 /**
+ * @Anno(b = [], c = [kotlin/String::class], d = [kotlin/Boolean::class])
  * public final class Test<T#0 (* G *)> : kotlin/Any {
  *
  *   // signature: <init>()V

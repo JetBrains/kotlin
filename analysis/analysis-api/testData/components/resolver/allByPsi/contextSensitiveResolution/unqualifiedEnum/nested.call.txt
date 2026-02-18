@@ -88,19 +88,18 @@ KtWhenExpression(186,307): 'when (o) {'
 KtNameReferenceExpression(192,193): 'o'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = o
-          receiverType = null
-          returnType = Outer
-          symbol = o: Outer
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = o
+        receiverType = null
+        returnType = Outer
+        symbol = o: Outer
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(205,215): 'FIRST -> 1'
@@ -112,22 +111,21 @@ KtWhenConditionWithExpression(205,210): 'FIRST'
 KtNameReferenceExpression(205,210): 'FIRST'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = FIRST
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = FIRST
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = FIRST
-          receiverType = null
-          returnType = Outer
-          symbol = /Outer.FIRST
-          contextParameters = []
-          callableId = /Outer.FIRST
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = FIRST
+        receiverType = null
+        returnType = Outer
+        symbol = /Outer.FIRST
+        contextParameters = []
+        callableId = /Outer.FIRST
       typeArgumentsMapping = {}
 
 KtConstantExpression(214,215): '1'
@@ -142,22 +140,21 @@ KtWhenConditionWithExpression(224,230): 'SECOND'
 KtNameReferenceExpression(224,230): 'SECOND'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = SECOND
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = SECOND
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = SECOND
-          receiverType = null
-          returnType = Outer
-          symbol = /Outer.SECOND
-          contextParameters = []
-          callableId = /Outer.SECOND
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = SECOND
+        receiverType = null
+        returnType = Outer
+        symbol = /Outer.SECOND
+        contextParameters = []
+        callableId = /Outer.SECOND
       typeArgumentsMapping = {}
 
 KtWhenExpression(234,301): 'when (i) {'
@@ -166,19 +163,18 @@ KtWhenExpression(234,301): 'when (i) {'
 KtNameReferenceExpression(240,241): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = Inner
-          symbol = i: Inner
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = Inner
+        symbol = i: Inner
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(257,268): 'SECOND -> 2'
@@ -190,22 +186,21 @@ KtWhenConditionWithExpression(257,263): 'SECOND'
 KtNameReferenceExpression(257,263): 'SECOND'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = SECOND
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = SECOND
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = SECOND
-          receiverType = null
-          returnType = Inner
-          symbol = /Inner.SECOND
-          contextParameters = []
-          callableId = /Inner.SECOND
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = SECOND
+        receiverType = null
+        returnType = Inner
+        symbol = /Inner.SECOND
+        contextParameters = []
+        callableId = /Inner.SECOND
       typeArgumentsMapping = {}
 
 KtConstantExpression(267,268): '2'
@@ -220,22 +215,21 @@ KtWhenConditionWithExpression(281,286): 'THIRD'
 KtNameReferenceExpression(281,286): 'THIRD'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = THIRD
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = THIRD
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = THIRD
-          receiverType = null
-          returnType = Inner
-          symbol = /Inner.THIRD
-          contextParameters = []
-          callableId = /Inner.THIRD
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = THIRD
+        receiverType = null
+        returnType = Inner
+        symbol = /Inner.THIRD
+        contextParameters = []
+        callableId = /Inner.THIRD
       typeArgumentsMapping = {}
 
 KtConstantExpression(290,291): '3'
@@ -292,19 +286,18 @@ KtWhenExpression(357,598): 'when (o) {'
 KtNameReferenceExpression(363,364): 'o'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = o
-          receiverType = null
-          returnType = Outer
-          symbol = o: Outer
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = o
+        receiverType = null
+        returnType = Outer
+        symbol = o: Outer
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(376,386): 'FIRST -> 1'
@@ -316,22 +309,21 @@ KtWhenConditionWithExpression(376,381): 'FIRST'
 KtNameReferenceExpression(376,381): 'FIRST'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = FIRST
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = FIRST
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = FIRST
-          receiverType = null
-          returnType = Outer
-          symbol = /Outer.FIRST
-          contextParameters = []
-          callableId = /Outer.FIRST
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = FIRST
+        receiverType = null
+        returnType = Outer
+        symbol = /Outer.FIRST
+        contextParameters = []
+        callableId = /Outer.FIRST
       typeArgumentsMapping = {}
 
 KtConstantExpression(385,386): '1'
@@ -346,22 +338,21 @@ KtWhenConditionWithExpression(395,401): 'SECOND'
 KtNameReferenceExpression(395,401): 'SECOND'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = SECOND
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = SECOND
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = SECOND
-          receiverType = null
-          returnType = Outer
-          symbol = /Outer.SECOND
-          contextParameters = []
-          callableId = /Outer.SECOND
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = SECOND
+        receiverType = null
+        returnType = Outer
+        symbol = /Outer.SECOND
+        contextParameters = []
+        callableId = /Outer.SECOND
       typeArgumentsMapping = {}
 
 KtBlockExpression(405,592): '{'
@@ -394,19 +385,18 @@ KtWhenExpression(459,550): 'when (i) {'
 KtNameReferenceExpression(465,466): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = Inner
-          symbol = i: Inner
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = Inner
+        symbol = i: Inner
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(490,501): 'SECOND -> 2'
@@ -418,22 +408,21 @@ KtWhenConditionWithExpression(490,496): 'SECOND'
 KtNameReferenceExpression(490,496): 'SECOND'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = SECOND
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = SECOND
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = SECOND
-          receiverType = null
-          returnType = Inner
-          symbol = /Inner.SECOND
-          contextParameters = []
-          callableId = /Inner.SECOND
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = SECOND
+        receiverType = null
+        returnType = Inner
+        symbol = /Inner.SECOND
+        contextParameters = []
+        callableId = /Inner.SECOND
       typeArgumentsMapping = {}
 
 KtConstantExpression(500,501): '2'
@@ -448,62 +437,59 @@ KtWhenConditionWithExpression(522,527): 'THIRD'
 KtNameReferenceExpression(522,527): 'THIRD'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = THIRD
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = THIRD
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = THIRD
-          receiverType = null
-          returnType = Inner
-          symbol = /Inner.THIRD
-          contextParameters = []
-          callableId = /Inner.THIRD
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = THIRD
+        receiverType = null
+        returnType = Inner
+        symbol = /Inner.THIRD
+        contextParameters = []
+        callableId = /Inner.THIRD
       typeArgumentsMapping = {}
 
 KtConstantExpression(531,532): '3'
   null
 
 KtCallExpression(577,582): 'baz()'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = baz(): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = baz(): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtNameReferenceExpression(577,580): 'baz'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = baz(): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = baz(): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(580,582): '()'
   null

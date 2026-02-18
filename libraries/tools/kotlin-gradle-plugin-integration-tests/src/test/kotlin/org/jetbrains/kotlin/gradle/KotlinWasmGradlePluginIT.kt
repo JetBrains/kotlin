@@ -35,7 +35,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+        get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("Check wasi target")
     @GradleTest
@@ -178,6 +178,68 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertTrue {
                     Files.size(original) > Files.size(optimized)
                 }
+            }
+
+            build(":wasmJsD8ProductionRun") {
+                assertTasksUpToDate(":compileProductionExecutableKotlinWasmJs")
+                assertTasksUpToDate(":compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":wasmJsD8ProductionRun")
+            }
+
+            projectPath.resolve("src/wasmJsMain/kotlin/foo.kt").modify {
+                it.replace(
+                    "println(foo())",
+                    """println("Hello from Wasi")"""
+                )
+            }
+
+            build(":wasmJsD8ProductionRun") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
+                assertTasksExecuted(":wasmJsD8ProductionRun")
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("Check js target with binaryen per-module closed world")
+    @GradleTest
+    fun jsTargetWithBinaryenPerModuleClosedWorld(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            buildGradleKts.modify {
+                it.replace("<JsEngine>", "d8")
+            }
+
+            buildScriptInjection {
+                kotlinMultiplatform.wasmJs {
+                    binaries.executable().forEach {
+                        it.linkTask.configure {
+                            compilerOptions.freeCompilerArgs.add("-Xwasm-generate-closed-world-multimodule")
+                        }
+                    }
+                }
+            }
+
+            build("assemble") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
+
+                val original =
+                    projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/kotlin")
+                val optimized =
+                    projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/optimized")
+
+                original.listDirectoryEntries("*.wasm")
+                    .also {
+                        assertTrue {
+                            it.size > 1
+                        }
+                    }
+                    .forEach {
+                        assertTrue {
+                            Files.size(it) > Files.size(optimized.resolve(it.name))
+                        }
+                    }
             }
 
             build(":wasmJsD8ProductionRun") {
@@ -805,6 +867,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             gradleVersion,
             dependencyManagement = dependencyManagement
         ) {
+            @Suppress("UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS")
             buildScriptInjection {
                 project.plugins.withType(WasmNodeJsPlugin::class.java) {
                     project.extensions.getByType(WasmNodeJsEnvSpec::class.java).download.set(false)

@@ -6,6 +6,6 @@
 kotlin {
     @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
     abiValidation {
-        legacyDump.referenceDumpDir = layout.projectDirectory.dir("../api")
+        referenceDumpDir = layout.projectDirectory.dir("../api")
     }
 }

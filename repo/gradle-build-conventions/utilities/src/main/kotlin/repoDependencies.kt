@@ -10,12 +10,14 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.file.FileCollection
 import org.gradle.internal.jvm.Jvm
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import java.io.File
+import java.net.URI
 
 private val Project.isEAPIntellij get() = rootProject.extra["versions.intellijSdk"].toString().contains("-EAP-")
 private val Project.isNightlyIntellij get() = rootProject.extra["versions.intellijSdk"].toString().endsWith("SNAPSHOT") && !isEAPIntellij
@@ -246,4 +248,56 @@ val compilerManifestClassPath
 
 object EmbeddedComponents {
     const val CONFIGURATION_NAME = "embedded"
+}
+
+fun RepositoryHandler.githubTag(ghUser: String, repo: String, revisionPrefix: String = "v", groupAlias: String? = null) {
+    exclusiveContent {
+        forRepository {
+            ivy {
+                name = "Github Tag: $ghUser/$repo"
+                url = URI("https://github.com/$ghUser/$repo/archive/refs/tags/")
+                patternLayout {
+                    artifact("$revisionPrefix[revision].[ext]")
+                }
+                metadataSources { artifact() }
+            }
+        }
+        filter {
+            includeModule(groupAlias ?: ghUser, repo)
+        }
+    }
+}
+fun RepositoryHandler.githubRelease(ghUser: String, repo: String, revisionPrefix: String = "v", groupAlias: String? = null) {
+    exclusiveContent {
+        forRepository {
+            ivy {
+                name = "Github Release: $ghUser/$repo"
+                url = URI("https://github.com/$ghUser/$repo/releases/download/")
+                patternLayout {
+                    artifact("$revisionPrefix[revision]/[artifact](-$revisionPrefix[revision])(-[classifier]).[ext]")
+                }
+                metadataSources { artifact() }
+            }
+        }
+        filter {
+            includeModule(groupAlias ?: ghUser, repo)
+        }
+    }
+}
+fun RepositoryHandler.githubCommit(ghUser: String, repo: String, groupAlias: String? = null) {
+    exclusiveContent {
+        forRepository {
+            ivy {
+                name = "Github Commit: $ghUser/$repo"
+                url = URI("https://github.com/$ghUser/$repo/zipball/")
+                patternLayout {
+                    artifact("[revision]")
+                }
+                metadataSources { artifact() }
+            }
+        }
+        filter {
+            includeModule(groupAlias ?: ghUser, repo)
+        }
+    }
 }

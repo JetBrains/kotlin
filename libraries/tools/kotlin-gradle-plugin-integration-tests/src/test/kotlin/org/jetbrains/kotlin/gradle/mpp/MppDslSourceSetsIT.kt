@@ -45,7 +45,7 @@ class MppDslSourceSetsIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             localRepoDir = defaultLocalRepo(gradleVersion),
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             if (!isWithJavaSupported) buildGradleKts.replaceText("withJava()", "")
             build("publish") {

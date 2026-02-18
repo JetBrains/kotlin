@@ -11,6 +11,8 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
+    isNotDefault: false
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -44,6 +46,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
@@ -93,9 +96,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: one.LibKt
   getContainingModule: KaLibraryModule "Library lib"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getTopLevelPropertyWithAnnotations
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: one.topLevelPropertyWithAnnotations

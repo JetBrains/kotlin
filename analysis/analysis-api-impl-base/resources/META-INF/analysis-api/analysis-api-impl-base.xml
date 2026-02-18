@@ -16,6 +16,23 @@
         area="IDEA_PROJECT"
         dynamic="true"
     />
+
+    <!--suppress DeprecatedClassUsageInspection -->
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.analysis.additionalKDocResolutionProvider"
+        interface="org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider"
+        dynamic="true"
+    />
+
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.kaAdditionalKDocResolutionProvider"
+        interface="org.jetbrains.kotlin.analysis.api.symbols.KaAdditionalKDocResolutionProvider"
+        dynamic="true"
+    />
+
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.irGenerationExtension"
+                    interface="org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension"
+                    area="IDEA_PROJECT" dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -125,7 +142,5 @@
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
     <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaResolveExtensionToContentScopeRefinerBridge"/>
     <kotlinGlobalSearchScopeMergeStrategy implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinResolveExtensionGeneratedFileScopeMergeStrategy"/>
-
-    <psiReferenceProvider implementation="org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference$Provider"/>
   </extensions>
 </idea-plugin>

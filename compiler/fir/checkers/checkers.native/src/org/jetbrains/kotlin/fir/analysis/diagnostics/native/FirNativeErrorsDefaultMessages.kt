@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_THROWS_INHERITED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_CHARACTERS_NATIVE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_CHARACTERS_NATIVE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_HIDES_TARGETS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_NAME_CHARS
@@ -72,7 +72,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "'@ThreadLocal' is applicable only to property with backing field, to property with delegation, or to objects."
         )
         map.put(INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL, "'@ThreadLocal' is applicable only to top-level declarations.")
-        map.put(INVALID_CHARACTERS_NATIVE, "Name {0}.", TO_STRING)
+        map.put(INVALID_CHARACTERS_NATIVE_ERROR, "Name {0}.", TO_STRING)
         map.put(REDUNDANT_SWIFT_REFINEMENT, "ObjC refined declarations cannot be refined in Swift.")
         map.put(
             INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE,

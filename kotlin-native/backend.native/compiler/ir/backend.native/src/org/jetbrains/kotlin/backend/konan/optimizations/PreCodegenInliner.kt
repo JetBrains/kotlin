@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.isArray
+import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnbox
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
-import org.jetbrains.kotlin.backend.konan.lower.NativePreCodegenFunctionInlining
+import org.jetbrains.kotlin.backend.konan.lower.PreCodegenFunctionInlining
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.lower.liveVariablesAtSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
@@ -132,7 +133,8 @@ internal class PreCodegenInliner(
                         val calleeSize = callee.body.allScopes.sumOf { it.nodes.size }
                         val shouldInline = !isALoop // As FunctionInlining doesn't work with recursive functions.
                                 && calleeSize <= inlineThreshold
-                                && (calleeIrFunction.origin != DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
+                                && calleeIrFunction.symbol != context.symbols.entryPoint // Might be unexpected to not see [main] in stacktraces.
+                                && !calleeIrFunction.isBoxOrUnbox()
                                 && calleeIrFunction.konanLibrary?.isCInteropLibrary() != true
                                 && !calleeIrFunction.hasAnnotation(noInline)
                                 && calleeIrFunction.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) != true
@@ -147,8 +149,7 @@ internal class PreCodegenInliner(
                     }
 
                     if (functionsToInline.isNotEmpty()) {
-                        val inliner = NativePreCodegenFunctionInlining(context, functionsToInline)
-                        inliner.lower(irBody, irFunction)
+                        PreCodegenFunctionInlining(context, functionsToInline).run(irFunction)
 
                         // KT-72336: This is not entirely correct since coroutinesLivenessAnalysisPhase could be turned off.
                         LivenessAnalysis.run(irBody) { it is IrSuspensionPoint }

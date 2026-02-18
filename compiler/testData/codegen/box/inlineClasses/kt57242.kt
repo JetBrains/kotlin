@@ -2,7 +2,7 @@
 // WITH_STDLIB
 // FULL_JDK
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 import java.util.UUID
 import java.util.UUID.randomUUID

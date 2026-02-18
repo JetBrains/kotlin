@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K1: JVM_IR
 // FULL_JDK
 // WITH_STDLIB
 // WITH_COROUTINES
@@ -24,6 +25,8 @@ suspend fun notTailCall() {
     empty()
 }
 
+// all `lambdaAsParameter` examples are not tail-call, as we cannot be sure that
+// the passed lambda is actually Unit-returing
 suspend fun lambdaAsParameter(c: suspend () -> Unit) {
     c()
 }
@@ -41,7 +44,7 @@ suspend fun lambdaAsParameterReturn(c: suspend () -> Unit) {
 
 suspend fun returnsInt() = 42.also { TailCallOptimizationChecker.saveStackTrace() }
 
-suspend fun callsIntTailCall() {
+suspend fun callsIntNoTailCall() {
     returnsInt()
     return
     empty()
@@ -53,7 +56,7 @@ suspend fun multipleExitPoints(b: Boolean) {
     empty()
 }
 
-suspend fun multipleExitPointsTailCall(b: Boolean) {
+suspend fun multipleExitPointsNoTailCall(b: Boolean) {
     if (b) empty() else returnsInt()
     return
     empty()
@@ -153,14 +156,14 @@ fun box(): String {
         lambdaAsParameterReturn { TailCallOptimizationChecker.saveStackTrace() }
         TailCallOptimizationChecker.checkNoStateMachineIn("lambdaAsParameterReturn")
 
-        callsIntTailCall()
-        TailCallOptimizationChecker.checkNoStateMachineIn("callsIntTailCall")
+        callsIntNoTailCall()
+        TailCallOptimizationChecker.checkStateMachineIn("callsIntNoTailCall")
 
         multipleExitPoints(false)
         TailCallOptimizationChecker.checkNoStateMachineIn("multipleExitPoints")
 
-        multipleExitPointsTailCall(false)
-        TailCallOptimizationChecker.checkNoStateMachineIn("multipleExitPointsTailCall")
+        multipleExitPointsNoTailCall(false)
+        TailCallOptimizationChecker.checkStateMachineIn("multipleExitPointsNoTailCall")
 
         multipleExitPointsWithOrdinaryInline(true)
         TailCallOptimizationChecker.checkNoStateMachineIn("multipleExitPointsWithOrdinaryInline")
@@ -178,7 +181,7 @@ fun box(): String {
         TailCallOptimizationChecker.checkNoStateMachineIn("useGenericInferType")
 
         useNullableUnit()
-        TailCallOptimizationChecker.checkNoStateMachineIn("useNullableUnit")
+        TailCallOptimizationChecker.checkStateMachineIn("useNullableUnit")
 
         useRunRunRunRunRun()
         TailCallOptimizationChecker.checkNoStateMachineIn("useRunRunRunRunRun")

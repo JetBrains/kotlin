@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.ifNoStatusCompilerPluginPresent
 import org.jetbrains.kotlin.analysis.api.fir.symbols.isTypeAliasedConstructor
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
@@ -41,6 +43,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes2
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.hasExternalModifier
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -101,25 +104,6 @@ internal fun FirDeclaration.findReferencePsi(scope: GlobalSearchScope): PsiEleme
     } ?: FirSyntheticFunctionInterfaceSourceProvider.findPsi(this, scope)
 }
 
-internal val KtNamedFunction.kaSymbolModality: KaSymbolModality?
-    get() {
-        val modalityByModifiers = kaSymbolModalityByModifiers
-        return when {
-            modalityByModifiers != null -> when {
-                // KT-80178: interface members with no body have implicit ABSTRACT modality
-                modalityByModifiers.isOpenFromInterface && !hasBody() -> KaSymbolModality.ABSTRACT
-                else -> modalityByModifiers
-            }
-
-            isTopLevel || isLocal -> KaSymbolModality.FINAL
-
-            // Green code cannot have those modifiers with other modalities
-            hasModifier(KtTokens.INLINE_KEYWORD) || hasModifier(KtTokens.TAILREC_KEYWORD) -> KaSymbolModality.FINAL
-
-            else -> null
-        }
-    }
-
 internal val KtDestructuringDeclarationEntry.entryName: Name
     get() = if (isSingleUnderscore) SpecialNames.UNDERSCORE_FOR_UNUSED_VAR else nameAsSafeName
 
@@ -130,6 +114,7 @@ internal val KtParameter.parameterName: Name
         else -> nameAsSafeName
     }
 
+context(symbol: KaFirSymbol<FirRegularClassSymbol>)
 internal val KtClassOrObject.kaSymbolModality: KaSymbolModality?
     get() = kaSymbolModalityByModifiers ?: when {
         this is KtObjectDeclaration || this is KtEnumEntry -> KaSymbolModality.FINAL
@@ -139,24 +124,9 @@ internal val KtClassOrObject.kaSymbolModality: KaSymbolModality?
 
         // Green code cannot have those modifiers with other modalities
         isValue() || isInline() -> KaSymbolModality.FINAL
-        else -> null
-    }
 
-internal val KtProperty.kaSymbolModality: KaSymbolModality?
-    get() {
-        val modalityByModifiers = kaSymbolModalityByModifiers
-        return when {
-            modalityByModifiers != null -> when {
-                // KT-80178: interface members with no body have implicit ABSTRACT modality
-                modalityByModifiers.isOpenFromInterface && !hasBody() -> KaSymbolModality.ABSTRACT
-                else -> modalityByModifiers
-            }
-
-            // Green code cannot have those modifiers with other modalities
-            hasModifier(KtTokens.CONST_KEYWORD) -> KaSymbolModality.FINAL
-
-            else -> null
-        }
+        // No compiler plugins -> final by default
+        else -> ifNoStatusCompilerPluginPresent { KaSymbolModality.FINAL }
     }
 
 internal val KtDeclaration.kaSymbolModalityByModifiers: KaSymbolModality?
@@ -168,29 +138,16 @@ internal val KtDeclaration.kaSymbolModalityByModifiers: KaSymbolModality?
         else -> null
     }
 
-internal val KtNamedFunction.visibility: Visibility?
-    get() = when {
-        isLocal -> Visibilities.Local
-        else -> visibilityByModifiers
-    }
-
 /**
  * The compiler forces the class-like declarations to have proper visibility right
  * away during their constructions and forbids its changes later, so the visibility might be
  * computed from the PSI directly
  */
 internal val KtClassLikeDeclaration.visibility: Visibility
-    get() = when (this) {
-        // TODO: KT-80716 replaced with native isLocal check
-        is KtTypeAlias if getClassId() == null -> Visibilities.Local
-        is KtClassOrObject if isLocal -> Visibilities.Local
-        else -> visibilityByModifiers ?: Visibilities.Public
-    }
-
-internal val KtProperty.visibility: Visibility?
-    get() = when {
-        isLocal -> Visibilities.Local
-        else -> visibilityByModifiers
+    get() = if (getClassId() == null) {
+        Visibilities.Local
+    } else {
+        visibilityByModifiers ?: Visibilities.Public
     }
 
 internal val KtDeclaration.visibilityByModifiers: Visibility?
@@ -231,7 +188,10 @@ internal val KtDeclaration.location: KaSymbolLocation
     }
 
 internal fun KtAnnotated.hasAnnotation(useSiteTarget: AnnotationUseSiteTarget): Boolean = annotationEntries.any {
-    it.useSiteTarget?.getAnnotationUseSiteTarget() == useSiteTarget
+    when (it.useSiteTarget?.getAnnotationUseSiteTarget()) {
+        useSiteTarget, AnnotationUseSiteTarget.ALL -> true
+        else -> false
+    }
 }
 
 /**
@@ -261,7 +221,7 @@ internal val KtProperty.hasRegularGetter: Boolean
     get() = hasDelegate() || getter?.hasBody() == true
 
 context(callable: KtCallableDeclaration)
-private val KaSymbolModality.isOpenFromInterface: Boolean
+internal val KaSymbolModality.isOpenFromInterface: Boolean
     get() = this == KaSymbolModality.OPEN && (callable.containingClassOrObject as? KtClass)?.isInterface() == true
 
 context(analysisSession: KaFirSession)
@@ -270,3 +230,24 @@ internal fun KtPsiDiagnostic.asKaDiagnostic(): KaDiagnosticWithPsi<*> = asKaDiag
 internal fun KtPsiDiagnostic.asKaDiagnostic(analysisSession: KaFirSession): KaDiagnosticWithPsi<*> {
     return KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as KtDiagnostic)
 }
+
+/**
+ * Helper property that determines whether this PSI declaration is effectively `external`.
+ *
+ * **Important:** This property is intended **only** to assist implementations of
+ * [KaDeclarationSymbol.isExternal][org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol.isExternal].
+ * It is not fully semantically correct on its own (for example, not all declarations marked with the `external` modifier
+ * are actually considered external).
+ */
+internal val KtDeclaration.isExternalDeclaration: Boolean
+    get() {
+        if (hasExternalModifier()) return true
+
+        if (this is KtProperty) {
+            if (getter?.hasExternalModifier() == true && (!isVar || setter?.hasExternalModifier() == true)) {
+                return true
+            }
+        }
+
+        return containingClassOrObject?.isExternalDeclaration == true
+    }

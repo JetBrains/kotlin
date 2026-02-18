@@ -8,5 +8,6 @@ KtNameReferenceExpression(357,364): 'oldItem'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

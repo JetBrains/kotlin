@@ -19,11 +19,9 @@ class JsPreSerializationLoweringContext(
     configuration: CompilerConfiguration,
     diagnosticReporter: IrDiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
-    override val symbols: PreSerializationJsSymbols by lazy {
-        PreSerializationJsSymbols.Impl(irBuiltIns)
-    }
+    override val symbols: PreSerializationJsSymbols = PreSerializationJsSymbols.Impl(irBuiltIns)
 
-    override val sharedVariablesManager by lazy { KlibSharedVariablesManager(symbols) }
+    override val sharedVariablesManager = KlibSharedVariablesManager(symbols)
 
     override val irMangler: KotlinMangler.IrMangler = JsManglerIr
 }

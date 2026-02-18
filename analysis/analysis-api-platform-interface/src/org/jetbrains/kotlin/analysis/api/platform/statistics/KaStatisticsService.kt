@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.statistics
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
 
 /**
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KaEngineService
  * While local logging of statistics comes out of the box in IntelliJ, other Analysis API platforms need to set up statistics collection on
  * their own. Notably, Standalone does not collect any statistics at all.
  */
+@KaPlatformInterface
 public interface KaStatisticsService : KaEngineService {
     /**
      * Schedules periodic updates and information gathering if statistics collection is [enabled][areStatisticsEnabled]. These tasks
@@ -54,6 +56,7 @@ public interface KaStatisticsService : KaEngineService {
      */
     public fun start()
 
+    @KaPlatformInterface
     public companion object {
         public val areStatisticsEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
             Registry.`is`("kotlin.analysis.statistics", false)

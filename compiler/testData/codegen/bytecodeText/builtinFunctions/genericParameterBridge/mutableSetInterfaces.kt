@@ -25,7 +25,8 @@ abstract class A : I2
 // 1 public final bridge contains\(Ljava/lang/Object;\)Z
 // 1 public final bridge remove\(Ljava/lang/Object;\)Z
 
-// There are 2 instanceof instructions:
+// There are 3 instanceof instructions:
 // * one in the bridge 'A.remove'
 // * one in the bridge 'A.contains'
-// 2 INSTANCEOF java/lang/String
+// * one in the bridge 'I2.contains' -- this one is unnecessary, see KT-75239
+// 3 INSTANCEOF java/lang/String

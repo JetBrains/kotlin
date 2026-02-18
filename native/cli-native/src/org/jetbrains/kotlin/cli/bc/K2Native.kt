@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.native.pipeline.NativeKlibCliPipeline
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
@@ -24,6 +27,9 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.ir.validation.IrValidationException
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
+import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
+import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
+import org.jetbrains.kotlin.konan.config.overrideKonanProperties
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -39,6 +45,32 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override fun MutableList<String>.addPlatformOptions(arguments: K2NativeCompilerArguments) {}
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = MetadataVersion(*versionArray)
+
+    /**
+     * Phased pipeline execution for klib compilation.
+     * Returns null if this compilation requires binary compilation.
+     */
+    override fun doExecutePhased(
+        arguments: K2NativeCompilerArguments,
+        services: Services,
+        basicMessageCollector: MessageCollector,
+    ): ExitCode? {
+        if (arguments.produce != "library") {
+            return null
+        }
+        return doExecutePhasedKlibCompilation(arguments, services, basicMessageCollector, isOneStageCompilation = false)
+    }
+
+    private fun doExecutePhasedKlibCompilation(
+        arguments: K2NativeCompilerArguments,
+        services: Services,
+        basicMessageCollector: MessageCollector,
+        isOneStageCompilation: Boolean
+    ): ExitCode {
+        // TODO (KT-84069)
+        arguments.disableDefaultScriptingPlugin = true
+        return NativeKlibCliPipeline(defaultPerformanceManager, isNativeOneStage = isOneStageCompilation).execute(arguments, services, basicMessageCollector)
+    }
 
     override fun doExecute(@NotNull arguments: K2NativeCompilerArguments,
                            @NotNull configuration: CompilerConfiguration,
@@ -69,9 +101,28 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             // Some errors during KotlinCoreEnvironment setup.
             return ExitCode.COMPILATION_ERROR
         }
-
         try {
-            runKonanDriver(configuration, environment, rootDisposable)
+            // K2/Native backend cannot produce binary directly from FIR frontend output, since descriptors, deserialized from KLib, are needed
+            // So, such compilation is split to two stages:
+            // - source files are compiled to intermediate KLib by FIR frontend
+            // - intermediate Klib is compiled to binary by K2/Native backend
+            if (isOneStageCompilation(arguments)) {
+                val intermediateKlib = createIntermediateKlib()
+                val klibArgs = prepareKlibArgumentsForOneStage(arguments, intermediateKlib.canonicalPath)
+                val klibCompilationExitCode = doExecutePhasedKlibCompilation(
+                    klibArgs, Services.EMPTY, configuration.messageCollector,
+                    isOneStageCompilation = true
+                )
+                if (klibCompilationExitCode != ExitCode.OK) {
+                    return klibCompilationExitCode
+                }
+                adjustConfigurationForSecondStage(configuration, intermediateKlib)
+                val environmentForSecondStage = prepareEnvironment(arguments, configuration, rootDisposable)
+                runKonanDriver(configuration, environmentForSecondStage, rootDisposable)
+            } else {
+                doExecutePhased(arguments, Services.EMPTY, configuration.messageCollector)
+                    ?: runKonanDriver(configuration, environment, rootDisposable)
+            }
         } catch (e: Throwable) {
             if (e is KonanCompilationException || e is CompilationErrorException || e is IrValidationException)
                 return ExitCode.COMPILATION_ERROR
@@ -86,7 +137,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 | * Source files: ${environment.getSourceFiles().joinToString(transform = KtFile::getName)}
                 | * Compiler version: ${KotlinCompilerVersion.getVersion()}
-                | * Output kind: ${configuration.get(KonanConfigKeys.PRODUCE)}
+                | * Output kind: ${configuration.konanProducedArtifactKind}
 
                 """.trimMargin())
             throw e
@@ -96,12 +147,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     }
 
     private fun prepareEnvironment(
-            arguments: K2NativeCompilerArguments,
-            configuration: CompilerConfiguration,
-            rootDisposable: Disposable
+        arguments: K2NativeCompilerArguments,
+        configuration: CompilerConfiguration,
+        rootDisposable: Disposable
     ): KotlinCoreEnvironment {
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable,
-                configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES)
+                                                                    configuration, EnvironmentConfigFiles.NATIVE_CONFIG_FILES)
 
         configuration.phaseConfig = createPhaseConfig(arguments)
 
@@ -138,7 +189,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 override fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit) {
                     val spawnedArguments = K2NativeCompilerArguments()
                     parseCommandLineArguments(arguments, spawnedArguments)
-                    val spawnedConfiguration = CompilerConfiguration()
+                    val spawnedConfiguration = CompilerConfiguration.create()
 
                     val spawnedPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = true)
                     spawnedConfiguration.messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -152,8 +203,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)?.let {
                         spawnedConfiguration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, it)
                     }
-                    configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let {
-                        spawnedConfiguration.put(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES, it)
+                    configuration[NativeConfigurationKeys.OVERRIDE_KONAN_PROPERTIES]?.let {
+                        spawnedConfiguration.overrideKonanProperties = it
                     }
                     configuration.get(BinaryOptions.checkStateAtExternalCalls)?.let {
                         spawnedConfiguration.put(BinaryOptions.checkStateAtExternalCalls, it)
@@ -196,9 +247,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     // It is executed before doExecute().
     override fun setupPlatformSpecificArgumentsAndServices(
-            configuration: CompilerConfiguration,
-            arguments: K2NativeCompilerArguments,
-            services: Services
+        configuration: CompilerConfiguration,
+        arguments: K2NativeCompilerArguments,
+        services: Services
     ) {
         configuration.setupFromArguments(arguments)
     }

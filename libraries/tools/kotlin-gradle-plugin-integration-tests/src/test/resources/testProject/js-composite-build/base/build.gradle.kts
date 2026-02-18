@@ -1,7 +1,7 @@
 group = "com.example"
 
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 repositories {
@@ -14,13 +14,19 @@ kotlin.js {
     browser()
 }
 
-tasks.named("browserTest") {
+tasks.named("jsBrowserTest") {
     enabled = false
 }
 
-dependencies {
-    implementation(npm("decamelize", "1.1.1"))
-    api(npm("cowsay", "1.6.0"))
-    runtimeOnly(npm("uuid", "11.1.0"))
-    // No compileOnly dependency because they are not supported. See  IncorrectCompileOnlyDependenciesChecker.
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation(npm("decamelize", "1.1.1"))
+                api(npm("cowsay", "1.6.0"))
+                runtimeOnly(npm("uuid", "11.1.0"))
+                // No compileOnly dependency because they are not supported. See  IncorrectCompileOnlyDependenciesChecker.
+            }
+        }
+    }
 }

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
 import org.jetbrains.kotlin.js.test.converters.finalizePath
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
-import org.jetbrains.kotlin.js.test.handlers.TypeScriptCompilationHandler
+import org.jetbrains.kotlin.js.test.handlers.JsTypeScriptCompilationHandler
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_JS_MODULE_SYSTEM
@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getMainModule
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.DFS.topologicalOrder
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
@@ -39,7 +40,7 @@ import java.io.File
 const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
 
 fun TestModule.getNameFor(filePath: String, testServices: TestServices): String {
-    return JsEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, name) + "-js-" + filePath
+    return testServices.klibEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, name) + "-js-" + filePath
 }
 
 fun TestModule.getNameFor(file: TestFile, testServices: TestServices): String {
@@ -139,7 +140,7 @@ fun getAdditionalMainFiles(
         }
         ?.let { additionalFiles += it }
 
-    TypeScriptCompilationHandler.compiledTypeScriptOutput(testServices, mode)
+    JsTypeScriptCompilationHandler.compiledTypeScriptOutput(testServices, mode)
         .takeIf { it.exists() }
         ?.let { additionalFiles += it }
 

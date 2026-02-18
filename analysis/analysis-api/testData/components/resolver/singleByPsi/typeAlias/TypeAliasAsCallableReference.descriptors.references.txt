@@ -9,5 +9,6 @@ KtNameReferenceExpression(88,95): 'MyAlias'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

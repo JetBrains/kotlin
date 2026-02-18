@@ -113,6 +113,11 @@ private fun WriteContext.writeConstructor(kmConstructor: KmConstructor): ProtoBu
         t.addValueParameter(writeValueParameter(it).build())
     }
     t.addAllVersionRequirement(kmConstructor.versionRequirements.mapNotNull(::writeVersionRequirement))
+    t.addAllCompilerPluginData(
+        kmConstructor.compilerPluginMetadata.map { (pluginId, data) ->
+            writeCompilerPluginData(pluginId, data, this).build()
+        }
+    )
     extensions.forEach {
         it.writeConstructorExtensions(kmConstructor, t, this)
     }
@@ -135,6 +140,11 @@ private fun WriteContext.writeFunction(kmFunction: KmFunction): ProtoBuf.Functio
     t.addAllValueParameter(kmFunction.valueParameters.map { writeValueParameter(it).build() })
     t.returnType = writeType(kmFunction.returnType).build()
     t.addAllVersionRequirement(kmFunction.versionRequirements.mapNotNull(::writeVersionRequirement))
+    t.addAllCompilerPluginData(
+        kmFunction.compilerPluginMetadata.map { (pluginId, data) ->
+            writeCompilerPluginData(pluginId, data, this).build()
+        }
+    )
 
     @OptIn(ExperimentalContracts::class)
     kmFunction.contract?.let { t.contract = writeContract(it) }
@@ -165,6 +175,11 @@ public fun WriteContext.writeProperty(kmProperty: KmProperty): ProtoBuf.Property
     kmProperty.setterParameter?.let { t.setterValueParameter = writeValueParameter(it).build() }
     t.returnType = writeType(kmProperty.returnType).build()
     t.addAllVersionRequirement(kmProperty.versionRequirements.mapNotNull { writeVersionRequirement(it) })
+    t.addAllCompilerPluginData(
+        kmProperty.compilerPluginMetadata.map { (pluginId, data) ->
+            writeCompilerPluginData(pluginId, data, this).build()
+        }
+    )
 
     extensions.forEach { it.writePropertyExtensions(kmProperty, t, this) }
 
@@ -214,6 +229,11 @@ private fun WriteContext.writeTypeAlias(
     t.expandedType = writeType(typeAlias.expandedType).build()
     t.addAllAnnotation(typeAlias.annotations.map { it.writeAnnotation(strings).build() })
     t.addAllVersionRequirement(typeAlias.versionRequirements.mapNotNull(::writeVersionRequirement))
+    t.addAllCompilerPluginData(
+        typeAlias.compilerPluginMetadata.map { (pluginId, data) ->
+            writeCompilerPluginData(pluginId, data, this).build()
+        }
+    )
     extensions.forEach { it.writeTypeAliasExtensions(typeAlias, t, this) }
 
     val flags = typeAlias.flags or
@@ -296,6 +316,7 @@ private fun WriteContext.writeEffect(
         KmEffectType.RETURNS_CONSTANT -> t.effectType = ProtoBuf.Effect.EffectType.RETURNS_CONSTANT
         KmEffectType.CALLS -> t.effectType = ProtoBuf.Effect.EffectType.CALLS
         KmEffectType.RETURNS_NOT_NULL -> t.effectType = ProtoBuf.Effect.EffectType.RETURNS_NOT_NULL
+        KmEffectType.RETURNS_RESULT_OF -> t.effectType = ProtoBuf.Effect.EffectType.RETURNS_RESULT_OF
     }
     when (effect.invocationKind) {
         KmEffectInvocationKind.AT_MOST_ONCE -> t.kind = ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE
@@ -373,6 +394,11 @@ public open class ClassWriter(stringTable: StringTable, contextExtensions: List<
         t.addAllContextReceiverType(kmClass.contextReceiverTypes.map { c.writeType(it).build() })
 
         t.addAllVersionRequirement(kmClass.versionRequirements.mapNotNull { c.writeVersionRequirement(it) })
+        t.addAllCompilerPluginData(
+            kmClass.compilerPluginMetadata.map { (pluginId, data) ->
+                writeCompilerPluginData(pluginId, data, c).build()
+            }
+        )
 
         c.extensions.forEach { it.writeClassExtensions(kmClass, t, c) }
 

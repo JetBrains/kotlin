@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions
+package org.jetbrains.kotlin.buildtools.tests.compilation.assertions
 
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.CompilationOutcome
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.nio.file.Path
 import kotlin.io.path.isRegularFile

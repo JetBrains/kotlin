@@ -1,0 +1,103 @@
+FILE: intersectionExpectedTypes.kt
+    public abstract interface A : R|kotlin/Any| {
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun of(vararg x: R|kotlin/IntArray|): R|A| {
+                ^of object : R|A| {
+                    private constructor(): R|<anonymous>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|B.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun of(vararg x: R|kotlin/IntArray|): R|B| {
+                ^of object : R|B| {
+                    private constructor(): R|<anonymous>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    public final fun <T> expectThroughTV(x: R|T|, y: R|T|): R|kotlin/Unit| {
+    }
+    public final fun viaSmartcast(x: R|kotlin/Any|): R|kotlin/Unit| {
+        (R|<local>/x| as R|A|)
+        (R|<local>/x| as R|B|)
+        R|/expectThroughTV|<R|it(A & B)|>(R|<local>/x|, <collectionLiteralCall>(Int(42)))
+        R|/expectThroughTV|<R|it(A & B)|>(R|<local>/x|, <collectionLiteralCall>())
+    }
+    public final fun viaWhen(): R|kotlin/Unit| {
+        R|/expectThroughTV|<R|it(A & B)|>(when () {
+            Boolean(true) ->  {
+                object : R|A|, R|B| {
+                    private constructor(): R|<anonymous>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+            else ->  {
+                object : R|B|, R|A| {
+                    private constructor(): R|<anonymous>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+        }
+        , <collectionLiteralCall>(String(42)))
+    }
+    public final fun intersectionWithOuterTvInPCLA(): R|kotlin/Unit| {
+        local final class Box<U> : R|kotlin/Any| {
+            public constructor<U>(): R|<local>/Box<U>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun put(x: R|U|): R|kotlin/Unit| {
+            }
+
+            public final fun get(): R|U| {
+                ^get Null(null)!!
+            }
+
+        }
+
+        local final fun <X> buildBox(block: R|<local>/Box<X>.() -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+        R|<local>/buildBox|<R|A|>(<L> = buildBox@fun R|<local>/Box<A>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            lval x: R|A| = this@R|special/anonymous|.R|SubstitutionOverride<<local>/Box.get: R|A|>|()
+            (R|<local>/x| as R|B|)
+            R|/expectThroughTV|<R|A|>(Q|A.Companion|.R|/A.Companion.of|(vararg(Int(42))), R|<local>/x|)
+            this@R|special/anonymous|.R|SubstitutionOverride<<local>/Box.put: R|kotlin/Unit|>|(Q|A|.R|/A.Companion.of|())
+        }
+        )
+        R|<local>/buildBox<CS errors: <local>/buildBox>#|<<ERROR TYPE REF: Cannot infer argument for type parameter X>>(<L> = buildBox@fun R|<local>/Box<ERROR CLASS: Cannot infer argument for type parameter X>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            lval x: <ERROR TYPE REF: Cannot infer argument for type parameter X> = this@R|special/anonymous|.R|SubstitutionOverride<<local>/Box.get: <ERROR TYPE REF: Cannot infer argument for type parameter X>>|()
+            (R|<local>/x| as R|B|)
+            R|/expectThroughTV|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>(Int(42)), R|<local>/x|)
+            Q|kotlin/Unit|
+        }
+        )
+    }

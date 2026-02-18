@@ -4,13 +4,14 @@
 
 // Even with enabled collection literals and implemented fallback we might want "unresolved" collection literal in some cases,
 // e.g. when standard library is missing.
+// `List` is resolved to some type even without stdlib, but there is no symbol for `listOf` (needed to resolve collection literal).
 
 fun testWithLambdas() {
-    val lam: Array<() -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{}]<!>
-    val withParam: Array<(Int) -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>it<!> -> }]<!>
-    val withParamOfSpecifiedType: Array<(Int) -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ it: Any -> }]<!>
-    val withReturn: Array<() -> Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ 42 }]<!>
-    val withReturnAndParam: Array<(Int) -> Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> x }]<!>
+    val lam: List<() -> Unit> = <!UNRESOLVED_REFERENCE!>[{}]<!>
+    val withParam: List<(Int) -> Unit> = <!UNRESOLVED_REFERENCE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>it<!> -> }]<!>
+    val withParamOfSpecifiedType: List<(Int) -> Unit> = <!UNRESOLVED_REFERENCE!>[{ it: Any -> }]<!>
+    val withReturn: List<() -> Int> = <!UNRESOLVED_REFERENCE!>[{ 42 }]<!>
+    val withReturnAndParam: List<(Int) -> Int> = <!UNRESOLVED_REFERENCE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> x }]<!>
 
     <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{}]<!>
     <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>it<!> -> }]<!>
@@ -20,10 +21,10 @@ fun testWithLambdas() {
 }
 
 fun testWithAnons() {
-    val anon: Array<() -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun() {}]<!>
-    val withParam: Array<(Int) -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun(x: Int) {}]<!>
-    val withReturn: Array<() -> Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun() = 42]<!>
-    val withReturnAndParam: Array<(Int) -> Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun(x: Int) = x]<!>
+    val anon: List<() -> Unit> = <!UNRESOLVED_REFERENCE!>[fun() {}]<!>
+    val withParam: List<(Int) -> Unit> = <!UNRESOLVED_REFERENCE!>[fun(x: Int) {}]<!>
+    val withReturn: List<() -> Int> = <!UNRESOLVED_REFERENCE!>[fun() = 42]<!>
+    val withReturnAndParam: List<(Int) -> Int> = <!UNRESOLVED_REFERENCE!>[fun(x: Int) = x]<!>
 
     <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun() {}]<!>
     <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun(x: Int) {}]<!>
@@ -37,10 +38,10 @@ fun const42() = 42
 fun <T> consume(it: T) {}
 
 fun testWithCallables() {
-    val callable: Array<() -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[::skip]<!>
-    val withParam: Array<(Int) -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>consume<!>]<!>
-    val withReturn: Array<() -> Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[::const42]<!>
-    val withReturnAndParam: Array<(Int) -> Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>id<!>]<!>
+    val callable: List<() -> Unit> = <!UNRESOLVED_REFERENCE!>[::skip]<!>
+    val withParam: List<(Int) -> Unit> = <!UNRESOLVED_REFERENCE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>consume<!>]<!>
+    val withReturn: List<() -> Int> = <!UNRESOLVED_REFERENCE!>[::const42]<!>
+    val withReturnAndParam: List<(Int) -> Int> = <!UNRESOLVED_REFERENCE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>id<!>]<!>
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, callableReference, collectionLiteral, functionDeclaration, integerLiteral,

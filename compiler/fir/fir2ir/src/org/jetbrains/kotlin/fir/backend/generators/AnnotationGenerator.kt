@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
 /**
  * A generator that converts annotations in [FirAnnotationContainer] to annotations in [IrMutableAnnotationContainer].
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
  */
 class AnnotationGenerator(private val components: Fir2IrComponents) : Fir2IrComponents by components {
 
-    fun List<FirAnnotation>.toIrAnnotations(): List<IrConstructorCall> =
+    fun List<FirAnnotation>.toIrAnnotations(): List<IrAnnotation> =
         mapNotNull {
             callGenerator.convertToIrAnnotation(it) as? IrAnnotation
         }

@@ -209,8 +209,8 @@ FILE: [ResolvedTo(CONSTANT_EVALUATION)] fileAnnotationsScript.kts
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](message = String())
-    @FILE:R|one/Anno|[Types](s = String(anno))
+    @FILE:R|kotlin/Deprecated|[Types](message = String() [evaluated = String()])
+    @FILE:R|one/Anno|[Types](s = String(anno) [evaluated = String(anno)])
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -228,8 +228,8 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileAnnotationsScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](message = String())
-    @FILE:R|one/Anno|[Types](s = String(anno))
+    @FILE:R|kotlin/Deprecated|[Types](message = String() [evaluated = String()])
+    @FILE:R|one/Anno|[Types](s = String(anno) [evaluated = String(anno)])
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
@@ -247,13 +247,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotationsScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotationsScript.kts
-    @FILE:R|kotlin/Deprecated|[Types](message = String())
-    @FILE:R|one/Anno|[Types](s = String(anno))
+    @FILE:R|kotlin/Deprecated|[Types](message = String() [evaluated = String()])
+    @FILE:R|one/Anno|[Types](s = String(anno) [evaluated = String(anno)])
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-fileAnnotationsScript.kts>
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-fileAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
                 super<R|kotlin/Any|>()
             }

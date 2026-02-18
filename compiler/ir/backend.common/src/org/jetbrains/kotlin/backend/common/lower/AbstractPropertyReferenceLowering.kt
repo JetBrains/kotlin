@@ -108,11 +108,7 @@ abstract class AbstractPropertyReferenceLowering<C : CommonBackendContext>(val c
     protected fun IrBuilderWithScope.propertyReferenceNameExpression(reference: IrRichPropertyReference): IrExpression {
         val originalPropertySymbol = reference.reflectionTargetSymbol
         require(originalPropertySymbol is IrPropertySymbol)
-        return if (reference.reflectionTargetLinkageError == null) {
-            irString(originalPropertySymbol.owner.name.asString())
-        } else {
-            irNull()
-        }
+        return irString(originalPropertySymbol.owner.name.asString())
     }
 
     protected fun IrBuilderWithScope.propertyReferenceLinkageErrorExpression(

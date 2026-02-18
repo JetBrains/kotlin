@@ -18,7 +18,7 @@ fun Test.configureTestDistribution(configure: TestDistributionConfiguration.() -
     develocity.testDistribution {
         enabled.set(testDistributionEnabled)
         maxRemoteExecutors.set(20)
-        if (isTeamcityBuild) {
+        if (isTeamcityBuild.get()) {
             requirements.set(setOf("os=${OperatingSystem.current().familyName}"))
         } else {
             maxLocalExecutors.set(0)

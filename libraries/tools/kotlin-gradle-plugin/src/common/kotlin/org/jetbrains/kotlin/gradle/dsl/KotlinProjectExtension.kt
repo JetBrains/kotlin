@@ -16,8 +16,11 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Undispatched
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationExtensionImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
@@ -40,7 +43,7 @@ internal const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
 
 internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinBaseExtension>): KotlinBaseExtension {
     return when (extensionClass) {
-        KotlinMultiplatformExtension::class -> extensions.KotlinMultiplatformExtension(objects)
+        KotlinMultiplatformExtension::class -> extensions.KotlinMultiplatformExtension(objects, this)
         else -> extensions.create(KOTLIN_PROJECT_EXTENSION_NAME, extensionClass.java, this)
     }
 }
@@ -168,6 +171,14 @@ abstract class KotlinProjectExtension @Inject constructor(
     @ExperimentalBuildToolsApi
     override val compilerVersion: Property<String> =
         project.objects.propertyWithConvention(project.getKotlinPluginVersion()).chainedFinalizeValueOnRead()
+
+    @ExperimentalAbiValidation
+    override val abiValidation: AbiValidationExtension = project.AbiValidationExtensionImpl()
+
+    @ExperimentalAbiValidation
+    override fun abiValidation(action: Action<AbiValidationExtension>) {
+        action.execute(abiValidation)
+    }
 }
 
 abstract class KotlinSingleTargetExtension<TARGET : KotlinTarget>(project: Project) : KotlinProjectExtension(project) {
@@ -297,7 +308,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
     )
     fun getTargets(): NamedDomainObjectContainer<KotlinTarget>? =
         targetFuture.lenient.getOrNull()?.let { target ->
-            target.project.container(KotlinTarget::class.java)
+            target.project.objects.domainObjectContainer(KotlinTarget::class.java)
                 .apply { add(target) }
         }
 }

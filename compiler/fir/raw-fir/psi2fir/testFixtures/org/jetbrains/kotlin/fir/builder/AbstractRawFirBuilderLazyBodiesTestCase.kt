@@ -16,7 +16,7 @@ abstract class AbstractRawFirBuilderLazyBodiesTestCase : AbstractRawFirBuilderTe
     override fun doRawFirTest(filePath: String) {
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.LAZY_BODIES)
-        val firFileDump = FirRenderer().renderElementAsString(firFile)
+        val firFileDump = dumpFirFile(firFile)
         val originalExpectedFile = File(expectedPath(filePath, ".lazyBodies.txt"))
         val alternativeExpectedFile = expectedAlternativeFileIfExists(filePath)
         TestDataAssertions.assertEqualsToFile(alternativeExpectedFile ?: originalExpectedFile, firFileDump)

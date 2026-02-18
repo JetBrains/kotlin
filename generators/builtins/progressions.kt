@@ -46,7 +46,7 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out, anno
             INT ->
                 "        if (isEmpty()) -1 else (31 * (31 * first + last) + step)"
             LONG ->
-                "        if (isEmpty()) -1 else (31 * (31 * ${hashLong("first")} + ${hashLong("last")}) + ${hashLong("step")}).toInt()"
+                "        if (isEmpty()) -1 else (31 * (31 * first.hashCode() + last.hashCode()) + step.hashCode())"
         }
         val elementToIncrement = when (kind) {
             CHAR -> ".code"

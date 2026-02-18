@@ -214,7 +214,8 @@ private fun writeCoroutineSupportModule(
     writeSupportModule(
         name = config.coroutineSupportModuleName,
         config = config,
-        outputPath = outputPath
+        outputPath = outputPath,
+        dependencies = listOf(SwiftExportModule.Reference(config.runtimeSupportModuleName))
     )
 }
 
@@ -222,6 +223,7 @@ private fun writeSupportModule(
     name: String,
     config: SwiftExportConfig,
     outputPath: Path,
+    dependencies: List<SwiftExportModule.Reference> = emptyList(),
 ): SwiftExportModule.BridgesToKotlin {
     require(name.isNotBlank() && name.first().isLetter() && name.all { it.isLetterOrDigit() }) { "Invalid module name $name" }
 
@@ -253,8 +255,8 @@ private fun writeSupportModule(
 
     return SwiftExportModule.BridgesToKotlin(
         name = name,
-        dependencies = emptyList(), // or add dependencies if needed
-        bridgeName = "${name}Bridge", // or another bridge name
+        dependencies = dependencies,
+        bridgeName = "${name}Bridge",
         files = outputFiles
     )
 }

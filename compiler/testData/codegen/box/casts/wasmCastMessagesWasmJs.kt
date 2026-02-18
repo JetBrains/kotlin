@@ -1,9 +1,7 @@
 // WITH_STDLIB
 // TARGET_BACKEND: WASM_JS
 
-import kotlin.js.Promise
-import kotlin.reflect.KProperty1
-
+// FILE: lib.kt
 inline fun <reified T> tryCast(x: Any?, expected: String?): String? {
     try {
         x as T
@@ -12,6 +10,10 @@ inline fun <reified T> tryCast(x: Any?, expected: String?): String? {
     }
     return "Expected ClassCastException with message <$expected> but no exception was throwed"
 }
+
+// FILE: main.kt
+import kotlin.js.Promise
+import kotlin.reflect.KProperty1
 
 fun tryCastToJsAny(x: Any?): String? {
     try {

@@ -2,5 +2,6 @@ KtPropertyDelegate(12,20): 'by Baz()'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Foo) operator fun getValue(p1: kotlin.Any?, p2: kotlin.Any?): kotlin.Int

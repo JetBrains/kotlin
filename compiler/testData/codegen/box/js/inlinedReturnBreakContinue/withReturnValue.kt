@@ -1,12 +1,14 @@
 // ISSUE: KT-68975
 // See same test for diagnostics: compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/withReturnValue.kt
-// LANGUAGE: +BreakContinueInInlineLambdas
+// LANGUAGE: +BreakContinueInInlineLambdas -ForbidCaptureInlinableLambdasInJsCode
 // TARGET_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // REASON: SyntaxError: Undefined label '$l$loop'
 
+// FILE: lib.kt
 inline fun foo(block: () -> Int): Int  = js("block()")
 
+// FILE: main.kt
 fun box(): String {
     var sum = 0
 

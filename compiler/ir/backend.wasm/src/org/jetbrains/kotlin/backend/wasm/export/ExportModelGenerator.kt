@@ -130,7 +130,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
         runIf(function.correspondingPropertySymbol == null && function.realOverrideTarget.parentClassOrNull?.symbol != context.irBuiltIns.anyClass) {
             val parentClass = function.parentClassOrNull
             ExportedFunction(
-                ExportedFunctionName.Identifier(function.getExportedIdentifier()),
+                ExportedMemberName.Identifier(function.getExportedIdentifier()),
                 returnType = exportType(function.returnType),
                 typeParameters = function.typeParameters.memoryOptimizedMap(::exportTypeParameter),
                 isMember = parentClass != null,
@@ -160,7 +160,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                 property.getter?.returnType?.isNullable() == true
 
         return ExportedProperty(
-            name = property.getExportedIdentifier(),
+            name = ExportedMemberName.Identifier(property.getExportedIdentifier()),
             type = specializeType ?: exportType(property.getter!!.returnType),
             mutable = property.isVar,
             isMember = parentClass != null,

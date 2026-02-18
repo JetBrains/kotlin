@@ -1,3 +1,4 @@
+// FILE: lib.kt
 interface SomeInterface<T>
 
 object Container {
@@ -5,6 +6,7 @@ object Container {
     class SomeClass : SomeInterface<SomeClass> by someMethod()
 }
 
+// FILE: main.kt
 fun box(): String {
     Container.SomeClass()
     return "OK"

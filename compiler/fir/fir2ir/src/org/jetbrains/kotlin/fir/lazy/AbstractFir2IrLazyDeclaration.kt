@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCopy
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.unwrapOr
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import kotlin.properties.ReadWriteProperty
 
 interface AbstractFir2IrLazyDeclaration<F> :
@@ -32,7 +32,7 @@ interface AbstractFir2IrLazyDeclaration<F> :
     override val factory: IrFactory
         get() = IrFactoryImpl
 
-    override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(lock) {
+    override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrAnnotation>> = lazyVar(lock) {
         // Normally lazy resolve would be not necessary here,
         // but in context of Kotlin project itself opened in IDE we can have here
         // an annotated built-in function in sources, like arrayOfNull (KT-70856).
@@ -45,14 +45,14 @@ interface AbstractFir2IrLazyDeclaration<F> :
     }
 
     private fun evaluateAnnotationArguments(annotation: FirAnnotation): FirAnnotation {
-        val evaluationResult = FirExpressionEvaluator.evaluateAnnotationArguments(annotation, session) ?: return annotation
+        val evaluationResult = FirExpressionEvaluator.evaluateAnnotationArguments(annotation, session)
 
         return buildAnnotationCopy(annotation) {
             argumentMapping = buildAnnotationArgumentMapping {
                 source = annotation.argumentMapping.source
 
                 for ((name, expression) in annotation.argumentMapping.mapping) {
-                    val evaluatedExpression = (evaluationResult[name] as? FirEvaluatorResult.Evaluated)?.result as? FirExpression
+                    val evaluatedExpression = evaluationResult[name]?.unwrapOr<FirExpression> {  }
                     mapping[name] = evaluatedExpression ?: expression
                 }
             }

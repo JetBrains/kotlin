@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.LanguageVersionSettingsCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkersComponent
 
 class LanguageVersionSettingsDiagnosticComponent(
     session: FirSession,
-    reporter: DiagnosticReporter,
+    reporter: PendingDiagnosticReporter,
     private val checkers: LanguageVersionSettingsCheckers = session.checkersComponent.languageVersionSettingsCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
     override fun checkSettings(data: CheckerContext) {

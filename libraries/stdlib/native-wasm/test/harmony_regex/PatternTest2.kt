@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 /* Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -981,6 +986,100 @@ class PatternTest2 {
         assertEquals("", s[0])
         assertEquals("2", s[1])
         assertEquals(2, s.size)
+    }
+
+    // Regression test for KT-80665
+    @Test fun testSymbolCategory() {
+        val symbols = Regex("\\p{S}+")
+        val punctuation = Regex("\\p{P}+")
+
+        val str = "«»" // Pi Pf
+        assertTrue(punctuation.matches(str))
+        assertFalse(symbols.matches(str))
+    }
+
+    // Regression test for KT-80665, KT-80666
+    @Test fun testOtherCategory() {
+        val other = Regex("\\p{C}")
+
+        val unassignedStr = "\ufdd0"
+        val wsStr = "\t"
+
+        assertTrue(other.matches(unassignedStr), "${other}.matches(\"$unassignedStr\")")
+        assertTrue(other.matches(wsStr), "${other}.matches(\"$wsStr\")")
+
+        val unassigned = Regex("\\p{Cn}")
+        assertTrue(unassigned.matches(unassignedStr), "${unassigned}.matches(\"$unassignedStr\")")
+
+        val whiteSpace = Regex("\\p{Cc}")
+        assertTrue(whiteSpace.matches(wsStr), "${unassigned}.matches(\"$wsStr\")")
+    }
+
+    @Test fun testMajorCategory() {
+        val unicodeCodePointFmt = HexFormat {
+            number {
+                prefix = "\\u"
+                minLength = 4
+                removeLeadingZeros = true
+            }
+        }
+
+        fun String.formatFirstCodePoint(): String = codePointAt(0).toHexString(unicodeCodePointFmt)
+
+        // Refer to https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt
+        val characterToCategory = mapOf(
+            // Lu, Ll, Lt, Lm, Lo
+            "a" to "L", // Ll
+            "\u02b6" to "L", // Lm (ʶ)
+            "\u01bb" to "L", // Lo (ƻ)
+            "\u01c5" to "L", // Lt (ǅ)
+            "A" to "L", // Lu,
+            // Mn, Me, Mc
+            "\u0334" to "M", // Mn ̴
+            "\u0488" to "M", // Me (҈)
+            "\u0f7f" to "M", // Mc (ཿ)
+            // Nd, No, Nl
+            "0" to "N", // Nd
+            "\u16ef" to "N", // Nl (ᛯ)
+            "\u00be" to "N", // No (¾),
+            // Zl, Zp, Zs
+            "\u2028" to "Z", // Zl
+            "\u2029" to "Z", // Zp
+            " " to "Z", // Zs
+            // Pc, Pd, Pe, Pf, Pi, Po, Ps
+            "_" to "P", // Pc
+            "-" to "P", // Pd
+            "}" to "P", // Pe
+            "\u00bb" to "P", // Pf (»)
+            "\u00ab" to "P", // Pi («)
+            "@" to "P", // Po
+            "{" to "P", // Ps
+            // Sc, Sk, Sm, So
+            "$" to "S", // Sc
+            "^" to "S", // Sk
+            "+" to "S", // Sm
+            "\u00b0" to "S", // So (°)
+            // CC, Cf, Co, Cs, Cn
+            "\r" to "C", // Cc
+            "\u00ad" to "C", // Cf
+            "\ue000" to "C", // Cp
+            "\ud800" to "C", // Cs
+            "\u0378" to "C", // Cn
+        )
+
+        val categoryToRegex = characterToCategory.values.toSet().associateWith { Regex("\\p{Is$it}") }
+
+        for ((charSample, category) in characterToCategory) {
+            val regex = categoryToRegex[category]!!
+            // Check that a character is matched by a regex corresponding to its major category
+            assertTrue(regex.matches(charSample), "$regex should match \"$charSample\" (${charSample.formatFirstCodePoint()})")
+
+            // Check that regexes for all other categories won't match it
+            for ((otherCategory, regex) in categoryToRegex) {
+                if (otherCategory == category) continue
+                assertFalse(regex.matches(charSample), "$regex should not match \"$charSample\" (${charSample.formatFirstCodePoint()})")
+            }
+        }
     }
 
     private class UBInfo(var low: Int, var high: Int, var name: String)

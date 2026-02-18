@@ -22,7 +22,7 @@ dependencies {
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.apache.commons:commons-lang3"))
-    compileOnly(commonDependency("org.apache.commons:commons-text"))
+    compileOnly(libs.apache.commons.text)
 }
 
 sourceSets {

@@ -20,9 +20,13 @@ declare namespace JS_TESTS {
         function inlineChain(x: number): Promise<number>;
         function suspendExtensionFun(_this_: number): Promise<number>;
         function suspendFunWithContext(ctx: number): Promise<number>;
+        function acceptHolderOfSum(test: foo.HolderOfSum): Promise<void>;
         function generateOneMoreChildOfTest(): foo.Test;
         function acceptTest(test: foo.Test): Promise<void>;
+        function getHolderOfParentSuspendFun1(): foo.HolderOfParentSuspendFun1<string>;
         function acceptExportedChild(child: foo.ExportedChild): Promise<void>;
+        function acceptHolderOfParentSuspendFun1(holder: foo.HolderOfParentSuspendFun1<string>): Promise<void>;
+        /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */

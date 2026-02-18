@@ -86,6 +86,7 @@ KtCallExpression(246,258): 'MyDelegate()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -156,6 +157,7 @@ KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.properties.ReadOnlyProperty) operator fun getValue(thisRef: T, property: kotlin.reflect.KProperty<*>): V
       1: (in myPack.ResourceID) operator fun provideDelegate(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.properties.ReadOnlyProperty<kotlin.Any?, T>
@@ -164,6 +166,7 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -179,4 +182,4 @@ KtNameReferenceExpression(457,460): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable

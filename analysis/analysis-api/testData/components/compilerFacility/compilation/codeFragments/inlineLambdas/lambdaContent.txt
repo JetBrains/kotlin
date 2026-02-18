@@ -7,7 +7,7 @@ final class CodeFragment$run$1$complexLambda$1$prop$1$l$1 extends kotlin/jvm/int
   // compiled from: fragment.kt
   OUTERCLASS CodeFragment$run$1$complexLambda$1$prop$1 invoke ()Ljava/lang/Integer;
 
-  @Lkotlin/Metadata;(mv={2, 3, 0}, k=3, xi=48, d1={"\u0000\n\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0002\u0010\u0000\u001a\u00020\u0001H\n\u00a2\u0006\u0004\u0008\u0002\u0010\u0003"}, d2={"<anonymous>", "", "invoke", "()Ljava/lang/Integer;"})
+  @Lkotlin/Metadata;(mv={2, 4, 0}, k=3, xi=48, d1={"\u0000\n\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0002\u0010\u0000\u001a\u00020\u0001H\n\u00a2\u0006\u0004\u0008\u0002\u0010\u0003"}, d2={"<anonymous>", "", "invoke", "()Ljava/lang/Integer;"})
   // access flags 0x19
   public final static INNERCLASS CodeFragment$run$1$complexLambda$1 null null
   // access flags 0x18
@@ -75,7 +75,7 @@ final class CodeFragment$run$1$complexLambda$1$prop$1 extends kotlin/jvm/interna
   // compiled from: fragment.kt
   OUTERCLASS CodeFragment$run$1$complexLambda$1 <init> ()V
 
-  @Lkotlin/Metadata;(mv={2, 3, 0}, k=3, xi=48, d1={"\u0000\n\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0002\u0010\u0000\u001a\u00020\u0001H\n\u00a2\u0006\u0004\u0008\u0002\u0010\u0003"}, d2={"<anonymous>", "", "invoke", "()Ljava/lang/Integer;"})
+  @Lkotlin/Metadata;(mv={2, 4, 0}, k=3, xi=48, d1={"\u0000\n\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0002\u0010\u0000\u001a\u00020\u0001H\n\u00a2\u0006\u0004\u0008\u0002\u0010\u0003"}, d2={"<anonymous>", "", "invoke", "()Ljava/lang/Integer;"})
   // access flags 0x19
   public final static INNERCLASS CodeFragment$run$1$complexLambda$1 null null
   // access flags 0x18
@@ -213,7 +213,7 @@ public final class CodeFragment$run$1$complexLambda$1 {
   // compiled from: fragment.kt
   OUTERCLASS CodeFragment run ()I
 
-  @Lkotlin/Metadata;(mv={2, 3, 0}, k=1, xi=48, d1={"\u0000\u0017\n\u0000\n\u0002\u0010\u0000\n\u0000\n\u0002\u0018\u0002\n\u0002\u0010\u0008\n\u0002\u0008\u0002*\u0001\u0000\u0008\n\u0018\u00002\u00020\u0001R\u0017\u0010\u0002\u001a\u0008\u0012\u0004\u0012\u00020\u00040\u0003\u00a2\u0006\u0008\n\u0000\u001a\u0004\u0008\u0005\u0010\u0006"}, d2={"CodeFragment$run$1$complexLambda$1", "", "prop", "Lkotlin/Function0;", "", "getProp", "()Lkotlin/jvm/functions/Function0;"})
+  @Lkotlin/Metadata;(mv={2, 4, 0}, k=1, xi=48, d1={"\u0000\u0017\n\u0000\n\u0002\u0010\u0000\n\u0000\n\u0002\u0018\u0002\n\u0002\u0010\u0008\n\u0002\u0008\u0002*\u0001\u0000\u0008\n\u0018\u00002\u00020\u0001R\u0017\u0010\u0002\u001a\u0008\u0012\u0004\u0012\u00020\u00040\u0003\u00a2\u0006\u0008\n\u0000\u001a\u0004\u0008\u0005\u0010\u0006"}, d2={"CodeFragment$run$1$complexLambda$1", "", "prop", "Lkotlin/Function0;", "", "getProp", "()Lkotlin/jvm/functions/Function0;"})
   // access flags 0x19
   public final static INNERCLASS CodeFragment$run$1$complexLambda$1 null null
   // access flags 0x18
@@ -263,7 +263,7 @@ public final class CodeFragment$run$1$createFunWithLocalObj$1$1 {
   // compiled from: fragment.kt
   OUTERCLASS CodeFragment$run$1$createFunWithLocalObj$1 invoke ()Ljava/lang/Integer;
 
-  @Lkotlin/Metadata;(mv={2, 3, 0}, k=1, xi=48, d1={"\u0000\u0013\n\u0000\n\u0002\u0010\u0000\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0002*\u0001\u0000\u0008\n\u0018\u00002\u00020\u0001R\u0014\u0010\u0002\u001a\u00020\u0003X\u0086D\u00a2\u0006\u0008\n\u0000\u001a\u0004\u0008\u0004\u0010\u0005"}, d2={"CodeFragment$run$1$createFunWithLocalObj$1$1", "", "x", "", "getX", "()I"})
+  @Lkotlin/Metadata;(mv={2, 4, 0}, k=1, xi=48, d1={"\u0000\u0013\n\u0000\n\u0002\u0010\u0000\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0002*\u0001\u0000\u0008\n\u0018\u00002\u00020\u0001R\u0014\u0010\u0002\u001a\u00020\u0003X\u0086D\u00a2\u0006\u0008\n\u0000\u001a\u0004\u0008\u0004\u0010\u0005"}, d2={"CodeFragment$run$1$createFunWithLocalObj$1$1", "", "x", "", "getX", "()I"})
   // access flags 0x18
   final static INNERCLASS CodeFragment$run$1$createFunWithLocalObj$1 null null
   // access flags 0x19
@@ -310,7 +310,7 @@ final class CodeFragment$run$1$createFunWithLocalObj$1 extends kotlin/jvm/intern
   // compiled from: fragment.kt
   OUTERCLASS CodeFragment run$createFunWithLocalObj ()Lkotlin/jvm/functions/Function0;
 
-  @Lkotlin/Metadata;(mv={2, 3, 0}, k=3, xi=48, d1={"\u0000\n\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0002\u0010\u0000\u001a\u00020\u0001H\n\u00a2\u0006\u0004\u0008\u0002\u0010\u0003"}, d2={"<anonymous>", "", "invoke", "()Ljava/lang/Integer;"})
+  @Lkotlin/Metadata;(mv={2, 4, 0}, k=3, xi=48, d1={"\u0000\n\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0002\u0010\u0000\u001a\u00020\u0001H\n\u00a2\u0006\u0004\u0008\u0002\u0010\u0003"}, d2={"<anonymous>", "", "invoke", "()Ljava/lang/Integer;"})
   // access flags 0x18
   final static INNERCLASS CodeFragment$run$1$createFunWithLocalObj$1 null null
   // access flags 0x19
@@ -377,7 +377,7 @@ public final class CodeFragment$run$1$localFunWithLocalClass$X {
   // compiled from: fragment.kt
   OUTERCLASS CodeFragment run$localFunWithLocalClass (I)I
 
-  @Lkotlin/Metadata;(mv={2, 3, 0}, k=1, xi=48, d1={"\u0000\u0013\n\u0000\n\u0002\u0010\u0000\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0004*\u0001\u0000\u0008\n\u0018\u00002\u00020\u0001B\u000f\u0012\u0006\u0010\u0002\u001a\u00020\u0003\u00a2\u0006\u0004\u0008\u0004\u0010\u0005R\u0011\u0010\u0002\u001a\u00020\u0003\u00a2\u0006\u0008\n\u0000\u001a\u0004\u0008\u0006\u0010\u0007"}, d2={"CodeFragment$run$1$localFunWithLocalClass$X", "", "x", "", "<init>", "(I)V", "getX", "()I"})
+  @Lkotlin/Metadata;(mv={2, 4, 0}, k=1, xi=48, d1={"\u0000\u0013\n\u0000\n\u0002\u0010\u0000\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0004*\u0001\u0000\u0008\n\u0018\u00002\u00020\u0001B\u000f\u0012\u0006\u0010\u0002\u001a\u00020\u0003\u00a2\u0006\u0004\u0008\u0004\u0010\u0005R\u0011\u0010\u0002\u001a\u00020\u0003\u00a2\u0006\u0008\n\u0000\u001a\u0004\u0008\u0006\u0010\u0007"}, d2={"CodeFragment$run$1$localFunWithLocalClass$X", "", "x", "", "<init>", "(I)V", "getX", "()I"})
   // access flags 0x19
   public final static INNERCLASS CodeFragment$run$1$localFunWithLocalClass$X null X
 
@@ -420,7 +420,7 @@ public final class CodeFragment {
 
   // compiled from: fragment.kt
 
-  @Lkotlin/Metadata;(mv={2, 3, 0}, k=3, xi=48)
+  @Lkotlin/Metadata;(mv={2, 4, 0}, k=3, xi=48)
   // access flags 0x18
   final static INNERCLASS CodeFragment$run$1$createFunWithLocalObj$1 null null
   // access flags 0x19

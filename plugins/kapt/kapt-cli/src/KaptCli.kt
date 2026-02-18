@@ -4,14 +4,14 @@
  */
 
 @file:JvmName("KaptCli")
+
 package org.jetbrains.kotlin.kapt.cli
 
 import com.intellij.util.PathUtil
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
 import org.jetbrains.kotlin.cli.common.arguments.preprocessCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArguments
+import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -39,14 +39,13 @@ fun main(args: Array<String>) {
     K2JVMCompiler.main(kaptTransformed.toTypedArray())
 }
 
-@TestOnly
 internal fun transformArgs(args: List<String>, messageCollector: MessageCollector, isTest: Boolean): List<String> {
     val parseErrors = ArgumentParseErrors()
     val kotlincTransformed = preprocessCommandLineArguments(args, lazy { parseErrors })
 
-    val errorMessage = validateArguments(parseErrors)
-    if (errorMessage != null) {
-        messageCollector.report(CompilerMessageSeverity.ERROR, errorMessage)
+    val errorMessages = validateArgumentsAllErrors(parseErrors)
+    if (errorMessages.isNotEmpty()) {
+        errorMessages.forEach { messageCollector.report(CompilerMessageSeverity.ERROR, it) }
         return emptyList()
     }
 
@@ -76,7 +75,7 @@ private fun transformKaptToolArgs(args: List<String>, messageCollector: MessageC
 
     data class Option(val cliToolOption: CliToolOption, val pluginOption: KaptCliOption)
 
-    val cliOptions = KaptCliOption.values().mapNotNull { Option(it.cliToolOption ?: return@mapNotNull null, it) }
+    val cliOptions = KaptCliOption.entries.mapNotNull { Option(it.cliToolOption ?: return@mapNotNull null, it) }
 
     val iterator = args.asIterable().iterator()
     loop@ while (iterator.hasNext()) {
@@ -139,8 +138,8 @@ private fun transformKaptToolArgs(args: List<String>, messageCollector: MessageC
 }
 
 private fun CliToolOption.matches(arg: String) = when (format) {
-    FLAG, VALUE -> arg.startsWith(name + "=")
-    KEY_VALUE -> arg.startsWith(name + ":")
+    FLAG, VALUE -> arg.startsWith("$name=")
+    KEY_VALUE -> arg.startsWith("$name:")
 }
 
 private fun CliToolOption.transform(arg: String): String {

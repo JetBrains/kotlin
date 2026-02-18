@@ -8,8 +8,8 @@ import kotlinx.atomicfu.*
 
 fun test() {
     val a = atomic<Int>(127)
-    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>a.compareAndSet(127, 128)<!> // true
-    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>a.compareAndSet(128, 7777)<!> // false
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>a.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>127<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>128<!>)<!> // true
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>a.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>128<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>7777<!>)<!> // false
 
     val aa: AtomicRef<Int>
     aa = a
@@ -20,9 +20,9 @@ typealias AtomicfuAtomicReference<T> = AtomicRef<T>
 fun testTypealiased() {
     val aa: AtomicfuAtomicReference<Int>
     aa = atomic<Int>(127)
-    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>aa.compareAndSet(127, 128)<!>
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>aa.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>127<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>128<!>)<!>
 }
 
 fun testArray(a: AtomicArray<Int>) {
-    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>a[0].compareAndSet(1, 2)<!> // A call on `AtomicRef<Int?>`
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>a[0].compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>1<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>2<!>)<!> // A call on `AtomicRef<Int?>`
 }

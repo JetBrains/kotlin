@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -71,6 +71,8 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * (see [INTERSECTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.INTERSECTION_OVERRIDE]
      * and [SUBSTITUTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.SUBSTITUTION_OVERRIDE]).
      *
+     * Also, the function doesn't return the original overridden declaration of a delegated symbol (for that, use [fakeOverrideOriginal]).
+     *
      * #### Example
      *
      * ```kotlin
@@ -90,6 +92,7 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * For `A.foo`, [allOverriddenSymbols] returns both overridden super-declarations, `B.foo` and `C.foo`.
      *
      * @see directlyOverriddenSymbols
+     * @see fakeOverrideOriginal
      */
     public val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
 
@@ -99,6 +102,8 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * The function doesn't return fake declarations, as it unwraps substituted overridden symbols implicitly
      * (see [INTERSECTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.INTERSECTION_OVERRIDE]
      * and [SUBSTITUTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.SUBSTITUTION_OVERRIDE]).
+     *
+     * Also, the function doesn't return the original overridden declaration of a delegated symbol (for that, use [fakeOverrideOriginal]).
      *
      * #### Example
      *
@@ -119,6 +124,7 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * For `A.foo`, [directlyOverriddenSymbols] returns only the directly overridden super-declaration, `B.foo`.
      *
      * @see allOverriddenSymbols
+     * @see fakeOverrideOriginal
      */
     public val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>
 
@@ -255,9 +261,9 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaSymbol.containingSymbol: KaSymbol?
-    get() = with(s) { containingSymbol }
+    get() = with(session) { containingSymbol }
 
 /**
  * The [KaDeclarationSymbol] which contains this symbol, or `null` if there is no containing declaration:
@@ -268,9 +274,9 @@ public val KaSymbol.containingSymbol: KaSymbol?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaSymbol.containingDeclaration: KaDeclarationSymbol?
-    get() = with(s) { containingDeclaration }
+    get() = with(session) { containingDeclaration }
 
 /**
  * The [KaFileSymbol] which contains this symbol, or `null` if this symbol is already a [KaFileSymbol], since it has no containing file.
@@ -278,18 +284,18 @@ public val KaSymbol.containingDeclaration: KaDeclarationSymbol?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaSymbol.containingFile: KaFileSymbol?
-    get() = with(s) { containingFile }
+    get() = with(session) { containingFile }
 
 /**
  * The [KaModule] which contains this symbol.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaSymbol.containingModule: KaModule
-    get() = with(s) { containingModule }
+    get() = with(session) { containingModule }
 
 /**
  * The associated [KaSamConstructorSymbol] if this [KaClassLikeSymbol] is a
@@ -297,18 +303,18 @@ public val KaSymbol.containingModule: KaModule
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
-    get() = with(s) { samConstructor }
+    get() = with(session) { samConstructor }
 
 /**
  * Returns the [KaClassLikeSymbol] of the corresponding SAM interface.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
-    get() = with(s) { constructedClass }
+    get() = with(session) { constructedClass }
 
 /**
  * Returns the original [KaConstructorSymbol] for a [type-aliased constructor][KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR], or `null`
@@ -319,9 +325,9 @@ public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSymbol?
-    get() = with(s) { originalConstructorIfTypeAliased }
+    get() = with(session) { originalConstructorIfTypeAliased }
 
 /**
  * A list of **all** explicitly declared symbols that are overridden by the callable symbol.
@@ -329,6 +335,8 @@ public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSy
  * The function doesn't return fake declarations, as it unwraps substituted overridden symbols implicitly
  * (see [INTERSECTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.INTERSECTION_OVERRIDE]
  * and [SUBSTITUTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.SUBSTITUTION_OVERRIDE]).
+ *
+ * Also, the function doesn't return the original overridden declaration of a delegated symbol (for that, use [fakeOverrideOriginal]).
  *
  * #### Example
  *
@@ -349,12 +357,13 @@ public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSy
  * For `A.foo`, [allOverriddenSymbols] returns both overridden super-declarations, `B.foo` and `C.foo`.
  *
  * @see directlyOverriddenSymbols
+ * @see fakeOverrideOriginal
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
-    get() = with(s) { allOverriddenSymbols }
+    get() = with(session) { allOverriddenSymbols }
 
 /**
  * A list of explicitly declared symbols which are **directly** overridden by the callable symbol.
@@ -362,6 +371,8 @@ public val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
  * The function doesn't return fake declarations, as it unwraps substituted overridden symbols implicitly
  * (see [INTERSECTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.INTERSECTION_OVERRIDE]
  * and [SUBSTITUTION_OVERRIDE][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin.SUBSTITUTION_OVERRIDE]).
+ *
+ * Also, the function doesn't return the original overridden declaration of a delegated symbol (for that, use [fakeOverrideOriginal]).
  *
  * #### Example
  *
@@ -382,12 +393,13 @@ public val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
  * For `A.foo`, [directlyOverriddenSymbols] returns only the directly overridden super-declaration, `B.foo`.
  *
  * @see allOverriddenSymbols
+ * @see fakeOverrideOriginal
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>
-    get() = with(s) { directlyOverriddenSymbols }
+    get() = with(session) { directlyOverriddenSymbols }
 
 /**
  * Checks if [this] class has [superClass] as its superclass somewhere in the inheritance hierarchy.
@@ -396,9 +408,9 @@ public val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean {
-    return with(s) {
+    return with(session) {
         isSubClassOf(
             superClass = superClass,
         )
@@ -412,9 +424,9 @@ public fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean {
-    return with(s) {
+    return with(session) {
         isDirectSubClassOf(
             superClass = superClass,
         )
@@ -446,9 +458,9 @@ public fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean 
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaK1Unsupported
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
-    get() = with(s) { intersectionOverriddenSymbols }
+    get() = with(session) { intersectionOverriddenSymbols }
 
 /**
  * Returns the [ImplementationStatus] of the given [KaCallableSymbol] in the given [parentClassSymbol], or `null` if this symbol is not
@@ -458,9 +470,9 @@ public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol
 @KaExperimentalApi
 @KaK1Unsupported
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {
-    return with(s) {
+    return with(session) {
         getImplementationStatus(
             parentClassSymbol = parentClassSymbol,
         )
@@ -494,9 +506,9 @@ public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSy
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
-    get() = with(s) { fakeOverrideOriginal }
+    get() = with(session) { fakeOverrideOriginal }
 
 /**
  * Returns an `expect` symbol for the given `actual` symbol, if it is available. The function may return multiple `expect` symbols in
@@ -505,9 +517,9 @@ public val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> {
-    return with(s) {
+    return with(session) {
         getExpectsForActual()
     }
 }
@@ -524,9 +536,9 @@ public fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> 
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
-    get() = with(s) { sealedClassInheritors }
+    get() = with(session) { sealedClassInheritors }
 
 /**
  * Returns whether [this] declaration has a conflicting signature with [other] based on platform-specific checks from [targetPlatform].
@@ -557,9 +569,9 @@ public val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol, targetPlatform: TargetPlatform): Boolean {
-    return with(s) {
+    return with(session) {
         hasConflictingSignatureWith(
             other = other,
             targetPlatform = targetPlatform,

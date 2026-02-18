@@ -21,14 +21,14 @@ FILE: enums.kt
             super<R|kotlin/Enum<WithNames>|>()
         }
 
-        @R|kotlinx/serialization/SerialName|(value = String(A)) public final static enum entry ENTRY1: R|WithNames| = object : R|WithNames| {
+        @R|kotlinx/serialization/SerialName|(value = String(A) [evaluated = String(A)]) public final static enum entry ENTRY1: R|WithNames| = object : R|WithNames| {
             private constructor(): R|<anonymous>| {
                 super<R|WithNames|>()
             }
 
         }
 
-        @R|kotlinx/serialization/SerialName|(value = String(B)) public final static enum entry ENTRY2: R|WithNames| = object : R|WithNames| {
+        @R|kotlinx/serialization/SerialName|(value = String(B) [evaluated = String(B)]) public final static enum entry ENTRY2: R|WithNames| = object : R|WithNames| {
             private constructor(): R|<anonymous>| {
                 super<R|WithNames|>()
             }
@@ -91,7 +91,7 @@ FILE: enums.kt
         }
 
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlinx/serialization/InternalSerializationApi|))) public final fun testSerializers(): R|kotlin/String| {
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlinx/serialization/InternalSerializationApi|)) [evaluated = vararg(<getClass>(Q|kotlinx/serialization/InternalSerializationApi|))]) public final fun testSerializers(): R|kotlin/String| {
         lval cs: R|kotlin/Array<kotlinx/serialization/KSerializer<*>>| = (Q|Holder|.R|/Holder.Companion.serializer|() as R|kotlinx/serialization/internal/GeneratedSerializer<*>|).R|SubstitutionOverride<kotlinx/serialization/internal/GeneratedSerializer.childSerializers: R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|>|()
         lval str1: R|kotlin/String| = R|<local>/cs|.R|SubstitutionOverride<kotlin/Array.get: R|kotlinx/serialization/KSerializer<*>|>|(Int(0)).R|kotlin/Any.toString|()
         when () {

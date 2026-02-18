@@ -1,0 +1,2 @@
+KtBinaryExpression(169,177): 'd1 == d2'
+  null

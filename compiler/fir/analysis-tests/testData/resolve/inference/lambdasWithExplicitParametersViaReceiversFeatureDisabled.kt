@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ResolveTopLevelLambdasAsSyntheticCallArgument
+// LANGUAGE: -ResolveTopLevelLambdasAsSyntheticCallArgument -LexicographicVariableReadinessCalculation
 // ISSUE: KT-81115
 
 val l1: String.() -> String = fun(x: String) = ""

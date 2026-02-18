@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 internal fun LLFirSession.registerIdeComponents(
     project: Project,
     languageVersionSettings: LanguageVersionSettings,
-    resolutionScope: GlobalSearchScope
+    annotationSearchScope: GlobalSearchScope
 ) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory(project))
     register(SealedClassInheritorsProvider::class, LLSealedInheritorsProvider(project))
@@ -61,7 +61,7 @@ internal fun LLFirSession.registerIdeComponents(
 
     @OptIn(FirImplementationDetail::class)
     register(FirJumpingPhaseComputationSessionForLocalClassesProvider::class, LLJumpingPhaseComputationSessionForLocalClassesProvider)
-    register(FirJavaAnnotationProvider::class, LLFirJavaAnnotationProvider(project, resolutionScope))
+    register(FirJavaAnnotationProvider::class, LLFirJavaAnnotationProvider(project, annotationSearchScope))
 }
 
 @SessionConfiguration
@@ -96,7 +96,9 @@ internal fun FirSession.registerCompilerPluginExtensions(project: Project, modul
 
 @SessionConfiguration
 internal fun FirSessionConfigurator.registerCompilerPluginExtensions(project: Project, module: KaModule) {
-    FirExtensionRegistrarAdapter.getInstances(project).forEach(::applyExtensionRegistrar)
+    project.extensionArea.getExtensionPoint<FirExtensionRegistrarAdapter>(FirExtensionRegistrarAdapter.name)
+        .extensionList
+        .forEach(::applyExtensionRegistrar)
 
     val pluginsProvider = KotlinCompilerPluginsProvider.getInstance(project) ?: return
     pluginsProvider
@@ -105,7 +107,8 @@ internal fun FirSessionConfigurator.registerCompilerPluginExtensions(project: Pr
 }
 
 private fun FirSessionConfigurator.applyExtensionRegistrar(registrar: FirExtensionRegistrarAdapter) {
-    registerExtensions((registrar as FirExtensionRegistrar).configure())
+    val extensions = (registrar as FirExtensionRegistrar).configure()
+    registerExtensions(extensions)
 }
 
 @SessionConfiguration
@@ -116,3 +119,4 @@ internal fun LLFirSession.registerCompilerPluginServices(project: Project, resol
     register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
     register(FirPredicateBasedProvider::class, LLFirIdePredicateBasedProvider(this, annotationsResolver))
 }
+

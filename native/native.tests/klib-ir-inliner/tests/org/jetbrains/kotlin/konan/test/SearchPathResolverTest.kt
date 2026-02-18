@@ -6,22 +6,18 @@
 package org.jetbrains.kotlin.konan.test
 
 import org.jetbrains.kotlin.konan.library.KonanLibraryProperResolver
-import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_COMMONIZER_NATIVE_TARGETS
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
-import org.jetbrains.kotlin.library.KotlinLibraryVersioning
-import org.jetbrains.kotlin.library.LenientUnresolvedLibrary
-import org.jetbrains.kotlin.library.RequiredUnresolvedLibrary
-import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.writer.KlibWriter
+import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.util.DummyLogger
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import java.util.Properties
-import java.util.UUID
+import java.util.*
 import kotlin.random.Random
 
 class SearchPathResolverTest {
@@ -67,20 +63,22 @@ class SearchPathResolverTest {
     ): String {
         val outputDir = tmpDir.resolve(UUID.randomUUID().toString()).apply(File::mkdirs).absolutePath
 
-        buildLibrary(
-            natives = emptyList(),
-            included = emptyList(),
-            linkDependencies = emptyList(),
-            metadata = DUMMY_METADATA,
-            ir = null,
-            versions = DUMMY_VERSIONS,
-            target = mainTarget,
-            output = outputDir,
-            moduleName = "test",
-            nopack = true,
-            shortName = "test",
-            manifestProperties = Properties().apply { setProperty(targetPropertyName, targetList.joinToString(" ")) }
-        )
+        KlibWriter {
+            manifest {
+                moduleName("test")
+                versions(DUMMY_VERSIONS)
+                platformAndTargets(
+                    builtInsPlatform = BuiltInsPlatform.NATIVE,
+                    targetNames = (if (targetPropertyName == KLIB_PROPERTY_NATIVE_TARGETS) targetList else listOf(mainTarget)).map { it.toString() },
+                )
+                customProperties {
+                    if (targetPropertyName != KLIB_PROPERTY_NATIVE_TARGETS) {
+                        setProperty(targetPropertyName, targetList.joinToString(" "))
+                    }
+                }
+            }
+            includeMetadata(DUMMY_METADATA)
+        }.writeTo(outputDir)
 
         return outputDir
     }

@@ -10,5 +10,6 @@ KtNameReferenceExpression(128,136): 'function'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

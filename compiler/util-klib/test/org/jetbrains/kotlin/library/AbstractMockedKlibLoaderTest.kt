@@ -58,7 +58,10 @@ abstract class AbstractMockedKlibLoaderTest(
                 abiVersion = abiVersion,
                 metadataVersion = MetadataVersion.INSTANCE,
             )
-        )
+        ) {
+            // This is only needed to simulate that the mock KLIB has some ABI.
+            this[KLIB_PROPERTY_IR_PROVIDER] = "simulation_of_some_ir_provider"
+        }
     }
 
     companion object {

@@ -186,7 +186,7 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
     IMPLICIT_TYPES_BODY_RESOLVE,
 
     /**
-     * The compiler evaluates expressions that are used as initializers for const properties and defaults of annotation's constructor.
+     * The compiler evaluates expressions that are used as initializers for const properties.
      *
      * This phase has two reasons to exist as a separate phase:
      * 1. It is a synchronization point.
@@ -208,7 +208,7 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
      * - bodies for [anonymous initializers][FirAnonymousInitializer]
      * - initializers for [variables][FirVariable]
      * - delegates for [variables][FirVariable]
-     * - default values for [value parameters][FirValueParameter]
+     * - default values for [value parameters][FirValueParameter] (including their evaluation if the parameter belongs to annotation)
      *
      * Also, during this resolution,
      * the compiler calculates the [control flow graph][org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference]

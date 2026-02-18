@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportOncePerGradleProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.supportedHosts
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal object SupportedNativeHostChecker : KotlinGradleProjectChecker {
 
@@ -25,7 +25,7 @@ internal object SupportedNativeHostChecker : KotlinGradleProjectChecker {
         val nativeTargets = extension.awaitTargets().withType<KotlinNativeTarget>()
         if (nativeTargets.isEmpty()) return
 
-        if (HostManager.hostOrNull != null) return
+        if (HostManager.hostIsSupported) return
         collector.reportOncePerGradleProject(
             project,
             KotlinToolingDiagnostics.NativeHostNotSupportedError(
@@ -35,16 +35,3 @@ internal object SupportedNativeHostChecker : KotlinGradleProjectChecker {
         )
     }
 }
-
-private val KonanTarget.formatedHostName: String
-    get() = when (this) {
-        KonanTarget.LINUX_X64 -> "Linux (x86_64)"
-        KonanTarget.LINUX_ARM64 -> "Linux (aarch64)"
-        KonanTarget.MINGW_X64 -> "Windows (x86_64)"
-        KonanTarget.MACOS_X64 -> "macOS (x86_64)"
-        KonanTarget.MACOS_ARM64 -> "macOS (arm64)"
-        // Fallback for any future hosts, though the 'when' should be exhaustive
-        else -> visibleName
-    }
-
-private val HostManager.supportedHosts: List<String> get() = enabledByHost.keys.map { it.formatedHostName }

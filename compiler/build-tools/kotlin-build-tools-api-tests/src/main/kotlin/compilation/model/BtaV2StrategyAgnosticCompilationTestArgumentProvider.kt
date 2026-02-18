@@ -3,11 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
+package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.provider.Arguments
@@ -21,11 +22,17 @@ class BtaV2StrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
 
     companion object {
         fun namedStrategyArguments(): List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> {
-            val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
+            val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
             val v2Args: List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> =
                 listOf(
-                    Named.named("[v2] in-process", kotlinToolchains to kotlinToolchains.createInProcessExecutionPolicy()),
-                    Named.named("[v2] within daemon", kotlinToolchains to kotlinToolchains.createDaemonExecutionPolicy())
+                    Named.named(
+                        "[v2][${kotlinToolchains.getCompilerVersion()}] in-process",
+                        kotlinToolchains to kotlinToolchains.createInProcessExecutionPolicy()
+                    ),
+                    Named.named(
+                        "[v2][${kotlinToolchains.getCompilerVersion()}] within daemon",
+                        kotlinToolchains to kotlinToolchains.daemonExecutionPolicyBuilder().build()
+                    )
                 )
 
             return v2Args

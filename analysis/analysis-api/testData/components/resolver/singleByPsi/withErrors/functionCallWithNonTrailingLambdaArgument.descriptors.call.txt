@@ -1,8 +1,42 @@
 KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(a: O1, b: kotlin.Function1<kotlin.Int, kotlin.Boolean>, c: T1): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = TypeVariable(O1)
+              symbol = a: O1
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
+              symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = TypeVariable(T1)
+              symbol = c: T1
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /function
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
           1 -> (KaVariableSignature:
             name = a
             receiverType = null
@@ -24,44 +58,43 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
             symbol = c: T1
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /function(a: O1, b: kotlin.Function1<kotlin.Int, kotlin.Boolean>, c: T1): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = TypeVariable(O1)
-                symbol = a: O1
-                contextParameters = []
-                callableId = null,
-              KaVariableSignature:
-                name = b
-                receiverType = null
-                returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
-                symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
-                contextParameters = []
-                callableId = null,
-              KaVariableSignature:
-                name = c
-                receiverType = null
-                returnType = TypeVariable(T1)
-                symbol = c: T1
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /function
-        typeArgumentsMapping = {},
+        },
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(a: O2, b: kotlin.Function1<kotlin.String, kotlin.Boolean>, c: T2): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = TypeVariable(O2)
+              symbol = a: O2
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
+              symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = TypeVariable(T2)
+              symbol = c: T2
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /function
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
           1 -> (KaVariableSignature:
             name = a
             receiverType = null
@@ -84,41 +117,6 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
             contextParameters = []
             callableId = null)
         }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /function(a: O2, b: kotlin.Function1<kotlin.String, kotlin.Boolean>, c: T2): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = TypeVariable(O2)
-                symbol = a: O2
-                contextParameters = []
-                callableId = null,
-              KaVariableSignature:
-                name = b
-                receiverType = null
-                returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
-                symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
-                contextParameters = []
-                callableId = null,
-              KaVariableSignature:
-                name = c
-                receiverType = null
-                returnType = TypeVariable(T2)
-                symbol = c: T2
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /function
-        typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
     public fun <T1, O1> function(a: TypeVariable(O1), b: (Int) -> Boolean, c: TypeVariable(T1)): Unit defined in root package in file functionCallWithNonTrailingLambdaArgument.kt

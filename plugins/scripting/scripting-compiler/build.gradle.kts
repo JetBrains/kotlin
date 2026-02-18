@@ -19,8 +19,11 @@ dependencies {
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:fir:raw-fir:raw-fir.common"))
     compileOnly(project(":compiler:fir:tree"))
+    compileOnly(project(":compiler:fir:providers"))
+    compileOnly(project(":compiler:fir:fir2ir:jvm-backend"))
     compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:cli-jvm"))
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:backend.jvm.entrypoint"))
@@ -33,12 +36,12 @@ dependencies {
     compileOnly(intellijCore())
 
     implementation(project(":kotlin-power-assert-compiler-plugin")) // TODO: KT-74787
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testImplementation(project(":compiler:frontend"))
     testImplementation(project(":compiler:plugin-api"))
     testImplementation(project(":compiler:util"))
     testImplementation(project(":compiler:cli"))
-    testImplementation(project(":compiler:cli-common"))
     testImplementation(project(":compiler:frontend.java"))
     testImplementation(project(":compiler:fir:plugin-utils"))
     testImplementation(testFixtures(project(":compiler:tests-common"))) { // TODO: drop this, it's based on JUnit4

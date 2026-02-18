@@ -21,13 +21,16 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsFirstStageEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Tag
 
 @Tag("custom-first-stage")
-open class AbstractCustomJsCompilerFirstStageTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
+open class AbstractCustomJsCompilerFirstStageTest(val testDataRoot: String = "compiler/testData/codegen/") :
+    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             // Note: Need to specify the concrete FE kind because this affects the choice of IGNORE_BACKEND_* directive.
@@ -43,6 +46,7 @@ open class AbstractCustomJsCompilerFirstStageTest : AbstractKotlinCompilerWithTa
             +WITH_STDLIB
         }
 
+        useMetaTestConfigurators(::UnsupportedFeaturesTestConfigurator)
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::JsFirstStageEnvironmentConfigurator,
@@ -69,13 +73,14 @@ open class AbstractCustomJsCompilerFirstStageTest : AbstractKotlinCompilerWithTa
         )
 
         commonConfigurationForJsBackendSecondStageTest(
-            pathToTestDir = "compiler/testData/codegen/box/",
-            testGroupOutputDirPrefix = "customJsCompilerFirstStageTest/",
+            pathToTestDir = testDataRoot,
+            testGroupOutputDirPrefix = this@AbstractCustomJsCompilerFirstStageTest::class.java.simpleName +
+                    customJsCompilerSettings.defaultLanguageVersion,
             backendFacades = JsBackendFacades.WithRecompilation
         )
 
         setUpDefaultDirectivesForJsBoxTest(parser = /* Does not matter */ FirParser.LightTree)
 
-        configureJsBoxHandlers()
+        configureJsBoxHandlers(verifyJsAst = false)
     }
 }

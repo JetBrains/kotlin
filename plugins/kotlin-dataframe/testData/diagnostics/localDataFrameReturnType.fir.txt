@@ -44,7 +44,7 @@ FILE: localDataFrameReturnType.kt
         )
             private get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>|
 
-        public final val df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>| = R|kotlin/run|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>|>(<L> = fun <anonymous>(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        public final val df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Any>| = R|kotlin/run|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>|>(<L> = fun <anonymous>(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class DataFrameOf_01I : R|kotlin/Any| {
                 @R|org/jetbrains/kotlinx/dataframe/annotations/Order|(order = Int(0)) public abstract val a: R|kotlin/Int|
                     public get(): R|kotlin/Int|
@@ -75,7 +75,7 @@ FILE: localDataFrameReturnType.kt
             ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/Int|>(vararg(Int(42))))))
         }
         )
-            public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Any>|
 
         private final val df2: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/MySchema>| = R|kotlin/run|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>|>(<L> = fun <anonymous>(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_01>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class DataFrameOf_01I : R|kotlin/Any| {

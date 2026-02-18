@@ -1,6 +1,6 @@
 FILE: suspendLambdaScript.kts
     SCRIPT: <script-suspendLambdaScript.kts>
 
-        init {
+        [ScriptTopLevelDeclaration=true] init {
             LAZY_EXPRESSION
         }

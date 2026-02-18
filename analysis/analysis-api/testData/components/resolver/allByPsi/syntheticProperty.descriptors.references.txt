@@ -16,6 +16,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -29,6 +30,7 @@ KtNameReferenceExpression(78,83): 'print'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -42,6 +44,7 @@ KtNameReferenceExpression(84,93): 'javaClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -55,7 +58,10 @@ KtNameReferenceExpression(94,103): 'something'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun getSomething(): kotlin.Int
 
 KtNameReferenceExpression(109,118): 'javaClass'
@@ -68,6 +74,7 @@ KtNameReferenceExpression(109,118): 'javaClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -81,7 +88,10 @@ KtNameReferenceExpression(119,128): 'something'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun setSomething(value: kotlin.Int)
 
 KtOperationReferenceExpression(129,130): '='
@@ -101,6 +111,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -114,13 +125,19 @@ KtNameReferenceExpression(147,156): 'something'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun getSomething(): kotlin.Int
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun setSomething(value: kotlin.Int)
 
 KtOperationReferenceExpression(157,159): '+='
@@ -140,6 +157,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -153,13 +171,19 @@ KtNameReferenceExpression(176,185): 'something'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun getSomething(): kotlin.Int
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun setSomething(value: kotlin.Int)
 
 KtOperationReferenceExpression(185,187): '++'
@@ -186,6 +210,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -199,13 +224,19 @@ KtNameReferenceExpression(204,213): 'something'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun getSomething(): kotlin.Int
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun setSomething(value: kotlin.Int)
 
 KtNameReferenceExpression(219,228): 'something'
@@ -218,13 +249,19 @@ KtNameReferenceExpression(219,228): 'something'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun getSomething(): kotlin.Int
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun setSomething(value: kotlin.Int)
 
 KtOperationReferenceExpression(228,230): '++'
@@ -244,13 +281,19 @@ KtNameReferenceExpression(236,245): 'something'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun getSomething(): kotlin.Int
 
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun setSomething(value: kotlin.Int)
 
 KtOperationReferenceExpression(246,248): '++'
@@ -270,7 +313,10 @@ KtNameReferenceExpression(254,263): 'something'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun setSomething(value: kotlin.Int)
 
 KtOperationReferenceExpression(265,266): '='
@@ -290,6 +336,7 @@ KtNameReferenceExpression(274,283): 'javaClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -303,7 +350,10 @@ KtNameReferenceExpression(284,293): 'something'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in JavaClass) open fun setSomething(value: kotlin.Int)
 
 KtOperationReferenceExpression(295,296): '='

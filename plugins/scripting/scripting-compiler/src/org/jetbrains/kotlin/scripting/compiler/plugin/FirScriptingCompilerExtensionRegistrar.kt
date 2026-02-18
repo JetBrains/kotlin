@@ -12,24 +12,17 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptConfigur
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptDefinitionProviderService
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptResolutionConfigurationExtensionImpl
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 class FirScriptingCompilerExtensionRegistrar(
-    private val hostConfiguration: ScriptingHostConfiguration, private val compilerConfiguration: CompilerConfiguration
+    private val compilerConfiguration: CompilerConfiguration
 ) : FirExtensionRegistrar() {
 
     override fun ExtensionRegistrarContext.configurePlugin() {
         if (compilerConfiguration.getBoolean(ScriptingConfigurationKeys.DISABLE_SCRIPTING_PLUGIN_OPTION)) return
 
-        configureScriptDefinitions(compilerConfiguration, hostConfiguration, this::class.java.classLoader)
-        val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
-        val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
-        if (definitionSources.isNotEmpty() || definitions.isNotEmpty()) {
-            +FirScriptDefinitionProviderService.getFactory(definitions, definitionSources)
-        }
-
-        +FirScriptConfiguratorExtensionImpl.getFactory(hostConfiguration)
-        +FirScriptResolutionConfigurationExtensionImpl.getFactory(hostConfiguration)
-        +Fir2IrScriptConfiguratorExtensionImpl.getFactory(hostConfiguration)
+        +FirScriptDefinitionProviderService.getFactory(compilerConfiguration)
+        +FirScriptConfiguratorExtensionImpl.getFactory()
+        +FirScriptResolutionConfigurationExtensionImpl.getFactory()
+        +Fir2IrScriptConfiguratorExtensionImpl.getFactory()
     }
 }

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerE
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CustomKlibs
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
@@ -92,7 +91,7 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
     private fun Array<String>.expandGlobs(settings: Settings, noExpandedFilesErrorMessage: () -> String): Set<File> {
         val files = buildSet {
             this@expandGlobs.forEach { pathPattern ->
-                expandGlobTo(getAbsoluteFile(substituteRealPaths(pathPattern, settings)), this)
+                expandGlobTo(getAbsoluteFile(PredefinedPaths.substitutePlaceholders(pathPattern, settings)), this)
             }
         }
         assertTrue(files.isNotEmpty(), noExpandedFilesErrorMessage)
@@ -103,7 +102,7 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
         if (isEmpty())
             TestCompilerArgs.EMPTY
         else {
-            val freeCompilerArgs = map { arg -> substituteRealPaths(arg, settings) }
+            val freeCompilerArgs = map { arg -> PredefinedPaths.substitutePlaceholders(arg, settings) }
             val forbiddenCompilerArgs = TestCompilerArgs.findForbiddenArgs(freeCompilerArgs)
             assertTrue(forbiddenCompilerArgs.isEmpty()) {
                 """
@@ -116,11 +115,4 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
 
             TestCompilerArgs(freeCompilerArgs)
         }
-
-    private fun substituteRealPaths(value: String, settings: Settings): String =
-        if ('$' in value) {
-            // N.B. Here, more substitutions can be supported in the future if it would be necessary.
-            value.replace(PredefinedPaths.KOTLIN_NATIVE_DISTRIBUTION, settings.get<KotlinNativeHome>().dir.path)
-        } else
-            value
 }

@@ -1,0 +1,6 @@
+KtArrayAccessExpression(44,48): '1[2]'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /get(<extension receiver>: kotlin.Int, index: kotlin.Int): kotlin.Int
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with get>

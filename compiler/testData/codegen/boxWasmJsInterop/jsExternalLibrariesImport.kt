@@ -1,5 +1,3 @@
-// TARGET_BACKEND: WASM
-
 // FILE: sqrt.kt
 @file:JsQualifier("Math")
 package math

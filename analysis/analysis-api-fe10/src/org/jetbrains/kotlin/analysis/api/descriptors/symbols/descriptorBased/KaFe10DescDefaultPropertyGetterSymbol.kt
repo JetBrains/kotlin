@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 internal class KaFe10DescDefaultPropertyGetterSymbol(
     private val propertyDescriptor: PropertyDescriptor,
@@ -72,6 +73,9 @@ internal class KaFe10DescDefaultPropertyGetterSymbol(
 
     override val annotations: KaAnnotationList
         get() = withValidityAssertion { KaBaseEmptyAnnotationList(token) }
+
+    override val isExternal: Boolean
+        get() = withValidityAssertion { propertyDescriptor.isEffectivelyExternal() }
 
     override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {
         KaFe10NeverRestoringSymbolPointer()

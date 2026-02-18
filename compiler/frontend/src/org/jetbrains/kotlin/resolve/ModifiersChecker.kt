@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -117,22 +118,13 @@ object ModifierCheckerCore {
     private fun checkTarget(trace: BindingTrace, node: ASTNode, actualTargets: List<KotlinTarget>): Boolean {
         val modifier = node.elementType as KtModifierKeywordToken
 
-        val possibleTargets = possibleTargetMap[modifier] ?: emptySet()
-        if (!actualTargets.any { it in possibleTargets }) {
+        val possibleTargets = possibleTargetPredicateMap[modifier]
+        if (actualTargets.none { possibleTargets?.isAllowed(it, LanguageVersionSettingsImpl.DEFAULT) == true }) {
             trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
             return false
         }
-        val deprecatedTargets = deprecatedTargetMap[modifier] ?: emptySet()
         val redundantTargets = redundantTargetMap[modifier] ?: emptySet()
         when {
-            actualTargets.any { it in deprecatedTargets } ->
-                trace.report(
-                    Errors.DEPRECATED_MODIFIER_FOR_TARGET.on(
-                        node.psi,
-                        modifier,
-                        actualTargets.firstOrNull()?.description ?: "this"
-                    )
-                )
             actualTargets.any { it in redundantTargets } ->
                 trace.report(
                     Errors.REDUNDANT_MODIFIER_FOR_TARGET.on(

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.forTestCompile;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -73,13 +74,58 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static File distKotlincForTests() {
+        return new File(propertyOrDist(KOTLIN_DIST_PATH, "dist"), "kotlinc");
+    }
+
+    @NotNull
+    public static File pluginSandboxAnnotationsJvmForTests() {
+        return propertyOrDist(
+                PLUGIN_SANDBOX_ANNOTATIONS_JAR_PATH,
+                "plugins/plugin-sandbox/plugin-annotations/build/libs/plugin-annotations-jvm" + "-" + KotlinCompilerVersion.VERSION + ".jar"
+        );
+    }
+
+    @NotNull
+    public static File pluginSandboxAnnotationsJsForTests() {
+        return propertyOrDist(
+                PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH,
+                "plugins/plugin-sandbox/plugin-annotations/build/libs/plugin-annotations-js" + "-" + KotlinCompilerVersion.VERSION + ".klib"
+        );
+    }
+
+    @NotNull
+    public static List<File> testScriptDefinitionClasspathForTests() {
+        String classpathString = getProperty(KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH, null);
+        if (classpathString == null) {
+            return Collections.emptyList();
+        }
+
+        List<File> list = new ArrayList<>();
+        for (String classpathEntryString : classpathString.split(File.pathSeparator)) {
+            File file = new File(classpathEntryString);
+            if (!file.exists()) {
+                throw new IllegalStateException("The file required for custom test script definition not found: " + classpathEntryString);
+            }
+            list.add(file);
+        }
+
+        return list;
+    }
+
+    @NotNull
     public static File runtimeSourcesJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-sources.jar"));
+        return propertyOrDist(KOTLIN_FULL_STDLIB_SOURCES_PATH, "dist/kotlinc/lib/kotlin-stdlib-sources.jar");
     }
 
     @NotNull
     public static File stdlibCommonForTests() {
         return propertyOrDist(KOTLIN_COMMON_STDLIB_PATH, "dist/common/kotlin-stdlib-common.klib");
+    }
+
+    @NotNull
+    public static File stdlibJs() {
+        return propertyOrDist(KOTLIN_JS_STDLIB_KLIB_PATH, "build/js-ir-runtime/full-runtime.klib");
     }
 
     private static File propertyOrDist(String property, String distPath) {
@@ -108,6 +154,11 @@ public class ForTestCompileRuntime {
     @NotNull
     public static File jvmAnnotationsForTests() {
         return propertyOrDist(KOTLIN_ANNOTATIONS_PATH, "dist/kotlinc/lib/kotlin-annotations-jvm.jar");
+    }
+
+    @NotNull
+    public static File stdlibJsForTests() {
+        return propertyOrDist(KOTLIN_JS_STDLIB_KLIB_PATH, "dist/kotlinc/lib/kotlin-stdlib-js.klib");
     }
 
     @NotNull

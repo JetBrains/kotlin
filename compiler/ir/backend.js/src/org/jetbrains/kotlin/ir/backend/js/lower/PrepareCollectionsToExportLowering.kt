@@ -53,6 +53,8 @@ private class ExportedCollectionsInfo(context: JsIrBackendContext) {
     )
 }
 
+val CONVERTERS_TO_JS_COLLECTIONS by IrDeclarationOriginImpl.Regular
+
 // TODO: Remove the lowering and move annotations into stdlib after solving problem with tests on KLIB
 class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private companion object {
@@ -82,6 +84,8 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
             declaration.declarations.forEach {
                 if (!it.shouldIncludeInInterfaceExport()) {
                     it.excludeFromJsExport()
+                } else {
+                    it.origin = CONVERTERS_TO_JS_COLLECTIONS
                 }
             }
 
@@ -191,21 +195,21 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
         if (this is IrSimpleFunction) {
             correspondingPropertySymbol?.owner?.excludeFromJsExport()
         }
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsExportIgnoreCtor)
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsExportIgnoreCtor)
     }
 
     private fun IrDeclarationWithName.addJsName() {
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsNameCtor).apply {
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsNameCtor).apply {
             arguments[0] = "Kt${name.asString()}".toIrConst(context.irBuiltIns.stringType)
         }
     }
 
     private fun IrDeclarationWithName.addJsStatic() {
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsStatic)
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsStatic)
     }
 
     private fun IrDeclaration.markWithJsImplicitExport() {
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsImplicitExportCtor).apply {
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsImplicitExportCtor).apply {
             arguments[0] = true.toIrConst(context.irBuiltIns.booleanType)
         }
     }

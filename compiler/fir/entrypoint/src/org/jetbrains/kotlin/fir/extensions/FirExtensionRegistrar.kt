@@ -5,27 +5,21 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
+import org.jetbrains.kotlin.fir.analysis.diagnostics.registeredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.backend.Fir2IrReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.backend.Fir2IrScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirReplSnippetConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
 import org.jetbrains.kotlin.fir.serialization.FirMetadataSerializerPlugin
 import kotlin.reflect.KClass
 
 abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
     companion object {
-        fun getInstances(project: Project): List<FirExtensionRegistrar> {
-            @Suppress("UNCHECKED_CAST")
-            return FirExtensionRegistrarAdapter.getInstances(project) as List<FirExtensionRegistrar>
-        }
-
         internal val AVAILABLE_EXTENSIONS = listOf(
             FirStatusTransformerExtension::class,
             FirDeclarationGenerationExtension::class,
@@ -338,5 +332,8 @@ fun FirExtensionService.registerExtensions(registeredExtensions: BunchOfRegister
         session.register(it.componentClass, it)
     }
     session.registeredPluginAnnotations.initialize()
-    session.diagnosticRendererFactory.registerFactories(registeredExtensions.diagnosticsContainers.map { it.getRendererFactory() })
+    if (session.kind == FirSession.Kind.Source) {
+        session.registeredDiagnosticFactoriesStorage.registerDiagnosticContainers(registeredExtensions.diagnosticsContainers)
+    }
 }
+

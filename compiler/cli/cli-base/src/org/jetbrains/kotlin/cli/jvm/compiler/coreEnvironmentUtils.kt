@@ -30,16 +30,18 @@ fun CompilerConfiguration.report(severity: CompilerMessageSeverity, message: Str
     messageCollector.report(severity, message, location)
 }
 
+class SourceFileWithModule<T>(val sourceFiles: Iterable<T>, val isCommon: Boolean, val moduleName: String?)
+
 fun List<KotlinSourceRoot>.forAllFiles(
     configuration: CompilerConfiguration,
     project: Project,
     reportLocation: CompilerMessageLocation? = null,
     body: (VirtualFile, Boolean, moduleName: String?) -> Unit
 ) {
+    if (isEmpty()) return
+
     val localFileSystem = VirtualFileManager.getInstance()
         .getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-
-    val processedFiles = hashSetOf<VirtualFile>()
 
     val virtualFileCreator = PreprocessedFileCreator(project)
 
@@ -53,9 +55,43 @@ fun List<KotlinSourceRoot>.forAllFiles(
         }
     }
 
-    for ((sourceRootPath, isCommon, hmppModuleName) in this) {
+    allSourceFilesSequence(
+        configuration,
+        reportLocation,
+        findVirtualFile = { localFileSystem.findFileByPath(it.normalize().path) },
+        filter = { virtualFile, isExplicit ->
+            if (virtualFile.extension != KotlinFileType.EXTENSION)
+                ensurePluginsConfigured()
+            val isKotlin = virtualFile.extension == KotlinFileType.EXTENSION || virtualFile.fileType == KotlinFileType.INSTANCE
+            if (isExplicit && !isKotlin)
+                configuration.report(CompilerMessageSeverity.ERROR, "Source entry is not a Kotlin file: ${virtualFile.path}", reportLocation)
+            isKotlin
+        },
+        convertToSourceFiles = { listOf(virtualFileCreator.create(it)) }
+    ).forEach { filesInfo ->
+        filesInfo.sourceFiles.forEach {
+            body(it, filesInfo.isCommon, filesInfo.moduleName)
+        }
+    }
+}
+
+fun interface ValidSourceFilesFilter<VirtualFile> {
+    operator fun invoke(virtualFile: VirtualFile, isExplicit: Boolean): Boolean
+}
+
+fun <VirtualFile, Source> List<KotlinSourceRoot>.allSourceFilesSequence(
+    configuration: CompilerConfiguration,
+    reportLocation: CompilerMessageLocation? = null,
+    findVirtualFile: (File) -> VirtualFile?,
+    filter: ValidSourceFilesFilter<VirtualFile>,
+    convertToSourceFiles: (VirtualFile) -> Iterable<Source>,
+) : Sequence<SourceFileWithModule<Source>> = sequence {
+
+    val processedFiles = hashSetOf<VirtualFile>()
+
+    for ((sourceRootPath, isCommon, hmppModuleName) in this@allSourceFilesSequence) {
         val sourceRoot = File(sourceRootPath)
-        val vFile = localFileSystem.findFileByPath(sourceRoot.normalize().path)
+        val vFile = findVirtualFile(sourceRoot)
         if (vFile == null) {
             val message = "Source file or directory not found: $sourceRootPath"
 
@@ -69,25 +105,15 @@ fun List<KotlinSourceRoot>.forAllFiles(
             continue
         }
 
-        if (!vFile.isDirectory && vFile.extension != KotlinFileType.EXTENSION) {
-            ensurePluginsConfigured()
-            if (vFile.fileType != KotlinFileType.INSTANCE) {
-                configuration.report(CompilerMessageSeverity.ERROR, "Source entry is not a Kotlin file: $sourceRootPath", reportLocation)
-                continue
-            }
-        }
+        if (!sourceRoot.isDirectory && !filter(vFile, true)) continue
 
         for (file in sourceRoot.walkTopDown()) {
             if (!file.isFile) continue
 
-            val virtualFile = localFileSystem.findFileByPath(file.absoluteFile.normalize().path)?.let(virtualFileCreator::create)
+            val virtualFile = findVirtualFile(file.absoluteFile)
             if (virtualFile != null && processedFiles.add(virtualFile)) {
-                if (virtualFile.extension != KotlinFileType.EXTENSION) {
-                    ensurePluginsConfigured()
-                }
-                if (virtualFile.extension == KotlinFileType.EXTENSION || virtualFile.fileType == KotlinFileType.INSTANCE) {
-                    body(virtualFile, isCommon, hmppModuleName)
-                }
+                if (filter(virtualFile, false))
+                    yield(SourceFileWithModule(convertToSourceFiles(virtualFile), isCommon, hmppModuleName))
             }
         }
     }

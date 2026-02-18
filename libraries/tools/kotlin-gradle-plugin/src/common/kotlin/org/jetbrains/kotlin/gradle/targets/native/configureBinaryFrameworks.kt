@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
@@ -90,6 +91,10 @@ private fun Configuration.applyBinaryFrameworkGroupAttributes(
 }
 
 private fun Project.addFrameworkArtifact(configuration: Configuration, artifactFile: Provider<File>) {
+    tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).configure { assemble ->
+        assemble.dependsOn(artifactFile)
+    }
+
     configuration.outgoing.registerArtifact(
         artifactProvider = artifactFile,
         name = name,

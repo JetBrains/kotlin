@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.diagnostics.*
 
-internal class LLFirDiagnosticReporter : DiagnosticReporter() {
+internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
     private val pendingDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
     private val _committedDiagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
 
@@ -37,15 +37,14 @@ internal class LLFirDiagnosticReporter : DiagnosticReporter() {
         pendingDiagnostics.addValueFor(psiDiagnostic.psiElement, psiDiagnostic)
     }
 
-    override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext?) {
-        val commitEverything = context == null
+    override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext, commitEverything: Boolean) {
         for ((diagnosticElement, pendingList) in pendingDiagnostics) {
             val committedList = _committedDiagnostics.getOrPut(diagnosticElement) { mutableListOf() }
             val iterator = pendingList.iterator()
             while (iterator.hasNext()) {
                 val diagnostic = iterator.next()
                 when {
-                    context?.isDiagnosticSuppressed(diagnostic as KtDiagnostic) == true -> {
+                    context.isDiagnosticSuppressed(diagnostic as KtDiagnostic) -> {
                         if (diagnostic.element == element ||
                             diagnostic.element.startOffset >= element.startOffset && diagnostic.element.endOffset <= element.endOffset
                         ) {

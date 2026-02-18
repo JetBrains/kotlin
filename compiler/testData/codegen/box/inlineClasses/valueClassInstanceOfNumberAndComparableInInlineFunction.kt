@@ -2,6 +2,7 @@
 // ISSUE: KT-67520
 // LANGUAGE: +AvoidWrongOptimizationOfTypeOperatorsOnValueClasses
 
+// FILE: main.kt
 inline class X(val x: String)
 
 fun box(): String {
@@ -19,7 +20,7 @@ fun box(): String {
     return "OK"
 }
 
-
+// FILE: lib.kt
 inline fun <T> leakInline(a: Any): Comparable<T> {
     if (a is Comparable<*>) return a as Comparable<T>
     error("Alas")

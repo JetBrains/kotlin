@@ -13,7 +13,7 @@ internal fun areJavacComponentsAvailable(): Boolean {
     return try {
         Class.forName(JAVAC_CONTEXT_CLASS)
         true
-    } catch (e: ClassNotFoundException) {
+    } catch (_: ClassNotFoundException) {
         false
     }
 }
@@ -27,10 +27,10 @@ internal fun findToolsJar(): File? {
 
     fun getToolsJar(javaHome: File) = File(javaHome, "lib/tools.jar").takeIf { it.exists() }
 
-    getToolsJar(currentJavaHome)?.let { return it}
+    getToolsJar(currentJavaHome)?.let { return it }
 
     if (currentJavaHome.name == "jre") {
-        getToolsJar(currentJavaHome.parentFile)?.let { return it}
+        getToolsJar(currentJavaHome.parentFile)?.let { return it }
     }
 
     return null

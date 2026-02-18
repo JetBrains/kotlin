@@ -1,0 +1,27 @@
+// FILE: lib.kt
+package foo
+import kotlin.test.*
+
+inline fun run(noinline f: () -> Int): Int {
+    return f()
+}
+
+// FILE: main.kt
+package foo
+import kotlin.test.*
+
+var flag = false
+fun toggle(): Boolean {
+    flag = !flag
+
+    return flag
+}
+
+// CHECK_BREAKS_COUNT: function=box count=0
+// CHECK_LABELS_COUNT: function=box name=$l$block count=0
+fun box(): String {
+    run({ toggle(); 4 })
+    assertEquals(true, flag)
+
+    return "OK"
+}

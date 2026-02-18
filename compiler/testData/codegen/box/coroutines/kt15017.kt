@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 import helpers.*
 import kotlin.coroutines.startCoroutine
 
@@ -13,6 +15,10 @@ fun builder(c: suspend Controller.() -> Unit) {
 }
 
 class OK
+
+// FILE: main.kt
+import helpers.*
+import kotlin.coroutines.startCoroutine
 
 fun box(): String {
     var result = ""

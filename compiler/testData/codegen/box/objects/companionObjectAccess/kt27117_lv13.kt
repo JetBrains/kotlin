@@ -1,5 +1,7 @@
+// FILE: lib.kt
 inline fun on(body: () -> Any) = body().toString()
 
+// FILE: main.kt
 class A {
     fun test() = foo()
 

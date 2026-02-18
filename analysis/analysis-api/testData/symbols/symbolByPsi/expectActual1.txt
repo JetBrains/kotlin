@@ -40,6 +40,7 @@ KaConstructorSymbol:
   isActual: true
   isExpect: false
   isExtension: false
+  isExternal: false
   isPrimary: true
   location: CLASS
   modality: FINAL
@@ -59,10 +60,12 @@ KaConstructorSymbol:
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
+      hasSynthesizedName: false
       isActual: false
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -100,6 +103,7 @@ KaConstructorSymbol:
   isActual: true
   isExpect: false
   isExtension: false
+  isExternal: false
   isPrimary: false
   location: CLASS
   modality: FINAL
@@ -119,10 +123,12 @@ KaConstructorSymbol:
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
+      hasSynthesizedName: false
       isActual: false
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -236,6 +242,8 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
+    isNotDefault: false
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -270,6 +278,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
@@ -327,10 +336,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: sample.B
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getN
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
@@ -376,6 +383,7 @@ KaTypeAliasSymbol:
     type: sample/D
   isActual: true
   isExpect: false
+  isExternal: false
   location: TOP_LEVEL
   modality: FINAL
   name: C
@@ -501,6 +509,8 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
+    isNotDefault: false
     isVal: false
     location: PROPERTY
     modality: FINAL
@@ -531,6 +541,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
@@ -582,6 +593,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
@@ -596,10 +608,12 @@ KaKotlinPropertySymbol:
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
+      hasSynthesizedName: false
       isActual: false
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -633,10 +647,12 @@ KaKotlinPropertySymbol:
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
+        hasSynthesizedName: false
         isActual: false
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -669,9 +685,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: sample.MainKt
   getContainingModule: KaSourceModule "Sources of jvm-main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getM
   javaSetterName: setM
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: sample.m

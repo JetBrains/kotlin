@@ -80,13 +80,15 @@ fun KaptContext.doAnnotationProcessing(
         val sourcesStructureListener = cacheManager?.let {
             if (processors.any { it.isUnableToRunIncrementally() }) return@let null
 
-            val recordTypesListener = MentionedTypesTaskListener(cacheManager.javaCache, processingEnvironment.elementUtils, Trees.instance(processingEnvironment))
+            val recordTypesListener = MentionedTypesTaskListener(
+                cacheManager.javaCache, processingEnvironment.elementUtils, Trees.instance(processingEnvironment),
+            )
             compiler.getTaskListeners().add(recordTypesListener)
             recordTypesListener
         }
 
         compilerAfterAP = try {
-            javaLog.interceptorData.files = parsedJavaFiles.map { it.sourceFile to it }.toMap()
+            javaLog.interceptorData.files = parsedJavaFiles.associateBy { it.sourceFile }
             val analyzedFiles = compiler.stopIfErrorOccurred(
                 CompileState.PARSE, compiler.enterTrees(parsedJavaFiles + additionalSources)
             )
@@ -282,7 +284,7 @@ private class ProcessorWrapper(private val delegate: IncrementalProcessor) : Pro
             @Suppress("UNCHECKED_CAST")
             val sources: Set<String>? = genSourceNameObj as? Set<String>
             numSourcesGenerated = sources?.size ?: -1
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // Not much we can do
         } finally {
             sourcesGenerated.add(numSourcesGenerated)

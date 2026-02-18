@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.kapt.base.test
 
 import org.jetbrains.kotlin.kapt.base.KaptOptions
-import org.jetbrains.kotlin.kapt.base.ProcessorLoader
+import org.jetbrains.kotlin.kapt.base.ProcessorLoaderImpl
 import org.jetbrains.kotlin.kapt.base.util.WriterBackedKaptLogger
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -16,6 +16,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 class ProcessorLoaderTest {
+    @Suppress("PropertyName")
     @JvmField
     @TempDir
     var _rootTempDirectory: File? = null
@@ -26,8 +27,8 @@ class ProcessorLoaderTest {
     @Test
     fun testProcessorClasspath() {
         val kaptOptions = with(KaptOptions.Builder()) {
-            val jar = rootTempDirectory.newFile("empty.jar").also {
-                ZipOutputStream(it.outputStream()).use {
+            val jar = rootTempDirectory.newFile("empty.jar").also { file ->
+                ZipOutputStream(file.outputStream()).use {
                     it.putNextEntry(ZipEntry("fake_entry"))
                     it.closeEntry()
                 }
@@ -38,15 +39,15 @@ class ProcessorLoaderTest {
             stubsOutputDir = rootTempDirectory.newStubsFolder()
             build()
         }
-        val loadedProcessors = ProcessorLoader(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
+        val loadedProcessors = ProcessorLoaderImpl(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
         assertTrue(loadedProcessors.processors.isEmpty())
     }
 
     @Test
     fun testProcessorUpperCaseExtensionClasspath() {
         val kaptOptions = with(KaptOptions.Builder()) {
-            val jar = rootTempDirectory.newFile("empty.JAR").also {
-                ZipOutputStream(it.outputStream()).use {
+            val jar = rootTempDirectory.newFile("empty.JAR").also { file ->
+                ZipOutputStream(file.outputStream()).use {
                     it.putNextEntry(ZipEntry("fake_entry"))
                     it.closeEntry()
                 }
@@ -57,7 +58,7 @@ class ProcessorLoaderTest {
             stubsOutputDir = rootTempDirectory.newStubsFolder()
             build()
         }
-        val loadedProcessors = ProcessorLoader(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
+        val loadedProcessors = ProcessorLoaderImpl(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
         assertTrue(loadedProcessors.processors.isEmpty())
     }
 
@@ -69,7 +70,7 @@ class ProcessorLoaderTest {
             stubsOutputDir = rootTempDirectory.newStubsFolder()
             build()
         }
-        val loadedProcessors = ProcessorLoader(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
+        val loadedProcessors = ProcessorLoaderImpl(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
         assertTrue(loadedProcessors.processors.isEmpty())
     }
 
@@ -82,7 +83,7 @@ class ProcessorLoaderTest {
             stubsOutputDir = rootTempDirectory.newStubsFolder()
             build()
         }
-        val loadedProcessors = ProcessorLoader(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
+        val loadedProcessors = ProcessorLoaderImpl(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
         assertTrue(loadedProcessors.processors.isEmpty())
     }
 }

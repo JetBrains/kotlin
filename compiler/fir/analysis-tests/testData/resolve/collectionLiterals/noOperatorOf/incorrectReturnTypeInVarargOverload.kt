@@ -5,13 +5,13 @@
 sealed class MyList {
     class MyListImpl : MyList()
     companion object {
-        operator fun of(vararg strs: String): MyListImpl = MyListImpl()
+        operator fun of(vararg strs: String): <!RETURN_TYPE_MISMATCH_OF_OPERATOR_OF!>MyListImpl<!> = MyListImpl()
     }
 }
 
 open class MyGenericList<T> {
     companion object {
-        operator fun <T1> of(vararg t: T1): MyGenericListImpl<T1> = MyGenericListImpl<T1>()
+        operator fun <T1> of(vararg t: T1): <!RETURN_TYPE_MISMATCH_OF_OPERATOR_OF!>MyGenericListImpl<T1><!> = MyGenericListImpl<T1>()
     }
 }
 
@@ -19,7 +19,7 @@ class MyGenericListImpl<T3>: MyGenericList<T3>()
 
 interface MyGenericInterfaceWithNonGenericImpl<U> {
     companion object {
-        operator fun of(vararg s: String): MyGenericInterfaceImpl = MyGenericInterfaceImpl()
+        operator fun of(vararg s: String): <!RETURN_TYPE_MISMATCH_OF_OPERATOR_OF!>MyGenericInterfaceImpl<!> = MyGenericInterfaceImpl()
     }
 }
 

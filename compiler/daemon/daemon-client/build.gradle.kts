@@ -17,6 +17,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testImplementation(kotlin("stdlib", coreDepsVersion))
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 projectTests {

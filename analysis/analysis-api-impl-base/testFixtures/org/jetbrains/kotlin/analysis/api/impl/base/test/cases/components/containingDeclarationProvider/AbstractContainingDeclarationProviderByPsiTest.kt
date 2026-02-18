@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.checkContainingFileSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.checkContainingJvmClassName
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -37,7 +38,12 @@ abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysis
                 override fun visitDeclaration(dcl: KtDeclaration) {
                     val parentDeclaration = currentPath.lastOrNull()
                     val currentDeclarationSymbol = dcl.symbol
-                    val expectedParentDeclarationSymbol = parentDeclaration?.symbol
+                    val expectedParentDeclarationSymbol = parentDeclaration?.symbol?.let { symbol ->
+                        // From the FIR point of view, the real containing declaration of enum entry functions
+                        // is not the enum entry itself, but its `KaFirEnumEntryInitializerSymbol`.
+                        // However, it is not a `KtDeclaration` from the PSI point of view.
+                        if (symbol is KaEnumEntrySymbol) symbol.enumEntryInitializer else symbol
+                    }
                     val actualParentDeclarationSymbol = currentDeclarationSymbol.containingDeclaration
 
                     if (dcl is KtScriptInitializer) {

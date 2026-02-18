@@ -10,6 +10,7 @@ public interface Foo {
     // source: 'localDelegatedProperties.kt'
     public synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     static method <clinit>(): void
+    private static method test$lambda$0(p0: Delegate): java.lang.String
     public @org.jetbrains.annotations.NotNull method test(): java.lang.String
 }
 

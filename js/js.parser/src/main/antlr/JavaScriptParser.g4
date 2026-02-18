@@ -339,25 +339,61 @@ sourceElements
     ;
 
 arrayLiteral
-    : ('[' elementList ']')
+    : '[' ']'
+    | '[' elementList ']'
     ;
 
-// JavaScript supports arrays like [,,1,2,,].
 elementList
-    : ','* arrayElement? (','+ arrayElement) * ','* // Yes, everything is optional
+    : arrayElement (',' arrayElement)*
     ;
 
 arrayElement
-    : Ellipsis? singleExpression
+    : Ellipsis singleExpression
+    | singleExpression? // Nullable because of the array holes we need to preserve during parsing
     ;
 
 propertyAssignment
     : propertyName ':' singleExpression                                  # PropertyExpressionAssignment
-    | '[' singleExpression ']' ':' singleExpression                      # ComputedPropertyExpressionAssignment
+    | '[' label=singleExpression ']' ':' value=singleExpression          # ComputedPropertyExpressionAssignment
     | Async? '*'? propertyName '(' formalParameterList? ')' functionBody # FunctionProperty
     | getter '(' ')' functionBody                                        # PropertyGetter
     | setter '(' formalParameterArg ')' functionBody                     # PropertySetter
-    | Ellipsis? singleExpression                                         # PropertyShorthand
+    | Ellipsis singleExpression                                          # SpreadProperty
+    | identifierName                                                     # PropertyShorthand
+    ;
+
+objectBindingPattern
+    : '{' '}'
+    | '{' restBindingElement ','? '}'
+    | '{' propertyBindingPattern (',' propertyBindingPattern)* (',' restBindingElement)? ','? '}'
+    ;
+
+propertyBindingPattern
+    : identifierName initializer?                                        # RegularPropertyBindingPattern
+    | propertyName ':' bindingElement                                    # NamedPropertyBindingPattern
+    ;
+
+arrayBindingPattern
+    : '[' ']'
+    | '[' restBindingElement ','? ']'
+    | '[' arrayItemList (',' restBindingElement)? ','?']'
+    ;
+
+arrayItemList
+    : bindingElement (',' arrayItemBinding)*               // starts with an element
+    | ',' arrayItemBinding (',' arrayItemBinding)*         // starts with a hole (consumes a comma)
+    ;
+
+arrayItemBinding
+    : bindingElement? // Nullable because of the array pattern holes we need to preserve during parsing
+    ;
+
+bindingElement
+    : assignable initializer?
+    ;
+
+restBindingElement
+    : Ellipsis identifierName
     ;
 
 propertyName
@@ -447,8 +483,8 @@ initializer
 assignable
     : identifier
     | keyword
-    | arrayLiteral
-    | objectLiteral
+    | arrayBindingPattern
+    | objectBindingPattern
     ;
 
 objectLiteral

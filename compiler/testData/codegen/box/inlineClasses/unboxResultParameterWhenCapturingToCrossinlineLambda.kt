@@ -1,5 +1,5 @@
 // WITH_STDLIB
-
+// FILE: lib.kt
 import kotlin.coroutines.*
 
 interface Flow<out T> {
@@ -14,6 +14,9 @@ suspend inline fun <T> Flow<T>.collect(crossinline action: suspend (value: T) ->
     collect(object : FlowCollector<T> {
         override suspend fun emit(value: T) = action(value)
     })
+
+// FILE: main.kt
+import kotlin.coroutines.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(Continuation(EmptyCoroutineContext) {

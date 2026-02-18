@@ -11,6 +11,13 @@ fun box() {
 // test.kt:6 box
 // test.kt:8 box
 
+// EXPECTATIONS NATIVE
+// test.kt:5 box
+// test.kt:5 invoke
+// test.kt:6 invoke
+// test.kt:7 invoke
+// test.kt:8 box
+
 // EXPECTATIONS JS_IR
 // test.kt:5 box
 // test.kt:6 box$lambda

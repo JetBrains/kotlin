@@ -1,0 +1,6 @@
+KtCallExpression(72,77): 'foo()'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(): kotlin.Unit
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'string: String' found.>

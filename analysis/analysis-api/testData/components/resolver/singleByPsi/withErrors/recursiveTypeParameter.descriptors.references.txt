@@ -8,5 +8,6 @@ KtNameReferenceExpression(96,103): 'install'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

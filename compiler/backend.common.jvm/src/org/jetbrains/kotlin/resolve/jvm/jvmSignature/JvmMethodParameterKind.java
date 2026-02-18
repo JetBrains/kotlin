@@ -15,8 +15,4 @@ public enum JvmMethodParameterKind {
     ENUM_NAME_OR_ORDINAL,
     SUPER_CALL_PARAM,
     CONSTRUCTOR_MARKER;
-
-    public boolean isSkippedInGenericSignature() {
-        return this == OUTER || this == ENUM_NAME_OR_ORDINAL;
-    }
 }

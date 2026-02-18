@@ -1,7 +1,8 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
+// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
+// FILE: lib.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z(val int: Int)
 
@@ -31,6 +32,7 @@ value class Host(val xx: Int) {
     fun testWithDefaultObj2() = withDefaultObj2(fn = { Obj(it.obj.toString() + "1") })
 }
 
+// FILE: main.kt
 fun box(): String {
     val h = Host(42)
     if (h.testWithDefaultZ().int != 43) throw AssertionError()

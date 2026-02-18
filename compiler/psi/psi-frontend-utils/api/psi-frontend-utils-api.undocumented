@@ -1,0 +1,29 @@
+org.jetbrains.kotlin.resolve.Compatibility
+org.jetbrains.kotlin.resolve.Compatibility.COMPATIBLE
+org.jetbrains.kotlin.resolve.Compatibility.COMPATIBLE_FOR_CLASSES_ONLY
+org.jetbrains.kotlin.resolve.Compatibility.DEPRECATED
+org.jetbrains.kotlin.resolve.Compatibility.INCOMPATIBLE
+org.jetbrains.kotlin.resolve.Compatibility.REDUNDANT
+org.jetbrains.kotlin.resolve.Compatibility.REPEATED
+org.jetbrains.kotlin.resolve.Compatibility.REVERSE_REDUNDANT
+org.jetbrains.kotlin.resolve.TargetAllowedPredicate
+org.jetbrains.kotlin.resolve.TargetAllowedPredicate.isAllowed(KotlinTarget, LanguageVersionSettings)
+org.jetbrains.kotlin.resolve.allowedInContextParameters
+org.jetbrains.kotlin.resolve.always(KotlinTarget, KotlinTarget)
+org.jetbrains.kotlin.resolve.compatibility(KtKeywordToken, KtKeywordToken)
+org.jetbrains.kotlin.resolve.compatibilityTypeMap
+org.jetbrains.kotlin.resolve.defaultVisibilityTargetPredicate
+org.jetbrains.kotlin.resolve.deprecatedParentTargetMap
+org.jetbrains.kotlin.resolve.deprecatedTargetPredicateMap
+org.jetbrains.kotlin.resolve.featureDependencies
+org.jetbrains.kotlin.resolve.featureDependenciesTargets
+org.jetbrains.kotlin.resolve.ifSupported(LanguageFeature, KotlinTarget, KotlinTarget)
+org.jetbrains.kotlin.resolve.ifUnsupported(LanguageFeature, KotlinTarget, KotlinTarget)
+org.jetbrains.kotlin.resolve.or(TargetAllowedPredicate)
+org.jetbrains.kotlin.resolve.possibleParentTargetPredicateMap
+org.jetbrains.kotlin.resolve.possibleTargetPredicateMap
+org.jetbrains.kotlin.resolve.redundantTargetMap
+org.jetbrains.kotlin.resolve.source.PsiSourceElement
+org.jetbrains.kotlin.resolve.source.PsiSourceElement.psi
+org.jetbrains.kotlin.resolve.source.PsiSourceFile
+org.jetbrains.kotlin.resolve.source.getPsi()

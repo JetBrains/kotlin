@@ -20,11 +20,11 @@ fun Test(param: Value): String {
 
 ========= FunctionMeta: true, OptimizeGroups: true =========
 ComposeStackTrace -> $$compose:
-  1:1:java.lang.String TestKt.Test(Value,androidx.compose.runtime.Composer,int):7:7 -> m$<key>
   1:1:java.lang.String TestKt.Test(Value,androidx.compose.runtime.Composer,int):6:6 -> m$<key>
+  1:1:java.lang.String TestKt.Test(Value,androidx.compose.runtime.Composer,int):7:7 -> m$<key>
   1:1:void ExtraKt.Str(kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):6:6 -> m$<key>
 ========= FunctionMeta: true, OptimizeGroups: false =========
 ComposeStackTrace -> $$compose:
+  1:1:java.lang.String TestKt.Test(Value,androidx.compose.runtime.Composer,int):5:5 -> m$<key>
   1:1:java.lang.String TestKt.Test(Value,androidx.compose.runtime.Composer,int):7:7 -> m$<key>
   1:1:void ExtraKt.Str(kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):5:5 -> m$<key>
-  1:1:java.lang.String TestKt.Test(Value,androidx.compose.runtime.Composer,int):5:5 -> m$<key>

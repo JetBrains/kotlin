@@ -170,8 +170,8 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 ANNOTATION_ARGUMENTS:
 TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] var something: R|kotlin/String|
-    @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| { LAZY_BLOCK }
-    @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|) [evaluated = <strcat>(String(getSomething: ), R|/getterProperty|)]) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|) [evaluated = <strcat>(String(setSomething: ), R|/setterProperty|)]) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|) [evaluated = <strcat>(String(setter type ), R|/propertyFromSetter|)])  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -179,9 +179,9 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+        @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|) [evaluated = <strcat>(String(getSomething: ), R|/getterProperty|)]) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
-        @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun setSomething([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|) [evaluated = <strcat>(String(setSomething: ), R|/setterProperty|)]) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun setSomething([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|) [evaluated = <strcat>(String(setter type ), R|/propertyFromSetter|)])  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -210,10 +210,10 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 BODY_RESOLVE:
 TARGET: public open override [<synthetic> BODY_RESOLVE] var something: R|kotlin/String|
-    @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|)) public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+    @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|) [evaluated = <strcat>(String(getSomething: ), R|/getterProperty|)]) public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
         <strcat>(String(body: ), R|/propertyFromBody|)
     }
-    @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|)) public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|))  kotlin/String|): R|kotlin/Unit| {
+    @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|) [evaluated = <strcat>(String(setSomething: ), R|/setterProperty|)]) public [<synthetic> ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|) [evaluated = <strcat>(String(setter type ), R|/propertyFromSetter|)])  kotlin/String|): R|kotlin/Unit| {
         R|kotlin/io/println|(R|<local>/s|)
     }
 
@@ -223,11 +223,11 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|)) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|kotlin/String| {
+        @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|) [evaluated = <strcat>(String(getSomething: ), R|/getterProperty|)]) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|kotlin/String| {
             <strcat>(String(body: ), R|/propertyFromBody|)
         }
 
-        @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|)) public open override [ResolvedTo(BODY_RESOLVE)] fun setSomething([ResolvedTo(BODY_RESOLVE)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|))  kotlin/String|): R|kotlin/Unit| {
+        @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|) [evaluated = <strcat>(String(setSomething: ), R|/setterProperty|)]) public open override [ResolvedTo(BODY_RESOLVE)] fun setSomething([ResolvedTo(BODY_RESOLVE)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|) [evaluated = <strcat>(String(setter type ), R|/propertyFromSetter|)])  kotlin/String|): R|kotlin/Unit| {
             R|kotlin/io/println|(R|<local>/s|)
         }
 
@@ -263,16 +263,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] Derived.kt
             super<R|Base|>()
         }
 
-        @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|)) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|kotlin/String| {
+        @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|) [evaluated = <strcat>(String(getSomething: ), R|/getterProperty|)]) public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|kotlin/String| {
             <strcat>(String(body: ), R|/propertyFromBody|)
         }
 
-        @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|)) public open override [ResolvedTo(BODY_RESOLVE)] fun setSomething([ResolvedTo(BODY_RESOLVE)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|))  kotlin/String|): R|kotlin/Unit| {
+        @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|) [evaluated = <strcat>(String(setSomething: ), R|/setterProperty|)]) public open override [ResolvedTo(BODY_RESOLVE)] fun setSomething([ResolvedTo(BODY_RESOLVE)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|) [evaluated = <strcat>(String(setter type ), R|/propertyFromSetter|)])  kotlin/String|): R|kotlin/Unit| {
             R|kotlin/io/println|(R|<local>/s|)
         }
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }

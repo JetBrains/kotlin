@@ -23,9 +23,10 @@ object KotlinLightParser {
         errorListener: LightTreeParsingErrorListener?,
     ): FlyweightCapableTreeStructure<LighterASTNode> {
         val builder = PsiBuilderFactory.getInstance().createBuilder(KotlinParserDefinition(), KotlinLexer(), code)
-        val extension = sourceFile?.let { FileUtilRt.getExtension(it.name) } ?: ""
-        val isScript = !(extension.isEmpty() || extension == KotlinFileType.EXTENSION)
-        return parse(builder, isScript).also {
+        return parse(
+            builder,
+            isScript = sourceFile?.let { FileUtilRt.getExtension(it.name) != KotlinFileType.EXTENSION } ?: false
+        ).also {
             if (errorListener != null) reportErrors(it.root, it, errorListener)
         }
     }

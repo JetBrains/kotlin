@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibH
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.validation.checkers.IrInlineDeclarationChecker
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.library.*
@@ -55,10 +54,10 @@ class KotlinFileSerializedData private constructor(
     constructor(metadata: ByteArray, path: String?, fqName: String) : this(metadata, irData = null, path, fqName)
 }
 
-class SerializerOutput<Dependency : KotlinLibrary>(
+class SerializerOutput(
     val serializedMetadata: SerializedMetadata?,
     val serializedIr: SerializedIrModule?,
-    val neededLibraries: List<Dependency>,
+    val neededLibraries: Collection<KotlinLibrary>,
 )
 
 fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
@@ -89,33 +88,24 @@ fun KtSourceFile.toIoFileOrNull(): File? = when (this) {
  * @param processCompiledFileData Called for each newly serialized file. Useful for incremental compilation.
  * @param processKlibHeader Called after serializing the KLIB header. Useful for incremental compilation.
  */
-fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
+fun <SourceFile> serializeModuleIntoKlib(
     moduleName: String,
     irModuleFragment: IrModuleFragment?,
     configuration: CompilerConfiguration,
     diagnosticReporter: IrDiagnosticReporter,
     cleanFiles: List<KotlinFileSerializedData>,
-    dependencies: List<Dependency>,
+    dependencies: List<KotlinLibrary>,
     createModuleSerializer: (irDiagnosticReporter: IrDiagnosticReporter) -> IrModuleSerializer<*>,
     metadataSerializer: KlibSingleFileMetadataSerializer<SourceFile>,
     platformKlibCheckers: List<(IrDiagnosticReporter) -> IrVisitor<*, Nothing?>> = emptyList(),
     processCompiledFileData: ((File, KotlinFileSerializedData) -> Unit)? = null,
     processKlibHeader: (ByteArray) -> Unit = {},
-): SerializerOutput<Dependency> {
+): SerializerOutput {
     val serializedIr = irModuleFragment?.let {
         it.runIrLevelCheckers(
             diagnosticReporter,
             *platformKlibCheckers.toTypedArray(),
         )
-
-        if (!configuration.languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)) {
-            // With IrIntraModuleInlinerBeforeKlibSerialization feature, this check happens after the first phase of KLIB inlining.
-            // Without it, the check should happen here instead.
-            it.runIrLevelCheckers(
-                diagnosticReporter,
-                ::IrInlineDeclarationChecker,
-            )
-        }
 
         createModuleSerializer(
             diagnosticReporter,

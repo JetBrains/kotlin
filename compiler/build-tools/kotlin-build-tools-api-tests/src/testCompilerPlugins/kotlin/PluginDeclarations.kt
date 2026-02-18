@@ -3,16 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation
+package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPlugin
 import org.jetbrains.kotlin.buildtools.api.arguments.CompilerPluginOption
 import java.io.File
 import java.nio.file.Paths
+import kotlin.reflect.KClass
 
 private enum class KnownCompilerPlugin(val pluginId: String, val classpathSystemPropertyName: String) {
     NOARG("org.jetbrains.kotlin.noarg", "NOARG_COMPILER_PLUGIN"),
     ASSIGNMENT("org.jetbrains.kotlin.assignment", "ASSIGNMENT_COMPILER_PLUGIN"),
+    SCRIPTING("kotlin.scripting", "SCRIPTING_COMPILER_PLUGIN"),
 }
 
 private fun getCompilerPlugin(plugin: KnownCompilerPlugin, arguments: List<CompilerPluginOption>): CompilerPlugin {
@@ -34,3 +36,14 @@ internal val NOARG_JPA_PLUGIN =
     )
 internal val ASSIGNMENT_PLUGIN =
     getCompilerPlugin(KnownCompilerPlugin.ASSIGNMENT, listOf(CompilerPluginOption("annotation", "GenerateAssignment")))
+
+internal fun scriptingPlugin(templateClass: KClass<*>) =
+    getCompilerPlugin(
+        KnownCompilerPlugin.SCRIPTING,
+        listOf(
+            CompilerPluginOption(
+                "script-definitions",
+                templateClass.qualifiedName ?: error("Cannot retrieve FQN for $templateClass")
+            )
+        )
+    )

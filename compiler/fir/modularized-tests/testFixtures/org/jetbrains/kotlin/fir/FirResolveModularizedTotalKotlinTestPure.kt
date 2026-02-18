@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
+import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsReporterImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.DiagnosticComponentsFactory
@@ -80,7 +81,7 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
                 val ktFiles = environment.getSourceFiles()
                 ktFiles.map { KtPsiSourceFile(it) } to
                         GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
-                            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
+                            .uniteWith(AllJavaSourcesInProjectScope(project))
                             .toAbstractProjectFileSearchScope()
             }
         val librariesScope = ProjectScope.getLibrariesScope(project)
@@ -286,8 +287,9 @@ class FirCheckersRunnerTransformer(
 
     override fun transformFile(file: FirFile, data: Nothing?): FirFile = file.also {
         withFileAnalysisExceptionWrapping(file) {
-            val reporter = DiagnosticReporterFactory.createPendingReporter()
-            diagnosticCollector.collectDiagnostics(file, reporter)
+            val diagnosticsCollector = DiagnosticsCollectorImpl()
+            val diagnosticsReporter = PendingDiagnosticsReporterImpl(diagnosticsCollector)
+            diagnosticCollector.collectDiagnostics(file, diagnosticsReporter)
         }
     }
 }

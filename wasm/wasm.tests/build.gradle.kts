@@ -1,14 +1,7 @@
 import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.internal.os.OperatingSystem
-import org.tukaani.xz.XZInputStream
 import java.net.URI
 import java.util.*
-
-buildscript {
-    dependencies {
-        classpath("org.tukaani:xz:1.10") // to extract `tar.xz`
-    }
-}
 
 plugins {
     kotlin("jvm")
@@ -37,14 +30,6 @@ repositories {
         content { includeModule("org.mozilla", "jsshell") }
     }
     ivy {
-        url = URI("https://github.com/WasmEdge/WasmEdge/releases/download/")
-        patternLayout {
-            artifact("[revision]/WasmEdge-[revision]-[classifier].[ext]")
-        }
-        metadataSources { artifact() }
-        content { includeModule("org.wasmedge", "wasmedge") }
-    }
-    ivy {
         url = URI("https://packages.jetbrains.team/files/p/kt/kotlin-file-dependencies/javascriptcore/")
         patternLayout {
             artifact("[classifier]_[revision].zip")
@@ -52,14 +37,8 @@ repositories {
         metadataSources { artifact() }
         content { includeModule("org.jsc", "jsc") }
     }
-    ivy {
-        url = URI("https://github.com/bytecodealliance/wasmtime/releases/download/")
-        patternLayout {
-            artifact("v[revision]/wasmtime-v[revision]-[classifier].[ext]")
-        }
-        metadataSources { artifact() }
-        content { includeModule("dev.wasmtime", "wasmtime") }
-    }
+    githubRelease("WasmEdge", "WasmEdge", groupAlias = "org.wasmedge", revisionPrefix = "")
+    githubRelease("bytecodealliance", "wasmtime", groupAlias = "dev.wasmtime")
 }
 
 enum class OsName { WINDOWS, MAC, LINUX, UNKNOWN }
@@ -160,12 +139,6 @@ val wasmEdgeSuffix = when (currentOsType) {
     OsType(OsName.WINDOWS, OsArch.X86_64) -> "windows@zip"
     else -> error("unsupported os type $currentOsType")
 }
-val wasmEdgeInnerSuffix = when (currentOsType.name) {
-    OsName.LINUX -> "Linux"
-    OsName.MAC -> "Darwin"
-    OsName.WINDOWS -> "Windows"
-    else -> error("unsupported os type $currentOsType")
-}
 
 val wasmEdge by configurations.creating {
     isCanBeResolved = true
@@ -242,11 +215,11 @@ dependencies {
     implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:linux-x86_64@zip")
     implicitDependencies("org.mozilla:jsshell:${jsShellVersion.get()}:mac@zip")
 
-    wasmEdge("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:$wasmEdgeSuffix")
+    wasmEdge("org.wasmedge:WasmEdge:${wasmEdgeVersion.get()}:$wasmEdgeSuffix")
 
-    implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:windows@zip")
-    implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:manylinux_2_28_x86_64@tar.gz")
-    implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:darwin_arm64@tar.gz")
+    implicitDependencies("org.wasmedge:WasmEdge:${wasmEdgeVersion.get()}:windows@zip")
+    implicitDependencies("org.wasmedge:WasmEdge:${wasmEdgeVersion.get()}:manylinux_2_28_x86_64@tar.gz")
+    implicitDependencies("org.wasmedge:WasmEdge:${wasmEdgeVersion.get()}:darwin_arm64@tar.gz")
 
     jsc("org.jsc:jsc:$jscOsDependentRevision:$jscOsDependentClassifier")
 
@@ -262,6 +235,36 @@ dependencies {
 }
 
 optInToExperimentalCompilerApi()
+
+val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
+
+val testJsFile = testDataDir.resolve("test.js")
+val packageJsonFile = testDataDir.resolve("package.json")
+val packageLockJsonFile = testDataDir.resolve("package-lock.json")
+
+val prepareNpmTestData by task<Copy> {
+    from(testJsFile)
+    from(packageJsonFile)
+    from(packageLockJsonFile)
+    into(node.nodeProjectDir)
+}
+
+val npmInstall by tasks.getting(NpmTask::class) {
+    val packageLockFile = testDataDir.resolve("package-lock.json")
+
+    inputs.file(node.nodeProjectDir.file("package.json"))
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("packageJson")
+
+    inputs.file(packageLockFile)
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("packageLockFile")
+    outputs.upToDateWhen { packageLockFile.exists() }
+
+    workingDir.fileProvider(node.nodeProjectDir.asFile)
+    dependsOn(prepareNpmTestData)
+    npmCommand.set(listOf("ci"))
+}
 
 sourceSets {
     "main" { }
@@ -287,51 +290,7 @@ fun Test.setupGradlePropertiesForwarding() {
     }
 }
 
-val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
-val typescriptTestsDir = testDataDir.resolve("typescript-export")
-val wasmTestDir = typescriptTestsDir.resolve("wasm")
 val toolsDirectory = layout.buildDirectory.dir("tools")
-
-fun generateTypeScriptTestFor(dir: String): TaskProvider<NpmTask> = tasks.register<NpmTask>("generate-ts-for-$dir") {
-    val baseDir = wasmTestDir.resolve(dir)
-    val mainTsFile = fileTree(baseDir).files.find { it.name.endsWith("__main.ts") } ?: return@register
-    val mainJsFile = baseDir.resolve("${mainTsFile.nameWithoutExtension}.js")
-
-    workingDir.set(testDataDir)
-
-    inputs.file(mainTsFile)
-        .withPathSensitivity(PathSensitivity.RELATIVE)
-        .withPropertyName("mainTsFileToCompile")
-
-    outputs.file(mainJsFile)
-    outputs.upToDateWhen { mainJsFile.exists() }
-
-    args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/wasm/$dir/tsconfig.json"))
-}
-
-val installTsDependencies by task<NpmTask> {
-    val nodeModules = testDataDir.resolve("node_modules")
-
-    inputs.files(
-        testDataDir.resolve("package.json"),
-        testDataDir.resolve("package-lock.json"),
-    )
-        .withPathSensitivity(PathSensitivity.RELATIVE)
-        .withPropertyName("installedTsDependencies")
-
-    outputs.upToDateWhen { nodeModules.exists() }
-
-    workingDir.set(testDataDir)
-    npmCommand.set(listOf("ci"))
-}
-
-val generateTypeScriptTests = parallel(
-    beforeAll = installTsDependencies,
-    tasksToRun = wasmTestDir
-        .listFiles { it: File -> it.isDirectory }
-        .map { generateTypeScriptTestFor(it.name) }
-)
-
 
 val jsShellDirectory = toolsDirectory.map { it.dir("JsShell").asFile }
 val jsShellUnpackedDirectory = jsShellDirectory.map { it.resolve("jsshell-$jsShellSuffix-${jsShellVersion.get()}") }
@@ -349,8 +308,6 @@ val unzipWasmEdge by task<UnzipWasmEdge> {
     val currentOsTypeForConfigurationCache = currentOsType.name
 
     into.fileProvider(toolsDirectory.map { it.dir("WasmEdge").asFile })
-
-    directoryName.set(wasmEdgeVersion.map { version -> "WasmEdge-$version-$wasmEdgeInnerSuffix" })
 
     getIsWindows.set(currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX))
     getIsMac.set(currentOsTypeForConfigurationCache == OsName.MAC)
@@ -377,45 +334,20 @@ val createJscRunner by task<CreateJscRunner> {
     inputDirectory.set(unzipJsc.flatMap { it.into })
 }
 
-// Repack .tar.xz archives into .tar due to an issue in the Gradle
-// https://github.com/gradle/gradle/issues/31858
-val wasmtimeArchive by task<Task> {
-    inputs.files(wasmtime)
+val unzipWasmtime by task<UnzipWasmtime> {
+    from.setFrom(wasmtime)
 
-    val archive = wasmtime.singleFile
+    val currentOsTypeForConfigurationCache = currentOsType.name
 
-    if (archive.extension == "xz") {
-        val tarFile = temporaryDir.resolve("${archive.name}.tar")
-        XZInputStream(archive.inputStream().buffered()).use { xzIn ->
-            tarFile.outputStream().buffered().use { tarOut ->
-                xzIn.copyTo(tarOut)
-            }
+    getIsWindows.set(currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX))
+
+    val wasmtimeDirectoryName: Provider<String> = wasmtimeVersion.map { version -> "wasmtime-$version-$wasmtimePlatformSuffix" }
+
+    into.set(
+        toolsDirectory.zip(wasmtimeDirectoryName) { toolsDir: Directory, wasmtimeDir: String ->
+            toolsDir.dir("Wasmtime").dir(wasmtimeDir)
         }
-
-        outputs.file(tarFile)
-    } else {
-        outputs.file(archive)
-    }
-}
-
-val unzipWasmtime by task<Copy> {
-    val wasmtime = wasmtimeArchive.map { it.outputs.files }
-    dependsOn(wasmtime)
-
-    from({
-             val wasmtimeFile = wasmtime.get().files.single()
-             if (wasmtimeFile.extension == "zip") {
-                 zipTree(wasmtimeFile)
-             } else {
-                 tarTree(wasmtimeFile)
-             }
-         })
-
-    val wasmtimeDirectory = toolsDirectory.map { it.dir("Wasmtime").asFile }
-    val wasmtimeDirectoryName = wasmtimeVersion.map { version -> "wasmtime-$version-$wasmtimePlatformSuffix" }
-    val wasmtimeUnpackedDirectory = wasmtimeDirectory.map { it.resolve(wasmtimeDirectoryName.get()) }
-
-    into(wasmtimeUnpackedDirectory)
+    )
 }
 
 fun Test.setupSpiderMonkey() {
@@ -432,11 +364,8 @@ fun Test.setupSpiderMonkey() {
 fun Test.setupWasmEdge() {
     val wasmEdgeExecutablePath = unzipWasmEdge
         .flatMap { task ->
-            task.into.zip(task.directoryName) { into, dirName ->
-                into.dir(dirName)
-            }
+            task.into.file("bin/wasmedge")
         }
-        .map { it.file("bin/wasmedge") }
 
     jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
         classpath.from(wasmEdgeExecutablePath)
@@ -455,11 +384,12 @@ fun Test.setupJsc() {
 }
 
 fun Test.setupWasmtime() {
-    dependsOn(unzipWasmtime)
-    val wasmtimeDirectory = unzipWasmtime.map { it.destinationDir.resolve("wasmtime-v${wasmtimeVersion.get()}-$wasmtimePlatformSuffix") }
+    val wasmtime = unzipWasmtime
+        .flatMap { it.into.dir("wasmtime-v${wasmtimeVersion.get()}-$wasmtimePlatformSuffix") }
+        .map { it.file("wasmtime") }
 
     jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        classpath.from(wasmtimeDirectory.map { it.resolve("wasmtime") })
+        classpath.from(wasmtime)
         property.set("wasm.engine.path.Wasmtime")
     }
 }
@@ -470,11 +400,6 @@ projectTests {
     testGenerator(
         "org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt",
         generateTestsInBuildDirectory = true,
-        configureTestDataCollection = {
-            inputs.files(generateTypeScriptTests)
-                .withPathSensitivity(PathSensitivity.RELATIVE)
-                .withPropertyName("compiledTypeScriptTestFiles")
-        }
     )
 
     fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
@@ -489,6 +414,7 @@ projectTests {
             }
             with(wasmNodeJsKotlinBuild) {
                 setupNodeJs(nodejsVersion)
+                dependsOn(":js:js.tests:npmInstall")
             }
             with(binaryenKotlinBuild) {
                 setupBinaryen()
@@ -503,20 +429,29 @@ projectTests {
                 property.set("kotlin.wasm.test.root.out.dir")
                 buildDirectory.set(layout.buildDirectory)
             }
+            jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
+                property.set("kotlin.wasm.test.node.dir")
+                buildDirectory.set(node.nodeProjectDir)
+            }
             body()
+            dependsOn(npmInstall)
         }
     }
 
     // Test everything
     wasmProjectTest("test") {
-        inputs.files(generateTypeScriptTests)
-            .withPathSensitivity(PathSensitivity.RELATIVE)
-            .withPropertyName("compiledTypeScriptTestFiles")
         include("**/*.class")
+        exclude("**/*SingleModule*TestGenerated.class")
+        exclude("**/*MultiModule*TestGenerated.class")
     }
 
     wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
         include("**/Diagnostics*.class")
+    }
+
+    wasmProjectTest("wasmFirCompilerExtraTest") {
+        include("**/*SingleModule*TestGenerated.class")
+        include("**/*MultiModule*TestGenerated.class")
     }
 
     testData(project(":compiler").isolated, "testData/diagnostics")

@@ -1,0 +1,9 @@
+FILE: Test.kt
+    public final fun test(list: R|kotlin/collections/MutableList<out kotlin/String?>|): R|kotlin/Unit| {
+        lval res: R|kotlin/collections/Collection<kotlin/String>| = Q|JavaClass|.R|/JavaClass.filter*s|<R|kotlin/String?|>(R|<local>/list|)
+        lval resImplicit: R|ft<kotlin/collections/MutableCollection<kotlin/String?>, kotlin/collections/Collection<kotlin/String?>?>| = Q|JavaClass|.R|/JavaClass.filter*s|<R|kotlin/String?|>(R|<local>/list|)
+    }
+    public final fun testNotNull(list: R|kotlin/collections/MutableList<out kotlin/String>|): R|kotlin/Unit| {
+        lval res: R|kotlin/collections/Collection<kotlin/String>| = Q|JavaClass|.R|/JavaClass.filter*s|<R|kotlin/String!|>(R|<local>/list|)
+        lval resImplicit: R|ft<kotlin/collections/MutableCollection<kotlin/String!>, kotlin/collections/Collection<kotlin/String!>?>| = Q|JavaClass|.R|/JavaClass.filter*s|<R|kotlin/String!|>(R|<local>/list|)
+    }

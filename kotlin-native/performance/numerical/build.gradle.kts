@@ -3,32 +3,30 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.benchmark.BenchmarkingPlugin
+import org.jetbrains.kotlin.benchmarkingTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.konan.target.*
 
 plugins {
     id("benchmarking")
 }
 
-benchmark {
-    applicationName = "Numerical"
-    commonSrcDirs = listOf("src/main/kotlin", "../../tools/benchmarks/shared/src/main/kotlin/report", "../shared/src/main/kotlin")
-    jvmSrcDirs = listOf("src/main/kotlin-jvm", "../shared/src/main/kotlin-jvm")
-    nativeSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/common")
-    mingwSrcDirs = listOf("../shared/src/main/kotlin-native/mingw")
-    posixSrcDirs = listOf("../shared/src/main/kotlin-native/posix")
-}
+kotlin {
+    benchmarkingTargets()
 
-val native = kotlin.targets.getByName("native") as KotlinNativeTarget
-native.apply {
-    compilations["main"].cinterops {
-        create("cinterop") {
-            headers("$projectDir/src/nativeInterop/cinterop/pi.h")
-            extraOpts("-Xccall-mode", "indirect") // Required for -Xcompile-source
-            extraOpts("-Xcompile-source", "$projectDir/src/nativeInterop/cinterop/pi.c")
-            extraOpts("-Xsource-compiler-option", "-O3")
+    targets.filterIsInstance<KotlinNativeTarget>().forEach {
+        it.compilations.getByName("main") {
+            cinterops {
+                val cinterop by creating {
+                    headers("$projectDir/src/nativeInterop/cinterop/pi.h")
+                    extraOpts("-Xccall-mode", "indirect") // Required for -Xcompile-source
+                    extraOpts("-Xcompile-source", "$projectDir/src/nativeInterop/cinterop/pi.c")
+                    extraOpts("-Xsource-compiler-option", "-O3")
+                }
+            }
         }
     }
+}
+
+benchmark {
+    applicationName = "Numerical"
 }

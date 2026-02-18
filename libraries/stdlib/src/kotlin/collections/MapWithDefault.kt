@@ -21,7 +21,8 @@ internal fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
     if (this is MapWithDefault)
         return this.getOrImplicitDefault(key)
 
-    return getOrElseNullable(key, { throw NoSuchElementException("Key $key is missing in the map.") })
+    @OptIn(ExperimentalStdlibApi::class)
+    return getOrElseIfMissing(key, { throw NoSuchElementException("Key $key is missing in the map.") })
 }
 
 /**
@@ -84,7 +85,8 @@ private class MapWithDefaultImpl<K, out V>(public override val map: Map<K, V>, p
     override val values: Collection<V> get() = map.values
     override val entries: Set<Map.Entry<K, V>> get() = map.entries
 
-    override fun getOrImplicitDefault(key: K): V = map.getOrElseNullable(key, { default(key) })
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun getOrImplicitDefault(key: K): V = map.getOrElseIfMissing(key, { default(key) })
 }
 
 private class MutableMapWithDefaultImpl<K, V>(public override val map: MutableMap<K, V>, private val default: (key: K) -> V) : MutableMapWithDefault<K, V> {
@@ -105,6 +107,7 @@ private class MutableMapWithDefaultImpl<K, V>(public override val map: MutableMa
     override fun putAll(from: Map<out K, V>) = map.putAll(from)
     override fun clear() = map.clear()
 
-    override fun getOrImplicitDefault(key: K): V = map.getOrElseNullable(key, { default(key) })
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun getOrImplicitDefault(key: K): V = map.getOrElseIfMissing(key, { default(key) })
 }
 

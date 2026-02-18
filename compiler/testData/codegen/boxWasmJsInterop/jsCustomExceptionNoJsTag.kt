@@ -1,4 +1,5 @@
 // TARGET_BACKEND: WASM
+// ^ The test is specific for Wasm envorinment without JSTag. It's not relevant for JS_IR and JS_IR_ES6
 // WASM_NO_JS_TAG
 
 fun throwCustomNamedJsError(): Int = js("""

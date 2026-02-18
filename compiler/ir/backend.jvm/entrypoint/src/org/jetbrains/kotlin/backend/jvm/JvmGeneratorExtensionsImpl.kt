@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.psi2ir.descriptors.fromSymbolDescriptor
@@ -45,8 +45,6 @@ open class JvmGeneratorExtensionsImpl(
     private val configuration: CompilerConfiguration,
     private val generateFacades: Boolean = true,
 ) : GeneratorExtensions(), JvmGeneratorExtensions {
-    override val irDeserializationEnabled: Boolean = configuration.get(JVMConfigurationKeys.SERIALIZE_IR) != JvmSerializeIrMode.NONE
-
     override val cachedFields = CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
 
     override val samConversion: SamConversion = JvmSamConversion()
@@ -152,17 +150,17 @@ open class JvmGeneratorExtensionsImpl(
     override val shouldPreventDeprecatedIntegerValueTypeLiteralConversion: Boolean
         get() = true
 
-    override fun generateFlexibleNullabilityAnnotationCall(): IrConstructorCall =
-        JvmIrSpecialAnnotationSymbolProvider.generateFlexibleNullabilityAnnotationCall()
+    override fun generateFlexibleNullabilityAnnotation(): IrAnnotation =
+        JvmIrSpecialAnnotationSymbolProvider.generateFlexibleNullabilityAnnotation()
 
-    override fun generateFlexibleMutabilityAnnotationCall(): IrConstructorCall =
-        JvmIrSpecialAnnotationSymbolProvider.generateFlexibleMutabilityAnnotationCall()
+    override fun generateFlexibleMutabilityAnnotation(): IrAnnotation =
+        JvmIrSpecialAnnotationSymbolProvider.generateFlexibleMutabilityAnnotation()
 
-    override fun generateEnhancedNullabilityAnnotationCall(): IrConstructorCall =
-        JvmIrSpecialAnnotationSymbolProvider.generateEnhancedNullabilityAnnotationCall()
+    override fun generateEnhancedNullabilityAnnotation(): IrAnnotation =
+        JvmIrSpecialAnnotationSymbolProvider.generateEnhancedNullabilityAnnotation()
 
-    override fun generateRawTypeAnnotationCall(): IrConstructorCall =
-        JvmIrSpecialAnnotationSymbolProvider.generateRawTypeAnnotationCall()
+    override fun generateRawTypeAnnotation(): IrAnnotation =
+        JvmIrSpecialAnnotationSymbolProvider.generateRawTypeAnnotation()
 
     override fun unwrapSyntheticJavaProperty(descriptor: PropertyDescriptor): Pair<FunctionDescriptor, FunctionDescriptor?>? {
         if (descriptor is SyntheticJavaPropertyDescriptor) {

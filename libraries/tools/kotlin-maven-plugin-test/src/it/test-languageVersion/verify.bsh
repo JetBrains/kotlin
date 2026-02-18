@@ -1,4 +1,4 @@
-source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
+source(new File(basedir, "verify-common.bsh").getAbsolutePath());
 
 assertBuildLogHasLine("[INFO] BUILD FAILURE");
 assertBuildLogHasLineThatContains("The feature \"break continue in inline lambdas\" is only available since language version 2.2");

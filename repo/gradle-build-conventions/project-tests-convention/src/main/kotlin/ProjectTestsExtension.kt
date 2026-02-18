@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -26,8 +27,17 @@ import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.build.project.tests.CollectTestDataTask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import java.io.File
+
+@RequiresOptIn(
+    level = RequiresOptIn.Level.ERROR,
+    message = "Unless your tests use the compiler distribution directly, consider depending on individual dist artifacts"
+)
+@Target(AnnotationTarget.FUNCTION)
+annotation class KotlinCompilerDistUsage
 
 abstract class ProjectTestsExtension(val project: Project) {
     abstract val allowFlaky: Property<Boolean>
@@ -35,6 +45,9 @@ abstract class ProjectTestsExtension(val project: Project) {
     // -------------------- dependencies for runtime of tests --------------------
 
     val stdlibRuntimeForTests: Configuration = project.configurations.create("stdlibRuntimeForTests") {
+        isTransitive = false
+    }
+    val stdlibRuntimeSourcesForTests: Configuration = project.configurations.create("stdlibRuntimeSourcesForTests") {
         isTransitive = false
     }
     val stdlibMinimalRuntimeForTests: Configuration = project.configurations.create("stdlibMinimalRuntimeForTests") {
@@ -56,6 +69,15 @@ abstract class ProjectTestsExtension(val project: Project) {
         isTransitive = false
     }
     val scriptingPluginForTests: Configuration = project.configurations.create("scriptingPluginForTests") {
+        isTransitive = false
+    }
+    var testScriptDefinitionForTests: Configuration = project.configurations.create("testScriptDefinitionForTests") {
+        isTransitive = false
+    }
+    val stdlibWebRuntimeForTests: Configuration = project.configurations.create("stdlibWebRuntimeForTests") {
+        isTransitive = false
+    }
+    val distForTests: Configuration = project.configurations.create("distForTests") {
         isTransitive = false
     }
     val stdlibJsRuntimeForTests: Configuration = project.configurations.create("stdlibJsRuntimeForTests") {
@@ -90,6 +112,18 @@ abstract class ProjectTestsExtension(val project: Project) {
         attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
     }
 
+    val pluginSandboxAnnotationsJar: Configuration = project.configurations.create("pluginSandboxAnnotationsJar") {
+        isTransitive = false
+    }
+
+    val pluginSandboxAnnotationsJsKlib: Configuration = project.configurations.create("pluginSandboxAnnotationsJsKlib") {
+        isTransitive = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_RUNTIME))
+            attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+        }
+    }
+
     private fun add(configuration: Configuration, dependency: DependencyHandler.() -> ProjectDependency) {
         project.dependencies { configuration(dependency(this)) }
     }
@@ -98,6 +132,10 @@ abstract class ProjectTestsExtension(val project: Project) {
         add(stdlibRuntimeForTests) { project(":kotlin-stdlib") }
         add(stdlibMinimalRuntimeForTests) { project(":kotlin-stdlib-jvm-minimal-for-test") }
         add(kotlinReflectJarForTests) { project(":kotlin-reflect") }
+    }
+
+    fun withJvmStdlibSources() {
+        add(stdlibRuntimeSourcesForTests) { project(":kotlin-stdlib", "distSources") }
     }
 
     fun withStdlibCommon() {
@@ -114,6 +152,10 @@ abstract class ProjectTestsExtension(val project: Project) {
 
     fun withAnnotations() {
         add(kotlinAnnotationsForTests) { project(":kotlin-annotations-jvm") }
+    }
+
+    fun withStdlibWeb() {
+        add(stdlibWebRuntimeForTests) { project(":kotlin-stdlib", "webMainMetadataElements") }
     }
 
     fun withJsRuntime() {
@@ -140,6 +182,15 @@ abstract class ProjectTestsExtension(val project: Project) {
         KOTLIN_SCRIPTING_COMMON_JAR
         KOTLIN_SCRIPTING_JVM_JAR
         */
+    }
+
+    fun withTestScriptDefinition() {
+        add(testScriptDefinitionForTests) { project(":plugins:scripting:test-script-definition", "testFixturesApiElements") }
+    }
+
+    @KotlinCompilerDistUsage
+    fun withDist() {
+        add(distForTests) { project(":kotlin-compiler", "distElements") }
     }
 
     abstract val mockJdkRuntime: RegularFileProperty
@@ -176,6 +227,11 @@ abstract class ProjectTestsExtension(val project: Project) {
 
     fun withThirdPartyJsr305() {
         thirdPartyJsr305.set(File(project.rootDir, "third-party/jsr305"))
+    }
+
+    fun withPluginSandboxAnnotations() {
+        add(pluginSandboxAnnotationsJar) { project(":plugins:plugin-sandbox:plugin-annotations") }
+        add(pluginSandboxAnnotationsJsKlib) { project(":plugins:plugin-sandbox:plugin-annotations", "jsRuntimeElements") }
     }
 
     // -------------------- testData configuration --------------------
@@ -231,7 +287,7 @@ abstract class ProjectTestsExtension(val project: Project) {
         skipInLocalBuild: Boolean,
         body: Test.() -> Unit = {},
     ): TaskProvider<out Task> {
-        if (skipInLocalBuild && !project.kotlinBuildProperties.isTeamcityBuild) {
+        if (skipInLocalBuild && !project.kotlinBuildProperties.isTeamcityBuild.get()) {
             return project.tasks.register(taskName)
         }
         if (jUnitMode == JUnitMode.JUnit5 && parallel != null) {
@@ -289,6 +345,7 @@ abstract class ProjectTestsExtension(val project: Project) {
                 add(generationPath.asFile.absolutePath)
                 if (generateTestsInBuildDirectory) {
                     add("allowGenerationOnTeamCity")
+                    add("skipTestAllFilesCheck")
                 }
             }
             if (generateTestsInBuildDirectory) {

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
+import org.jetbrains.kotlin.gradle.util.useCompilerVersion
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -137,7 +138,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
                         jvmToolchain(17)
                         @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
                         if (btaVersion != null) {
-                            compilerVersion.set(btaVersion)
+                            useCompilerVersion(btaVersion)
                         }
                     }
                     // to make the test more reliable, fixate AV/LV. Those particular values are defaults for Gradle 8

@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
+package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.SnapshotConfig
 
 interface Scenario {
     /**
@@ -29,8 +29,8 @@ interface Scenario {
         moduleName: String,
         dependencies: List<ScenarioModule> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
-        compilationConfigAction: (JvmCompilationOperation) -> Unit = {},
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit) = {},
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
+        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit) = {},
     ): ScenarioModule
 
     /**
@@ -53,7 +53,7 @@ interface Scenario {
         moduleName: String,
         dependencies: List<ScenarioModule> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
-        compilationConfigAction: (JvmCompilationOperation) -> Unit = {},
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit) = {},
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
+        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit) = {},
     ): ScenarioModule
 }

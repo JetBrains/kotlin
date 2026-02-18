@@ -363,6 +363,12 @@ class BasicIncrementalJavaInteropIT : KGPBaseTest() {
     @GradleTest
     fun testKotlinConstantTrackingJavaConstant(gradleVersion: GradleVersion) {
         project("kt-69042-basic-java-interop", gradleVersion) {
+            buildGradleKts.appendText(
+                """
+                // Hack: Read property to ensure Gradle 9.1.0+ invalidates CC when it changes
+                providers.gradleProperty("invalidateCC").orNull
+                """.trimIndent()
+            )
             build("assemble")
 
             val javaSource = projectPath.resolve("src/main/java/JavaConstants.java")
@@ -371,7 +377,7 @@ class BasicIncrementalJavaInteropIT : KGPBaseTest() {
             // KT-75850: we need to explicitly invalidate the CC here, as changing the logLevel doesn't trigger it
             build(
                 "assemble",
-                "-PinvalidateCC${generateIdentifier()}",
+                "-PinvalidateCC=${generateIdentifier()}", // Now this will actually trigger invalidation
                 buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG),
             ) {
                 assertTasksExecuted(":compileJava", ":compileKotlin")

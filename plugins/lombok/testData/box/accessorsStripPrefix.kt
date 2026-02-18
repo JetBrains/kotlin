@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K1: ANY
+
 // FILE: AccessorsTest.java
 
 import lombok.*;
@@ -11,15 +13,15 @@ public class AccessorsTest {
     private int fTarget = 42;
     private String fieldValue;
 
-    @Accessors
+    @Accessors(prefix = { "" })
     private boolean isHuman;
     private boolean fPrefixedBoolean;
-    @Accessors
+    @Accessors(prefix = { "" })
     private Boolean isNonPrimitiveHuman;
 
     static void test()
     {
-        val obj = new AccessorsTest ();
+        val obj = new AccessorsTest();
 
         obj.getTarget();
         obj.setTarget(34);
@@ -44,6 +46,7 @@ public class AccessorsTest {
 
 fun box(): String {
     val obj = AccessorsTest()
+    AccessorsTest.test()
 
     obj.getTarget()
     obj.setTarget(34)

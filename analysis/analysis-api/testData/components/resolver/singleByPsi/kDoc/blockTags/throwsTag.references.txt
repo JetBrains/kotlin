@@ -3,6 +3,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -11,6 +12,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: null
       symbols:
         Nothing (Unresolved reference)
 
@@ -19,6 +21,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in kotlin) typealias IllegalStateException = java.lang.IllegalStateException
 
@@ -27,6 +30,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in kotlin) typealias IllegalStateException = java.lang.IllegalStateException
 
@@ -35,6 +39,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) class MyException : kotlin.Exception /* = java.lang.Exception */()
 
@@ -43,6 +48,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) class MyException : kotlin.Exception /* = java.lang.Exception */()
 
@@ -51,6 +57,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) class MyThrowable : kotlin.Throwable()
 
@@ -59,5 +66,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in ROOT) class MyThrowable : kotlin.Throwable()

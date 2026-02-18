@@ -9,6 +9,7 @@ Resolved constructor:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isPrimary: false
     location: CLASS
     modality: FINAL
@@ -28,6 +29,7 @@ Resolved constructor:
         compilerVisibility: Local
         isActual: false
         isExpect: false
+        isExternal: false
         isReified: false
         location: LOCAL
         modality: FINAL
@@ -50,10 +52,12 @@ Resolved constructor:
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
+        hasSynthesizedName: false
         isActual: false
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -91,6 +95,7 @@ Original constructor if type aliased:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isPrimary: true
     location: CLASS
     modality: FINAL
@@ -110,6 +115,7 @@ Original constructor if type aliased:
         compilerVisibility: Local
         isActual: false
         isExpect: false
+        isExternal: false
         isReified: false
         location: CLASS
         modality: FINAL
@@ -132,10 +138,12 @@ Original constructor if type aliased:
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
+        hasSynthesizedName: false
         isActual: false
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true

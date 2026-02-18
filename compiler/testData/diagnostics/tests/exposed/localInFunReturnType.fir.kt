@@ -1,10 +1,9 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
 class My<T>(val value: T)
 
 open class Base
 
-fun <!EXPOSED_FUNCTION_RETURN_TYPE!>invalid1<!>() = run {
+fun invalid1() = run {
     class Local
     My(Local())
 }
@@ -13,12 +12,12 @@ fun invalid2() = My(object {})
 
 fun invalid3() = My(object : Base() {})
 
-fun <!EXPOSED_FUNCTION_RETURN_TYPE!>invalid4<!>() = run {
+fun invalid4() = run {
     class Local
     My(My(Local()))
 }
 
-fun <!EXPOSED_FUNCTION_RETURN_TYPE!>invalid5<!>() = run {
+fun invalid5() = run {
     fun invalid5a() = run {
         class Local
         Local()

@@ -40,6 +40,8 @@ enum class WasmImmediateKind {
     CATCH_VECTOR
 }
 
+private const val SIMPLE_IDX_CACHE_SIZE = 20
+
 sealed class WasmImmediate {
     class ConstU8(val value: UByte) : WasmImmediate()
     class ConstI32(val value: Int) : WasmImmediate()
@@ -55,21 +57,18 @@ sealed class WasmImmediate {
         class Value(val type: WasmType?) : BlockType()
     }
 
-    class FuncIdx(val value: WasmSymbol<WasmFunction>) : WasmImmediate() {
-        constructor(value: WasmFunction) : this(WasmSymbol(value))
+    abstract class FuncIdx : WasmImmediate()
+
+    class LocalIdx private constructor(val value: Int) : WasmImmediate() {
+        companion object {
+            private val localIdxCache = Array<LocalIdx>(SIMPLE_IDX_CACHE_SIZE) { LocalIdx(it) }
+            fun get(value: Int): LocalIdx = if (value < SIMPLE_IDX_CACHE_SIZE) localIdxCache[value] else LocalIdx(value)
+            fun get(local: WasmLocal): LocalIdx = get(local.id)
+        }
     }
 
-    class LocalIdx(val value: Int) : WasmImmediate() {
-        constructor(value: WasmLocal) : this(value.id)
-    }
-
-    class GlobalIdx(val value: WasmSymbol<WasmGlobal>) : WasmImmediate() {
-        constructor(value: WasmGlobal) : this(WasmSymbol(value))
-    }
-
-    class TypeIdx(val value: WasmSymbolReadOnly<WasmTypeDeclaration>) : WasmImmediate() {
-        constructor(value: WasmTypeDeclaration) : this(WasmSymbol(value))
-    }
+    abstract class GlobalIdx : WasmImmediate()
+    abstract class TypeIdx : WasmImmediate()
 
     class ValTypeVector(val value: List<WasmType>) : WasmImmediate()
 
@@ -83,18 +82,27 @@ sealed class WasmImmediate {
         constructor(value: Int) : this(WasmSymbol(value))
     }
 
-    class LabelIdx(val value: Int) : WasmImmediate()
+    class LabelIdx private constructor(val value: Int) : WasmImmediate() {
+        companion object {
+            private val labelIdxCache = Array<LabelIdx>(SIMPLE_IDX_CACHE_SIZE) { LabelIdx(it) }
+            fun get(value: Int): LabelIdx = if (value < SIMPLE_IDX_CACHE_SIZE) labelIdxCache[value] else LabelIdx(value)
+            fun get(local: WasmLocal): LabelIdx = get(local.id)
+        }
+    }
+
     class TagIdx(val value: WasmSymbol<Int>) : WasmImmediate() {
         constructor(value: Int) : this(WasmSymbol(value))
     }
     class LabelIdxVector(val value: List<Int>) : WasmImmediate()
     class ElemIdx(val value: WasmElement) : WasmImmediate()
 
-    class GcType(val value: WasmSymbol<WasmTypeDeclaration>) : WasmImmediate() {
-        constructor(value: WasmTypeDeclaration) : this(WasmSymbol(value))
+    class StructFieldIdx private constructor(val value: Int) : WasmImmediate() {
+        companion object {
+            private val structFieldIdxCache = Array<StructFieldIdx>(SIMPLE_IDX_CACHE_SIZE) { StructFieldIdx(it) }
+            fun get(value: Int): StructFieldIdx = if (value < SIMPLE_IDX_CACHE_SIZE) structFieldIdxCache[value] else StructFieldIdx(value)
+            fun get(local: WasmLocal): StructFieldIdx = get(local.id)
+        }
     }
-
-    class StructFieldIdx(val value: Int) : WasmImmediate()
 
     class HeapType(val value: WasmHeapType) : WasmImmediate() {
         constructor(type: WasmType) : this(type.getHeapType())

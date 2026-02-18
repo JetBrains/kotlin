@@ -289,7 +289,7 @@ class FirCallCompleter(
     }
 
     private fun FirBasedSymbol<*>.isSyntheticElvisFunction(): Boolean {
-        return origin == FirDeclarationOrigin.Synthetic.FakeFunction && (this as? FirCallableSymbol)?.callableId == SyntheticCallableId.ELVIS_NOT_NULL
+        return origin == FirDeclarationOrigin.Synthetic.FakeFunction && (this as? FirCallableSymbol)?.callableId == SyntheticCallableId.ELVIS
     }
 
     fun <T> runCompletionForCall(
@@ -307,8 +307,8 @@ class FirCallCompleter(
             listOf(ConeAtomWithCandidate(call, candidate)),
             initialType,
             transformer.resolutionContext
-        ) { atom, withPCLASession ->
-            analyzer.analyze(candidate.system, atom, candidate, withPCLASession)
+        ) { atom, withPCLASession, precalculatedBoundsForCL ->
+            analyzer.analyze(candidate.system, atom, candidate, withPCLASession, precalculatedBoundsForCL)
         }
     }
 

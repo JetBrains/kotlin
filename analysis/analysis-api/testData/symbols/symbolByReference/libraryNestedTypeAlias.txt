@@ -8,6 +8,7 @@ KaTypeAliasSymbol:
     type: C
   isActual: false
   isExpect: false
+  isExternal: false
   location: CLASS
   modality: FINAL
   name: TA

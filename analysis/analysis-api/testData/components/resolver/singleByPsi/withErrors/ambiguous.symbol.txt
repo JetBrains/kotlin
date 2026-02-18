@@ -1,0 +1,17 @@
+KtCallExpression(98,109): 'function(1)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /function(a: kotlin.Char): kotlin.Unit,
+      /function(b: kotlin.Boolean): kotlin.Unit,
+      /function(c: kotlin.String): kotlin.Unit
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+    
+    fun function(a: Char): Unit:
+      Argument type mismatch: actual type is 'Int', but 'Char' was expected.
+    
+    fun function(b: Boolean): Unit:
+      Argument type mismatch: actual type is 'Int', but 'Boolean' was expected.
+    
+    fun function(c: String): Unit:
+      Argument type mismatch: actual type is 'Int', but 'String' was expected.>

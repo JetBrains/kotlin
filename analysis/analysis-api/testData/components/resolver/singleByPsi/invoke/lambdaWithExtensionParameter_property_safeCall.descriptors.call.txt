@@ -2,22 +2,21 @@ KtNameReferenceExpression(93,99): 'action'
   KaErrorCallInfo:
     candidateCalls = [
       KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = foo
+          isSafeNavigation = true
+          type = test.Foo?
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = foo
-            isSafeNavigation = true
-            type = test.Foo?
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = action
-            receiverType = null
-            returnType = kotlin.Function0<kotlin.Unit>
-            symbol = val action: kotlin.Function0<kotlin.Unit>
-            contextParameters = []
-            callableId = test/Foo.action
-        simpleAccess = Read
+        kind = Read
+        signature = KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.Unit>
+          symbol = val action: kotlin.Function0<kotlin.Unit>
+          contextParameters = []
+          callableId = test/Foo.action
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: UNSAFE_CALL_ERROR with invoke>

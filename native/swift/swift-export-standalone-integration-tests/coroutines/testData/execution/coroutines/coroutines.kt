@@ -10,6 +10,8 @@ import kotlinx.coroutines.*
 
 object Foo
 
+fun testPrimitiveProducedLambda(): suspend ()->Int = ::testPrimitive
+
 suspend fun testPrimitive(): Int {
     delay(33L)
     return 42
@@ -61,4 +63,9 @@ suspend fun throwAfter(delay: Long, message: String): Int {
 
 suspend fun throwImmediately(message: String): Int {
     error(message)
+}
+
+suspend fun throwNonException(message: String): Int {
+    class NonExceptionThrowable(message: String) : Throwable(message)
+    throw NonExceptionThrowable(message)
 }

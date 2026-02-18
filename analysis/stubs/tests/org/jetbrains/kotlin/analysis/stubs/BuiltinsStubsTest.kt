@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 
-class BuiltinsStubsTest : AbstractAnalysisApiExecutionTest("analysis/stubs/testData/builtins/stubs") {
+class BuiltinsStubsTest : AbstractAnalysisApiExecutionTest("testData/builtins/stubs") {
     override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 
     @Test

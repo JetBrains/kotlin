@@ -1,5 +1,6 @@
 // SKIP_MANGLE_VERIFICATION
 
+// FILE: lib.kt
 interface C<A : Any, B : Any> {
     fun foo(a: A): B
 
@@ -33,6 +34,7 @@ data class B(val a: A?) {
     )
 }
 
+// FILE: main.kt
 fun box(): String {
     val b = B(A("OK"))
     return B.foo(b).a ?: "fail"

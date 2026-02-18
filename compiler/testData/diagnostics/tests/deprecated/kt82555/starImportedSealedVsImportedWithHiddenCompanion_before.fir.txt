@@ -6,7 +6,7 @@ FILE: some.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|kotlin/Deprecated|(message = String(), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final companion object Companion : R|kotlin/Any| {
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final companion object Companion : R|kotlin/Any| {
             private constructor(): R|some/Some.Companion| {
                 super<R|kotlin/Any|>()
             }

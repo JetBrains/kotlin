@@ -6,6 +6,9 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl
 
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import org.jetbrains.kotlinx.dataframe.api.insert
+import org.jetbrains.kotlinx.dataframe.api.under
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
 
 /**
  * If column not in the schema but String API refers to it, operation will fail with runtime exception
@@ -13,10 +16,22 @@ import org.jetbrains.kotlin.utils.mapToSetOrEmpty
  *  However, only with `Any?` type
  */
 context(arguments: Arguments)
-fun PluginDataFrameSchema.createImpliedColumns(selector: List<String>): PluginDataFrameSchema {
+fun PluginDataFrameSchema.insertImpliedColumns(selector: List<String>): PluginDataFrameSchema {
     val nullableAny = arguments.session.builtinTypes.nullableAnyType.coneType
     val topLevelColumns = columns().mapToSetOrEmpty { it.name }
     val assumedColumns = selector.filter { it !in topLevelColumns }
         .map { simpleColumnOf(it, nullableAny) }
     return PluginDataFrameSchema(columns() + assumedColumns)
+}
+
+fun PluginDataFrameSchema.insertImpliedColumns(selector: ColumnsResolver): PluginDataFrameSchema {
+    val df = asDataFrame()
+    // groupBy { expr { } } - untitled goes only in `key` columns, shouldn't appear in groups
+    // groupBy { "myKey"() } - myKey is implied to exist in original df, goes in both keys and groups
+    // just containsColumn is not enough to distinguish these 2 cases, need to know exactly how it was resolved (is it from string api?)
+    val columns = selector.resolve(this).filter { it.isImpliedColumn }
+    val schema = columns.filterNot { df.containsColumn(it.path) }.fold(df) { acc, column ->
+        acc.insert(column.column.asDataColumn()).under(column.path.dropLast())
+    }.toPluginDataFrameSchema()
+    return schema
 }

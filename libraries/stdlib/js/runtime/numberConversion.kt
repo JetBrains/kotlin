@@ -7,6 +7,7 @@ package kotlin.js
 
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
+@UsedFromCompilerGeneratedCode
 internal fun numberToByte(a: dynamic): Byte = toByte(numberToInt(a))
 
 @UsedFromCompilerGeneratedCode

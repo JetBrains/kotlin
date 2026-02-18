@@ -5,27 +5,31 @@
 
 package org.jetbrains.kotlin.cli.pipeline.web
 
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.loadSizeInfo
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, JsSerializedKlibPipelineArtifact>(
     name = "JsKlibSerializationPipelinePhase",
 ) {
     override fun executePhase(input: JsFir2IrPipelineArtifact): JsSerializedKlibPipelineArtifact {
-        val (fir2IrResult, firResult, configuration, diagnosticCollector, moduleStructure) = input
-        val irDiagnosticReporter =
-            KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticCollector.deduplicating(), configuration.languageVersionSettings)
+        val (fir2IrResult, firResult, configuration, moduleStructure) = input
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            configuration.diagnosticsCollector,
+            configuration.languageVersionSettings
+        )
 
         val outputKlibPath = configuration.computeOutputKlibPath()
         val fir2KlibMetadataSerializer = Fir2KlibMetadataSerializer(
@@ -43,7 +47,6 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             diagnosticReporter = irDiagnosticReporter,
             metadataSerializer = fir2KlibMetadataSerializer,
             klibPath = outputKlibPath,
-            dependencies = moduleStructure.klibs.all,
             moduleFragment = fir2IrResult.irModuleFragment,
             irBuiltIns = fir2IrResult.irBuiltIns,
             cleanFiles = icData ?: emptyList(),
@@ -53,9 +56,13 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             wasmTarget = configuration.wasmTarget,
             performanceManager = moduleStructure.compilerConfiguration.perfManager,
         )
+
+        loadSizeInfo(File(outputKlibPath))?.flatten()?.let { stats ->
+            configuration.perfManager?.registerKlibElementStats(stats)
+        }
+
         return JsSerializedKlibPipelineArtifact(
             outputKlibPath,
-            diagnosticCollector,
             configuration
         )
     }

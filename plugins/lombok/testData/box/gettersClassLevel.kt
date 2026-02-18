@@ -1,0 +1,46 @@
+// FILE: ClassLevelGetterTest.java
+
+import lombok.AccessLevel;
+import lombok.Getter;
+
+@Getter
+public class ClassLevelGetterTest {
+    private int age = 10;
+
+    @Getter(AccessLevel.PROTECTED) private String name;
+
+    private boolean primitiveBoolean;
+
+    private Boolean boxedBoolean;
+
+    void test() {
+        getAge();
+        isPrimitiveBoolean();
+    }
+
+}
+
+// FILE: test.kt
+
+fun box(): String {
+    val obj = ClassLevelGetterTest()
+    val getter = obj.getAge()
+    val property = obj.age
+
+    obj.isPrimitiveBoolean()
+
+    obj.boxedBoolean
+    obj.getBoxedBoolean()
+
+    obj.getName()
+
+    OverridenGetterTest().usage()
+
+    return "OK"
+}
+
+class OverridenGetterTest : ClassLevelGetterTest() {
+    fun usage() {
+        getName()
+    }
+}

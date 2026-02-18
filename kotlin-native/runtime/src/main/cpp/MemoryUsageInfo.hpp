@@ -3,15 +3,17 @@
  * that can be found in the LICENSE file.
  */
 
-#ifndef RUNTIME_MEMORY_USAGE_INFO_H
-#define RUNTIME_MEMORY_USAGE_INFO_H
+#pragma once
 
 #include <cstddef>
 
 namespace kotlin {
 
-size_t GetPeakResidentSetSizeBytes() noexcept;
+// An estimate of how much memory was committed by the process at its peak:
+// * RSS on Linux
+// * Memory Footprint on macOS
+// * Working Set Size on Windows
+// May return 0 if unimplemented on some platform, or in case of an error.
+size_t peakResidentSetSizeBytes() noexcept;
 
 }
-
-#endif // RUNTIME_MEMORY_USAGE_INFO_H

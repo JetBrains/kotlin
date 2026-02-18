@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors

@@ -25,15 +25,15 @@ internal class BuildMetricsReporterAdapter(private val collector: BuildMetricsCo
     override fun endMeasure(time: BuildTimeMetric) {
         val startNs = myBuildTimeStartNs.remove(time) ?: error("$time finished before it started")
         val durationNs = System.nanoTime() - startNs
-        collector.collectMetric(time.readableString, BuildMetricsCollector.ValueType.NANOSECONDS, durationNs)
+        collector.collectMetric(time.hierarchicalReadableName(), BuildMetricsCollector.ValueType.NANOSECONDS, durationNs)
     }
 
     override fun addTimeMetricNs(time: BuildTimeMetric, durationNs: Long) {
-        collector.collectMetric(time.readableString, BuildMetricsCollector.ValueType.NANOSECONDS, durationNs)
+        collector.collectMetric(time.hierarchicalReadableName(), BuildMetricsCollector.ValueType.NANOSECONDS, durationNs)
     }
 
     override fun addMetric(metric: BuildPerformanceMetric, value: Long) {
-        collector.collectMetric(metric.readableString, metric.type.toMetricsReporterType(), value)
+        collector.collectMetric(metric.hierarchicalReadableName(), metric.type.toMetricsReporterType(), value)
     }
 
     override fun addTimeMetric(metric: BuildPerformanceMetric) {
@@ -42,7 +42,7 @@ internal class BuildMetricsReporterAdapter(private val collector: BuildMetricsCo
             ValueType.MILLISECONDS, ValueType.TIME -> System.currentTimeMillis()
             else -> error("Unable to add time metric for '${metric.type}' type")
         }
-        collector.collectMetric(metric.readableString, metric.type.toMetricsReporterType(), time)
+        collector.collectMetric(metric.hierarchicalReadableName(), metric.type.toMetricsReporterType(), time)
     }
 
     override fun addGcMetric(metric: String, value: GcMetric) {
@@ -63,7 +63,7 @@ internal class BuildMetricsReporterAdapter(private val collector: BuildMetricsCo
     }
 
     override fun addAttribute(attribute: BuildAttribute) {
-        collector.collectMetric(attribute.readableString, BuildMetricsCollector.ValueType.ATTRIBUTE, 1)
+        collector.collectMetric(attribute.composedReadableName, BuildMetricsCollector.ValueType.ATTRIBUTE, 1)
     }
 
     override fun getMetrics(): BuildMetrics<BuildTimeMetric, BuildPerformanceMetric> {
@@ -102,3 +102,24 @@ internal fun BuildOperationImpl<*>.getMetricsReporter(): BuildMetricsReporter<Bu
     } else {
         DoNothingBuildMetricsReporter
     }
+
+private val droppedHierarchyElements = setOf(
+    GRADLE_TASK_ACTION, // we are not in the context of Gradle
+    RUN_COMPILATION_IN_WORKER, // we are not in the context of Gradle
+    INCREMENTAL_COMPILATION_DAEMON, // reports metrics unrelated to IC and daemon
+)
+
+private fun BuildPerformanceMetric.hierarchicalReadableName(): String {
+    var node: BuildPerformanceMetric? = this
+    return buildList {
+        while (node != null) {
+            if (node !in droppedHierarchyElements) {
+                add(node.readableString)
+            }
+            node = node.parent
+        }
+    }.asReversed().joinToString(" -> ")
+}
+
+private val BuildAttribute.composedReadableName: String
+    get() = "$readableString (${kind.readableName})"

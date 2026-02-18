@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,10 +14,18 @@ import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionTypeStub;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Represents a function type with parameters and return type.
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ * val action: (Int, String) -> Boolean = { _, _ -> true }
+ * //          ^______________________^
+ * }</pre>
+ */
 public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> implements KtTypeElement {
 
     public static final KtToken RETURN_TYPE_SEPARATOR = KtTokens.ARROW;

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
@@ -41,6 +42,18 @@ import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 @Suppress("DuplicatedCode")
 internal object KDocReferenceResolver {
+    private val EP_NAME: ExtensionPointName<KaAdditionalKDocResolutionProvider> = ExtensionPointName(
+        "org.jetbrains.kotlin.kaAdditionalKDocResolutionProvider"
+    )
+
+    fun resolveKdocFqName(
+        analysisSession: KaSession,
+        fqName: FqName,
+        contextElement: KtElement,
+    ): Collection<KaSymbol> = EP_NAME.extensions.flatMap {
+        it.resolveKdocFqName(analysisSession, fqName, contextElement)
+    }
+
     /**
      * [symbol] is the symbol referenced by this resolve result.
      *
@@ -92,7 +105,7 @@ internal object KDocReferenceResolver {
         with(analysisSession) {
             if (KotlinKDocResolutionStrategyProviderService
                     .getService(useSiteModule.project)
-                    ?.shouldUseExperimentalStrategy() != true
+                    ?.shouldUseExperimentalStrategy() == false
             ) {
                 return ClassicKDocReferenceResolver.resolveKdocFqName(
                     analysisSession,
@@ -195,7 +208,7 @@ internal object KDocReferenceResolver {
      */
     private fun KtElement.getContextElementOrSelf(): KtElement {
         return PsiTreeUtil.findFirstContext(this, false) { context ->
-            context !is KDocElement && context !is KDocName && context !is KDocLink
+            context !is KDocElement && context !is KDocName && context !is KDocLink && context !is KtFile
         } as? KtElement ?: this
     }
 
@@ -225,7 +238,7 @@ internal object KDocReferenceResolver {
      * Then, if no symbols were found on previous stages, the following symbol categories are searched:
      * 1. Type qualified extensions
      * 2. Packages
-     * 3. Symbols provided via [AdditionalKDocResolutionProvider] extension point
+     * 3. Symbols provided via [KaAdditionalKDocResolutionProvider] extension point
      *
      * This resolution algorithm is implemented according to KEEP-0389 "Streamline ambiguous KDoc links".
      */
@@ -406,17 +419,23 @@ internal object KDocReferenceResolver {
         }
 
         if ((contextElement as? KtNamedDeclaration)?.nameAsName == name) {
-            add(contextElement.symbol)
+            if (contextElement is KtConstructor<*>) {
+                /**
+                 * Every constructor has the same name as the class it constructs.
+                 * If a link with a class name is placed on some constructor,
+                 * it's most likely used to point to the class.
+                 * That's why we need to manually add the enclosing class as a context declaration.
+                 */
+                add(contextElement.getContainingClassOrObject().symbol)
+            } else {
+                add(contextElement.symbol)
+            }
         }
 
         collectParametersAndProperties(contextElement)
 
         if (contextElement is KtClassOrObject) {
             val primaryConstructor = contextElement.primaryConstructor ?: return@buildList
-
-            if (contextElement.nameAsName == name) {
-                addIfNotNull(primaryConstructor.symbol)
-            }
 
             collectParametersAndProperties(primaryConstructor)
         }
@@ -480,7 +499,7 @@ internal object KDocReferenceResolver {
                     .ifNotEmpty { return this.toResolveResults() }
 
                 // Search for symbols provided via `AdditionalKDocResolutionProvider` extension point
-                AdditionalKDocResolutionProvider.resolveKdocFqName(useSiteSession, fqName, contextElement).getThrowableSymbols()
+                resolveKdocFqName(useSiteSession, fqName, contextElement).getThrowableSymbols()
                     .ifNotEmpty { return this.toResolveResults() }
             }
 
@@ -519,7 +538,7 @@ internal object KDocReferenceResolver {
         }
 
         // Search for symbols provided via `AdditionalKDocResolutionProvider` extension point
-        AdditionalKDocResolutionProvider.resolveKdocFqName(useSiteSession, fqName, contextElement)
+        resolveKdocFqName(useSiteSession, fqName, contextElement)
             .ifNotEmpty { return this.toResolveResults() }
 
         return emptyList()

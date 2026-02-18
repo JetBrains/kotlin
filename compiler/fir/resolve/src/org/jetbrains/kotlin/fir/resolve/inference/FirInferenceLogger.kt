@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemMarker
 import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger
 import org.jetbrains.kotlin.resolve.calls.inference.components.LegacyVariableReadinessCalculator
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.inference.model.InitialConstraint
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
@@ -50,7 +50,7 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
         val owner: BlockOwner,
     ) : LoggingElement()
 
-    sealed class BlockItemElement() : LoggingElement()
+    sealed class BlockItemElement : LoggingElement()
 
     class NewVariableElement(val variable: TypeVariableMarker) : BlockItemElement()
 
@@ -207,24 +207,6 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
         return true
     }
 
-    fun assignFixedToInFixationLogs(system: ConstraintSystemCompletionContext) {
-        prepareProperBlock(system)
-        for ((constructor, type) in system.fixedTypeVariables) {
-            val typeVariable = system.allTypeVariables[constructor] ?: continue
-            val relevantBlocks = topLevelElements.filter { (it.owner as? BlockOwner.Candidate)?.candidate?.system == system }
-
-            for (block in relevantBlocks) {
-                for (element in block.items) {
-                    if (element !is FixationLogRecordElement) continue
-                    val log = element.record
-                    if (log.chosen !== typeVariable) continue
-                    if (log.map[typeVariable]?.isForbiddenReadiness == true) continue
-                    log.fixedTo = type
-                }
-            }
-        }
-    }
-
     private val FixationLogVariableInfo<*>.isForbiddenReadiness: Boolean
         get() = when (val readiness = readiness) {
             is VariableReadinessCalculator.TypeVariableFixationReadiness -> !readiness[Q.ALLOWED]
@@ -259,6 +241,22 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
             cachedElementFor(variable2, constraint2),
         )
         return withOriginatingElements(elements, block)
+    }
+
+    override fun logFixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, system: ConstraintSystemMarker) {
+        prepareProperBlock(system)
+
+        val relevantBlocks = topLevelElements.filter { (it.owner as? BlockOwner.Candidate)?.candidate?.system == system }
+
+        for (block in relevantBlocks) {
+            for (element in block.items) {
+                if (element !is FixationLogRecordElement) continue
+                val log = element.record
+                if (log.chosen !== variable) continue
+                if (log.map[variable]?.isForbiddenReadiness == true) continue
+                log.fixedTo = resultType
+            }
+        }
     }
 
     companion object {

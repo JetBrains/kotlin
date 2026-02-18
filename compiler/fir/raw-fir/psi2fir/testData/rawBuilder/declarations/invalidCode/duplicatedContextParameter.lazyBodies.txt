@@ -6,7 +6,7 @@ FILE: duplicatedContextParameter.kt
         public? get(): Int { LAZY_BLOCK }
     public final? class Foo : R|kotlin/Any| {
         context(c: Int, c: String)
-        public? constructor(): R|Foo| {
+        public? [ContainingClassKey=Foo] constructor(): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 

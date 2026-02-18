@@ -100,7 +100,7 @@ digraph functionCallBound_kt {
                     32 [label="Function call exit: $subj$.R|/isOk|()" style="filled" fillcolor=yellow];
                     33 [label="Exit safe call"];
                     34 [label="Const: Boolean(true)"];
-                    35 [label="Equality operator =="];
+                    35 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     36 [label="Exit when branch condition"];
                 }
                 subgraph cluster_13 {

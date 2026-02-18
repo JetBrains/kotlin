@@ -1,7 +1,8 @@
 // TARGET_BACKEND: WASM
 // USE_OLD_EXCEPTION_HANDLING_PROPOSAL
-// WASM_FAILS_IN: Wasmtime
+// WASM_FAILS_IN: Wasmtime, WasmEdge
 
+// FILE: lib.kt
 inline fun <T> withCatch(block: () -> T?) : T? {
     try {
         return block()
@@ -10,9 +11,6 @@ inline fun <T> withCatch(block: () -> T?) : T? {
     } finally {
     }
 }
-fun f1() = withCatch<Int> { null }
-fun f2() = withCatch<Unit> { null }
-fun f3() = withCatch<Nothing> { null }
 
 inline fun <T> withOutCatch(block: () -> T?) : T? {
     try {
@@ -20,6 +18,12 @@ inline fun <T> withOutCatch(block: () -> T?) : T? {
     } finally {
     }
 }
+
+// FILE: main.kt
+fun f1() = withCatch<Int> { null }
+fun f2() = withCatch<Unit> { null }
+fun f3() = withCatch<Nothing> { null }
+
 fun f4() = withOutCatch<Int> { null }
 fun f5() = withOutCatch<Unit> { null }
 fun f6() = withOutCatch<Nothing> { null }

@@ -1,0 +1,6 @@
+KtArrayAccessExpression(44,48): '1[2]'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /get(<extension receiver>: kotlin.Int, index: kotlin.Int): kotlin.Int
+    ]
+    diagnostic = ERROR<OPERATOR_MODIFIER_REQUIRED: 'operator' modifier is required on 'fun Int.get(index: Int): Int'.>

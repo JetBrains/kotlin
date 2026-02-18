@@ -43,7 +43,7 @@ abstract class KotlinNativeTarget @Inject constructor(
      * Indicates whether cross-compilation is supported on the current host for the associated Kotlin Native Target.
      */
     internal val crossCompilationOnCurrentHostSupported: Future<Boolean> = project.future {
-        if (HostManager.hostOrNull == null) return@future false
+        if (!HostManager.hostIsSupported) return@future false
         val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
         val isSupportedHost = hostManager.isEnabled(konanTarget)
 
@@ -205,13 +205,13 @@ abstract class KotlinNativeTargetWithTests<T : KotlinNativeBinaryTestRun>(
 abstract class KotlinNativeTargetWithHostTests @Inject constructor(project: Project, konanTarget: KonanTarget) :
     KotlinNativeTargetWithTests<KotlinNativeHostTestRun>(project, konanTarget) {
     override val testRuns: NamedDomainObjectContainer<KotlinNativeHostTestRun> by lazy {
-        project.container(KotlinNativeHostTestRun::class.java, KotlinNativeHostTestRunFactory(this))
+        project.objects.domainObjectContainer(KotlinNativeHostTestRun::class.java, KotlinNativeHostTestRunFactory(this))
     }
 }
 
 abstract class KotlinNativeTargetWithSimulatorTests @Inject constructor(project: Project, konanTarget: KonanTarget) :
     KotlinNativeTargetWithTests<KotlinNativeSimulatorTestRun>(project, konanTarget) {
     override val testRuns: NamedDomainObjectContainer<KotlinNativeSimulatorTestRun> by lazy {
-        project.container(KotlinNativeSimulatorTestRun::class.java, KotlinNativeSimulatorTestRunFactory(this))
+        project.objects.domainObjectContainer(KotlinNativeSimulatorTestRun::class.java, KotlinNativeSimulatorTestRunFactory(this))
     }
 }

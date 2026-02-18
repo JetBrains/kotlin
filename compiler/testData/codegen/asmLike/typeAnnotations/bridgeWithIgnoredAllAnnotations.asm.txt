@@ -1,0 +1,49 @@
+Ljava/lang/Object;Lmain/I<Ljava/lang/Integer;>;
+public final class main/C : java/lang/Object, main/I {
+    public void <init>()
+
+    public java.lang.String foo(int p1)
+      @Lmain/FunAnno;([])
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+      @Lmain/TypeAnno;([]) : METHOD_RETURN, null
+      @Lmain/TypeAnno;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @Lmain/ParamAnno;([]) // parameter 0
+
+    public java.lang.Object foo(java.lang.Object p1)
+}
+
+public abstract interface main/FunAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+<T:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface main/I : java/lang/Object {
+    (TT;)Ljava/lang/Object;
+    public java.lang.Object foo(java.lang.Object p1)
+      @Lmain/OldFunAnno;([])
+      @Lorg/jetbrains/annotations/Nullable;([]) // invisible
+      @Lmain/OldTypeAnno;([]) : METHOD_RETURN, null
+      @Lmain/OldTypeAnno;([]) : METHOD_FORMAL_PARAMETER 0, null
+        @Lmain/OldParamAnno;([]) // parameter 0
+        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
+}
+
+public abstract interface main/OldFunAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface main/OldParamAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface main/OldTypeAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface main/ParamAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface main/TypeAnno : java/lang/Object, java/lang/annotation/Annotation {
+
+}

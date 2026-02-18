@@ -10,6 +10,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
@@ -50,22 +51,20 @@ open class InvalidateStaleCaches @Inject constructor(
         }))
     }
 
-    // Remove when this is no longer used from build.gradle files.
-    @get:Internal
-    val distributionAsDirectory = objectFactory.directoryProperty()
-
     /**
      * Distribution in which to clean stale caches
      */
     @get:Internal("This task uses only some parts of the Native distribution")
-    val distribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty().convention(distributionAsDirectory.map { NativeDistribution(it) })
+    val distributionRoot: DirectoryProperty = objectFactory.directoryProperty()
+
+    private val distribution = distributionRoot.asNativeDistribution()
 
     /**
      * Path to the data directory with Native dependencies.
      */
     @get:Input
     @get:Optional
-    val dataDirPath = objectFactory.property(String::class).convention(project.kotlinBuildProperties.getOrNull("konan.data.dir") as String?)
+    val dataDirPath = objectFactory.property(String::class).convention(project.kotlinBuildProperties.stringProperty("konan.data.dir").orNull)
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)

@@ -8,10 +8,12 @@ package kotlin.wasm.internal
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.reflect.KClass
 
+@UsedFromCompilerGeneratedCode
 internal fun THROW_CCE(): Nothing {
     throw ClassCastException()
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun THROW_CCE_WITH_INFO(obj: Any?, klass: KClass<*>, isNullable: Boolean): Nothing {
     @Suppress("UNSUPPORTED_REFLECTION_API")
     val targetType = klass.qualifiedName ?: klass.simpleName ?: "<unknown>"
@@ -37,26 +39,32 @@ internal fun THROW_CCE_WITH_INFO(obj: Any?, klass: KClass<*>, isNullable: Boolea
     throw ClassCastException(message)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun THROW_NPE(): Nothing {
     throw NullPointerException()
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun THROW_ISE(): Nothing {
     throw IllegalStateException()
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun THROW_IAE(message: String): Nothing {
     throw IllegalArgumentException(message)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun throwNoBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun throwKotlinNothingValueException(): Nothing {
     throw KotlinNothingValueException()
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun rangeCheck(index: Int, size: Int) {
   if (index < 0 || index >= size) throw IndexOutOfBoundsException()
 }

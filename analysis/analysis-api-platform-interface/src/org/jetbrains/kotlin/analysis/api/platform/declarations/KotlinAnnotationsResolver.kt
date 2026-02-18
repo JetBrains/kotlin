@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.declarations
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtAnnotated
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtElement
  * }
  * ```
  */
+@KaPlatformInterface
 public interface KotlinAnnotationsResolver {
     /**
      * Returns an approximate set of [KtAnnotated] declarations which have an annotation with the given [annotationClassId] applied to them.
@@ -44,6 +46,7 @@ public interface KotlinAnnotationsResolver {
     public fun annotationsOnDeclaration(declaration: KtAnnotated): Set<ClassId>
 }
 
+@KaPlatformInterface
 public interface KotlinAnnotationsResolverFactory : KotlinPlatformComponent {
     /**
      * @param searchScope A scope in which the created [KotlinAnnotationsResolver] will operate. Make sure that this scope contains all
@@ -51,10 +54,12 @@ public interface KotlinAnnotationsResolverFactory : KotlinPlatformComponent {
      */
     public fun createAnnotationResolver(searchScope: GlobalSearchScope): KotlinAnnotationsResolver
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinAnnotationsResolverFactory = project.service()
     }
 }
 
+@KaPlatformInterface
 public fun Project.createAnnotationResolver(searchScope: GlobalSearchScope): KotlinAnnotationsResolver =
     KotlinAnnotationsResolverFactory.getInstance(this).createAnnotationResolver(searchScope)

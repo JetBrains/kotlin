@@ -12,7 +12,7 @@ dependencies {
     implementation(project(":compiler:util"))
     implementation(project(":compiler:config"))
 
-    if (kotlinBuildProperties.isInIdeaSync) {
+    if (kotlinBuildProperties.isInIdeaSync.get()) {
         compileOnly(project("tree-generator")) // Provided, so that IDEA can recognize references to this module in KDoc.
     }
     compileOnly(intellijCore())
@@ -27,7 +27,6 @@ sourceSets {
 }
 
 tasks.withType<KotlinJvmCompile> {
-    compilerOptions.freeCompilerArgs.add("-Xinline-classes")
     compilerOptions.freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
 }
 

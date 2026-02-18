@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.backend.ast
 
 abstract class JsIterableLoop(
     val bindingVarVariant: JsVars.Variant?,
-    val bindingVarName: JsName?,
+    val bindingAssignable: JsAssignable?,
     bindingExpression: JsExpression?,
     iterableExpression: JsExpression,
     body: JsStatement

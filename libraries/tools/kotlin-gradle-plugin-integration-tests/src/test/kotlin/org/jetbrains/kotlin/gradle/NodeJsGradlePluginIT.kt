@@ -20,7 +20,7 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+        get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("Set different Node.js versions in different subprojects")
     @GradleTest
@@ -106,7 +106,7 @@ class NodeJsGradlePluginIT : KGPBaseTest() {
             "subprojects-nodejs-setup",
             gradleVersion
         ) {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION", "UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS")
             buildScriptInjection {
                 project.rootProject.plugins.withType(NodeJsPlugin::class.java, Action {
                     project.rootProject.extensions.getByType(NodeJsEnvSpec::class.java).version.set("22.3.0")

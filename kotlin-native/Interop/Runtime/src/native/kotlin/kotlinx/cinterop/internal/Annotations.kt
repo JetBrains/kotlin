@@ -1,6 +1,7 @@
 
 package kotlinx.cinterop.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.InternalForKotlinNative
 
 @InternalForKotlinNative
@@ -139,6 +140,7 @@ public annotation class CEnumVarTypeSize(val size: Int)
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal annotation class CToKotlinBridge(val language: String, val declaration: String)
 
 /**
@@ -147,4 +149,5 @@ internal annotation class CToKotlinBridge(val language: String, val declaration:
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 @PublishedApi
+@UsedFromCompilerGeneratedCode
 internal annotation class KotlinToCBridge(val language: String, val impl: String, val library: String)

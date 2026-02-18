@@ -35,7 +35,7 @@ fun evalFile(scriptFile: File, cacheDir: File? = null): ResultWithDiagnostics<Ev
             enableScriptsInstancesSharing()
         }
 
-        BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), scriptDefinition, evaluationEnv)
+        BasicJvmScriptingHost.createLegacy().eval(scriptFile.toScriptSource(), scriptDefinition, evaluationEnv)
     }
 
 const val TEST_DATA_ROOT = "testData"

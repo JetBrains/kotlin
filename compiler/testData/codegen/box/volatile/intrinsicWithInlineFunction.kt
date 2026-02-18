@@ -1,27 +1,31 @@
 // TARGET_BACKEND: NATIVE
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
 
+// FILE: lib.kt
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
 import kotlin.concurrent.*
 import kotlin.reflect.*
 
-class Box(@Volatile var value1: Int, @Volatile var value2: Int)
-
 inline fun wrapCas(crossinline refGetter: () -> KMutableProperty0<Int>, expected: Int, new: Int) = refGetter().compareAndExchangeField(expected, new)
 inline fun wrapCasTwice(crossinline refGetter: () -> KMutableProperty0<Int>, expected: Int, new: Int) = wrapCas(refGetter, expected, new)
-
-class A(@Volatile var x: String) {
-    fun add(str: String) {
-        update({ -> (this::x)}) { x + str }
-    }
-}
 
 inline fun update(crossinline refGetter: () -> KMutableProperty0<String>, action: (String) -> String) {
     while (true) {
         val cur = refGetter().get()
         val upd = action(cur)
         if (refGetter().compareAndSetField(cur, upd)) return
+    }
+}
+
+// FILE: main.kt
+import kotlin.concurrent.*
+
+class Box(@Volatile var value1: Int, @Volatile var value2: Int)
+
+class A(@Volatile var x: String) {
+    fun add(str: String) {
+        update({ -> (this::x)}) { x + str }
     }
 }
 

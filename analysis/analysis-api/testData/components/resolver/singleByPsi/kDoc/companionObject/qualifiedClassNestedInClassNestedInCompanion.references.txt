@@ -2,5 +2,6 @@ KDocName(150,157): 'X.YY.ZZ'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in C.X.Companion.YY) class ZZ

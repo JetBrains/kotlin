@@ -5,8 +5,6 @@
 
 // CHECK_BYTECODE_TEXT
 // 2 java/lang/invoke/LambdaMetafactory
-// 2 A\.plus\(Ljava/lang/String;\)Ljava/lang/String;\,
-//  ^ check that we generate a reference to A::plus (same as javac)
 
 // FILE: serializableFakeOverrideFunRef.kt
 import java.io.*

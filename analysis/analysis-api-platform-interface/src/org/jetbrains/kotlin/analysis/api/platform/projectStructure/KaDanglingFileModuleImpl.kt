@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  * Note that if you need custom behavior, you should create a custom implementation of a [KaDanglingFileModule], as the Analysis API
  * treats this implementation specially (by allowing certain performance optimizations).
  */
+@KaPlatformInterface
 public class KaDanglingFileModuleImpl(
     files: List<KtFile>,
     override val contextModule: KaModule,
@@ -65,11 +67,12 @@ public class KaDanglingFileModuleImpl(
 
     override val baseContentScope: GlobalSearchScope
         get() {
-            val virtualFiles = files.mapNotNull { it.virtualFile }
-            return when {
-                virtualFiles.isEmpty() -> GlobalSearchScope.EMPTY_SCOPE
-                else -> GlobalSearchScope.filesScope(project, virtualFiles)
-            }
+            // The content scope should cover the dangling file regardless of whether it's physical or in memory (in-memory elements still
+            // need to be accepted by the resolution scope). To ensure that the content scope covers non-physical files, it's crucial
+            // to go through the file view provider. With it, we will get a virtual file even for non-physical PSI files.
+            // `PsiFile.virtualFile` would NOT achieve the same result, as it returns `null` for in-memory files.
+            val virtualFiles = files.map { it.viewProvider.virtualFile }
+            return GlobalSearchScope.filesScope(project, virtualFiles)
         }
 
     override val directRegularDependencies: List<KaModule>

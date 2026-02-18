@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KlibAttributes
 import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.KlibLayoutReaderFactory
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -52,7 +53,6 @@ internal class KlibImpl(
 
     override val attributes = KlibAttributes()
 
-    override val libraryName get() = location.path
     override val libraryFile get() = location
 
     override fun toString() = listOfNotNull(
@@ -63,7 +63,7 @@ internal class KlibImpl(
     ).joinToString("\n")
 }
 
-private class KlibManifestComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
+internal class KlibManifestComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
     val manifestFile: KlibFile
         get() = root.child(KLIB_DEFAULT_COMPONENT_NAME).child(KLIB_MANIFEST_FILE_NAME)
 }

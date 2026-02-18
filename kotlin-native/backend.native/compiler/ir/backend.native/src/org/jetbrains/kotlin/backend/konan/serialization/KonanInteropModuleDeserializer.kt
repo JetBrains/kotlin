@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.findPackage
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
@@ -23,10 +24,13 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
+import org.jetbrains.kotlin.psi2ir.lazy.IrLazyClass
 
 internal class KonanInteropModuleDeserializer(
     moduleDescriptor: ModuleDescriptor,
@@ -83,6 +87,30 @@ internal class KonanInteropModuleDeserializer(
         if (!isLibraryCached && descriptor.isCEnumsOrCStruct()) return resolveCEnumsOrStruct(descriptor, idSig, symbolKind)
 
         val symbolOwner = stubGenerator.generateMemberStub(descriptor) as IrSymbolOwner
+
+        // Workaround for KT-83236: touch all types accessible via lazy class stub generated in the previous line
+        // to trigger its deserialization. A better idea might be to generate a non-lazy stub.
+        (symbolOwner as? IrLazyClass)?.let { owner ->
+            fun touchTypes(function: IrFunction) {
+                function.returnType
+                function.typeParameters.forEach { it.superTypes }
+                function.parameters.forEach { it.type }
+                // Don't touch `overriddenSymbols` here, due to an error in the usecase "a lazy class with a real class in super-type":
+                // If the supertype is not found, stubGenerator incorrectly would not request symbols through the linker, but instead generates them in place.
+                // Later the real class will be correctly attempted to be deserialized, which will fail with "symbol already bound".
+            }
+
+            owner.superTypes
+            // No need to touch properties as well, since all relevant types would be touched via types of separate accessor functions.
+            for (function in owner.functions) {
+                touchTypes(function)
+            }
+            for (constructor in owner.constructors) {
+                // Now cinterop constructors are duplicated with deprecated `init` functions, see `ObjCMethodStubBuilder.build()`.
+                // They might be removed, so explicit constructors processing is required here to be on the safe side.
+                touchTypes(constructor)
+            }
+        }
 
         return symbolOwner.symbol
     }

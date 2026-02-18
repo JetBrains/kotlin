@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 internal class KaFe10PsiNamedFunctionSymbol(
     override val psi: KtNamedFunction,
@@ -57,7 +58,7 @@ internal class KaFe10PsiNamedFunctionSymbol(
         get() = withValidityAssertion { psi.hasModifier(KtTokens.OPERATOR_KEYWORD) }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { psi.hasModifier(KtTokens.EXTERNAL_KEYWORD) }
+        get() = withValidityAssertion { psi.hasModifier(KtTokens.EXTERNAL_KEYWORD) || descriptor?.isEffectivelyExternal() == true }
 
     override val isInline: Boolean
         get() = withValidityAssertion { psi.hasModifier(KtTokens.INLINE_KEYWORD) }

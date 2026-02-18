@@ -46,12 +46,12 @@ FILE: inaccessibleReceiver.kt
     }
     public final class FooImpl2 : R|Base|, R|Foo| {
         public constructor(): R|FooImpl2| {
-            super<R|Base|>(context(R|FooImpl2|this@R|/FooImpl2|) R|/test|<R|FooImpl2|>())
+            super<R|Base|>(R|/test<Inapplicable(INAPPLICABLE): /test>#|<R|Foo|>())
         }
 
         public constructor(s: R|kotlin/String|): R|FooImpl2| {
             super<R|Base|>(R|kotlin/with|<R|kotlin/String|, R|Foo|>(R|<local>/s|, <L> = with@fun R|kotlin/String|.<anonymous>(): R|Foo| <inline=Inline, kind=EXACTLY_ONCE>  {
-                ^ R|/functional|.R|SubstitutionOverride<kotlin/Function2.invoke: R|Foo|>|(this@R|special/anonymous|, R|FooImpl2|this@R|/FooImpl2|)
+                ^ R|/functional|.R|SubstitutionOverride<kotlin/Function2.invoke: R|Foo|><Inapplicable(INAPPLICABLE): kotlin/Function2.invoke>#|()
             }
             ))
         }

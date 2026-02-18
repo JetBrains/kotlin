@@ -1,18 +1,17 @@
 KtNameReferenceExpression(80,83): 'bar'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = bar
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = var bar: kotlin.Int
-          contextParameters = []
-          callableId = /BaseClass.bar
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = bar
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = var bar: kotlin.Int
+        contextParameters = []
+        callableId = /BaseClass.bar
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -1,14 +1,16 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-import kotlin.reflect.KProperty
-
+// FILE: lib.kt
 var log: String = ""
 
 inline fun <T> runLogged(entry: String, action: () -> T): T {
     log += entry
     return action()
 }
+
+// FILE: main.kt
+import kotlin.test.*
+import kotlin.reflect.KProperty
 
 operator fun String.provideDelegate(host: Any?, p: KProperty<*>): String =
         if (p.name == this) runLogged("tdf($this);") { this } else "fail 1"

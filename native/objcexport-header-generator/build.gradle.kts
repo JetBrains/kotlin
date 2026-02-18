@@ -16,7 +16,7 @@ dependencies {
     api(project(":kotlin-tooling-core"))
     api(project(":native:base"))
 
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         testImplementation(project(":kotlin-native:Interop:Indexer"))
         testImplementation(project(":native:kotlin-native-utils"))
         testImplementation(project(":kotlin-native:Interop:StubGenerator"))
@@ -27,6 +27,7 @@ dependencies {
     testRuntimeOnly(project(":native:analysis-api-based-test-utils"))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(testFixtures(project(":compiler:tests-common")))
     api(project(":kotlin-stdlib"))
     testImplementation(project(":kotlin-stdlib"))

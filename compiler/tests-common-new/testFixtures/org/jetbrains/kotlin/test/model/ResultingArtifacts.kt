@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
+import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 
@@ -53,15 +54,21 @@ object BinaryArtifacts {
         }
     }
 
-    class Native : ResultingArtifact.Binary<Native>() {
+    class Native(val executable: File) : ResultingArtifact.Binary<Native>() {
         override val kind: ArtifactKind<Native>
             get() = ArtifactKinds.Native
     }
 
-    class Wasm(
+    class WasmCompilationSet(
+        val compiledModule: WasmModule,
         val compilerResult: WasmCompilerResult,
-        val compilerResultWithDCE: WasmCompilerResult,
-        val compilerResultWithOptimizer: WasmCompilerResult?,
+        val compilationDependencies: List<WasmCompilationSet> = emptyList(),
+    )
+
+    class Wasm(
+        val compilation: WasmCompilationSet,
+        val dceCompilation: WasmCompilationSet? = null,
+        val optimisedCompilation: WasmCompilationSet? = null,
     ) : ResultingArtifact.Binary<Wasm>() {
         override val kind: ArtifactKind<Wasm>
             get() = ArtifactKinds.Wasm

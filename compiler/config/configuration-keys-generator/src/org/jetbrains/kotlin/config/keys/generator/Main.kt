@@ -15,6 +15,9 @@ val allContainers: List<KeysContainer> = listOf(
     KlibConfigurationKeysContainer,
     JvmConfigurationKeysContainer,
     JsConfigurationKeysContainer,
+    FrontendConfigurationKeysContainer,
+    WasmConfigurationKeysContainer,
+    NativeConfigurationKeysContainer,
 )
 
 fun main(args: Array<String>) {

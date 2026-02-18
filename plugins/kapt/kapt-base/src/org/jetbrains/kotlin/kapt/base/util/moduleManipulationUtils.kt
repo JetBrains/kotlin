@@ -16,11 +16,11 @@ val REQUIRED_PACKAGES_TO_TEST_CLASSES = mapOf(
     "com.sun.tools.javac.tree" to "TreeTranslator",
     "com.sun.tools.javac.main" to "Option",
     "com.sun.tools.javac.jvm" to "ClassFile",
-    "com.sun.tools.javac.parser" to "Tokens\$TokenKind",
+    "com.sun.tools.javac.parser" to $$"Tokens$TokenKind",
     "com.sun.tools.javac.code" to "Source",
     "com.sun.tools.javac.processing" to "PrintingProcessor",
     "com.sun.tools.javac.comp" to "AttrContext",
-    "com.sun.tools.javac.api" to "DiagnosticFormatter\$PositionKind"
+    "com.sun.tools.javac.api" to $$"DiagnosticFormatter$PositionKind"
 )
 
 private fun openPackages(packagesToOpen: Collection<String>) {
@@ -39,6 +39,7 @@ private fun openPackages(packagesToOpen: Collection<String>) {
     fun getPackages(module: Any) =
         // similar to module.packages
         module.javaClass.getMethod("getPackages").invoke(module) as Collection<String>
+
     val modules = allModules() ?: return
     val unsafe = Unsafe::class.java.getDeclaredField("theUnsafe").apply {
         isAccessible = true

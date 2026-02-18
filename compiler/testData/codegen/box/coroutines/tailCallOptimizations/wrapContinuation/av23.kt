@@ -4,7 +4,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_TAIL_CALL_OPTIMIZATION
-// API_VERSION: 2.3
+// LANGUAGE: -WrapContinuationForTailCallFunctions
 
 import helpers.*
 import kotlin.coroutines.*

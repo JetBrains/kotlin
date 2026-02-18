@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.konan.config.exportedLibraries
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -16,11 +17,11 @@ import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 
-internal fun ModuleDescriptor.getExportedDependencies(konanConfig: KonanConfig): List<ModuleDescriptor> =
-        getDescriptorsFromLibraries((konanConfig.exportedLibraries + konanConfig.includedLibraries).toSet())
+internal fun ModuleDescriptor.getExportedDependencies(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
+        getDescriptorsFromLibraries((config.exportedLibraries + config.includedLibraries).toSet())
 
-internal fun ModuleDescriptor.getIncludedLibraryDescriptors(konanConfig: KonanConfig): List<ModuleDescriptor> =
-        getDescriptorsFromLibraries(konanConfig.includedLibraries.toSet())
+internal fun ModuleDescriptor.getIncludedLibraryDescriptors(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
+        getDescriptorsFromLibraries(config.includedLibraries.toSet())
 
 private fun ModuleDescriptor.getDescriptorsFromLibraries(libraries: Set<KotlinLibrary>) =
     allDependencyModules.filter {
@@ -36,7 +37,7 @@ internal fun getExportedLibraries(
     resolver: SearchPathResolver<KotlinLibrary>,
     report: Boolean
 ): List<KotlinLibrary> = getFeaturedLibraries(
-        configuration.getList(KonanConfigKeys.EXPORTED_LIBRARIES),
+        configuration.exportedLibraries,
         resolvedLibraries,
         resolver,
         if (report) FeaturedLibrariesReporter.forExportedLibraries(configuration) else FeaturedLibrariesReporter.Silent,
@@ -78,7 +79,7 @@ private sealed class FeaturedLibrariesReporter {
         override fun reportIllegalKind(library: KotlinLibrary) {
             configuration.report(
                     CompilerMessageSeverity.STRONG_WARNING,
-                    illegalKindMessage(library.reportedKind, library.libraryName)
+                    illegalKindMessage(library.reportedKind, library.location.path)
             )
         }
 
@@ -97,7 +98,7 @@ private sealed class FeaturedLibrariesReporter {
 
     private class IncludedLibrariesReporter(val configuration: CompilerConfiguration) : FeaturedLibrariesReporter() {
         override fun reportIllegalKind(library: KotlinLibrary) = with(library) {
-            val message = "$reportedKind library $libraryName cannot be passed with -Xinclude " +
+            val message = "$reportedKind library $location cannot be passed with -Xinclude " +
                     "(library path: ${libraryFile.absolutePath})"
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, message)
         }

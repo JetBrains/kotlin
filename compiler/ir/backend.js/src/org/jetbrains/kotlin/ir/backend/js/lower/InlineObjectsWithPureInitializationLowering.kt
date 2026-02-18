@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  * Optimization: inlines object instance fields getters whenever it's possible.
  */
 @PhasePrerequisites(PurifyObjectInstanceGettersLowering::class)
-class InlineObjectsWithPureInitializationLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
+open class InlineObjectsWithPureInitializationLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {

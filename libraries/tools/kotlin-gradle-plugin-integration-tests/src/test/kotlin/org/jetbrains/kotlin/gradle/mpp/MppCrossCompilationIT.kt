@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.withType
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.GradleTestVersions
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
@@ -14,6 +19,7 @@ import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.OsCondition
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
+import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.assertTasksSkipped
 import org.jetbrains.kotlin.gradle.testbase.build
@@ -65,12 +71,30 @@ class MppCrossCompilationIT : KGPBaseTest() {
                             }
                         }
                     }
+
+                    // Register a task to introspect the `crossCompilationSupported` property.
+                    tasks.register("verifyCrossCompilationProperties") {
+                        val targets = project.extensions.getByType<KotlinMultiplatformExtension>().targets
+                        val nativeTargets = targets.withType<KotlinNativeTarget>()
+
+                        val checks = nativeTargets.associate { target ->
+                            val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+                            target.name to mainCompilation.crossCompilationSupported
+                        }
+
+                        it.doLast {
+                            checks.forEach { (targetName, provider) ->
+                                println("Property check [$targetName]: ${provider.get()}")
+                            }
+                        }
+                    }
                 }
             }
 
             include(subprojectWithCinterops(gradleVersion), "cinteropdependency")
 
             build(":build", "-Pkotlin.mpp.enableCInteropCommonization=true") {
+                // 1. Verify Task Execution
                 assertTasksExecuted(
                     ":cinteropdependency:compileKotlinLinuxX64",
                     ":cinteropdependency:compileKotlinMingwX64",
@@ -94,6 +118,18 @@ class MppCrossCompilationIT : KGPBaseTest() {
                     ":compileKotlinMacosArm64",
                     ":compileKotlinMacosX64",
                 )
+            }
+
+            build(":verifyCrossCompilationProperties") {
+                // 2. Verify Property Values
+                // macOS targets should be unsupported because they depend on a library with CInterop,
+                // and we are running on Linux/Windows (non-macOS host).
+                assertOutputContains("Property check [macosArm64]: false")
+                assertOutputContains("Property check [macosX64]: false")
+
+                // Linux and MinGW targets are supported in this test environment.
+                assertOutputContains("Property check [linuxX64]: true")
+                assertOutputContains("Property check [mingwX64]: true")
             }
         }
     }

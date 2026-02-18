@@ -39,10 +39,10 @@ fun testConcat() {
     val a: MyList<Int> = concat([1, 2, 3], [4, 5, 6])
     val b: MyList<Int> = concat([], [])
     val c: MyList<Int> = concat(<!ARGUMENT_TYPE_MISMATCH!>[""]<!>, [1, 2, 3])
-    val d = <!CANNOT_INFER_PARAMETER_TYPE!>concat<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[1, 2, 3]<!>, <!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[4, 5, 6]<!>)
-    val e = <!CANNOT_INFER_PARAMETER_TYPE!>concat<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[1, 2, 3]<!>, <!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>["string"]<!>)
-    val f = <!CANNOT_INFER_PARAMETER_TYPE!>concat<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[]<!>, <!CANNOT_INFER_PARAMETER_TYPE!>[<!NULL_FOR_NONNULL_TYPE!>null<!>]<!>)
-    val g = <!CANNOT_INFER_PARAMETER_TYPE!>concat<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[1, 2, 3]<!>, <!CANNOT_INFER_PARAMETER_TYPE!>[<!NULL_FOR_NONNULL_TYPE!>null<!>]<!>)
+    val d = concat([1, 2, 3], [4, 5, 6])
+    val e = concat([1, 2, 3], ["string"])
+    val f = concat([], [null])
+    val g = concat([1, 2, 3], [null])
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, companionObject, funWithExtensionReceiver,

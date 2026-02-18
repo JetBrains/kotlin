@@ -1,0 +1,5 @@
+KtCallableReferenceExpression(114,120): '::Anno'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): Anno
+    ]

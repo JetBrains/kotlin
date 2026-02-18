@@ -9,6 +9,7 @@ KtCallExpression(49,58): 'foo(s = )'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

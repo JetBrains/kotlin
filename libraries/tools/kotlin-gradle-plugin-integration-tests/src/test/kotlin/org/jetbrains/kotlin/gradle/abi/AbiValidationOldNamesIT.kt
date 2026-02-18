@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.gradle.abi
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.abi.utils.abiValidation
 import org.jetbrains.kotlin.gradle.abi.utils.androidProject
-import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
 
@@ -23,7 +22,7 @@ class AbiValidationOldNamesIT : KGPBaseTest() {
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         androidProject(gradleVersion, agpVersion, jdkVersion) {
-            abiValidation<AbiValidationExtension> {
+            abiValidation {
                 enabled.set(true)
             }
 

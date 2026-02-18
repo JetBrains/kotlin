@@ -88,19 +88,19 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
-            OUTPUT_PATH_OPTION -> configuration.put(JvmAbiConfigurationKeys.OUTPUT_PATH, value)
-            REMOVE_DEBUG_INFO_OPTION -> configuration.put(JvmAbiConfigurationKeys.REMOVE_DEBUG_INFO, value == "true")
+            OUTPUT_PATH_OPTION -> configuration.put(JvmAbiConfigurationKeys.JVM_ABI_OUTPUT_PATH, value)
+            REMOVE_DEBUG_INFO_OPTION -> configuration.put(JvmAbiConfigurationKeys.JVM_ABI_REMOVE_DEBUG_INFO, value == "true")
             REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION -> configuration.put(
-                JvmAbiConfigurationKeys.REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE,
+                JvmAbiConfigurationKeys.JVM_ABI_REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE,
                 value == "true"
             )
-            PRESERVE_DECLARATION_ORDER_OPTION -> configuration.put(JvmAbiConfigurationKeys.PRESERVE_DECLARATION_ORDER, value == "true")
+            PRESERVE_DECLARATION_ORDER_OPTION -> configuration.put(JvmAbiConfigurationKeys.JVM_ABI_PRESERVE_DECLARATION_ORDER, value == "true")
             REMOVE_PRIVATE_CLASSES_OPTION -> configuration.put(
-                JvmAbiConfigurationKeys.REMOVE_PRIVATE_CLASSES,
+                JvmAbiConfigurationKeys.JVM_ABI_REMOVE_PRIVATE_CLASSES,
                 value == "true"
             )
             TREAT_INTERNAL_AS_PRIVATE_OPTION -> configuration.put(
-                JvmAbiConfigurationKeys.TREAT_INTERNAL_AS_PRIVATE,
+                JvmAbiConfigurationKeys.JVM_ABI_TREAT_INTERNAL_AS_PRIVATE,
                 value == "true"
             )
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")

@@ -4,7 +4,7 @@
 // FULL_JDK
 
 // CHECK_BYTECODE_TEXT
-// 3 java/lang/invoke/LambdaMetafactory
+// 4 java/lang/invoke/LambdaMetafactory
 
 // FILE: serializableBoundInterfaceMemberFunRef.kt
 import java.io.*

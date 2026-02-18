@@ -10,4 +10,4 @@ import KotlinBuildProperties
 // Enabling publishing docs jars only on CI build by default
 // Currently dokka task runs non-incrementally and takes big amount of time
 val KotlinBuildProperties.publishGradlePluginsJavadoc: Boolean
-    get() = getBoolean("kotlin.build.gradle.publish.javadocs", isTeamcityBuild)
+    get() = booleanProperty("kotlin.build.gradle.publish.javadocs", isTeamcityBuild).get()

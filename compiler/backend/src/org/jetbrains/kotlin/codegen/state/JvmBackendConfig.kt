@@ -93,7 +93,7 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
 
     val noNewJavaAnnotationTargets: Boolean = configuration.getBoolean(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
 
-    val supportMultiFieldValueClasses: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)
+    val supportJvmInlineMultiFieldValueClasses: Boolean = languageVersionSettings.supportsFeature(LanguageFeature.JvmInlineMultiFieldValueClasses)
 
     val enableDebugMode: Boolean = configuration.getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
 
@@ -109,7 +109,8 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
     val nullOutSpilledCoroutineLocalsUsingStdlibFunction: Boolean =
         languageVersionSettings.supportsFeature(LanguageFeature.JvmNullOutSpilledCoroutineLocals)
 
-    val wrapContinuationForTailCallFunctions: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_4
+    val wrapContinuationForTailCallFunctions: Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.WrapContinuationForTailCallFunctions)
 
     val whenGenerationScheme: JvmWhenGenerationScheme =
         if (target.majorVersion >= JvmTarget.JVM_21.majorVersion)

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import java.io.File
@@ -58,6 +57,12 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             "Script resolver environment in key-value pairs (the value could be quoted and escaped)",
             required = false, allowMultipleOccurrences = true
         )
+        val DISABLE_SCRIPT_COMPILATION_CACHE = CliOption(
+            "disable-script-compilation-cache",
+            "true/false",
+            "Do not attempt to use script compilation cache, even if provided by the definition",
+            required = false, allowMultipleOccurrences = false
+        )
     }
 
     override val pluginId = KOTLIN_SCRIPTING_PLUGIN_ID
@@ -71,7 +76,8 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION,
             LEGACY_SCRIPT_TEMPLATES_OPTION,
             LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
-            ENABLE_SCRIPT_EXPLANATION_OPTION
+            ENABLE_SCRIPT_EXPLANATION_OPTION,
+            DISABLE_SCRIPT_COMPILATION_CACHE,
         )
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
@@ -136,6 +142,12 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
                     match.groupValues.drop(2).firstOrNull { it.isNotEmpty() }?.let { unescapeRe.replace(it, "\$1") }
             }
             configuration.put(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION, currentEnv)
+        }
+        DISABLE_SCRIPT_COMPILATION_CACHE -> {
+            configuration.put(
+                ScriptingConfigurationKeys.DISABLE_SCRIPT_COMPILATION_CACHE,
+                value.takeUnless { it.isBlank() }?.toBoolean() ?: false
+            )
         }
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }

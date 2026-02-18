@@ -22,26 +22,35 @@ public const val E: Double = 2.718281828459045
 
 // region ================ Double Math ========================================
 
-/** Computes the sine of the angle [x] given in radians.
+/**
+ * Computes the sine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.sin
  */
 @SinceKotlin("1.2")
 public expect fun sin(x: Double): Double
 
-/** Computes the cosine of the angle [x] given in radians.
+/**
+ * Computes the cosine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.cos
  */
 @SinceKotlin("1.2")
 public expect fun cos(x: Double): Double
 
-/** Computes the tangent of the angle [x] given in radians.
+/**
+ * Computes the tangent of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.tan
  */
 @SinceKotlin("1.2")
 public expect fun tan(x: Double): Double
@@ -52,6 +61,8 @@ public expect fun tan(x: Double): Double
  *
  * Special cases:
  *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.asin
  */
 @SinceKotlin("1.2")
 public expect fun asin(x: Double): Double
@@ -62,6 +73,8 @@ public expect fun asin(x: Double): Double
  *
  * Special cases:
  *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.acos
  */
 @SinceKotlin("1.2")
 public expect fun acos(x: Double): Double
@@ -72,6 +85,8 @@ public expect fun acos(x: Double): Double
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.atan
  */
 @SinceKotlin("1.2")
 public expect fun atan(x: Double): Double
@@ -80,6 +95,11 @@ public expect fun atan(x: Double): Double
  * Returns the angle `theta` of the polar coordinates `(r, theta)` that correspond
  * to the rectangular coordinates `(x, y)` by computing the arc tangent of the value [y] / [x];
  * the returned value is an angle in the range from `-PI` to `PI` radians.
+ *
+ * In other words, this function returns an angle in radians between the positive x-axis and
+ * a ray from the origin (`(0, 0)`) to the point `(x, y)` confined to the interval `(-π, π]`.
+ *
+ * The `r` component (the distance) of the polar coordinates `(r, theta)` could be calculated as `hypot(x, y)`.
  *
  * Special cases:
  *   - `atan2(0.0, 0.0)` is `0.0`
@@ -91,6 +111,9 @@ public expect fun atan(x: Double): Double
  *   - `atan2(+Inf, x)` is `PI/2` for finite `x`
  *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
+ *
+ * @see hypot function.
+ * @sample samples.math.MathSamples.Doubles.atan2
  */
 @SinceKotlin("1.2")
 public expect fun atan2(y: Double, x: Double): Double
@@ -173,6 +196,8 @@ public expect fun atanh(x: Double): Double
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.MathSamples.Doubles.hypot
  */
 @SinceKotlin("1.2")
 public expect fun hypot(x: Double, y: Double): Double
@@ -197,6 +222,8 @@ public expect fun sqrt(x: Double): Double
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Doubles.exp
  */
 @SinceKotlin("1.2")
 public expect fun exp(x: Double): Double
@@ -212,6 +239,8 @@ public expect fun exp(x: Double): Double
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ * @see [ln1p] function.
+ * @sample samples.math.MathSamples.Doubles.expm1
  */
 @SinceKotlin("1.2")
 public expect fun expm1(x: Double): Double
@@ -413,6 +442,8 @@ public expect fun cbrt(x: Double): Double
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Doubles.powDouble
  */
 @SinceKotlin("1.2")
 public expect fun Double.pow(x: Double): Double
@@ -421,6 +452,8 @@ public expect fun Double.pow(x: Double): Double
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
+ *
+ * @sample samples.math.MathSamples.Doubles.powInt
  */
 @SinceKotlin("1.2")
 public expect fun Double.pow(n: Int): Double
@@ -540,26 +573,35 @@ public expect fun Double.roundToLong(): Long
 
 // region ================ Float Math ========================================
 
-/** Computes the sine of the angle [x] given in radians.
+/**
+ * Computes the sine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.sin
  */
 @SinceKotlin("1.2")
 public expect fun sin(x: Float): Float
 
-/** Computes the cosine of the angle [x] given in radians.
+/**
+ * Computes the cosine of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.cos
  */
 @SinceKotlin("1.2")
 public expect fun cos(x: Float): Float
 
-/** Computes the tangent of the angle [x] given in radians.
+/**
+ * Computes the tangent of the angle [x] given in radians.
  *
- *  Special cases:
- *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ * Special cases:
+ *  - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.tan
  */
 @SinceKotlin("1.2")
 public expect fun tan(x: Float): Float
@@ -570,6 +612,8 @@ public expect fun tan(x: Float): Float
  *
  * Special cases:
  *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.asin
  */
 @SinceKotlin("1.2")
 public expect fun asin(x: Float): Float
@@ -580,6 +624,8 @@ public expect fun asin(x: Float): Float
  *
  * Special cases:
  *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.acos
  */
 @SinceKotlin("1.2")
 public expect fun acos(x: Float): Float
@@ -590,6 +636,8 @@ public expect fun acos(x: Float): Float
  *
  * Special cases:
  *   - `atan(NaN)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.atan
  */
 @SinceKotlin("1.2")
 public expect fun atan(x: Float): Float
@@ -599,6 +647,11 @@ public expect fun atan(x: Float): Float
  * to the rectangular coordinates `(x, y)` by computing the arc tangent of the value [y] / [x];
  * the returned value is an angle in the range from `-PI` to `PI` radians.
  *
+ * In other words, this function returns an angle in radians between the positive x-axis and
+ * a ray from the origin (`(0, 0)`) to the point `(x, y)` confined to the interval `(-π, π]`.
+ *
+ * The `r` component (the distance) of the polar coordinates `(r, theta)` could be calculated as `hypot(x, y)`.
+ *
  * Special cases:
  *   - `atan2(0.0, 0.0)` is `0.0`
  *   - `atan2(0.0, x)` is  `0.0` for `x > 0` and `PI` for `x < 0`
@@ -606,9 +659,12 @@ public expect fun atan(x: Float): Float
  *   - `atan2(y, +Inf)` is `0.0` for `0 < y < +Inf` and `-0.0` for `-Inf < y < 0`
  *   - `atan2(y, -Inf)` is `PI` for `0 < y < +Inf` and `-PI` for `-Inf < y < 0`
  *   - `atan2(y, 0.0)` is `PI/2` for `y > 0` and `-PI/2` for `y < 0`
- *   - `atan2(+Inf, x)` is `PI/2` for finite `x`y
+ *   - `atan2(+Inf, x)` is `PI/2` for finite `x`
  *   - `atan2(-Inf, x)` is `-PI/2` for finite `x`
  *   - `atan2(NaN, x)` and `atan2(y, NaN)` is `NaN`
+ *
+ * @see hypot function.
+ * @sample samples.math.MathSamples.Floats.atan2
  */
 @SinceKotlin("1.2")
 public expect fun atan2(y: Float, x: Float): Float
@@ -691,6 +747,8 @@ public expect fun atanh(x: Float): Float
  * Special cases:
  *   - returns `+Inf` if any of arguments is infinite
  *   - returns `NaN` if any of arguments is `NaN` and the other is not infinite
+ *
+ * @sample samples.math.MathSamples.Floats.hypot
  */
 @SinceKotlin("1.2")
 public expect fun hypot(x: Float, y: Float): Float
@@ -715,6 +773,8 @@ public expect fun sqrt(x: Float): Float
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Floats.exp
  */
 @SinceKotlin("1.2")
 public expect fun exp(x: Float): Float
@@ -722,7 +782,7 @@ public expect fun exp(x: Float): Float
 /**
  * Computes `exp(x) - 1`.
  *
- * This function can be implemented to produce more precise result for [x] near zero.
+ * This function can be implemented to produce a more precise result for [x] near zero.
  *
  * Special cases:
  *   - `expm1(NaN)` is `NaN`
@@ -730,6 +790,8 @@ public expect fun exp(x: Float): Float
  *   - `expm1(-Inf)` is `-1.0`
  *
  * @see [exp] function.
+ * @see [ln1p] function.
+ * @sample samples.math.MathSamples.Floats.expm1
  */
 @SinceKotlin("1.2")
 public expect fun expm1(x: Float): Float
@@ -935,6 +997,8 @@ public expect fun cbrt(x: Float): Float
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Floats.powFloat
  */
 @SinceKotlin("1.2")
 public expect fun Float.pow(x: Float): Float
@@ -943,6 +1007,8 @@ public expect fun Float.pow(x: Float): Float
  * Raises this value to the integer power [n].
  *
  * See the other overload of [pow] for details.
+ *
+ * @sample samples.math.MathSamples.Floats.powInt
  */
 @SinceKotlin("1.2")
 public expect fun Float.pow(n: Int): Float

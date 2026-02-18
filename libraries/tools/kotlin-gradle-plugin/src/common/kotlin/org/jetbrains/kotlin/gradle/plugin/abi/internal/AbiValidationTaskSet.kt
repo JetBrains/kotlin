@@ -62,9 +62,9 @@ internal class AbiValidationTaskSet(project: Project) {
     /**
      * Keeps ABI declarations in a dump file for unsupported targets which were added using [unsupportedTarget].
      */
-    fun keepUnsupportedTargets(keep: Provider<Boolean>) {
+    fun keepLocallyUnsupportedTargets(keep: Provider<Boolean>) {
         legacyDumpTaskProvider.configure {
-            it.keepUnsupportedTargets.set(keep)
+            it.keepLocallyUnsupportedTargets.set(keep)
         }
     }
 

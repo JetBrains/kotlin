@@ -2,11 +2,15 @@ KtCallExpression(67,71): 'f {}'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<VARARG_OUTSIDE_PARENTHESES: Passing value as a vararg is allowed only inside a parenthesized argument list.>
     symbols:
       (in Foo) fun invoke(vararg a: kotlin.Any)
 
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<VARARG_OUTSIDE_PARENTHESES: Passing value as a vararg is allowed only inside a parenthesized argument list.>
     symbols:
       (in Foo) fun invoke(vararg a: kotlin.Any)

@@ -88,7 +88,7 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
          *
          * Since the release of 2.2.0, the ABI version is aligned with the Kotlin version.
          */
-        val CURRENT = KotlinAbiVersion(2, 3, 0)
+        val CURRENT = KotlinAbiVersion(2, 4, 0)
 
         /**
          * Versions before 1.4.1 were the active development phase.

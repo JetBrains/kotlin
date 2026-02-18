@@ -8,5 +8,6 @@ KtNameReferenceExpression(169,171): 'd1'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

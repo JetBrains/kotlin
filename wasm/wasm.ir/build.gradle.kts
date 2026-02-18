@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import java.net.URI
 
 plugins {
     kotlin("jvm")
@@ -8,23 +7,8 @@ plugins {
 }
 
 repositories {
-    ivy {
-        url = URI("https://github.com/webassembly/testsuite/zipball/")
-        patternLayout {
-            artifact("[revision]")
-        }
-        metadataSources { artifact() }
-        content { includeModule("webassembly", "testsuite") }
-    }
-
-    ivy {
-        url = URI("https://github.com/webassembly/wabt/releases/download/")
-        patternLayout {
-            artifact("[revision]/[artifact]-[revision]-[classifier].[ext]")
-        }
-        metadataSources { artifact() }
-        content { includeModule("webassembly", "wabt") }
-    }
+    githubCommit("webassembly", "testsuite")
+    githubRelease("webassembly", "wabt", revisionPrefix = "")
 }
 
 val wabtDir = File(layout.buildDirectory.get().asFile, "wabt")

@@ -192,22 +192,19 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     fun inProjectDependencies(gradleVersion: GradleVersion) {
         nativeProject("native-incremental-multi-project", gradleVersion, configureSubProjects = true) {
-            // https://github.com/gradle/gradle/issues/33248
-            val libCachePrefix = "MultiProject" + (if (buildOptions.isolatedProjects.toBooleanFlag(gradleVersion)) "." else "")
-
             var fooKtCacheModified = 0L
             var barKtCacheModified = 0L
             var mainKtCacheModified = 0L
             val fooKtCache = getFileCache(
-                "$libCachePrefix:library", "library/src/hostMain/kotlin/foo.kt",
+                "MultiProject:library", "library/src/hostMain/kotlin/foo.kt",
                 executableProjectName = "program"
             )
             val barKtCache = getFileCache(
-                "$libCachePrefix:program", "program/src/hostMain/kotlin/bar.kt",
+                "MultiProject:program", "program/src/hostMain/kotlin/bar.kt",
                 executableProjectName = "program"
             )
             val mainKtCache = getFileCache(
-                "$libCachePrefix:program", "program/src/hostMain/kotlin/main.kt",
+                "MultiProject:program", "program/src/hostMain/kotlin/main.kt",
                 executableProjectName = "program"
             )
             build("linkDebugExecutableHost") {

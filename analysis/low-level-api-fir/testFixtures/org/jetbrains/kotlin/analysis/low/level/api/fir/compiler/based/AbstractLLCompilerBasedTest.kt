@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtModuleByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -167,12 +168,13 @@ abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
     }
 
     override fun runTest(filePath: String) {
-        val configuration = testConfiguration(filePath, configuration)
+        val absoluteFilePath = ForTestCompileRuntime.transformTestDataPath(filePath).path
 
-        if (ignoreTest(filePath, configuration)) {
+        val configuration = testConfiguration(absoluteFilePath, configuration)
+        if (ignoreTest(absoluteFilePath, configuration)) {
             return
         }
 
-        super.runTest(filePath)
+        super.runTest(absoluteFilePath)
     }
 }

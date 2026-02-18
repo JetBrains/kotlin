@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_JAVAC
-// LANGUAGE: +CustomEqualsInValueClasses, +ValueClasses
+// LANGUAGE: +CustomEqualsInValueClasses, +JvmInlineMultiFieldValueClasses
 // ALLOW_KOTLIN_PACKAGE
 // DIAGNOSTICS: -UNUSED_PARAMETER
 

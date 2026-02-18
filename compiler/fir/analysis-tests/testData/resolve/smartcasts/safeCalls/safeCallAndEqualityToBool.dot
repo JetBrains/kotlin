@@ -54,7 +54,7 @@ digraph safeCallAndEqualityToBool_kt {
                     18 [label="Function call exit: $subj$.R|/check|()" style="filled" fillcolor=yellow];
                     19 [label="Exit safe call"];
                     20 [label="Const: Boolean(true)"];
-                    21 [label="Equality operator =="];
+                    21 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     22 [label="Exit when branch condition"];
                 }
                 subgraph cluster_8 {
@@ -142,7 +142,7 @@ digraph safeCallAndEqualityToBool_kt {
                     50 [label="Function call exit: $subj$.R|/check|()" style="filled" fillcolor=yellow];
                     51 [label="Exit safe call"];
                     52 [label="Const: Boolean(false)"];
-                    53 [label="Equality operator =="];
+                    53 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     54 [label="Exit when branch condition"];
                 }
                 subgraph cluster_16 {
@@ -230,7 +230,7 @@ digraph safeCallAndEqualityToBool_kt {
                     82 [label="Function call exit: $subj$.R|/check|()" style="filled" fillcolor=yellow];
                     83 [label="Exit safe call"];
                     84 [label="Const: Boolean(true)"];
-                    85 [label="Equality operator !="];
+                    85 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     86 [label="Exit when branch condition"];
                 }
                 subgraph cluster_24 {
@@ -318,7 +318,7 @@ digraph safeCallAndEqualityToBool_kt {
                     114 [label="Function call exit: $subj$.R|/check|()" style="filled" fillcolor=yellow];
                     115 [label="Exit safe call"];
                     116 [label="Const: Boolean(false)"];
-                    117 [label="Equality operator !="];
+                    117 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     118 [label="Exit when branch condition"];
                 }
                 subgraph cluster_32 {

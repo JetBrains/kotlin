@@ -956,11 +956,11 @@ class Strings {
 
     @Sample
     fun stringPlus() {
-        assertEquals("Kodee", "Ko" + "dee")
+        assertPrints("Ko" + "dee", "Kodee")
         // 2 is not a string, but plus concatenates its string representation with the "Kotlin " string
-        assertEquals("Kotlin 2", "Kotlin " + 2)
+        assertPrints("Kotlin " + 2, "Kotlin 2")
         // list is converted to a String first and then concatenated with the "Numbers: " string
-        assertEquals("Numbers: [1, 2, 3]", "Numbers: " + listOf(1, 2, 3))
+        assertPrints("Numbers: " + listOf(1, 2, 3), "Numbers: [1, 2, 3]")
     }
 
     @Sample

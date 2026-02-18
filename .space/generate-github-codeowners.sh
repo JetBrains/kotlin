@@ -8,7 +8,8 @@
 # Script to convert Space CODEOWNERS to matching GitHub CODEOWNERS
 # 1. Copies CODEOWNERS file to .github
 # 2. Replaces team owners such as "Kotlin Build Infrastructure" with their GitHub team equivalent for GitHub CODEOWNERS
-# 3. If given Space team is in "codeowners-virtual-team-mapping.json", "virtualMembers" field is used instead of the GitHub team
+# 3. If given Space team has a SPACE_TO_GITHUB_OWNER mapping, the specified GitHub usernames are used instead of the GitHub team
+# 4. Individual owners are mapped from their email address to their GitHub username
 
 # Make the script execution relative to project root
 PARENT_PATH=$( cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1 ; pwd -P )
@@ -17,13 +18,6 @@ cd "$PARENT_PATH" || exit 1
 # Path to the input and output files
 GITHUB_CODEOWNERS_FILE="../.github/CODEOWNERS"
 SPACE_CODEOWNERS_FILE="../.space/CODEOWNERS"
-TEAM_MAPPING_FILE="../.space/codeowners-virtual-team-mapping.json"
-
-# Check if jq is installed
-if ! command -v jq &> /dev/null; then
-    echo "Error: jq is not installed. Please install jq to run this script."
-    exit 1
-fi
 
 # Check if the required files exist
 if [ ! -f "$SPACE_CODEOWNERS_FILE" ]; then
@@ -31,13 +25,11 @@ if [ ! -f "$SPACE_CODEOWNERS_FILE" ]; then
     exit 1
 fi
 
-if [ ! -f "$TEAM_MAPPING_FILE" ]; then
-    echo "Error: $TEAM_MAPPING_FILE does not exist"
+# Check if awk is available
+if ! command -v awk &> /dev/null; then
+    echo "Error: awk is required but not installed"
     exit 1
 fi
-
-# Create a temporary file for GitHub CODEOWNERS file
-GITHUB_TMP_FILE=$(mktemp)
 
 # Header text for generated files
 HEADER="# Auto-generated file. DO NOT EDIT!
@@ -47,50 +39,118 @@ HEADER="# Auto-generated file. DO NOT EDIT!
 # Correctness can be also verified by opening it on your branch/commit on GitHub where a banner with information \`This CODEOWNERS file is valid.\` should be displayed
 "
 
-# Process the OWNERS file line by line
-while IFS= read -r line; do
-    # Skip comment lines from Space CODEOWNERS as they are not relevant for the GitHub file
-    if [[ "$line" == \#* ]]; then
-        continue
-    fi
+# Process the entire file with awk in a single pass
+printf "%s" "$HEADER" > "$GITHUB_CODEOWNERS_FILE"
 
-    # Skip empty lines but preserve them in the output
-    if [[ -z "$line" ]]; then
-        echo "$line" >> "$GITHUB_TMP_FILE"
-        continue
-    fi
+awk '
+BEGIN {
+    # Initialize arrays for mappings
+}
 
-    # Start with the original line
-    processed_line="$line"
+# First pass behavior embedded: collect SPACE_TO_GITHUB_OWNER mappings
+/^# SPACE_TO_GITHUB_OWNER:/ {
+    # Extract team name between quotes and members after
+    line = $0
+    # Remove prefix
+    sub(/^# SPACE_TO_GITHUB_OWNER: "/, "", line)
+    # Find closing quote
+    idx = index(line, "\"")
+    if (idx > 0) {
+        team_name = substr(line, 1, idx - 1)
+        members = substr(line, idx + 2)  # Skip quote and space
+        # Prepend @ to each username
+        n = split(members, usernames, " ")
+        members_with_at = ""
+        for (i = 1; i <= n; i++) {
+            if (usernames[i] != "") {
+                members_with_at = members_with_at (members_with_at == "" ? "" : " ") "@" usernames[i]
+            }
+        }
+        team_mapping[team_name] = members_with_at
+    }
+    next
+}
 
-    # Extract all team names in quotes and process them
-    while [[ "$processed_line" =~ \"([^\"]*)\" ]]; do
-        team_pattern="\"${BASH_REMATCH[1]}\""
-        team_name="${BASH_REMATCH[1]}"
+# Collect USER_OWNER mappings (email -> github_username)
+/^# USER_OWNER:/ {
+    # Format: # USER_OWNER: <email> <github_username>
+    email = $3
+    github_user = $4
+    user_mapping[email] = github_user
+    next
+}
 
-        # Use jq to check if the team has virtual members and extract them
-        virtual_members=$(jq -r --arg team "$team_name" '.[] | select(.spaceTeam == $team) | .virtualMembers | join(" ")' "$TEAM_MAPPING_FILE")
+# Skip all other comment lines
+/^#/ {
+    next
+}
 
-        # If team has virtual members, use them, otherwise use GitHub team name
-        if [[ -n "$virtual_members" ]]; then
-            # Replace the team name with its virtual members
-            processed_line="${processed_line//$team_pattern/$virtual_members}"
-        else
-            # Construct GitHub team name from team_name (lowercase, replace whitespaces with dash, prepend "@JetBrains/")
-            github_team="@JetBrains/$(echo "$team_name" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')"
-            # Replace the team name with its GitHub team equivalent
-            processed_line="${processed_line//$team_pattern/$github_team}"
-        fi
-    done
+# Preserve empty lines
+/^[[:space:]]*$/ {
+    print ""
+    next
+}
 
-    echo "$processed_line" >> "$GITHUB_TMP_FILE"
-done < "$SPACE_CODEOWNERS_FILE"
+# Process data lines
+{
+    line = $0
+    result = ""
+    
+    # Process the line character by character to handle quoted team names
+    while (length(line) > 0) {
+        # Find next quote
+        quote_pos = index(line, "\"")
+        
+        if (quote_pos == 0) {
+            # No more quotes, process remaining text for emails
+            result = result process_emails(line)
+            break
+        }
+        
+        # Add text before the quote (process for emails)
+        if (quote_pos > 1) {
+            result = result process_emails(substr(line, 1, quote_pos - 1))
+        }
+        
+        # Find closing quote
+        rest = substr(line, quote_pos + 1)
+        close_quote = index(rest, "\"")
+        
+        if (close_quote == 0) {
+            # No closing quote, treat rest as literal
+            result = result process_emails(substr(line, quote_pos))
+            break
+        }
+        
+        # Extract team name
+        team_name = substr(rest, 1, close_quote - 1)
+        
+        # Check if team has a mapping
+        if (team_name in team_mapping) {
+            result = result team_mapping[team_name]
+        } else {
+            # Convert to GitHub team format: lowercase, spaces to dashes, prepend @JetBrains/
+            github_team = team_name
+            gsub(/ /, "-", github_team)
+            github_team = tolower(github_team)
+            result = result "@JetBrains/" github_team
+        }
+        
+        # Move past the closing quote
+        line = substr(rest, close_quote + 1)
+    }
+    
+    print result
+}
 
-# Copy the processed file to the GitHub destination with header
-printf "$HEADER" > "$GITHUB_CODEOWNERS_FILE"
-cat "$GITHUB_TMP_FILE" >> "$GITHUB_CODEOWNERS_FILE"
-
-# Clean up
-rm "$GITHUB_TMP_FILE"
+function process_emails(text) {
+    # Replace email addresses with GitHub usernames if mapping exists
+    result_text = text
+    for (email in user_mapping) {
+        gsub(email, "@" user_mapping[email], result_text)
+    }
+    return result_text
+}
+' "$SPACE_CODEOWNERS_FILE" >> "$GITHUB_CODEOWNERS_FILE"
 
 echo "Conversion completed. CODEOWNERS file created at $GITHUB_CODEOWNERS_FILE"

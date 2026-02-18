@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.platform.js
 
+import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.platform.JsPlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isJs as _isJs
 
 object JsPlatforms {
     object DefaultSimpleJsPlatform : JsPlatform()
@@ -18,4 +18,6 @@ object JsPlatforms {
         get() = CompatJsPlatform
 
     val allJsPlatforms: List<TargetPlatform> = listOf(defaultJsPlatform)
+
+    val latestSupportedTarget = EcmaVersion.latestSupportedVersion().name
 }

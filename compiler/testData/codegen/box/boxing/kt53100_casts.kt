@@ -2,8 +2,7 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 // Reproducer is copied from FloatingPointParser.unaryMinus()
 inline fun <reified T> unaryMinus(value: T): T {
     return when (value) {
@@ -12,6 +11,9 @@ inline fun <reified T> unaryMinus(value: T): T {
         else -> throw NumberFormatException()
     }
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun box(): String {
     val res1 = unaryMinus(0.0).toString()

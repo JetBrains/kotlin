@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.backend.wasm.jsFunctionForExternalAdapterFunction
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -42,6 +43,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private val builtIns = context.irBuiltIns
     private val jsToKotlinAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter
     private val kotlinToJsAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.kotlinToJsAnyAdapter
+    private val unitGetInstance by lazy { context.findUnitGetInstanceFunction() }
 
     private lateinit var builder: DeclarationIrBuilder
 
@@ -197,6 +199,19 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             return builder.irComposite(resultType = builtIns.nothingNType) {
                 +value
                 +builder.irNull()
+            }
+        }
+
+        // For functional arguments which are declared to return the
+        // Unit type, we still need to accept functions declared as
+        // e.g. fun <T> List<T>.foo(): T, but making sure to ignore
+        // the result to return Unit instead. We essentially emulate
+        // what is done for IMPLICIT_COERCION_TO_UNIT by the body
+        // generator.
+        if (toType.isUnit()) {
+            return builder.irComposite(resultType = builtIns.unitType) {
+                +value
+                +builder.irCall(unitGetInstance)
             }
         }
 

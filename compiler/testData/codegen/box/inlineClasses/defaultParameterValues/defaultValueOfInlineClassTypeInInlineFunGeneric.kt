@@ -1,7 +1,8 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +JvmInlineMultiFieldValueClasses, +GenericInlineClassParameter
 
+// FILE: lib.kt
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z<T: Int>(val int: T)
 
@@ -21,6 +22,7 @@ inline fun <R> withDefaultStr(fn: (Str<String>) -> R, x: Str<String> = Str("abc"
 inline fun <R> withDefaultObj(fn: (Obj<Any>) -> R, x: Obj<Any> = Obj("abc")) = fn(x)
 inline fun <R> withDefaultObj2(x: Obj<Any> = Obj("abc"), fn: (Obj<Any>) -> R) = fn(x)
 
+// FILE: main.kt
 fun testWithDefaultZ() = withDefaultZ({ Z(it.int + 1) })
 fun testWithDefaultL() = withDefaultL({ L(it.long + 1L) })
 fun testWithDefaultL2() = withDefaultL2(fn = { L(it.long + 1L) })

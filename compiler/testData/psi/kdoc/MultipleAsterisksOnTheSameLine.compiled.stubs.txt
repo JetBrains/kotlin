@@ -1,3 +1,1 @@
-FILE[kind=File[packageFqName=<root>]]
-  PACKAGE_DIRECTIVE
-  IMPORT_LIST
+NO FILES

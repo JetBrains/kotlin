@@ -69,7 +69,7 @@ fun main() {
     select(id1 { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!>.inv() }, id2 { x: Int -> })
     selectWithInv(id1 { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!>.inv() }, id2(Inv { x: Int -> }))
     select(id1 { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!>.inv() }, id1 { x: Number -> TODO() }, id1(id2 { x: Int -> x }))
-    select(id1 { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!>.inv() }, id1 { x: Number -> TODO() }, id1(id2(::takeInt)))
+    select(id1 { <!DEBUG_INFO_EXPRESSION_TYPE("@ParameterName(...) kotlin.Int")!>it<!>.inv() }, id1 { x: Number -> TODO() }, id1(id2(::takeInt)))
     select(id1 { x: Inv<out Number> -> TODO() }, id1 { <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Int>")!>it<!>.x.inv() }, id1 { x: Inv<Int> -> TODO() })
     select(id1 { <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.Number> & Inv<kotlin.Int>")!>it<!> }, id1 { x: Inv<Number> -> TODO() }, id1 { x: Inv<Int> -> TODO() })
     select(id(id2 { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!>.inv() }), id(id { x: Int -> x }))
@@ -152,7 +152,7 @@ fun main() {
     select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this<!> })
     select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x: String, y: String -> x })
     // Convert to extension lambda is impossible because the lambda parameter types aren't specified explicitly
-    select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), <!ARGUMENT_TYPE_MISMATCH!>{ x, <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>y<!> -> x }<!>)
+    select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x, y -> x })
     select(id(id(fun(x: String, y: String) { }), <!TOO_MANY_ARGUMENTS!>fun String.(x: String) {}<!>), { x, y -> x })
     val x26: Int.(String) -> Int <!INITIALIZER_TYPE_MISMATCH!>=<!> fun (x: String) = 10 // it must be error, see KT-38439
     // Receiver must be specified in anonymous function declaration
@@ -187,7 +187,7 @@ fun main() {
     // Should be error as `A3::foo1` is `KFunction2`, but the remaining arguments are `KFuncion1` or `Function1`
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Any>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, @ParameterName(...) kotlin.Int, kotlin.Unit>")!>A3::foo1<!>, { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>a<!> -> <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer type for parameter a")!>a<!> }, { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>it<!> -> <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Cannot infer type for parameter it")!>it<!> })<!>
     // It's OK because `A3::foo2` is from companion of `A3`
-    <!DEBUG_INFO_EXPRESSION_TYPE("(@ParameterName(...) kotlin.Int) -> kotlin.Any")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Int, kotlin.Unit>")!>A3::foo2<!>, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(@ParameterName(...) kotlin.Int) -> kotlin.Any")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.Int, kotlin.Unit>")!>A3::foo2<!>, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("@ParameterName(...) kotlin.Int")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Int) -> kotlin.Comparable<*> & java.io.Serializable")!>select(A4(), { x: Number -> "" })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Int, kotlin.Int) -> kotlin.Comparable<*> & java.io.Serializable")!>select(A5<Int, Int>(), { x: Number, y: Int -> "" })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Int, kotlin.String, kotlin.Float) -> kotlin.Float")!>select(A2(), id { a, b, c -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a<!>; <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>; <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float")!>c<!> })<!>
@@ -223,7 +223,7 @@ fun main() {
 
     // Anonymous functions
     val x69: (C) -> Unit = selectB({ it }, { }, id(fun (x) { <!DEBUG_INFO_EXPRESSION_TYPE("A")!>x<!> }))
-    select(id1(fun(it) { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!>.inv() }), id1 { x: Number -> TODO() }, id1(id2(::takeInt)))
+    select(id1(fun(it) { <!DEBUG_INFO_EXPRESSION_TYPE("@ParameterName(...) kotlin.Int")!>it<!>.inv() }), id1 { x: Number -> TODO() }, id1(id2(::takeInt)))
     select(id(fun (it) { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> }), id(id<(Int) -> Unit> { x: Number -> Unit }))
     select(id(fun (it) { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!>.inv() }), id<(Int) -> Unit> { })
     val x70: (Int) -> Unit = selectNumber(id(fun (it) { }), id {}, id {})

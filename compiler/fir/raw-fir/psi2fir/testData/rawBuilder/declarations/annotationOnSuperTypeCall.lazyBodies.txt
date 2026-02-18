@@ -1,29 +1,29 @@
 FILE: annotationOnSuperTypeCall.kt
     @Target(LAZY_EXPRESSION) public final? annotation class Anno : R|kotlin/Annotation| {
-        public? constructor(position: String): R|util/Anno| {
+        public? [ContainingClassKey=Anno] constructor([CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? val position: String = R|<local>/position|
-            public? get(): String
+        public? final? [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ContainingClassKey=Anno] get(): String
 
     }
     public? final? const val prop: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>
     public abstract class AbstractClass<T> : R|kotlin/Any| {
-        public? constructor<T>(): R|util/AbstractClass<T>| {
+        public? [ContainingClassKey=AbstractClass] constructor<T>(): R|util/AbstractClass<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
     public final? class MyClassWithoutConstructor : @Anno(LAZY_EXPRESSION) AbstractClass<@Anno(LAZY_EXPRESSION) List<@Anno(LAZY_EXPRESSION) Int>> {
-        public? constructor(): R|util/MyClassWithoutConstructor| {
+        public? [ContainingClassKey=MyClassWithoutConstructor] constructor(): R|util/MyClassWithoutConstructor| {
             LAZY_super<@Anno(LAZY_EXPRESSION) AbstractClass<@Anno(LAZY_EXPRESSION) List<@Anno(LAZY_EXPRESSION) Int>>>
         }
 
     }
     public final? class MyClassWithConstructor : @Anno(LAZY_EXPRESSION) AbstractClass<@Anno(LAZY_EXPRESSION) List<@Anno(LAZY_EXPRESSION) Int>> {
-        public? constructor(): R|util/MyClassWithConstructor| {
+        public? [ContainingClassKey=MyClassWithConstructor] constructor(): R|util/MyClassWithConstructor| {
             LAZY_super<@Anno(LAZY_EXPRESSION) AbstractClass<@Anno(LAZY_EXPRESSION) List<@Anno(LAZY_EXPRESSION) Int>>>
         }
 

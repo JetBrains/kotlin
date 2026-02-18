@@ -1,0 +1,157 @@
+FILE: overloads.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
+    public final class C : R|B| {
+        public constructor(): R|C| {
+            super<R|B|>()
+        }
+
+    }
+    public abstract interface I1 : R|kotlin/Any| {
+    }
+    public abstract interface I2 : R|kotlin/Any| {
+    }
+    public final class Merge : R|I1|, R|I2| {
+        public constructor(): R|Merge| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(<unused var>: R|kotlin/Boolean|, a: R|kotlin/String|)
+    public final fun foo0(): R|kotlin/Int| {
+        ^foo0 Int(1)
+    }
+    context(<unused var>: R|kotlin/Boolean|)
+    public final fun foo0(a: R|kotlin/CharSequence|): R|kotlin/Boolean| {
+        ^foo0 Boolean(true)
+    }
+    context(<unused var>: R|kotlin/Any|, a: R|kotlin/String|)
+    public final fun foo1(): R|kotlin/Int| {
+        ^foo1 Int(1)
+    }
+    context(<unused var>: R|kotlin/Boolean|)
+    public final fun foo1(a: R|kotlin/String|): R|kotlin/Boolean| {
+        ^foo1 Boolean(true)
+    }
+    context(<unused var>: R|kotlin/Any|, a: R|kotlin/String|)
+    public final fun foo2(): R|kotlin/Int| {
+        ^foo2 Int(1)
+    }
+    context(<unused var>: R|kotlin/Boolean|)
+    public final fun foo2(b: R|kotlin/String|): R|kotlin/Boolean| {
+        ^foo2 Boolean(true)
+    }
+    context(<unused var>: R|kotlin/Any|, a: R|kotlin/Array<kotlin/String>|)
+    public final fun foo3(): R|kotlin/Int| {
+        ^foo3 Int(1)
+    }
+    context(<unused var>: R|kotlin/Boolean|)
+    public final fun foo3(vararg a: R|kotlin/Array<out kotlin/String>|): R|kotlin/Boolean| {
+        ^foo3 Boolean(true)
+    }
+    context(i: R|I1|)
+    public final fun foo4(): R|kotlin/Boolean| {
+        ^foo4 Boolean(true)
+    }
+    public final fun foo4(i: R|I2|): R|kotlin/String| {
+        ^foo4 String()
+    }
+    context(a: R|A|)
+    public final fun foo5(b: R|A|, i: R|kotlin/Int|): R|kotlin/Boolean| {
+        ^foo5 Boolean(true)
+    }
+    context(b: R|A|)
+    public final fun foo5(i: R|kotlin/Int|, a: R|A|): R|kotlin/String| {
+        ^foo5 String()
+    }
+    context(a: R|A|)
+    public final fun foo6(b: R|B|): R|kotlin/Boolean| {
+        ^foo6 Boolean(true)
+    }
+    context(b: R|B|)
+    public final fun foo6(a: R|A|): R|kotlin/String| {
+        ^foo6 String()
+    }
+    context(a: R|A|)
+    public final fun foo7(b: R|B|, i: R|kotlin/Int|): R|kotlin/Boolean| {
+        ^foo7 Boolean(true)
+    }
+    context(b: R|A|)
+    public final fun foo7(i: R|kotlin/Int|, a: R|B|): R|kotlin/String| {
+        ^foo7 String()
+    }
+    context(a: R|A|)
+    public final fun foo8(b: R|B|): R|kotlin/Boolean| {
+        ^foo8 Boolean(true)
+    }
+    context(b: R|B|)
+    public final fun foo8(a: R|B|): R|kotlin/String| {
+        ^foo8 String()
+    }
+    context(a: R|A|)
+    public final fun R|B|.foo9(): R|kotlin/Boolean| {
+        ^foo9 Boolean(true)
+    }
+    context(a: R|B|)
+    public final fun R|A|.foo9(): R|kotlin/String| {
+        ^foo9 String()
+    }
+    public abstract fun interface Runnable : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    context(f: R|Runnable|)
+    public final fun foo10(): R|kotlin/Boolean| {
+        ^foo10 Boolean(true)
+    }
+    public final fun foo10(f: R|() -> kotlin/Unit|): R|kotlin/String| {
+        ^foo10 String()
+    }
+    context(a: R|A|, b: R|B|)
+    public final fun foo11(): R|kotlin/Boolean| {
+        ^foo11 Boolean(true)
+    }
+    context(a: R|A|, b: R|A|)
+    public final fun foo11(): R|kotlin/String| {
+        ^foo11 String()
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|kotlin/with|<R|kotlin/Boolean|, R|kotlin/Unit|>(Boolean(true), <L> = with@fun R|kotlin/Boolean|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            lval t0: R|kotlin/Int| = context(this@R|special/anonymous|, String()) R|/foo0|()
+            <Ambiguity: foo1, [/foo1, /foo1]>#(String())
+            lval t2: R|kotlin/Int| = context(this@R|special/anonymous|, String()) R|/foo2|()
+            lval t2_: R|kotlin/Boolean| = context(this@R|special/anonymous|) R|/foo2|(String())
+            lval t3: R|kotlin/Int| = context(this@R|special/anonymous|, R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String()))) R|/foo3|()
+        }
+        )
+        <Ambiguity: foo4, [/foo4, /foo4]>#(R|/Merge.Merge|())
+        <Ambiguity: foo5, [/foo5, /foo5]>#(R|/A.A|(), R|/A.A|(), Int(42))
+        <Ambiguity: foo6, [/foo6, /foo6]>#(R|/A.A|(), R|/B.B|())
+        <Ambiguity: foo7, [/foo7, /foo7]>#(R|/B.B|(), R|/B.B|(), Int(42))
+        lval t8: R|kotlin/String| = context(R|/C.C|()) R|/foo8|(R|/C.C|())
+        R|kotlin/with|<R|B|, R|kotlin/Boolean|>(R|/B.B|(), <L> = with@fun R|B|.<anonymous>(): R|kotlin/Boolean| <inline=Inline, kind=EXACTLY_ONCE>  {
+            <Ambiguity: foo9, [/foo9, /foo9]>#(R|/C.C|())
+            lval t9: R|kotlin/Boolean| = context(this@R|special/anonymous|) this@R|special/anonymous|.R|/foo9|()
+            ^ context(R|/A.A|()) this@R|special/anonymous|.R|/foo9|()
+        }
+        )
+        lval t10: R|kotlin/String| = R|/foo10|(foo10@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@foo10 Unit
+        }
+        )
+        R|kotlin/with|<R|B|, R|kotlin/Unit|>(R|/B.B|(), <L> = with@fun R|B|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            <Ambiguity: foo11, [/foo11, /foo11]>#(R|/A.A|())
+            lval t11: R|kotlin/Boolean| = context(this@R|special/anonymous|, R|/B.B|()) R|/foo11|()
+        }
+        )
+    }

@@ -1,31 +1,45 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
-
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 import kotlin.test.assertEquals
 
-
 inline fun <reified T> funNoArgs() = "OK" as? T
+
+inline fun <reified T> funWithArgs(x: T, y: T) = x to y
+
+inline fun <reified T> funWithVarargs(vararg i: T) = i.toList()
+
+inline fun <reified T> T.funWithExtensionNoArgs() = this
+
+inline fun <reified T> T.funWithExtensionAndArgs(x: Int, y: Int) = this to (x + y)
+
+inline fun <reified T> T.funWithExtensionAndVarargs(vararg i: Int) = this to i.sum()
+
+class TestClass(val s: String) {
+    inline fun <reified T> classFunNoArgs() = s as? T
+    inline fun <reified T> classFunWithArgs(x: T) = x to s
+    inline fun <reified T> classFunWithVarargs(vararg i: T) = i.toList() to s
+}
+
+// FILE: main.kt
+
+import kotlin.test.assertEquals
 
 fun testFunctionNoArgs() {
     val callable: () -> String? = ::funNoArgs
     assertEquals(callable(), "OK")
 }
 
-inline fun <reified T> funWithArgs(x: T, y: T) = x to y
-
 fun testFunctionWithArgs() {
     val callable: (String, String) -> Pair<String, String> = ::funWithArgs
     assertEquals(callable("O", "K"), "O" to "K")
 }
 
-inline fun <reified T> funWithVarargs(vararg i: T) = i.toList()
-
 fun testFunctionWithVarargs() {
     val callable: (Array<Int>) -> List<Int> = ::funWithVarargs
     assertEquals(callable(arrayOf(1, 2, 3)), listOf(1, 2, 3))
 }
-
-inline fun <reified T> T.funWithExtensionNoArgs() = this
 
 fun testFunctionWithExtensionNoArgs() {
     val callable1 = String::funWithExtensionNoArgs
@@ -40,8 +54,6 @@ fun testFunctionWithExtensionNoArgs() {
     val callable4 = with("OK4") { ::funWithExtensionNoArgs }
     assertEquals(callable4(), "OK4")
 }
-
-inline fun <reified T> T.funWithExtensionAndArgs(x: Int, y: Int) = this to (x + y)
 
 fun testFunctionWithExtensionAndArgs() {
     val callable1 = String::funWithExtensionAndArgs
@@ -59,8 +71,6 @@ fun testFunctionWithExtensionAndArgs() {
     assertEquals(callable4(9, 10), "OK4" to 19)
 }
 
-inline fun <reified T> T.funWithExtensionAndVarargs(vararg i: Int) = this to i.sum()
-
 fun testFunctionWithExtensionAndVararg() {
     val callable1 = String::funWithExtensionAndVarargs
     assertEquals(callable1("OK1", arrayOf(1, 2, 3).toIntArray()), "OK1" to 6)
@@ -75,12 +85,6 @@ fun testFunctionWithExtensionAndVararg() {
 
     val callable4 = with("OK4") { ::funWithExtensionAndVarargs }
     assertEquals(callable4(arrayOf(11, 12).toIntArray()), "OK4" to 23)
-}
-
-class TestClass(val s: String) {
-    inline fun <reified T> classFunNoArgs() = s as? T
-    inline fun <reified T> classFunWithArgs(x: T) = x to s
-    inline fun <reified T> classFunWithVarargs(vararg i: T) = i.toList() to s
 }
 
 fun testClassFunctionNoArgs() {

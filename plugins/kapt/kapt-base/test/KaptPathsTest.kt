@@ -52,7 +52,7 @@ class KaptPathsTest {
                 assertTrue(javaSourceFiles.any { it.toRelativeString(tempDir) == path }) { "Can't find path $path\nAvailable: $available" }
             }
 
-            assertEquals(4, javaSourceFiles.size, "Actual content: ${javaSourceFiles}")
+            assertEquals(4, javaSourceFiles.size, "Actual content: $javaSourceFiles")
             assertContains("Simple.java")
             assertContains("Other.java")
             assertContains("NotJava.java")

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
-import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.internal.tasks.ProducesKlib
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
-import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeCompilerOptionMetrics
@@ -58,12 +56,10 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCInteropRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
-import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DefFile
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
@@ -251,9 +247,6 @@ abstract class AbstractKotlinNativeCompile<
     @get:Optional
     @get:Nested
     var kotlinPluginData: Provider<KotlinCompilerPluginData>? = null
-
-    @get:Internal
-    internal val manifestFile: Provider<RegularFile> get() = projectLayout.buildDirectory.file("tmp/$name/inputManifest")
 
     @get:Input
     internal abstract val separateKmpCompilation: Property<Boolean>
@@ -468,7 +461,6 @@ internal constructor(
             args.nodefaultlibs = sharedCompilationData != null
             args.nostdlib = true
             args.exportKDoc = exportKdoc.get()
-            args.manifestFile = sharedCompilationData?.manifestFile?.absolutePath
             args.nopack = produceUnpackagedKlib.get()
 
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
@@ -550,31 +542,7 @@ internal constructor(
     private fun createSharedCompilationDataOrNull(): SharedCompilationData? {
         if (!isMetadataCompilation) return null
 
-        val manifestFile: File = manifestFile.get().asFile
-        manifestFile.ensureParentDirsCreated()
-        val properties = java.util.Properties()
-        /**
-         * We're overwriting the native_targets field in the klib manifest, because otherwise it will contain
-         * only one passed `-target` or host-target, if nothing is passed. Both options are wrong for shared-native
-         * compilations.
-         *
-         * If the native_targets manifest will contain too few targets, IDE and compilation will not work properly (e.g., it will forbid
-         * dependencies on such metadata-klibs from shared native source sets, because it will consider that a source set with targets
-         * like (iosArm64, iosSimulatorArm64) can't depend on a klib with native_targets=iosArm64)
-         *
-         * Now, overwriting it to empty value is entirely unintended behavior that appeared long time ago (~Kotlin 1.4) due to some
-         * unfortunate merges. Surprisingly, it gives the desired behavior.
-         *
-         * While we could change this code to contain the proper set of KonanTargets (the ones that are actually the targets of shared-native
-         * compilation), that would introduce one new "flavour" of manifests/binaries, which complicates a bit further work in this area.
-         *
-         * So, for now we're leaving this "hack" as is. Refer to KT-64525 "Clean-up target-related fields in manifest of klibs" for the
-         * plan on proper fixes
-         */
-        properties[KLIB_PROPERTY_NATIVE_TARGETS] = ""
-        properties.saveToFile(org.jetbrains.kotlin.konan.file.File(manifestFile.toPath()))
-
-        return SharedCompilationData(manifestFile, refinesModule)
+        return SharedCompilationData(refinesModule)
     }
 
     @TaskAction

@@ -1,4 +1,5 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(inline.Bar::class, "22ExportedKotlinPackages6inlineO4mainE3BarC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(operators.Foo::class, "22ExportedKotlinPackages9operatorsO4mainE3FooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(operators.Foo.EmptyIterator::class, "22ExportedKotlinPackages9operatorsO4mainE3FooC13EmptyIteratorC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(overload.Foo::class, "22ExportedKotlinPackages8overloadO4mainE3FooC")
@@ -170,6 +171,31 @@ public fun __root___foo_set__TypesOfArguments__Swift_Optional_main_Foo__Swift_St
 public fun __root___return_any_should_append_runtime_import(): kotlin.native.internal.NativePtr {
     val _result = return_any_should_append_runtime_import()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("inline_Bar_bar")
+public fun inline_Bar_bar(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as inline.Bar
+    val _result = __self.bar()
+    return _result.objcPtr()
+}
+
+@ExportedBridge("inline_Bar_init_allocate")
+public fun inline_Bar_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<inline.Bar>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("inline_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun inline_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, inline.Bar())
+}
+
+@ExportedBridge("inline_foo")
+public fun inline_foo(): kotlin.native.internal.NativePtr {
+    val _result = `inline`.foo()
+    return _result.objcPtr()
 }
 
 @ExportedBridge("namespace1_bar")

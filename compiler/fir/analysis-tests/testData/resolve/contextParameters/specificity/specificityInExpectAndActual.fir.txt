@@ -1,0 +1,36 @@
+Module: m1-common
+FILE: common.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract expect interface A : R|kotlin/Any| {
+        context(c: R|C|)
+        public abstract expect fun foo(): R|kotlin/Unit|
+
+    }
+    public final fun bar1a(a: R|A|): R|kotlin/Unit| {
+        R|<local>/a|.R|/A.foo<Inapplicable(INAPPLICABLE): /A.foo>#|()
+    }
+    context(c: R|C|)
+    public final fun bar2a(a: R|A|): R|kotlin/Unit| {
+        context(R|<local>/c|) R|<local>/a|.R|/A.foo|()
+    }
+Module: m2-jvm
+FILE: jvm.kt
+    public abstract actual interface A : R|kotlin/Any| {
+        context(c: R|C|)
+        public abstract actual fun foo(): R|kotlin/Unit|
+
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public final fun bar1b(a: R|A|): R|kotlin/Unit| {
+        R|<local>/a|.R|/A.foo|()
+    }
+    context(c: R|C|)
+    public final fun bar2b(a: R|A|): R|kotlin/Unit| {
+        R|<local>/a|.<Ambiguity: foo, [/A.foo, /A.foo]>#()
+    }

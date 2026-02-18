@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformComponent
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
  * Implementations of this provider should ensure that results are provided in reasonable time, for example by caching results, as its
  * functions may be called frequently.
  */
+@KaPlatformInterface
 public interface KotlinModuleDependentsProvider : KotlinPlatformComponent {
     /**
      * Returns all direct dependents of [module], excluding [module] if it depends on itself.
@@ -43,6 +45,7 @@ public interface KotlinModuleDependentsProvider : KotlinPlatformComponent {
      */
     public fun getRefinementDependents(module: KaModule): Set<KaModule>
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinModuleDependentsProvider = project.service()
     }

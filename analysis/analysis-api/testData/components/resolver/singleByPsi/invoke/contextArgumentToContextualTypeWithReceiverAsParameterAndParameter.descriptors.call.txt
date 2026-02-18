@@ -1,0 +1,59 @@
+KtCallExpression(141,181): 'block(regularReceiver, regularParameter)'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaImplicitInvokeCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = block
+          isSafeNavigation = false
+          type = @R|kotlin.ContextFunctionTypeParams|(count = Int(1))  kotlin.Function3<kotlin.String, kotlin.Int, kotlin.Boolean, kotlin.Unit>
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function3.invoke(<dispatch receiver>: kotlin.Function3<P1, P2, P3, R>, p1: P1, p2: P2, p3: P3): R
+          valueParameters = [
+            KaVariableSignature:
+              name = p1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = p1: P1
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = p2
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = p2: P2
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = p3
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = p3: P3
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Function3.invoke
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          regularReceiver -> (KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = kotlin.String
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null),
+          regularParameter -> (KaVariableSignature:
+            name = p2
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p2: P2
+            contextParameters = []
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>

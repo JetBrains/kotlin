@@ -18,7 +18,11 @@ import org.jetbrains.kotlin.psi.*
 /** Base interface for all Kotlin stubs */
 @KtImplementationDetail
 interface KotlinStubElement<T : KtElement> : StubElement<T> {
-    /** Returns a copy of this stub with the parent set to [newParent] */
+    /**
+     * Returns a copy of this stub with the parent set to [newParent].
+     *
+     * **Note**: the implementation doesn't guarantee that [com.intellij.psi.stubs.ObjectStubBase.isDangling] flag is copied
+     */
     @KtImplementationDetail
     fun copyInto(newParent: StubElement<*>?): KotlinStubElement<T>
 }

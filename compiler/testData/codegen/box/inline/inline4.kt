@@ -1,12 +1,14 @@
 // WITH_STDLIB
 
-import kotlin.test.*
-
+// FILE: lib.kt
 @Suppress("NOTHING_TO_INLINE")
 inline fun foo(i4: Int, i5: Int): Int {
     if (i4 > 0) return i4
     return i5
 }
+
+// FILE: main.kt
+import kotlin.test.*
 
 fun bar(i1: Int, i2: Int): Int {
     return foo(i1, i2)

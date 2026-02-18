@@ -12,9 +12,10 @@ import kotlin.io.path.Path
 
 internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
 
-internal class DaemonExecutionPolicyImpl : ExecutionPolicy.WithDaemon {
+internal class DaemonExecutionPolicyImpl private constructor(private val options: Options = Options(ExecutionPolicy.WithDaemon::class)) :
+    ExecutionPolicy.WithDaemon, ExecutionPolicy.WithDaemon.Builder, DeepCopyable<DaemonExecutionPolicyImpl> {
 
-    private val options: Options = Options(ExecutionPolicy.WithDaemon::class)
+    constructor() : this(Options(ExecutionPolicy.WithDaemon::class))
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: ExecutionPolicy.WithDaemon.Option<V>): V = options[key.id]
@@ -24,11 +25,19 @@ internal class DaemonExecutionPolicyImpl : ExecutionPolicy.WithDaemon {
         options[key] = value
     }
 
+    override fun build(): ExecutionPolicy.WithDaemon = deepCopy()
+
+    override fun toBuilder(): ExecutionPolicy.WithDaemon.Builder = deepCopy()
+
     operator fun <V> get(key: Option<V>): V = options[key]
 
     @OptIn(UseFromImplModuleRestricted::class)
-    operator fun <V> set(key: Option<V>, value: V) {
+    private operator fun <V> set(key: Option<V>, value: V) {
         options[key] = value
+    }
+
+    override fun deepCopy(): DaemonExecutionPolicyImpl {
+        return DaemonExecutionPolicyImpl(options.deepCopy())
     }
 
     class Option<V> : BaseOptionWithDefault<V> {

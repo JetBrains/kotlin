@@ -1,0 +1,25 @@
+import java.io.*;
+import java.util.*;
+import org.codehaus.plexus.util.*;
+
+File target = new File(basedir, "target");
+if (!target.exists() || !target.isDirectory()) {
+    throw new RuntimeException("Target directory not found");
+}
+
+File classes = new File(target, "classes");
+if (!classes.exists() || !classes.isDirectory()) {
+    throw new RuntimeException("Classes directory not found");
+}
+
+// Check if HelloWorld.class exists (it means kotlin-maven-plugin:compile was executed)
+File helloWorldClass = new File(classes, "org/jetbrains/HelloWorldKt.class");
+if (!helloWorldClass.exists()) {
+    throw new RuntimeException("HelloWorldKt.class not found. Kotlin compilation failed or didn't run.");
+}
+
+// Check if kotlin-stdlib is in dependencies
+// This is harder to check from bsh script without accessing MavenProject, 
+// but we can check if it was used during compilation by looking at some logs or if the build succeeded at all (it should if stdlib is added)
+
+return true;

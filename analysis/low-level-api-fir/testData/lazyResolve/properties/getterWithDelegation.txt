@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
-        @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+        @R|kotlin/Deprecated|[Types](message = String(reason) [evaluated = String(reason)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
             LAZY_super<R|kotlin/Any|>
@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
     public final [ResolvedTo(BODY_RESOLVE)] val one: R|kotlin/Int|by R|/Prp.Prp|()
-        @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+        @R|kotlin/Deprecated|[Types](message = String(reason) [evaluated = String(reason)]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ D|/one|.R|/Prp.getValue<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Prp.getValue>#|(Null(null), ::R|/one|)
         }
     public final [ResolvedTo(STATUS)] class Prp : R|kotlin/Any| {
@@ -174,7 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] getterWithDelegation.kt
     public final [ResolvedTo(BODY_RESOLVE)] val one: R|kotlin/Int|by R|/Prp.Prp|()
-        @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+        @R|kotlin/Deprecated|[Types](message = String(reason) [evaluated = String(reason)]) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ D|/one|.R|/Prp.getValue<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /Prp.getValue>#|(Null(null), ::R|/one|)
         }
     public final [ResolvedTo(BODY_RESOLVE)] class Prp : R|kotlin/Any| {

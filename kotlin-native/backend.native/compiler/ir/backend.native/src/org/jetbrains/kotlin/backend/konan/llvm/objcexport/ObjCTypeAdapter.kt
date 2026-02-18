@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.ConstPointer
 import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmCallable
-import org.jetbrains.kotlin.backend.konan.llvm.NullPointer
 import org.jetbrains.kotlin.backend.konan.llvm.RTTIGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.Struct
 import org.jetbrains.kotlin.backend.konan.llvm.constPointer
@@ -92,18 +91,18 @@ internal class ObjCTypeAdapter private constructor(val irClass: IrClass?, val ob
                 objCName = objCName,
                 type = llvm.runtime.objCTypeAdapter,
                 irClass?.let { constPointer(typeInfoValue(it)) },
-                NullPointer(llvm.voidType),
+                llvm.nullPointer, // vtable
                 llvm.constInt32(0),
-                NullPointer(llvm.runtime.interfaceTableRecordType),
+                llvm.nullPointer, // itable
                 llvm.constInt32(0),
                 llvm.staticData.cStringLiteral(objCName),
-                NullPointer(llvm.runtime.objCToKotlinMethodAdapter),
+                llvm.nullPointer, // directAdapters
                 llvm.constInt32(0),
-                NullPointer(llvm.runtime.objCToKotlinMethodAdapter),
+                llvm.nullPointer, // classAdapters
                 llvm.constInt32(0),
-                NullPointer(llvm.runtime.objCToKotlinMethodAdapter),
+                llvm.nullPointer, // virtualAdapters
                 llvm.constInt32(0),
-                NullPointer(llvm.runtime.kotlinToObjCMethodAdapter),
+                llvm.nullPointer, // reverseAdapters
                 llvm.constInt32(0),
         )
     }

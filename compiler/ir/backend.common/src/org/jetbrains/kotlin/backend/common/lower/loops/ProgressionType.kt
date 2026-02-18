@@ -6,7 +6,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower.loops
 
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.BackendSymbols
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.irInt
@@ -35,7 +35,7 @@ sealed class ProgressionType(
     fun IrExpression.asStepType() = castIfNecessary(stepClass)
 
     companion object {
-        fun fromIrType(irType: IrType, irBuiltIns: IrBuiltIns, symbols: Symbols, allowUnsignedBounds: Boolean): ProgressionType? =
+        fun fromIrType(irType: IrType, irBuiltIns: IrBuiltIns, symbols: BackendSymbols, allowUnsignedBounds: Boolean): ProgressionType? =
             when {
                 irType.isSubtypeOfClass(symbols.charProgression) -> CharProgressionType(irBuiltIns, symbols)
                 irType.isSubtypeOfClass(symbols.intProgression) -> IntProgressionType(irBuiltIns, symbols)
@@ -49,7 +49,7 @@ sealed class ProgressionType(
     }
 }
 
-internal class IntProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols) :
+internal class IntProgressionType(irBuiltIns: IrBuiltIns, symbols: BackendSymbols) :
     ProgressionType(
         elementClass = irBuiltIns.intClass.owner,
         stepClass = irBuiltIns.intClass.owner,
@@ -62,7 +62,7 @@ internal class IntProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols) :
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
 }
 
-internal class LongProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols) :
+internal class LongProgressionType(irBuiltIns: IrBuiltIns, symbols: BackendSymbols) :
     ProgressionType(
         elementClass = irBuiltIns.longClass.owner,
         stepClass = irBuiltIns.longClass.owner,
@@ -75,7 +75,7 @@ internal class LongProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols) :
     override fun DeclarationIrBuilder.zeroStepExpression() = irLong(0)
 }
 
-internal class CharProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols) :
+internal class CharProgressionType(irBuiltIns: IrBuiltIns, symbols: BackendSymbols) :
     ProgressionType(
         elementClass = irBuiltIns.charClass.owner,
         stepClass = irBuiltIns.intClass.owner,
@@ -104,7 +104,7 @@ internal class CharProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols) :
 // `to(U)Int/(U)Long()` functions otherwise.
 
 internal abstract class UnsignedProgressionType(
-    symbols: Symbols,
+    symbols: BackendSymbols,
     elementClass: IrClass,
     stepClass: IrClass,
     minValueAsLong: Long,
@@ -164,7 +164,7 @@ internal abstract class UnsignedProgressionType(
     }
 }
 
-internal class UIntProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols, allowUnsignedBounds: Boolean) :
+internal class UIntProgressionType(irBuiltIns: IrBuiltIns, symbols: BackendSymbols, allowUnsignedBounds: Boolean) :
     UnsignedProgressionType(
         symbols,
         elementClass = if (allowUnsignedBounds) irBuiltIns.uintClass!!.owner else irBuiltIns.intClass.owner,
@@ -180,7 +180,7 @@ internal class UIntProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols, all
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
 }
 
-internal class ULongProgressionType(irBuiltIns: IrBuiltIns, symbols: Symbols, allowUnsignedBounds: Boolean) :
+internal class ULongProgressionType(irBuiltIns: IrBuiltIns, symbols: BackendSymbols, allowUnsignedBounds: Boolean) :
     UnsignedProgressionType(
         symbols,
         elementClass = if (allowUnsignedBounds) irBuiltIns.ulongClass!!.owner else irBuiltIns.longClass.owner,

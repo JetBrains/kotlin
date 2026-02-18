@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.kapt.base.KaptContext
 import org.jetbrains.kotlin.kapt.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt.base.stubs.KotlinPosition
 import org.jetbrains.kotlin.kapt.base.util.isJava9OrLater
-import java.io.*
+import java.io.File
+import java.io.PrintWriter
 import javax.tools.Diagnostic
 import javax.tools.JavaFileObject
 import javax.tools.JavaFileObject.Kind
@@ -62,9 +63,9 @@ class KaptJavaLog(
         super.flush(kind)
 
         val diagnosticKind = when (kind) {
-            WriterKind.ERROR -> JCDiagnostic.DiagnosticType.ERROR
-            WriterKind.WARNING -> JCDiagnostic.DiagnosticType.WARNING
-            WriterKind.NOTICE -> JCDiagnostic.DiagnosticType.NOTE
+            WriterKind.ERROR -> DiagnosticType.ERROR
+            WriterKind.WARNING -> DiagnosticType.WARNING
+            WriterKind.NOTICE -> DiagnosticType.NOTE
             else -> return
         }
 
@@ -77,11 +78,11 @@ class KaptJavaLog(
     }
 
     override fun report(diagnostic: JCDiagnostic) {
-        if (diagnostic.type == JCDiagnostic.DiagnosticType.ERROR && diagnostic.code in IGNORED_DIAGNOSTICS) {
+        if (diagnostic.type == DiagnosticType.ERROR && diagnostic.code in IGNORED_DIAGNOSTICS) {
             return
         }
 
-        if (diagnostic.type == JCDiagnostic.DiagnosticType.WARNING
+        if (diagnostic.type == DiagnosticType.WARNING
             && diagnostic.code == "compiler.warn.proc.unmatched.processor.options"
             && diagnostic.args.singleOrNull() == "[kapt.kotlin.generated]"
         ) {
@@ -104,7 +105,7 @@ class KaptJavaLog(
             val kotlinPosition = stubLineInfo.getPositionInKotlinFile(sourceFile, targetElement.tree)
             val kotlinFile = kotlinPosition?.let { getKotlinSourceFile(it) }
             if (kotlinPosition != null && kotlinFile != null) {
-                val flags = JCDiagnostic.DiagnosticFlag.values().filterTo(mutableSetOf(), diagnostic::isFlagSet)
+                val flags = JCDiagnostic.DiagnosticFlag.entries.filterTo(mutableSetOf(), diagnostic::isFlagSet)
 
                 val kotlinDiagnostic = diags.create(
                     diagnostic.type,
@@ -170,12 +171,12 @@ class KaptJavaLog(
 
         val formattedMessage = diagnosticFormatter.format(diagnostic, javacMessages.currentLocale)
             .lines()
-            .joinToString(LINE_SEPARATOR, postfix = LINE_SEPARATOR) { original ->
+            .joinToString(System.lineSeparator(), postfix = System.lineSeparator()) { original ->
                 // Kotlin location is put as a sub-diagnostic, so the formatter indents it with four additional spaces (6 in total).
                 // It looks weird, especially in the build log inside IntelliJ, so let's make things a bit better.
                 val trimmed = original.trimStart()
                 // Typically, javac places additional details about the diagnostics indented by two spaces
-                if (trimmed.startsWith(KOTLIN_LOCATION_PREFIX)) "  " + trimmed else original
+                if (trimmed.startsWith(KOTLIN_LOCATION_PREFIX)) "  $trimmed" else original
             }
 
         writer.print(formattedMessage)
@@ -198,7 +199,7 @@ class KaptJavaLog(
 
         var found = false
         val visitor = object : JCTree.Visitor() {
-            override fun visitImport(that: JCTree.JCImport) {
+            override fun visitImport(that: JCImport) {
                 super.visitImport(that)
                 if (!found) (jcImportQualidField.get(that) as JCTree).accept(this)
             }
@@ -217,8 +218,7 @@ class KaptJavaLog(
     }
 
     companion object {
-        private val LINE_SEPARATOR: String = System.getProperty("line.separator")
-        private val KOTLIN_LOCATION_PREFIX = "Kotlin location: "
+        private const val KOTLIN_LOCATION_PREFIX = "Kotlin location: "
 
         private val IGNORED_DIAGNOSTICS = setOf(
             "compiler.err.name.clash.same.erasure",
@@ -236,10 +236,8 @@ class KaptJavaLog(
     }
 }
 
-private val LINE_SEPARATOR: String = System.getProperty("line.separator")
-
 fun KaptContext.kaptError(vararg line: String): JCDiagnostic {
-    val text = line.joinToString(LINE_SEPARATOR)
+    val text = line.joinToString(System.lineSeparator())
     return JCDiagnostic.Factory.instance(context).errorJava9Aware(null, null, "proc.messager", text)
 }
 

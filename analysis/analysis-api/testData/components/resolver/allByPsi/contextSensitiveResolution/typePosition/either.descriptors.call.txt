@@ -273,19 +273,18 @@ KtNameReferenceExpression(314,318): 'Left'
 KtNameReferenceExpression(322,329): 'default'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = default
-          receiverType = null
-          returnType = A
-          symbol = default: A
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = default
+        receiverType = null
+        returnType = A
+        symbol = default: A
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(334,351): 'is Right -> value'

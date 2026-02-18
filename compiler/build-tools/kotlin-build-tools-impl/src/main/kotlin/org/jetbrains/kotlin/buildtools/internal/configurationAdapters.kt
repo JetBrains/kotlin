@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
-
-private typealias ICConfiguration = IncrementalJvmCompilationConfiguration<*>
 
 /**
  * IncrementalJvmCompilationConfiguration provides single-property API for forward-compatibility.
@@ -16,7 +16,7 @@ private typealias ICConfiguration = IncrementalJvmCompilationConfiguration<*>
  * configurationAdapters are there to regroup the properties and work with higher-level interfaces.
  */
 
-internal fun ICConfiguration.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
+internal fun IncrementalJvmCompilationConfiguration<*>.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
     return IncrementalCompilationFeatures(
         usePreciseJavaTracking = preciseJavaTrackingEnabled,
         withAbiSnapshot = false,

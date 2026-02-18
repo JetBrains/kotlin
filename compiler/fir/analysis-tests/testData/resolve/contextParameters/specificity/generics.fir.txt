@@ -1,0 +1,213 @@
+FILE: generics.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun expectA(vararg a: R|kotlin/Array<out A>|): R|kotlin/Unit| {
+    }
+    public final fun expectB(vararg b: R|kotlin/Array<out B>|): R|kotlin/Unit| {
+    }
+    public abstract interface Box<T> : R|kotlin/Any| {
+    }
+    public open class Ca : R|kotlin/Any| {
+        public constructor(): R|Ca| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class Cb : R|Ca| {
+        public constructor(): R|Cb| {
+            super<R|Ca|>()
+        }
+
+    }
+    public final fun foo0(): R|A| {
+        ^foo0 R|/A.A|()
+    }
+    context(t: R|T|)
+    public final fun <T> foo0(): R|B| {
+        ^foo0 R|/B.B|()
+    }
+    public final val foop0: R|A|
+        public get(): R|A| {
+            ^ R|/A.A|()
+        }
+    context(t: R|T|)
+    public final val <T> foop0: R|B|
+        public get(): R|B| {
+            ^ R|/B.B|()
+        }
+    context(s: R|kotlin/String|)
+    public final fun foo1(): R|A| {
+        ^foo1 R|/A.A|()
+    }
+    context(t: R|T|)
+    public final fun <T> foo1(): R|B| {
+        ^foo1 R|/B.B|()
+    }
+    context(s: R|kotlin/String|)
+    public final val foop1: R|A|
+        public get(): R|A| {
+            ^ R|/A.A|()
+        }
+    context(t: R|T|)
+    public final val <T> foop1: R|B|
+        public get(): R|B| {
+            ^ R|/B.B|()
+        }
+    context(s: R|kotlin/String|)
+    public final fun foo2(argS: R|kotlin/String|): R|A| {
+        ^foo2 R|/A.A|()
+    }
+    context(t: R|T|)
+    public final fun <T> foo2(argT: R|T|): R|B| {
+        ^foo2 R|/B.B|()
+    }
+    context(s: R|kotlin/String|, i: R|kotlin/Int|)
+    public final fun foo3(): R|A| {
+        ^foo3 R|/A.A|()
+    }
+    context(t: R|T|, i: R|kotlin/Int|)
+    public final fun <T> foo3(): R|B| {
+        ^foo3 R|/B.B|()
+    }
+    context(s: R|kotlin/String|, i: R|kotlin/Int|)
+    public final val foop3: R|A|
+        public get(): R|A| {
+            ^ R|/A.A|()
+        }
+    context(t: R|T|, i: R|kotlin/Int|)
+    public final val <T> foop3: R|B|
+        public get(): R|B| {
+            ^ R|/B.B|()
+        }
+    context(i: R|kotlin/Int|)
+    public final fun test0(): R|kotlin/Unit| {
+        lval a0: R|A| = R|/foo0|()
+        lval a1: R|A| = R|/foop0|
+        lval b2: R|B| = context(R|<local>/i|) R|/foo1|<R|kotlin/Int|>()
+        lval b3: R|B| = context(R|<local>/i|) R|/foop1|<R|kotlin/Int|>
+        lval b4: R|B| = context(R|<local>/i|) R|/foo2|<R|kotlin/Int|>(Int(42))
+        lval b5: R|B| = context(R|<local>/i|, R|<local>/i|) R|/foo3|<R|kotlin/Int|>()
+        lval b6: R|B| = context(R|<local>/i|, R|<local>/i|) R|/foop3|<R|kotlin/Int|>
+        R|/expectA|(vararg(R|<local>/a0|, R|<local>/a1|))
+        R|/expectB|(vararg(R|<local>/b2|, R|<local>/b3|, R|<local>/b4|, R|<local>/b5|, R|<local>/b6|))
+    }
+    context(s: R|kotlin/String|)
+    public final fun test1(): R|kotlin/Unit| {
+        lval a0: R|A| = R|/foo0|()
+        lval a1: R|A| = R|/foop0|
+        lval a2: R|A| = context(R|<local>/s|) R|/foo1|()
+        lval a3: R|A| = context(R|<local>/s|) R|/foop1|
+        lval b4: R|B| = context(R|<local>/s|) R|/foo1|<R|kotlin/String|>()
+        R|/expectA|(vararg(R|<local>/a0|, R|<local>/a1|, R|<local>/a2|, R|<local>/a3|))
+        R|/expectB|(vararg(R|<local>/b4|))
+    }
+    context(s: R|kotlin/String|, i: R|kotlin/Int|)
+    public final fun test2(): R|kotlin/Unit| {
+        lval a0: R|A| = R|/foo0|()
+        lval a1: R|A| = R|/foop0|
+        lval a2: R|A| = context(R|<local>/s|) R|/foo1|()
+        lval a3: R|A| = context(R|<local>/s|) R|/foop1|
+        lval b4: R|B| = context(R|<local>/s|) R|/foo1|<R|kotlin/String|>()
+        lval a5: R|A| = context(R|<local>/s|) R|/foo2|(String())
+        lval b6: R|A| = context(R|<local>/s|) R|/foo2<Inapplicable(INAPPLICABLE): /foo2>#|(Int(42))
+        lval a7: R|A| = context(R|<local>/s|, R|<local>/i|) R|/foo3|()
+        lval a8: R|A| = context(R|<local>/s|, R|<local>/i|) R|/foop3|
+        lval b9: R|B| = context(R|<local>/s|, R|<local>/i|) R|/foo3|<R|kotlin/String|>()
+        R|/expectA|(vararg(R|<local>/a0|, R|<local>/a1|, R|<local>/a2|, R|<local>/a3|, R|<local>/a5|, R|<local>/a7|, R|<local>/a8|))
+        R|/expectB|(vararg(R|<local>/b4|, R|<local>/b9|))
+    }
+    context(<unused var>: R|Box<kotlin/String>|)
+    public final fun bar1(): R|A| {
+        ^bar1 R|/A.A|()
+    }
+    context(<unused var>: R|Box<T>|)
+    public final fun <T> bar1(): R|B| {
+        ^bar1 R|/B.B|()
+    }
+    context(<unused var>: R|Box<kotlin/String>|)
+    public final val barp1: R|A|
+        public get(): R|A| {
+            ^ R|/A.A|()
+        }
+    context(<unused var>: R|Box<T>|)
+    public final val <T> barp1: R|B|
+        public get(): R|B| {
+            ^ R|/B.B|()
+        }
+    context(<unused var>: R|Box<T>|)
+    public final fun <T> bar2(element: R|kotlin/Int?|): R|A| {
+        ^bar2 R|/A.A|()
+    }
+    context(<unused var>: R|Box<T>|)
+    public final fun <T> bar2(vararg elements: R|kotlin/Array<out kotlin/Int?>|): R|B| {
+        ^bar2 R|/B.B|()
+    }
+    context(<unused var>: R|Box<kotlin/String>|)
+    public final fun bar3(s: R|kotlin/String|): R|A| {
+        ^bar3 R|/A.A|()
+    }
+    context(<unused var>: R|Box<T>|)
+    public final fun <T> bar3(t: R|T|): R|B| {
+        ^bar3 R|/B.B|()
+    }
+    context(<unused var>: R|Box<T>|)
+    public final fun <T> bar4(): R|A| {
+        ^bar4 R|/A.A|()
+    }
+    context(<unused var>: R|Box<T>|)
+    public final fun <T : R|Cb|> bar4(): R|B| {
+        ^bar4 R|/B.B|()
+    }
+    context(<unused var>: R|Box<T>|)
+    public final val <T> barp4: R|A|
+        public get(): R|A| {
+            ^ R|/A.A|()
+        }
+    context(<unused var>: R|Box<T>|)
+    public final val <T : R|Cb|> barp4: R|B|
+        public get(): R|B| {
+            ^ R|/B.B|()
+        }
+    context(b: R|Box<kotlin/String>|)
+    public final fun test3(): R|kotlin/Unit| {
+        lval a0: R|A| = context(R|<local>/b|) R|/bar1|()
+        lval a1: R|A| = context(R|<local>/b|) R|/barp1|
+        lval b2: R|B| = context(R|<local>/b|) R|/bar2|<R|kotlin/String|>()
+        lval a3: R|A| = context(R|<local>/b|) R|/bar2|<R|kotlin/String|>(Int(1))
+        lval a4: R|A| = context(R|<local>/b|) R|/bar2|<R|kotlin/String|>(Null(null))
+        lval b5: R|B| = context(R|<local>/b|) R|/bar2|<R|kotlin/String|>(vararg(Int(1), Int(2)))
+        lval b6: R|B| = context(R|<local>/b|) R|/bar2|<R|kotlin/String|>(vararg(Int(1), Null(null)))
+        context(R|<local>/b|) R|/bar2<Inapplicable(INAPPLICABLE): /bar2>#|<R|kotlin/String|>(Boolean(true))
+        lval a7: R|A| = context(R|<local>/b|) R|/bar3|(String())
+        context(R|<local>/b|) R|/bar3<Inapplicable(INAPPLICABLE): /bar3>#|(Int(42))
+        R|/expectA|(vararg(R|<local>/a0|, R|<local>/a1|, R|<local>/a3|, R|<local>/a4|, R|<local>/a7|))
+        R|/expectB|(vararg(R|<local>/b2|, R|<local>/b5|, R|<local>/b6|))
+    }
+    context(b: R|Box<kotlin/Int>|)
+    public final fun test4(): R|kotlin/Unit| {
+        lval b0: R|B| = context(R|<local>/b|) R|/bar1|<R|kotlin/Int|>()
+        lval b1: R|B| = context(R|<local>/b|) R|/barp1|<R|kotlin/Int|>
+        R|/bar3<Inapplicable(INAPPLICABLE): /bar3>#|(String())
+        lval b2: R|B| = context(R|<local>/b|) R|/bar3|<R|kotlin/Int|>(Int(42))
+        R|/expectB|(vararg(R|<local>/b0|, R|<local>/b1|, R|<local>/b2|))
+    }
+    context(b: R|Box<Ca>|)
+    public final fun test5(): R|kotlin/Unit| {
+        context(R|<local>/b|) R|/bar4|<R|Ca|>()
+        context(R|<local>/b|) R|/barp4|<R|Ca|>
+    }
+    context(b: R|Box<Cb>|)
+    public final fun test6(): R|kotlin/Unit| {
+        <Ambiguity: bar4, [/bar4, /bar4]>#()
+        <Ambiguity: barp4, [/barp4, /barp4]>#
+    }

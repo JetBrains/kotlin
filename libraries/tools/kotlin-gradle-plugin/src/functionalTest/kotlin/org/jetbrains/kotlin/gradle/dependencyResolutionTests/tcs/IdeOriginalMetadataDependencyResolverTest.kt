@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
-import org.junit.Test
+import kotlin.test.Test
 
 class IdeOriginalMetadataDependencyResolverTest {
     @Test

@@ -3,7 +3,6 @@
 // EXPORT_TO_SWIFT
 // FILE: simple.kt
 
-fun foo_sus(): suspend ()->Unit = TODO()
 fun foo_1(): ()->Unit = TODO()
 
 fun foo_consume_simple(block: ()->Unit): Unit = TODO()
@@ -98,9 +97,21 @@ typealias Closure = (Int, Int) -> Unit
 
 fun typealias_demo(input: Closure): Closure = TODO()
 
+typealias CallbackWithInnerClosure = ((() -> Int)) -> Int
+
+fun foo_flow_with_callback(callback: CallbackWithInnerClosure): CallbackWithInnerClosure = TODO()
+
 // MODULE: data
 // EXPORT_TO_SWIFT
 // FILE: data.kt
 
 class Foo
 class Bar
+
+// MODULE: inline
+// EXPORT_TO_SWIFT
+// FILE: inline.kt
+
+inline fun foo(inlined: () -> Unit): Unit = TODO()
+
+inline fun bar(inlined: () -> Unit, noinline notInlined: () -> Unit): Unit = TODO()

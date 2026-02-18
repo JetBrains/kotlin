@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.library.klibFlag
 /**
  * Indicates whether this [Klib] is from the Kotlin/Native distribution.
  */
-// TODO (KT-81411): Move this attribute to a Native-related module.
+// TODO (KT-61096): Move this attribute to a Native-related module.
 var Klib.isFromKotlinNativeDistribution: Boolean by klibFlag()
-    // TODO (KT-81411): After moving, make the setter to be internal.
+    // TODO (KT-61096): After moving, make the setter to be internal.
     set

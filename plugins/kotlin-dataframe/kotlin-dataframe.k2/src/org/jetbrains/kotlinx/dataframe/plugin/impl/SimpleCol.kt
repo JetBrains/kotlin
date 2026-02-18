@@ -13,6 +13,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.extensions.changeNullability
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
 import org.jetbrains.kotlinx.dataframe.plugin.findSchemaArgument
 import org.jetbrains.kotlinx.dataframe.plugin.getSchema
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 data class PluginDataFrameSchema(
@@ -22,8 +23,11 @@ data class PluginDataFrameSchema(
         val EMPTY = PluginDataFrameSchema(emptyList())
     }
 
-    fun columns(): List<SimpleCol> {
-        return columns
+    /**
+     * [impliedColumnsResolver] for operations that need to provide String API support
+     */
+    fun columns(impliedColumnsResolver: ColumnsResolver? = null): List<SimpleCol> {
+        return impliedColumnsResolver?.let { insertImpliedColumns(it) }?.columns ?: columns
     }
 
     override fun toString(): String {

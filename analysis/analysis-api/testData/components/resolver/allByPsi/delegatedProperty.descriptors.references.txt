@@ -30,6 +30,7 @@ KtPropertyDelegate(74,87): 'by Delegate()'
   KtPropertyDelegationMethodsReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in myPack.Delegate) operator fun getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String
       1: (in myPack.Delegate) operator fun setValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.String)
@@ -38,6 +39,7 @@ KtCallExpression(77,87): 'Delegate()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -51,6 +53,7 @@ KtNameReferenceExpression(77,85): 'Delegate'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

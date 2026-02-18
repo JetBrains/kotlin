@@ -20,9 +20,9 @@ suspend fun B.bar(): String {
 suspend fun test() = B.bar()
 
 // METHOD : ExtensionComponentsKt$bar$2.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
-// VARIABLE : NAME=x_param TYPE=Ljava/lang/String; INDEX=2
-// VARIABLE : NAME=<destruct> TYPE=LA; INDEX=*
-// VARIABLE : NAME=y_param TYPE=Ljava/lang/String; INDEX=3
-// VARIABLE : NAME=z_param TYPE=I INDEX=4
-// VARIABLE : NAME=this TYPE=LExtensionComponentsKt$bar$2; INDEX=0
-// VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=1
+// VARIABLE : NAME=$result TYPE=Ljava/lang/Object;
+// VARIABLE : NAME=<destruct> TYPE=LA;
+// VARIABLE : NAME=this TYPE=LExtensionComponentsKt$bar$2;
+// VARIABLE : NAME=x_param TYPE=Ljava/lang/String;
+// VARIABLE : NAME=y_param TYPE=Ljava/lang/String;
+// VARIABLE : NAME=z_param TYPE=I

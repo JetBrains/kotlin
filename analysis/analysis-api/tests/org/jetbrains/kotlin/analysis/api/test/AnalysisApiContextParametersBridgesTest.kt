@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -134,9 +134,8 @@ class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiSurfaceCodeba
 
         // New context parameter
         append("context(")
-        // One letter name is chosen intentionally to avoid conflicts with any potential regular parameters
-        // since they are expected to be meaningful
-        val contextParameterName = "s"
+        // A proper name is required to have a meaningful name in the case of explicit context argument
+        val contextParameterName = "session"
         append(contextParameterName)
         append(": ")
         append(KA_SESSION_CLASS)
@@ -149,7 +148,7 @@ class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiSurfaceCodeba
         append(signature.trimIndent())
 
         // Original declaration is deprecated -> suppression on the call site is required for compilation
-        val suppressDeprecationStatement = if (hasAnnotation(DEPRECATED_ANNOTATION)) {
+        val suppressDeprecationStatement = if (hasDeprecatedAnnotation()) {
             """@Suppress("DEPRECATION")"""
         } else {
             null
@@ -195,7 +194,6 @@ class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiSurfaceCodeba
         private val BRIDGE_ANNOTATION_MARKER: String = KaContextParameterApi::class.simpleName!!
         private val CUSTOM_BRIDGE_ANNOTATION_MARKER: String = KaCustomContextParameterBridge::class.simpleName!!
         private val IGNORE_BRIDGE_ANNOTATION_MARKER: String = KaNoContextParameterBridgeRequired::class.simpleName!!
-        private val DEPRECATED_ANNOTATION: String = Deprecated::class.simpleName!!
         private const val BASE_INDENT_SIZE = 4
     }
 }

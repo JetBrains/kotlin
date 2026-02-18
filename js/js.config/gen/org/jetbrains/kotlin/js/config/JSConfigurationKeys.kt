@@ -21,160 +21,189 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 
 object JSConfigurationKeys {
     @JvmField
-    val WASM_COMPILATION = CompilerConfigurationKey.create<Boolean>("compile to WASM")
+    val WASM_COMPILATION = CompilerConfigurationKey.create<Boolean>("WASM_COMPILATION")
+
+    // Name of output KLib file.
+    @JvmField
+    val OUTPUT_NAME = CompilerConfigurationKey.create<String>("OUTPUT_NAME")
 
     @JvmField
-    val OUTPUT_NAME = CompilerConfigurationKey.create<String>("Name of output KLib file")
+    val LIBRARIES = CompilerConfigurationKey.create<List<String>>("LIBRARIES")
 
     @JvmField
-    val LIBRARIES = CompilerConfigurationKey.create<List<String>>("library file paths")
+    val FRIEND_LIBRARIES = CompilerConfigurationKey.create<List<String>>("FRIEND_LIBRARIES")
 
     @JvmField
-    val FRIEND_LIBRARIES = CompilerConfigurationKey.create<List<String>>("friend library file paths")
+    val SOURCE_MAP = CompilerConfigurationKey.create<Boolean>("SOURCE_MAP")
 
     @JvmField
-    val SOURCE_MAP = CompilerConfigurationKey.create<Boolean>("generate source map")
+    val USE_DEBUGGER_CUSTOM_FORMATTERS = CompilerConfigurationKey.create<Boolean>("USE_DEBUGGER_CUSTOM_FORMATTERS")
 
     @JvmField
-    val USE_DEBUGGER_CUSTOM_FORMATTERS = CompilerConfigurationKey.create<Boolean>("add import of debugger custom formatters")
+    val ARTIFACT_CONFIGURATION = CompilerConfigurationKey.create<WebArtifactConfiguration>("ARTIFACT_CONFIGURATION")
 
     @JvmField
-    val ARTIFACT_CONFIGURATION = CompilerConfigurationKey.create<WebArtifactConfiguration>("JS/Wasm output configuration")
+    val OUTPUT_DIR = CompilerConfigurationKey.create<File>("OUTPUT_DIR")
+
+    // Prefix to add to paths in source map.
+    @JvmField
+    val SOURCE_MAP_PREFIX = CompilerConfigurationKey.create<String>("SOURCE_MAP_PREFIX")
+
+    // Base directories used to calculate relative paths for source map.
+    @JvmField
+    val SOURCE_MAP_SOURCE_ROOTS = CompilerConfigurationKey.create<List<String>>("SOURCE_MAP_SOURCE_ROOTS")
+
+    // Embed source files into source map.
+    @JvmField
+    val SOURCE_MAP_EMBED_SOURCES = CompilerConfigurationKey.create<SourceMapSourceEmbedding>("SOURCE_MAP_EMBED_SOURCES")
+
+    // A policy to generate a mapping from generated identifiers to their corresponding original names.
+    @JvmField
+    val SOURCEMAP_NAMES_POLICY = CompilerConfigurationKey.create<SourceMapNamesPolicy>("SOURCEMAP_NAMES_POLICY")
+
+    // Insert source mappings from libraries even if their sources are unavailable on the end-user machine.
+    @JvmField
+    val SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES = CompilerConfigurationKey.create<Boolean>("SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES")
 
     @JvmField
-    val OUTPUT_DIR = CompilerConfigurationKey.create<File>("output directory")
+    val MODULE_KIND = CompilerConfigurationKey.create<ModuleKind>("MODULE_KIND")
 
     @JvmField
-    val SOURCE_MAP_PREFIX = CompilerConfigurationKey.create<String>("prefix to add to paths in source map")
+    val JS_INCREMENTAL_COMPILATION_ENABLED = CompilerConfigurationKey.create<Boolean>("JS_INCREMENTAL_COMPILATION_ENABLED")
 
     @JvmField
-    val SOURCE_MAP_SOURCE_ROOTS = CompilerConfigurationKey.create<List<String>>("base directories used to calculate relative paths for source map")
+    val INCREMENTAL_DATA_PROVIDER = CompilerConfigurationKey.create<IncrementalDataProvider>("INCREMENTAL_DATA_PROVIDER")
 
     @JvmField
-    val SOURCE_MAP_EMBED_SOURCES = CompilerConfigurationKey.create<SourceMapSourceEmbedding>("embed source files into source map")
+    val INCREMENTAL_RESULTS_CONSUMER = CompilerConfigurationKey.create<IncrementalResultsConsumer>("INCREMENTAL_RESULTS_CONSUMER")
 
     @JvmField
-    val SOURCEMAP_NAMES_POLICY = CompilerConfigurationKey.create<SourceMapNamesPolicy>("a policy to generate a mapping from generated identifiers to their corresponding original names")
+    val INCREMENTAL_NEXT_ROUND_CHECKER = CompilerConfigurationKey.create<IncrementalNextRoundChecker>("INCREMENTAL_NEXT_ROUND_CHECKER")
 
     @JvmField
-    val SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES = CompilerConfigurationKey.create<Boolean>("insert source mappings from libraries even if their sources are unavailable on the end-user machine")
+    val FRIEND_PATHS_DISABLED = CompilerConfigurationKey.create<Boolean>("FRIEND_PATHS_DISABLED")
 
     @JvmField
-    val MODULE_KIND = CompilerConfigurationKey.create<ModuleKind>("module kind")
+    val METADATA_ONLY = CompilerConfigurationKey.create<Boolean>("METADATA_ONLY")
+
+    // Enable additional checkers.
+    @JvmField
+    val DEVELOPER_MODE = CompilerConfigurationKey.create<Boolean>("DEVELOPER_MODE")
+
+    // Generate comments with file path at the start of each file block.
+    @JvmField
+    val GENERATE_COMMENTS_WITH_FILE_PATH = CompilerConfigurationKey.create<Boolean>("GENERATE_COMMENTS_WITH_FILE_PATH")
+
+    // Generate polyfills for newest properties, methods and classes from ES6+.
+    @JvmField
+    val GENERATE_POLYFILLS = CompilerConfigurationKey.create<Boolean>("GENERATE_POLYFILLS")
+
+    // Provide platform-specific args as a parameter of the main function.
+    @JvmField
+    val DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS = CompilerConfigurationKey.create<String>("DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS")
+
+    // Generate TypeScript definition file.
+    @JvmField
+    val GENERATE_DTS = CompilerConfigurationKey.create<Boolean>("GENERATE_DTS")
+
+    // Force suspend functions compilation in JS generator functions.
+    @JvmField
+    val COMPILE_SUSPEND_AS_JS_GENERATOR = CompilerConfigurationKey.create<Boolean>("COMPILE_SUSPEND_AS_JS_GENERATOR")
+
+    // Lower Kotlin lambdas into arrow functions instead of anonymous functions.
+    @JvmField
+    val COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS = CompilerConfigurationKey.create<Boolean>("COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS")
 
     @JvmField
-    val JS_INCREMENTAL_COMPILATION_ENABLED = CompilerConfigurationKey.create<Boolean>("incremental compilation enabled")
+    val COMPILE_LONG_AS_BIGINT = CompilerConfigurationKey.create<Boolean>("COMPILE_LONG_AS_BIGINT")
+
+    // Generate special comments at the start and the end of each file block, it allows to fold them and navigate to them in IDEA.
+    @JvmField
+    val GENERATE_REGION_COMMENTS = CompilerConfigurationKey.create<Boolean>("GENERATE_REGION_COMMENTS")
+
+    // This map is used to shorten/replace prefix of paths in comments with file paths, including region comments.
+    @JvmField
+    val FILE_PATHS_PREFIX_MAP = CompilerConfigurationKey.create<Map<String, String>>("FILE_PATHS_PREFIX_MAP")
+
+    // Print declarations' reachability info during performing DCE.
+    @JvmField
+    val PRINT_REACHABILITY_INFO = CompilerConfigurationKey.create<Boolean>("PRINT_REACHABILITY_INFO")
+
+    // Dump declarations' reachability info to file during performing DCE.
+    @JvmField
+    val DUMP_REACHABILITY_INFO_TO_FILE = CompilerConfigurationKey.create<String>("DUMP_REACHABILITY_INFO_TO_FILE")
 
     @JvmField
-    val INCREMENTAL_DATA_PROVIDER = CompilerConfigurationKey.create<IncrementalDataProvider>("incremental data provider")
+    val FAKE_OVERRIDE_VALIDATOR = CompilerConfigurationKey.create<Boolean>("FAKE_OVERRIDE_VALIDATOR")
 
     @JvmField
-    val INCREMENTAL_RESULTS_CONSUMER = CompilerConfigurationKey.create<IncrementalResultsConsumer>("incremental results consumer")
+    val PROPERTY_LAZY_INITIALIZATION = CompilerConfigurationKey.create<Boolean>("PROPERTY_LAZY_INITIALIZATION")
+
+    // Translate lambdas into inline anonymous functions.
+    @JvmField
+    val GENERATE_INLINE_ANONYMOUS_FUNCTIONS = CompilerConfigurationKey.create<Boolean>("GENERATE_INLINE_ANONYMOUS_FUNCTIONS")
+
+    // Enable strict implicitly exported entities types inside d.ts files.
+    @JvmField
+    val GENERATE_STRICT_IMPLICIT_EXPORT = CompilerConfigurationKey.create<Boolean>("GENERATE_STRICT_IMPLICIT_EXPORT")
 
     @JvmField
-    val INCREMENTAL_NEXT_ROUND_CHECKER = CompilerConfigurationKey.create<IncrementalNextRoundChecker>("incremental compilation next round checker")
+    val OPTIMIZE_GENERATED_JS = CompilerConfigurationKey.create<Boolean>("OPTIMIZE_GENERATED_JS")
 
     @JvmField
-    val FRIEND_PATHS_DISABLED = CompilerConfigurationKey.create<Boolean>("disable support for friend paths")
+    val USE_ES6_CLASSES = CompilerConfigurationKey.create<Boolean>("USE_ES6_CLASSES")
+
+    // List of KLibs for this linking phase.
+    @JvmField
+    val INCLUDES = CompilerConfigurationKey.create<String>("INCLUDES")
+
+    // Need to produce KLib file or not.
+    @JvmField
+    val PRODUCE_KLIB_FILE = CompilerConfigurationKey.create<Boolean>("PRODUCE_KLIB_FILE")
+
+    // Need to produce unpacked KLib dir or not.
+    @JvmField
+    val PRODUCE_KLIB_DIR = CompilerConfigurationKey.create<Boolean>("PRODUCE_KLIB_DIR")
+
+    // Custom output name to the split .js files.
+    @JvmField
+    val PER_MODULE_OUTPUT_NAME = CompilerConfigurationKey.create<String>("PER_MODULE_OUTPUT_NAME")
+
+    // List of fully qualified names not to be eliminated by DCE.
+    @JvmField
+    val KEEP = CompilerConfigurationKey.create<List<String>>("KEEP")
+
+    // Perform experimental dead code elimination.
+    @JvmField
+    val DCE = CompilerConfigurationKey.create<Boolean>("DCE")
+
+    // Enable runtime diagnostics instead of removing declarations when performing DCE.
+    @JvmField
+    val DCE_RUNTIME_DIAGNOSTIC = CompilerConfigurationKey.create<String>("DCE_RUNTIME_DIAGNOSTIC")
+
+    // Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'.
+    @JvmField
+    val SAFE_EXTERNAL_BOOLEAN = CompilerConfigurationKey.create<Boolean>("SAFE_EXTERNAL_BOOLEAN")
+
+    // Enable runtime diagnostics when accessing external 'Boolean' properties.
+    @JvmField
+    val SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC = CompilerConfigurationKey.create<String>("SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC")
 
     @JvmField
-    val METADATA_ONLY = CompilerConfigurationKey.create<Boolean>("generate .meta.js and .kjsm files only")
+    val MINIMIZED_MEMBER_NAMES = CompilerConfigurationKey.create<Boolean>("MINIMIZED_MEMBER_NAMES")
+
+    // Specify whether the 'main' function should be called upon execution.
+    @JvmField
+    val CALL_MAIN_MODE = CompilerConfigurationKey.create<String>("CALL_MAIN_MODE")
 
     @JvmField
-    val DEVELOPER_MODE = CompilerConfigurationKey.create<Boolean>("enables additional checkers")
+    val IC_CACHE_DIRECTORY = CompilerConfigurationKey.create<String>("IC_CACHE_DIRECTORY")
 
     @JvmField
-    val GENERATE_COMMENTS_WITH_FILE_PATH = CompilerConfigurationKey.create<Boolean>("generate comments with file path at the start of each file block")
+    val IC_CACHE_READ_ONLY = CompilerConfigurationKey.create<Boolean>("IC_CACHE_READ_ONLY")
 
     @JvmField
-    val GENERATE_POLYFILLS = CompilerConfigurationKey.create<Boolean>("generate polyfills for newest properties, methods and classes from ES6+")
-
-    @JvmField
-    val DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS = CompilerConfigurationKey.create<String>("provide platform specific args as a parameter of the main function")
-
-    @JvmField
-    val GENERATE_DTS = CompilerConfigurationKey.create<Boolean>("generate TypeScript definition file")
-
-    @JvmField
-    val COMPILE_SUSPEND_AS_JS_GENERATOR = CompilerConfigurationKey.create<Boolean>("force suspend functions compilation int JS generator functions")
-
-    @JvmField
-    val COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS = CompilerConfigurationKey.create<Boolean>("lower Kotlin lambdas into arrow functions instead of anonymous functions")
-
-    @JvmField
-    val COMPILE_LONG_AS_BIGINT = CompilerConfigurationKey.create<Boolean>("compile Long as BigInt")
-
-    @JvmField
-    val GENERATE_REGION_COMMENTS = CompilerConfigurationKey.create<Boolean>("generate special comments at the start and the end of each file block, it allows to fold them and navigate to them in the IDEA")
-
-    @JvmField
-    val FILE_PATHS_PREFIX_MAP = CompilerConfigurationKey.create<Map<String, String>>("this map used to shorten/replace prefix of paths in comments with file paths, including region comments")
-
-    @JvmField
-    val PRINT_REACHABILITY_INFO = CompilerConfigurationKey.create<Boolean>("print declarations' reachability info during performing DCE")
-
-    @JvmField
-    val DUMP_REACHABILITY_INFO_TO_FILE = CompilerConfigurationKey.create<String>("dump declarations' reachability info to file during performing DCE")
-
-    @JvmField
-    val FAKE_OVERRIDE_VALIDATOR = CompilerConfigurationKey.create<Boolean>("IR fake override validator")
-
-    @JvmField
-    val PROPERTY_LAZY_INITIALIZATION = CompilerConfigurationKey.create<Boolean>("perform lazy initialization for properties")
-
-    @JvmField
-    val GENERATE_INLINE_ANONYMOUS_FUNCTIONS = CompilerConfigurationKey.create<Boolean>("translate lambdas into in-line anonymous functions")
-
-    @JvmField
-    val GENERATE_STRICT_IMPLICIT_EXPORT = CompilerConfigurationKey.create<Boolean>("enable strict implicitly exported entities types inside d.ts files")
-
-    @JvmField
-    val OPTIMIZE_GENERATED_JS = CompilerConfigurationKey.create<Boolean>("perform additional optimizations on the generated JS code")
-
-    @JvmField
-    val USE_ES6_CLASSES = CompilerConfigurationKey.create<Boolean>("perform ES6 class usage")
-
-    @JvmField
-    val INCLUDES = CompilerConfigurationKey.create<String>("List of KLibs for this linking phase")
-
-    @JvmField
-    val PRODUCE_KLIB_FILE = CompilerConfigurationKey.create<Boolean>("Need to produce KLib file or not")
-
-    @JvmField
-    val PRODUCE_KLIB_DIR = CompilerConfigurationKey.create<Boolean>("Need to produce unpacked KLib dir or not")
-
-    @JvmField
-    val PER_MODULE_OUTPUT_NAME = CompilerConfigurationKey.create<String>("Custom output name to the split .js files")
-
-    @JvmField
-    val KEEP = CompilerConfigurationKey.create<List<String>>("list of fully qualified names not to be eliminated by DCE")
-
-    @JvmField
-    val DCE = CompilerConfigurationKey.create<Boolean>("Perform experimental dead code elimination")
-
-    @JvmField
-    val DCE_RUNTIME_DIAGNOSTIC = CompilerConfigurationKey.create<String>("Enable runtime diagnostics instead of removing declarations when performing DCE")
-
-    @JvmField
-    val SAFE_EXTERNAL_BOOLEAN = CompilerConfigurationKey.create<Boolean>("Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'")
-
-    @JvmField
-    val SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC = CompilerConfigurationKey.create<String>("Enable runtime diagnostics when accessing external 'Boolean' properties")
-
-    @JvmField
-    val MINIMIZED_MEMBER_NAMES = CompilerConfigurationKey.create<Boolean>("Minimize the names of members")
-
-    @JvmField
-    val CALL_MAIN_MODE = CompilerConfigurationKey.create<String>("Specify whether the 'main' function should be called upon execution.")
-
-    @JvmField
-    val IC_CACHE_DIRECTORY = CompilerConfigurationKey.create<String>("Directory for the IC cache")
-
-    @JvmField
-    val IC_CACHE_READ_ONLY = CompilerConfigurationKey.create<Boolean>("IC caches are read-only")
-
-    @JvmField
-    val PRESERVE_IC_ORDER = CompilerConfigurationKey.create<Boolean>("Preserve IC order")
+    val PRESERVE_IC_ORDER = CompilerConfigurationKey.create<Boolean>("PRESERVE_IC_ORDER")
 
 }
 

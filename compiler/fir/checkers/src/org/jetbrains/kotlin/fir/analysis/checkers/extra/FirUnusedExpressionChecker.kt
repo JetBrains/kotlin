@@ -21,6 +21,7 @@ object FirUnusedExpressionChecker : FirUnusedCheckerBase() {
     override fun reportUnusedExpressionIfNeeded(
         expression: FirExpression,
         hasSideEffects: Boolean,
+        data: UsageState,
         source: KtSourceElement?,
     ): Boolean {
         if (hasSideEffects) return false

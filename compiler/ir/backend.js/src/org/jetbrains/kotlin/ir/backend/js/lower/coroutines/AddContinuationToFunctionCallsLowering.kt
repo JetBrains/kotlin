@@ -10,16 +10,16 @@ import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLoc
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
 /**
  * Replace suspend function calls with calls with continuation.
  *
- * Requires [AddContinuationToLocalSuspendFunctionsLowering] and
+ * Requires [AddContinuationToLocalSuspendFunctionsLowering] (for JS backend only) and
  * [AddContinuationToNonLocalSuspendFunctionsLowering] to transform function declarations first.
  */
-@PhasePrerequisites(AddContinuationToLocalSuspendFunctionsLowering::class, AddContinuationToNonLocalSuspendFunctionsLowering::class)
-class AddContinuationToFunctionCallsLowering(
+abstract class AddContinuationToFunctionCallsLowering(
     override val context: JsCommonBackendContext
 ) : AbstractAddContinuationToFunctionCallsLowering() {
     override fun IrSimpleFunction.isContinuationItself(): Boolean = overriddenSymbols.any { overriddenSymbol ->
@@ -29,3 +29,6 @@ class AddContinuationToFunctionCallsLowering(
     override val IrSimpleFunction.continuationOwner: IrSimpleFunction
         get() = if (origin == YIELDED_WRAPPER_FUNCTION) parent as IrSimpleFunction else this
 }
+
+@PhasePrerequisites(AddContinuationToLocalSuspendFunctionsLowering::class, AddContinuationToNonLocalSuspendFunctionsLowering::class)
+class JsAddContinuationToFunctionCallsLowering(context: JsIrBackendContext) : AddContinuationToFunctionCallsLowering(context)

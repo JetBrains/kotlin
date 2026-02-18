@@ -433,6 +433,7 @@ object FirTree : AbstractFirTreeBuilder() {
     val equalityOperatorCall: Element by element(Expression) {
         parent(expression)
         parent(call)
+        parent(resolvable)
 
         +field("operation", operationType)
     }
@@ -495,6 +496,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField("superTypeRefs", typeRef, withReplace = true, withTransform = true)
         +declarations {
             withTransform = true
+            withReplace = true
         }
         +annotations
     }
@@ -946,6 +948,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +listField(import, withTransform = true)
         +declarations {
             withTransform = true
+            withReplace = true
         }
         +field("name", string)
         +field("sourceFile", sourceFileType, nullable = true)
@@ -995,6 +998,34 @@ object FirTree : AbstractFirTreeBuilder() {
             withBindThis = false
             isMutable = false
         }
+    }
+
+    val replExpressionReference: Element by element(Expression) {
+        parent(expression)
+
+        +field("expressionRef", referenceToSimpleExpressionType, isChild = false)
+    }
+
+    val replPropertyInitializer: Element by element(Expression) {
+        parent(statement)
+
+        +referencedSymbol("propertySymbol", propertySymbolType) {
+            withBindThis = false
+            isMutable = false
+        }
+
+        +field("initializer", expression, withReplace = true, withTransform = true)
+    }
+
+    val replPropertyDelegate: Element by element(Expression) {
+        parent(statement)
+
+        +referencedSymbol("propertySymbol", propertySymbolType) {
+            withBindThis = false
+            isMutable = false
+        }
+
+        +field("delegate", expression, withReplace = true, withTransform = true)
     }
 
     val packageDirective: Element by element(Other) {
@@ -1226,6 +1257,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +referencedSymbol("symbol", classLikeSymbolType, nullable = true)
         +field("explicitParent", resolvedQualifier, nullable = true)
         +field("isNullableLHSForCallableReference", boolean, withReplace = true)
+        +field("resolvedLHSTypeForCallableReferenceOrNull", coneKotlinTypeType, nullable = true, withReplace = true)
         +field("resolvedToCompanionObject", boolean, withReplace = true)
         +field("canBeValue", boolean, withReplace = true) {
             kDoc = "If true, the qualifier is resolved to an object or companion object and can be used as an expression."

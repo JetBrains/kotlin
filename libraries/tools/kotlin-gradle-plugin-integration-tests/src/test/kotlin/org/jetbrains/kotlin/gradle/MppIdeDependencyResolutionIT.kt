@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
@@ -1039,6 +1040,116 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 )
             }
         }
+    }
+
+    @GradleTest
+    fun `KT-81973_npe_when_strange_dependency_is-added`(gradleVersions: GradleVersion) {
+        // it covers this bug https://github.com/gradle/gradle/issues/36284
+        // info is needed to check case when the "bad" error is logged out
+        val withLogLevelInfo = defaultBuildOptions.copy(logLevel = LogLevel.INFO)
+        project("empty", gradleVersions, buildOptions = withLogLevelInfo) {
+            plugins { kotlin("multiplatform") }
+            buildScriptInjection {
+                kotlinMultiplatform.jvm()
+                kotlinMultiplatform.sourceSets.getByName("commonMain").dependencies {
+                    api("androidx.room:room-sqlite-wrapper:2.8.3")
+                    api("androidx.room:room-runtime:2.8.3")
+                }
+            }
+        }.resolveIdeDependencies { dependencies ->
+            val cause = "Got class org.gradle.internal.resolve.ModuleVersionResolveException error when trying to resolve Artifact, but explanation message can't be displayed because it failed with class java.lang.NullPointerException. For details please visit https://github.com/gradle/gradle/issues/36284"
+            assertOutputContains(cause)
+            dependencies["commonTest"].assertMatches(
+                kotlinStdlibDependencies,
+                jetbrainsAnnotationDependencies,
+                anySourceFriendDependency(),
+                binaryCoordinates("androidx.annotation:annotation-jvm:1.9.1"),
+                binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1"),
+                binaryCoordinates("androidx.collection:collection-jvm:1.5.0"),
+                binaryCoordinates("androidx.room:room-common-jvm:2.8.3"),
+                binaryCoordinates("androidx.sqlite:sqlite-jvm:2.6.1"),
+                binaryCoordinates("androidx.room:room-runtime-jvm:2.8.3"),
+                IdeaKotlinDependencyMatcher("Unresolved androidx.room:room-sqlite-wrapper:2.8.3") { dependency ->
+                    dependency is IdeaKotlinUnresolvedBinaryDependency
+                            && dependency.coordinates.toString() == "androidx.room:room-sqlite-wrapper:2.8.3"
+                            && dependency.cause == cause
+                },
+            )
+        }
+    }
+
+    @GradleAndroidTest
+    @DisplayName("KT-82090 jvm+android commonMain dependency with Project Isolation")
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_813)
+    fun `KT-82090 jvm+android commonMain dependency with Project Isolation`(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        val producer = project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location,
+        ) {
+            plugins {
+                kotlin("multiplatform")
+                id("com.android.library")
+            }
+
+            buildScriptInjection {
+                applyDefaultAndroidLibraryConfiguration()
+
+                project.applyMultiplatform {
+                    jvm()
+                    @Suppress("DEPRECATION")
+                    androidTarget()
+
+                    sourceSets.commonMain.get().compileSource("interface Producer")
+                }
+            }
+        }
+
+        val consumer = project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location,
+        ) {
+            include(producer, "producer")
+
+            plugins {
+                kotlin("multiplatform")
+                id("com.android.library")
+            }
+
+            buildScriptInjection {
+                applyDefaultAndroidLibraryConfiguration()
+
+                project.applyMultiplatform {
+                    jvm()
+                    @Suppress("DEPRECATION")
+                    androidTarget()
+
+                    sourceSets.getByName("commonMain").dependencies {
+                        api(project(":producer"))
+                    }
+
+                    sourceSets.commonMain.get().compileSource("class Consumer : Producer")
+                }
+            }
+        }
+
+        val dependencies = consumer.resolveIdeDependenciesAsModel(
+            sourceSets = setOf("commonMain"),
+            buildOptions = consumer.buildOptions.enableIsolatedProjects()
+        )
+
+        dependencies["commonMain"].assertMatches(
+            kotlinStdlibDependencies,
+            jetbrainsAnnotationDependencies,
+            regularSourceDependency(":producer/commonMain"),
+        )
     }
 
     private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =

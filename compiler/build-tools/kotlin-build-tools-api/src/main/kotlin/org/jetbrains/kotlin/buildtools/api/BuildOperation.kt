@@ -16,15 +16,40 @@ import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
  * This interface is not intended to be implemented by the API consumers.
  *
  * Instances of concrete implementations for operations can be obtained from [KotlinToolchains] and related classes, e.g.
- * [JvmPlatformToolchain.createClasspathSnapshottingOperation] or [JvmPlatformToolchain.createJvmCompilationOperation]
+ * [JvmPlatformToolchain.classpathSnapshottingOperationBuilder] or [JvmPlatformToolchain.jvmCompilationOperationBuilder]
  *
  * @see KotlinToolchains.BuildSession.executeOperation
  * @since 2.3.0
  */
 @ExperimentalBuildToolsApi
 public interface BuildOperation<R> {
+
     /**
-     * Base class for [JvmCompilationOperation] options.
+     * A builder for configuring a [BuildOperation].
+     *
+     * @since 2.3.20
+     */
+    public interface Builder {
+        /**
+         * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+         *
+         * @return the previously set value for an option
+         * @throws IllegalStateException if the option was not set and has no default value
+         *
+         * @since 2.3.20
+         */
+        public operator fun <V> get(key: Option<V>): V
+
+        /**
+         * Set the [value] for option specified by [key], overriding any previous value for that option.
+         *
+         * @since 2.3.20
+         */
+        public operator fun <V> set(key: Option<V>, value: V)
+    }
+
+    /**
+     * An option for configuring a [BuildOperation].
      *
      * @see get
      * @see set
@@ -42,6 +67,10 @@ public interface BuildOperation<R> {
     /**
      * Set the [value] for option specified by [key], overriding any previous value for that option.
      */
+    @Deprecated(
+        "Build operations will become immutable in an upcoming release. " +
+                "Obtain an instance of a mutable builder for the operation from the appropriate `Toolchain` instead."
+    )
     public operator fun <V> set(key: Option<V>, value: V)
 
     public companion object {

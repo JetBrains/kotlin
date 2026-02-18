@@ -39,11 +39,6 @@ private val patterns = buildList {
         "USE_OLD_INLINE_CLASSES_MANGLING_SCHEME",
         JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME,
     )
-    createPattern(
-        "SERIALIZE_IR",
-        JVMConfigurationKeys.SERIALIZE_IR,
-        JvmSerializeIrMode.Companion::fromString,
-    )
 }
 
 private sealed class PatternWithExtractor<E : Any> {

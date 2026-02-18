@@ -5,7 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 void * Accessor_Inner_init_allocate();
 
-void Accessor_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double_Swift_Array_Swift_Bool__main_Accessor__(void * __kt, double y, NSArray<NSNumber *> * z, void * outer__);
+void Accessor_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double_Swift_Array_Swift_Bool__Vararg__main_Accessor__(void * __kt, double y, NSArray<NSNumber *> * z, void * outer__);
 
 double Accessor_Inner_y_get(void * self);
 
@@ -19,16 +19,20 @@ void * Accessor_x_get(void * self);
 
 void * __root___Accessor_init_allocate();
 
-void __root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Int32___(void * __kt, NSArray<NSNumber *> * x);
+void __root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Int32__Vararg___(void * __kt, NSArray<NSNumber *> * x);
 
-NSArray<id> * _Nullable __root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number___(NSArray<id> * x);
+NSArray<id> * _Nullable __root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number__Vararg___(NSArray<id> * x);
 
-void __root___extension__TypesOfArguments__main_Accessor_Swift_Array_Swift_Double___(void * receiver, NSArray<NSNumber *> * d);
+void __root___extension__TypesOfArguments__main_Accessor_Swift_Array_Swift_Double__Vararg___(void * receiver, NSArray<NSNumber *> * d);
 
-void __root___oneMore__TypesOfArguments__Swift_Array_Swift_String__Swift_Int32__(NSArray<NSString *> * a, int32_t b);
+void __root___oneMore__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__(NSArray<NSString *> * a, int32_t b);
 
-NSString * __root___simple__TypesOfArguments__Swift_Array_Swift_String___(NSArray<NSString *> * s);
+void __root___setTag__TypesOfArguments__Swift_Array_Swift_String__Vararg___(NSArray<NSString *> * tag);
 
-void __root___withDefault__TypesOfArguments__Swift_Array_Swift_String__Swift_Int32__(NSArray<NSString *> * a, int32_t b);
+void __root___setTag__TypesOfArguments__Swift_Array_Swift_String___(NSArray<NSString *> * tags);
+
+NSString * __root___simple__TypesOfArguments__Swift_Array_Swift_String__Vararg___(NSArray<NSString *> * s);
+
+void __root___withDefault__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__(NSArray<NSString *> * a, int32_t b);
 
 NS_ASSUME_NONNULL_END

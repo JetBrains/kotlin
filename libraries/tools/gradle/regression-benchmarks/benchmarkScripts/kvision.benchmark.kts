@@ -10,7 +10,7 @@
     name = "kvision",
     gitUrl = "https://github.com/rjaros/kvision.git",
     gitCommitSha = "8f2b3c96dcc9ad594995367ad138a37328244bb9",
-    stableKotlinVersion = "2.2.21-RC2",
+    stableKotlinVersion = "2.3.0",
 )
 
 import java.io.File

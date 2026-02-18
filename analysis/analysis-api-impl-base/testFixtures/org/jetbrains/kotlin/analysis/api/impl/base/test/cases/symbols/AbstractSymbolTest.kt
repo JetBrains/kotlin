@@ -153,7 +153,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                     PointerWithRenderedSymbol(
                         safePointer(symbol),
                         when (symbol) {
-                            is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(useSiteSession, symbol)
+                            is KaReceiverParameterSymbol -> KaDebugRenderer().render(useSiteSession, symbol)
                             is KaDeclarationSymbol -> symbol.render(prettyRenderer)
                             is KaFileSymbol -> prettyPrint {
                                 printCollection(symbol.fileScope.declarations.asIterable(), separator = "\n\n") {
@@ -405,7 +405,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     }
 
     protected open fun KaSession.renderSymbolForComparison(symbol: KaSymbol, directives: RegisteredDirectives): String {
-        val renderer = DebugSymbolRenderer(
+        val renderer = KaDebugRenderer(
             renderExtra = true,
             renderExpandedTypes = directives[PRETTY_RENDERER_OPTION].any { it == PrettyRendererOption.FULLY_EXPANDED_TYPES },
             renderIsPublicApi = RENDER_IS_PUBLIC_API in directives

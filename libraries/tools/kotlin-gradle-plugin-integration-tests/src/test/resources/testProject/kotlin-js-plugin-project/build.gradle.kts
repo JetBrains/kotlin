@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
     `maven-publish`
 }
 
@@ -9,20 +9,6 @@ version = "1.0"
 repositories {
     mavenLocal()
     mavenCentral()
-}
-
-kotlin.sourceSets {
-    getByName("main") {
-        dependencies {
-            api("org.jetbrains.kotlinx:kotlinx-html-js:0.7.5")
-            implementation(kotlin("stdlib-js"))
-        }
-    }
-    getByName("test") {
-        dependencies {
-            implementation(kotlin("test-js"))
-        }
-    }
 }
 
 kotlin.js {
@@ -43,6 +29,22 @@ kotlin.js().compilations.create("benchmark") {
         val main by kotlin.js().compilations
         implementation(main.compileDependencyFiles + main.output.classesDirs)
         runtimeOnly(files(main.runtimeDependencyFiles))
+    }
+}
+
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                api("org.jetbrains.kotlinx:kotlinx-html-js:0.7.5")
+                implementation(kotlin("stdlib-js"))
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
     }
 }
 

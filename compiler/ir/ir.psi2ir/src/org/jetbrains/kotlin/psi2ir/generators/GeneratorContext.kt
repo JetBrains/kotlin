@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class GeneratorContext private constructor(
     val configuration: Psi2IrConfiguration,
+    val compilerConfiguration: CompilerConfiguration,
     val moduleDescriptor: ModuleDescriptor,
     val bindingContext: BindingContext,
     val languageVersionSettings: LanguageVersionSettings,
@@ -36,6 +38,7 @@ class GeneratorContext private constructor(
 
     constructor(
         configuration: Psi2IrConfiguration,
+        compilerConfiguration: CompilerConfiguration,
         moduleDescriptor: ModuleDescriptor,
         bindingContext: BindingContext,
         languageVersionSettings: LanguageVersionSettings,
@@ -46,6 +49,7 @@ class GeneratorContext private constructor(
         fragmentContext: FragmentContext? = null,
     ) : this(
         configuration,
+        compilerConfiguration,
         moduleDescriptor,
         bindingContext,
         languageVersionSettings,
@@ -73,6 +77,7 @@ class GeneratorContext private constructor(
     fun createFileScopeContext(ktFile: KtFile): GeneratorContext {
         return GeneratorContext(
             configuration,
+            compilerConfiguration,
             moduleDescriptor,
             bindingContext,
             languageVersionSettings,

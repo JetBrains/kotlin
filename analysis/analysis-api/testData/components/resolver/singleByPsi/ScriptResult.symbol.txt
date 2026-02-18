@@ -1,0 +1,2 @@
+KtNameReferenceExpression(16,26): '`$$result`'
+  null

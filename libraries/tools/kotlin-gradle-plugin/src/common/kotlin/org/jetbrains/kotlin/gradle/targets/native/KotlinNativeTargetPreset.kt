@@ -60,7 +60,7 @@ internal abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>
             targetPreset = this@AbstractKotlinNativeTargetPreset
 
             val compilationFactory = KotlinNativeCompilationFactory(this)
-            compilations = project.container(compilationFactory.itemClass, compilationFactory)
+            compilations = project.objects.domainObjectContainer(compilationFactory.itemClass, compilationFactory)
         }
 
         createTargetConfigurator().configureTarget(result)
@@ -126,7 +126,7 @@ internal val KonanTarget.isCurrentHost: Boolean
 @Deprecated("Use crossCompilationOnCurrentHostSupported instead")
 internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     provider: PropertiesProvider,
-) = if (HostManager.hostOrNull != null) {
+) = if (HostManager.hostIsSupported) {
     if (provider.enableKlibsCrossCompilation) {
         // If cross-compilation is enabled, allow compilation for all targets
         true
@@ -146,7 +146,7 @@ internal val AbstractKotlinNativeCompilation.crossCompilationSharedData: KotlinP
 internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Boolean
     get() = when (this) {
         is KotlinNativeCompilation -> target.crossCompilationOnCurrentHostSupported.getOrThrow()
-        else -> HostManager.hostOrNull != null
+        else -> HostManager.hostIsSupported
     }
 
 // KT-81134 with a fallback to `enabledOnCurrentHostForKlibCompilation`
@@ -156,4 +156,16 @@ internal val KotlinNativeTarget.publishableWithFallback: Boolean
         ?: konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
 
 internal val KonanTarget.enabledOnCurrentHostForBinariesCompilation
-    get() = if (HostManager.hostOrNull != null) HostManager().isEnabled(this) else false
+    get() = if (HostManager.hostIsSupported) HostManager().isEnabled(this) else false
+
+internal val HostManager.supportedHosts: List<String> get() = enabledByHost.keys.map { it.formattedHostName }
+
+private val KonanTarget.formattedHostName: String
+    get() = when (this) {
+        KonanTarget.LINUX_X64 -> "Linux (x86_64)"
+        KonanTarget.MINGW_X64 -> "Windows (x86_64)"
+        KonanTarget.MACOS_X64 -> "macOS (x86_64)"
+        KonanTarget.MACOS_ARM64 -> "macOS (arm64)"
+        // Fallback for any future hosts, though the 'when' should be exhaustive
+        else -> visibleName
+    }

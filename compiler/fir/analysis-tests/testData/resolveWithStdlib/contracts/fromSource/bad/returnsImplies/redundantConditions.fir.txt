@@ -1,5 +1,5 @@
 FILE: redundantConditions.kt
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun testAlwaysNotNull(x: R|kotlin/String?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun testAlwaysNotNull(x: R|kotlin/String?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(NOT_NULL) -> x is kotlin/String && x != null
@@ -14,7 +14,7 @@ FILE: redundantConditions.kt
 
         ^testAlwaysNotNull R|<local>/x|
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun testAlwaysAny(x: R|kotlin/String?|): R|kotlin/Any?|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun testAlwaysAny(x: R|kotlin/String?|): R|kotlin/Any?|
         [R|Contract description]
          <
             Returns(NOT_NULL) -> x is kotlin/String? || x is kotlin/Any?

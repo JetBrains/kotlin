@@ -1,0 +1,7 @@
+/misplacedArgumentsInInnerOnly.kt:(207,217): warning: One type argument expected for 'inner class Y<B, Outer(A)> : Any'. Use the full type 'X<Int>.Y<Int>' instead. This will become an error in language version 2.5. See https://youtrack.jetbrains.com/issue/KTLC-388.
+
+/misplacedArgumentsInInnerOnly.kt:(257,267): warning: One type argument expected for 'inner class Y<B, Outer(A)> : Any'. Use the full type 'X<Int>.Y<Int>' instead. This will become an error in language version 2.5. See https://youtrack.jetbrains.com/issue/KTLC-388.
+
+/misplacedArgumentsInInnerOnly.kt:(321,331): warning: One type argument expected for 'inner class Y<B, Outer(A)> : Any'. Use the full type 'X<Int>.Y<Int>' instead. This will become an error in language version 2.5. See https://youtrack.jetbrains.com/issue/KTLC-388.
+
+/misplacedArgumentsInInnerOnly.kt:(468,478): warning: One type argument expected for 'inner class Y<B, Outer(A), Outer(C)> : Any'. Try to use a lambda expression instead. This will become an error in language version 2.5. See https://youtrack.jetbrains.com/issue/KTLC-388.

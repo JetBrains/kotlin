@@ -78,7 +78,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET = TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, PARAMETER_NAME_RECOVERY_SET);
     private static final TokenSet PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET = TokenSet.orSet(PROPERTY_NAME_FOLLOW_SET, LBRACE_RBRACE_SET, TOP_LEVEL_DECLARATION_FIRST);
     private static final TokenSet IDENTIFIER_EQ_COLON_SEMICOLON_SET = TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON);
-    private static final TokenSet COMMA_RPAR_COLON_EQ_SET = TokenSet.create(COMMA, RPAR, COLON, EQ);
+    private static final TokenSet COMMA_RPAR_RBRACKET_COLON_EQ_SET = TokenSet.create(COMMA, RPAR, RBRACKET, COLON, EQ);
     private static final TokenSet ACCESSOR_FIRST_OR_PROPERTY_END =
             TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(AT, GET_KEYWORD, SET_KEYWORD, FIELD_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
     private static final TokenSet RPAR_IDENTIFIER_COLON_LBRACE_EQ_SET = TokenSet.create(RPAR, IDENTIFIER, COLON, LBRACE, EQ);
@@ -1643,7 +1643,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                         errorWithRecovery("Expecting val keyword", recoverySet);
                     }
                 } else {
-                    parseModifierList(COMMA_RPAR_COLON_EQ_SET);
+                    parseModifierList(COMMA_RPAR_RBRACKET_COLON_EQ_SET);
                 }
 
                 expect(IDENTIFIER, "Expecting a name", recoverySet);

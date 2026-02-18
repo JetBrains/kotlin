@@ -480,7 +480,7 @@ class SimpleFirDeprecationInfo(
 ) : FirDeprecationInfo() {
     override fun getMessage(session: FirSession): String? {
         (annotation as? FirAnnotationCall)?.containingDeclarationSymbol?.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
-        return annotation.getStringArgument(ParameterNames.deprecatedMessage, session)
+        return annotation.getStringArgument(ParameterNames.deprecatedMessage)
     }
 
 }

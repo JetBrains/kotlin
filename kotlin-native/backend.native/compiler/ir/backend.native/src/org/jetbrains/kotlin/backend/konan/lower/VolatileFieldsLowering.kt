@@ -53,6 +53,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
     ))
     private val convertedBooleanFields = mutableSetOf<IrFieldSymbol>()
     private fun IrField.requiresBooleanConversion() = (type == irBuiltins.booleanType && hasAnnotation(KonanFqNames.volatile)) || symbol in convertedBooleanFields
+    private fun IrField.effectiveFieldType(): IrType = if (requiresBooleanConversion()) irBuiltins.byteType else this.type
 
     private fun buildIntrinsicFunction(irField: IrField, intrinsicType: IntrinsicType, builder: IrSimpleFunction.() -> Unit) = context.irFactory.buildFun {
         isExternal = true
@@ -86,13 +87,13 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                     startOffset = irField.startOffset
                     endOffset = irField.endOffset
                     name = Name.identifier("expectedValue")
-                    type = irField.type
+                    type = irField.effectiveFieldType()
                 }
                 addValueParameter {
                     startOffset = irField.startOffset
                     endOffset = irField.endOffset
                     name = Name.identifier("newValue")
-                    type = irField.type
+                    type = irField.effectiveFieldType()
                 }
             }
 
@@ -103,7 +104,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                     startOffset = irField.startOffset
                     endOffset = irField.endOffset
                     name = Name.identifier("value")
-                    type = irField.type
+                    type = irField.effectiveFieldType()
                 }
             }
 

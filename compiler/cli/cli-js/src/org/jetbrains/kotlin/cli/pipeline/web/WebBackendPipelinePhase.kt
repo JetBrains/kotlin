@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.backend.js.ic.acquireAndRelease
 import org.jetbrains.kotlin.ir.backend.js.ic.tryAcquireAndRelease
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInProductionPipeline
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 
@@ -106,6 +108,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
                 icCacheReadOnly = icCacheReadOnly,
             )
         }
+        configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
 
         // We use one cache directory for both caches: JS AST and JS code.
         // This guard MUST be unlocked after a successful preparing icCaches (see prepareIcCaches()).
@@ -143,6 +146,8 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
             compilerConfiguration = configuration,
             klibs = klibs,
         )
+
+        configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
         return compileNonIncrementally(configuration, module, mainCallArguments)
     }
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
+import org.jetbrains.kotlin.fir.analysis.js.checkers.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isExportedObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.fir.declarations.expectForActual
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
@@ -34,8 +37,10 @@ object FirJsExportedActualMatchExpectChecker : FirBasicDeclarationChecker(MppChe
         ) return
 
         val expectForActualMatchingData = declaration.symbol.expectForActual.orEmpty()
-        val correspondingExpectDeclaration =
-            expectForActualMatchingData[ExpectActualMatchingCompatibility.MatchedSuccessfully]?.singleOrNull() ?: return
+        val correspondingExpectDeclaration = expectForActualMatchingData[ExpectActualMatchingCompatibility.MatchedSuccessfully]
+            ?.singleOrNull() ?: return
+
+        if (!correspondingExpectDeclaration.isExportedObject()) return
 
         val correspondingActualDeclaration = when (declaration) {
             is FirTypeAlias -> {
@@ -44,9 +49,15 @@ object FirJsExportedActualMatchExpectChecker : FirBasicDeclarationChecker(MppChe
             else -> declaration.symbol
         }
 
-
-        if (correspondingExpectDeclaration.isExportedObject() && !correspondingActualDeclaration.isExportedObject()) {
-            reporter.reportOn(declaration.source, FirJsErrors.NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED)
+        if (!correspondingActualDeclaration.isReachableOutsideOfKotlin()) {
+            reporter.reportOn(declaration.source, FirJsErrors.NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED)
         }
     }
+
+    context(context: CheckerContext)
+    private fun FirBasedSymbol<*>.isReachableOutsideOfKotlin(): Boolean =
+        when (this) {
+            is FirClassLikeSymbol -> isExportedObject() || isEffectivelyExternal()
+            else -> isExportedObject()
+        }
 }

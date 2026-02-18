@@ -6,6 +6,7 @@
 package kotlin.script.experimental.jvmhost.test
 
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import org.jetbrains.kotlin.test.compileJavaFiles
 import org.junit.jupiter.api.io.TempDir
@@ -13,6 +14,7 @@ import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvmhost.JvmScriptCompiler
 import kotlin.test.Test
 import kotlin.test.fail
@@ -34,7 +36,11 @@ class FeaturesTest {
                 dependencies(JvmDependency(destDir))
             }
 
-            JvmScriptCompiler()(File(srcDir, "test.samwr.kts").toScriptSource(), baseConfig).let { res ->
+            val compiler =
+                if (isRunningTestOnK2) JvmScriptCompiler()
+                else JvmScriptCompiler.createLegacy()
+
+            compiler.invoke(File(srcDir, "test.samwr.kts").toScriptSource(), baseConfig).let { res ->
                 when (res) {
                     is ResultWithDiagnostics.Success -> fail("Expecting \"Unresolved reference\" error, got successful compilation")
                     is ResultWithDiagnostics.Failure ->
@@ -52,7 +58,10 @@ class FeaturesTest {
             val configWithSwr = baseConfig.with {
                 annotationsForSamWithReceivers("SamWithReceiver1")
             }
-            JvmScriptCompiler()(File(srcDir, "test.samwr.kts").toScriptSource(), configWithSwr).onFailure { res ->
+            JvmScriptCompiler(
+                defaultJvmScriptingHostConfiguration,
+                if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration),
+            )(File(srcDir, "test.samwr.kts").toScriptSource(), configWithSwr).onFailure { res ->
                 fail("Compilation failed:\n  ${res.reports.joinToString("\n  ")}")
             }
         }

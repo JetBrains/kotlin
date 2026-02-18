@@ -2,5 +2,6 @@ KDocName(74,76): 'TT'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in <local>: A.A) TT

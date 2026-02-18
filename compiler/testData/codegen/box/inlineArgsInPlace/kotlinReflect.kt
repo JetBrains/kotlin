@@ -1,6 +1,7 @@
 // FULL_JDK
 // WITH_STDLIB
 
+// FILE: lib.kt
 interface Foo {
     val foos: List<Foo>
 }
@@ -10,6 +11,7 @@ inline fun <reified T : Any> Sequence<*>.firstIsInstanceOrNull(): T? {
     return null
 }
 
+// FILE: main.kt
 fun faultyLvt() {
     sequenceOf<Foo>().firstIsInstanceOrNull<Foo>()?.foos.orEmpty()
 

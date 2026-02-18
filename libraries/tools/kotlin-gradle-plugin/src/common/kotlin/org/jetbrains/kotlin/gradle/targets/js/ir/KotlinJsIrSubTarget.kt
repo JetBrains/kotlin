@@ -89,7 +89,9 @@ abstract class KotlinJsIrSubTarget(
         lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, *names)
 
     private fun configureTests() {
-        testRuns = project.container(KotlinJsPlatformTestRun::class.java) { name -> KotlinJsPlatformTestRun(name, target) }.also {
+        testRuns = project.objects.domainObjectContainer(KotlinJsPlatformTestRun::class.java) { name ->
+            KotlinJsPlatformTestRun(name, target)
+        }.also {
             (this as ExtensionAware).extensions.add(this::testRuns.name, it)
         }
 
@@ -111,6 +113,8 @@ abstract class KotlinJsIrSubTarget(
                 AbstractKotlinTargetConfigurator.testTaskNameSuffix
             )
         )
+
+        setupTest(compilation)
 
         val testJs = project.registerTask<KotlinJsTest>(
             testRun.subtargetTestTaskName(),
@@ -192,6 +196,12 @@ abstract class KotlinJsIrSubTarget(
     private fun setupBuild(compilation: KotlinJsIrCompilation) {
         subTargetConfigurators.configureEach {
             it.setupBuild(compilation)
+        }
+    }
+
+    private fun setupTest(compilation: KotlinJsIrCompilation) {
+        subTargetConfigurators.configureEach {
+            it.setupTest(compilation)
         }
     }
 

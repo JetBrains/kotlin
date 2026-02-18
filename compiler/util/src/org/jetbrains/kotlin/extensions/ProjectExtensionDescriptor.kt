@@ -9,7 +9,13 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 
-open class ProjectExtensionDescriptor<T : Any>(name: String, private val extensionClass: Class<T>) {
+/**
+ * Class representing an extension point. Used as a key in structures which store
+ * specific instances of extensions.
+ */
+abstract class ExtensionPointDescriptor<T : Any>(val name: String, val extensionClass: Class<T>)
+
+open class ProjectExtensionDescriptor<T : Any>(name: String, extensionClass: Class<T>) : ExtensionPointDescriptor<T>(name, extensionClass) {
     val extensionPointName: ExtensionPointName<T> = ExtensionPointName.create(name)
 
     fun registerExtensionPoint(project: Project) {
@@ -21,7 +27,10 @@ open class ProjectExtensionDescriptor<T : Any>(name: String, private val extensi
     }
 
     fun registerExtension(project: Project, extension: T) {
-        project.extensionArea.getExtensionPoint(extensionPointName).registerExtension(extension, project)
+        val extensionPoint = project.extensionArea.getExtensionPoint(extensionPointName)
+        if (extension !in extensionPoint.extensions) {
+            extensionPoint.registerExtension(extension, project)
+        }
     }
 
     fun getInstances(project: Project): List<T> {

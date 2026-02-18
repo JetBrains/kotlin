@@ -1,5 +1,6 @@
 // WITH_STDLIB
 
+// FILE: lib.kt
 inline fun <T> foo(f: () -> T): String {
     return (f() as? Inv<T>)?.result() ?: "Bad"
 }
@@ -10,6 +11,7 @@ class Inv<T> {
 
 fun <K> create(): Inv<K> = Inv()
 
+// FILE: main.kt
 fun test(b: Boolean): String {
     return foo {
         if (!b) {

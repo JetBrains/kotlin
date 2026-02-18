@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.backend.common.diagnostics
 import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_MANIFEST_FILE
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.KlibLayoutReader
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import java.io.ByteArrayInputStream
 import java.util.jar.Manifest
@@ -30,7 +32,8 @@ abstract class LibrarySpecialCompatibilityChecker {
         override fun equals(other: Any?) = (other as? Version)?.comparableVersion == comparableVersion
         override fun hashCode() = comparableVersion.hashCode()
 
-        fun hasSameLanguageVersion(other: Version) = languageVersion == other.languageVersion
+        // TODO (KT-83853): Find a reliable way to detect dev compiler versions.
+        val isDevVersion: Boolean = "-dev-" in rawVersion || rawVersion.endsWith("-SNAPSHOT")
 
         override fun toString() = rawVersion
         fun toComparableVersionString() = comparableVersion.toString()
@@ -56,8 +59,18 @@ abstract class LibrarySpecialCompatibilityChecker {
         }
     }
 
-    fun check(libraries: Collection<KotlinLibrary>, messageCollector: MessageCollector) {
+    fun check(
+        libraries: Collection<KotlinLibrary>,
+        messageCollector: MessageCollector,
+        klibAbiCompatibilityLevel: KlibAbiCompatibilityLevel,
+    ) {
         val compilerVersion = Version.parseVersion(getRawCompilerVersion()) ?: return
+        val isLatestKlibAbiCompatibilityLevel = klibAbiCompatibilityLevel == KlibAbiCompatibilityLevel.LATEST_STABLE
+
+        // It might happen that the compiler has already got a new major version (N.M+1.0), but there is still the old bootstrap compiler
+        // version (N.M,*) used to compile stdlib & kotlin-test libraries. As a result, these libraries still have `abi_version=N.M.0`
+        // in their manifest files. And the compatibility check, if it were applied, would fail.
+        val useRelaxedCompatibilityCheckForDevCompilerVersion = isLatestKlibAbiCompatibilityLevel && compilerVersion.isDevVersion
 
         for (library in libraries) {
             val checkedLibrary = library.toCheckedLibrary() ?: continue
@@ -65,23 +78,54 @@ abstract class LibrarySpecialCompatibilityChecker {
             val jarManifest = library.getComponent(JarManifestComponent.Kind)?.jarManifest ?: continue
             val libraryVersion = Version.parseVersion(jarManifest.mainAttributes.getValue(KLIB_JAR_LIBRARY_VERSION)) ?: continue
 
-            val rootCause = when {
-                libraryVersion < compilerVersion ->
-                    "The ${checkedLibrary.platformDisplayName} ${checkedLibrary.libraryDisplayName} library has an older version ($libraryVersion) than the compiler ($compilerVersion). Such a configuration is not supported."
+            val libraryAbiVersion = library.versions.abiVersion ?: continue
 
-                !libraryVersion.hasSameLanguageVersion(compilerVersion) ->
-                    "The ${checkedLibrary.platformDisplayName} ${checkedLibrary.libraryDisplayName} library has a more recent version ($libraryVersion) than the compiler supports. The compiler version is $compilerVersion."
+            val isLibraryAbiCompatible = libraryAbiVersion.isCompatibleWithAbiLevel(klibAbiCompatibilityLevel) ||
+                    useRelaxedCompatibilityCheckForDevCompilerVersion && libraryAbiVersion.isCompatibleWithAbiLevel(klibAbiCompatibilityLevel.previous())
 
+            val errorMessage = when {
+                !isLibraryAbiCompatible ->
+                    message(
+                        rootCause = "The ${checkedLibrary.platformDisplayName} ${checkedLibrary.libraryDisplayName} library has the ABI version (${library.versions.abiVersion}) that is not compatible with the compiler's current ABI compatibility level ($klibAbiCompatibilityLevel).",
+                        libraryName = checkedLibrary.libraryDisplayName,
+                        versionKind = "ABI version",
+                        minAcceptedVersion = "$klibAbiCompatibilityLevel.0",
+                        maxAcceptedVersion = "$klibAbiCompatibilityLevel.${KotlinVersion.MAX_COMPONENT_VALUE}"
+                    )
+                isLatestKlibAbiCompatibilityLevel && libraryVersion < compilerVersion ->
+                    message(
+                        rootCause = "The ${checkedLibrary.platformDisplayName} ${checkedLibrary.libraryDisplayName} library has an older version ($libraryVersion) than the compiler ($compilerVersion). Such a configuration is not supported.",
+                        libraryName = checkedLibrary.libraryDisplayName,
+                        versionKind = "version",
+                        minAcceptedVersion = compilerVersion.toComparableVersionString(),
+                        maxAcceptedVersion = "${compilerVersion.toLanguageVersionString()}.${KotlinVersion.MAX_COMPONENT_VALUE}"
+                    )
                 else -> continue
             }
 
-            messageCollector.report(
-                CompilerMessageSeverity.ERROR,
-                "$rootCause\nPlease, make sure that the ${checkedLibrary.libraryDisplayName} library has the version in the range " +
-                        "[${compilerVersion.toComparableVersionString()} .. ${compilerVersion.toLanguageVersionString()}.${KotlinVersion.MAX_COMPONENT_VALUE}]. " +
-                        "Adjust your project's settings if necessary."
-            )
+            messageCollector.report(CompilerMessageSeverity.ERROR, errorMessage)
         }
+    }
+
+    private fun message(
+        rootCause: String,
+        libraryName: String,
+        versionKind: String,
+        minAcceptedVersion: String,
+        maxAcceptedVersion: String
+    ): String =
+        "$rootCause\nPlease, make sure that the $libraryName library $versionKind is in the range " +
+                "[$minAcceptedVersion .. $maxAcceptedVersion]. Adjust your project's settings if necessary."
+
+    private fun KotlinAbiVersion.isCompatibleWithAbiLevel(klibAbiCompatibilityLevel: KlibAbiCompatibilityLevel?): Boolean {
+        if (klibAbiCompatibilityLevel == null) return false
+        return klibAbiCompatibilityLevel.major == this.major && klibAbiCompatibilityLevel.minor == this.minor
+    }
+
+    private fun KotlinLibrary.isCompatible(compilerAbiCompatibilityLevel: KlibAbiCompatibilityLevel): Boolean {
+        val libraryAbiVersion = this.versions.abiVersion
+        return if (libraryAbiVersion == null) true
+        else compilerAbiCompatibilityLevel.major == libraryAbiVersion.major && compilerAbiCompatibilityLevel.minor == libraryAbiVersion.minor
     }
 
     private fun getRawCompilerVersion(): String? {

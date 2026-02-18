@@ -1,9 +1,11 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
 // LANGUAGE: +ContextParameters
+// FILE: lib.kt
 context(c: Int)
 inline fun <T : CharSequence> Int.foo(a: T) = a.length + c + this
 
+// FILE: main.kt
 context(c: Int)
 fun <T : CharSequence> Int.bar(a: T) = a.length + c + this
 

@@ -1,0 +1,15 @@
+KtCollectionLiteralExpression(57,60): '[1]'
+  KtCollectionLiteralReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
+
+KtCallExpression(50,61): 'accept([1])'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

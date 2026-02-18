@@ -1,8 +1,10 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
 
+// FILE: lib.kt
 inline fun <T> foo(a: T) = a.toString()
 
+// FILE: main.kt
 fun <T> bar(a: T) = a.toString()
 
 fun box(): String {

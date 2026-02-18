@@ -75,6 +75,7 @@ internal fun createGradleCompilerRunner(
     diagnosticsReporter: UsesKotlinToolingDiagnostics,
 ): GradleCompilerRunner {
     if (runViaBuildToolsApi) {
+        @Suppress("DEPRECATION")
         if (compilerExecutionSettings.strategy != KotlinCompilerExecutionStrategy.OUT_OF_PROCESS) {
             return GradleBuildToolsApiCompilerRunner(
                 taskProvider,
@@ -91,6 +92,13 @@ internal fun createGradleCompilerRunner(
         } else {
             diagnosticsReporter.reportDiagnostic(KotlinToolingDiagnostics.UsingOutOfProcessDisablesBuildToolsApi())
         }
+    } else if (compilerExecutionSettings.generateCompilerRefIndex) {
+        diagnosticsReporter.reportDiagnostic(
+            KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi(
+                taskProvider.projectName.get(),
+                taskProvider.projectPath.get(),
+            )
+        )
     }
     return GradleCompilerRunnerWithWorkers(
         taskProvider,
@@ -120,7 +128,7 @@ internal open class GradleCompilerRunner(
     internal val buildDirProvider = taskProvider.buildDir.get().asFile
     internal val projectDirProvider = taskProvider.projectDir.get()
     internal val sessionDirProvider = taskProvider.sessionsDir.get()
-    internal val projectNameProvider = taskProvider.projectName.get()
+    internal val rootProjectNameProvider = taskProvider.rootProjectName.get()
     internal val incrementalModuleInfoProvider = taskProvider.buildModulesInfo
     internal val errorsFiles = taskProvider.errorsFiles.get()
 
@@ -189,7 +197,7 @@ internal open class GradleCompilerRunner(
                 loggerProvider,
                 projectDirProvider,
                 buildDirProvider,
-                projectNameProvider,
+                rootProjectNameProvider,
                 sessionDirProvider
             ),
             compilerFullClasspath = environment.compilerFullClasspath(jdkToolsJar),

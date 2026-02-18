@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_EXPERIMENTAL_TRY_NEXT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_GENERATE_COMPILER_REF_INDEX
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_FIR
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_ALLOW_MULTIPLATFORM_PUBLICATIONS_ON_UNSUPPORTED_HOST
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JVM_ADD_CLASSES_VARIANT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_IGNORE_WARNING_MODE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ENABLE_UKLIBS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ALLOW_MATCHING_BY_REQUESTED_COORDINATES_IN_GMDT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
@@ -157,6 +159,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property("kotlin.js.ir.output.granularity").orNull?.let { KotlinJsIrOutputGranularity.byArgument(it) }
             ?: KotlinJsIrOutputGranularity.PER_MODULE
 
+    // TODO(KT-83665): remove this option after the new "binary" DSL is introduced
+    val delegateTranspilationToExternalTool: Boolean
+        get() = booleanProperty("kotlin.js.delegated.transpilation") ?: false
+
     val jsIrGeneratedTypeScriptValidationDevStrategy: KotlinIrJsGeneratedTSValidationStrategy
         get() = property("kotlin.js.ir.development.typescript.validation.strategy")
             .orNull?.let {
@@ -210,6 +216,24 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     private val enableUKlibs: Boolean
         get() = booleanProperty(KOTLIN_KMP_ENABLE_UKLIBS) ?: false
+
+    /**
+     * By default, the Source Set Visibility algorithm considers only end-resolved artifact coordinates.
+     * In Compose.git common dependencies are declared on coordinates X, but on some target dependencies they're
+     * [org.gradle.api.artifacts.DependencySubstitution] to androidX
+     *      'A.commonMain'     => api(project(":B")
+     *      |- 'A.jvmMain'     => inherited from A.commonMain
+     *      |- 'A.androidMain' => dependencySubstitution to api('androidx:B')
+     *                                  ^
+     *      resolved end-coordinates are different, but requested will be matching
+     *  When the flag is set, the algorithm will proceed with matching "requested" (i.e. api(project(":B")) coordinates
+     *
+     *  *Why not enable it by default?*
+     *  Because of the danger of dependency inconsistency. Algorithm expects that ALL artifacts are coming from the same publication
+     *  i.e. build. So API and Expect/Actuals are consistent between "metadata" and "implementation" variants.
+     */
+    val allowMatchingByRequestedCoordinatesInGMDT: Provider<Boolean>
+        get() = booleanProvider(KOTLIN_KMP_ALLOW_MATCHING_BY_REQUESTED_COORDINATES_IN_GMDT).orElse(false)
 
     // Throw in IDE resolvers instead of just printing them
     val strictResolveIdeDependencies: Boolean
@@ -409,6 +433,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val createDefaultMultiplatformPublications: Boolean
         get() = booleanProperty(KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS) ?: true
 
+    val allowMultiplatformPublicationsOnUnsupportedHost: Boolean
+        get() = booleanProperty(KOTLIN_INTERNAL_ALLOW_MULTIPLATFORM_PUBLICATIONS_ON_UNSUPPORTED_HOST) ?: false
+
     val createArchiveTasksForCustomCompilations: Boolean
         get() = booleanProperty(KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS) ?: false
 
@@ -482,13 +509,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     val abiValidationBannedTargets: String?
         get() = property(PropertyNames.ABI_VALIDATION_BANNED_TARGETS).orNull
-
-    /**
-     * Application Binary Interface (ABI) validation:
-     * Disable extension and task creation.
-     */
-    val abiValidationDisabled: Boolean
-        get() = booleanProperty(PropertyNames.ABI_VALIDATION_DISABLED) ?: false
 
 
     /**
@@ -733,6 +753,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API = property("kotlin.compiler.runViaBuildToolsApi")
         val KOTLIN_GENERATE_COMPILER_REF_INDEX = property("kotlin.compiler.generateCompilerRefIndex")
         val KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES = property("kotlin.mpp.allow.legacy.dependencies")
+        val KOTLIN_DEPRECATED_TEST_PROPERTY = property("${KOTLIN_INTERNAL_NAMESPACE}.deprecatedTestProperty")
         val KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE = property("kotlin.publishJvmEnvironmentAttribute")
         val KOTLIN_EXPERIMENTAL_TRY_NEXT = property("kotlin.experimental.tryNext")
         val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = property(KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY)
@@ -755,6 +776,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_KMP_RESOLUTION_STRATEGY = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.kmpResolutionStrategy")
         val KOTLIN_KMP_ENABLE_UKLIBS = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.enableUKlibs")
         val KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.strictResolveIdeDependencies")
+        val KOTLIN_KMP_ALLOW_MATCHING_BY_REQUESTED_COORDINATES_IN_GMDT =
+            property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.allowMatchingByRequestedCoordinatesInMetadataTransformations")
         val KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT = property("kotlin.kmp.isolated-projects.support")
         val KOTLIN_INCREMENTAL_FIR = property("kotlin.incremental.jvm.fir")
         val KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.unresolvedDependenciesDiagnostic")
@@ -769,6 +792,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT = property("$KOTLIN_INTERNAL_NAMESPACE.mpp.hierarchicalStructureByDefault")
         val KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS =
             property("$KOTLIN_INTERNAL_NAMESPACE.mpp.createDefaultMultiplatformPublications")
+        val KOTLIN_INTERNAL_ALLOW_MULTIPLATFORM_PUBLICATIONS_ON_UNSUPPORTED_HOST =
+            property("$KOTLIN_INTERNAL_NAMESPACE.mpp.allowMultiplatformPublicationsOnUnsupportedHost")
         val KOTLIN_INTERNAL_DIAGNOSTICS_USE_PARSABLE_FORMATTING = property("$KOTLIN_INTERNAL_NAMESPACE.diagnostics.useParsableFormatting")
         val KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE = property("$KOTLIN_INTERNAL_NAMESPACE.diagnostics.showStacktrace")
         val KOTLIN_INTERNAL_DIAGNOSTICS_IGNORE_WARNING_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.diagnostics.ignoreWarningMode")
@@ -784,7 +809,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_USE_NON_PACKED_KLIBS = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.non-packed")
         val KOTLIN_CLASSLOADER_CACHE_TIMEOUT = property("$KOTLIN_INTERNAL_NAMESPACE.classloaderCache.timeoutSeconds")
         val ABI_VALIDATION_BANNED_TARGETS = property(ABI_VALIDATION_BANNED_TARGETS_NAME)
-        val ABI_VALIDATION_DISABLED = property(ABI_VALIDATION_DISABLED_NAME)
         val KOTLIN_PARSE_INLINED_LOCAL_CLASSES = property("$KOTLIN_INTERNAL_NAMESPACE.classpathSnapshot.parseInlinedLocalClasses")
 
         val FUNCTIONAL_TEST_MODE_PROPERTY = "$KOTLIN_INTERNAL_NAMESPACE.functionalTestMode"
@@ -801,8 +825,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         internal const val KOTLIN_INTERNAL_NAMESPACE = "kotlin.internal"
 
         internal const val ABI_VALIDATION_BANNED_TARGETS_NAME = "$KOTLIN_INTERNAL_NAMESPACE.abi.validation.klib.targets.disabled.for.testing"
-
-        internal const val ABI_VALIDATION_DISABLED_NAME = "kotlin.abi.validation.disabled"
 
         operator fun invoke(project: Project): PropertiesProvider =
             with(project.extensions.extraProperties) {

@@ -4,6 +4,7 @@
 // STDLIB_JDK8
 // JVM_TARGET: 1.8
 // ISSUE: KT-71854
+// DUMP_INFERENCE_LOGS: FIXATION, MARKDOWN
 
 // FILE: Wrapper.java
 
@@ -11,7 +12,7 @@ import java.util.Comparator;
 import java.util.Collections;
 
 public class Wrapper {
-    public static <T extends Comparable<? super T>> Comparator<T> reverseOrder() {
+    public static <W extends Comparable<? super W>> Comparator<W> reverseOrder() {
         return Collections.reverseOrder();
     }
 }

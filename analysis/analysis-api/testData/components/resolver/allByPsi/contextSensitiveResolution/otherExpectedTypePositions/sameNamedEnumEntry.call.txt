@@ -49,19 +49,18 @@ KtWhenExpression(131,185): 'when (a) {'
 KtNameReferenceExpression(137,138): 'a'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = a: A
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = A
+        symbol = a: A
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtWhenEntry(150,160): 'A.A -> "A"'
@@ -73,22 +72,21 @@ KtWhenConditionWithExpression(150,153): 'A.A'
 KtDotQualifiedExpression(150,153): 'A.A'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = A
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = A
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = A
-          receiverType = null
-          returnType = A
-          symbol = /A.A
-          contextParameters = []
-          callableId = /A.A
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = A
+        receiverType = null
+        returnType = A
+        symbol = /A.A
+        contextParameters = []
+        callableId = /A.A
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(150,151): 'A'
@@ -97,22 +95,21 @@ KtNameReferenceExpression(150,151): 'A'
 KtNameReferenceExpression(152,153): 'A'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = A
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = A
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = A
-          receiverType = null
-          returnType = A
-          symbol = /A.A
-          contextParameters = []
-          callableId = /A.A
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = A
+        receiverType = null
+        returnType = A
+        symbol = /A.A
+        contextParameters = []
+        callableId = /A.A
       typeArgumentsMapping = {}
 
 KtStringTemplateExpression(157,160): '"A"'
@@ -130,22 +127,21 @@ KtWhenConditionWithExpression(169,172): 'A.B'
 KtDotQualifiedExpression(169,172): 'A.B'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = A
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = A
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = B
-          receiverType = null
-          returnType = A
-          symbol = /A.B
-          contextParameters = []
-          callableId = /A.B
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = B
+        receiverType = null
+        returnType = A
+        symbol = /A.B
+        contextParameters = []
+        callableId = /A.B
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(169,170): 'A'
@@ -154,22 +150,21 @@ KtNameReferenceExpression(169,170): 'A'
 KtNameReferenceExpression(171,172): 'B'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = A
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = A
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = B
-          receiverType = null
-          returnType = A
-          symbol = /A.B
-          contextParameters = []
-          callableId = /A.B
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = B
+        receiverType = null
+        returnType = A
+        symbol = /A.B
+        contextParameters = []
+        callableId = /A.B
       typeArgumentsMapping = {}
 
 KtStringTemplateExpression(176,179): '"B"'

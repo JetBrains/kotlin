@@ -23,6 +23,7 @@ KtValueArgument(107,125): '"a type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       str: kotlin.String
 
@@ -51,6 +52,7 @@ KtValueArgument(138,163): '"a nested type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       str: kotlin.String
 
@@ -79,6 +81,7 @@ KtValueArgument(182,214): '"a nested nested type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       str: kotlin.String
 
@@ -107,6 +110,7 @@ KtValueArgument(240,258): '"b type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       str: kotlin.String
 
@@ -135,6 +139,7 @@ KtValueArgument(272,297): '"b nested type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       str: kotlin.String
 
@@ -163,6 +168,7 @@ KtValueArgument(310,342): '"b nested nested type $constant"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       str: kotlin.String
 
@@ -178,7 +184,7 @@ KtNameReferenceExpression(344,347): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(377,381): 'Anno'
   KtSimpleNameReference:
@@ -191,6 +197,7 @@ KtValueArgument(382,397): '"destr 1 $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       str: kotlin.String
 
@@ -205,7 +212,10 @@ KtDestructuringDeclarationEntry(404,422): '@Anno("a $prop") a'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in util.Pair) operator fun component1(): @util.Anno(str = "a type s") kotlin.collections.List<@util.Anno(str = "a nested type s") kotlin.collections.Collection<@util.Anno(str = "a nested nested type s") kotlin.String>>?
+    resolveToSymbols:
       0: (in util) val a: @util.Anno(str = "a type s") kotlin.collections.List<@util.Anno(str = "a nested type s") kotlin.collections.Collection<@util.Anno(str = "a nested nested type s") kotlin.String>>?
       1: (in util.Pair) operator fun component1(): @util.Anno(str = "a type s") kotlin.collections.List<@util.Anno(str = "a nested type s") kotlin.collections.Collection<@util.Anno(str = "a nested nested type s") kotlin.String>>?
 
@@ -220,6 +230,7 @@ KtValueArgument(410,419): '"a $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       str: kotlin.String
 
@@ -234,7 +245,10 @@ KtDestructuringDeclarationEntry(424,442): '@Anno("b $prop") b'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in util.Pair) operator fun component2(): @util.Anno(str = "b type s") kotlin.Array<@util.Anno(str = "b nested type s") kotlin.collections.List<@util.Anno(str = "b nested nested type s") kotlin.Int>>?
+    resolveToSymbols:
       0: (in util) val b: @util.Anno(str = "b type s") kotlin.Array<@util.Anno(str = "b nested type s") kotlin.collections.List<@util.Anno(str = "b nested nested type s") kotlin.Int>>?
       1: (in util.Pair) operator fun component2(): @util.Anno(str = "b type s") kotlin.Array<@util.Anno(str = "b nested type s") kotlin.collections.List<@util.Anno(str = "b nested nested type s") kotlin.Int>>?
 
@@ -249,6 +263,7 @@ KtValueArgument(430,439): '"b $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       str: kotlin.String
 
@@ -263,6 +278,7 @@ KtCallExpression(446,462): 'Pair(null, null)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -284,6 +300,7 @@ KtValueArgument(470,485): '"destr 1 $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       str: kotlin.String
 
@@ -298,7 +315,10 @@ KtDestructuringDeclarationEntry(492,510): '@Anno("c $prop") c'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in util.Pair) operator fun component1(): @util.Anno(str = "a type s") kotlin.collections.List<@util.Anno(str = "a nested type s") kotlin.collections.Collection<@util.Anno(str = "a nested nested type s") kotlin.String>>?
+    resolveToSymbols:
       0: (in util) val c: @util.Anno(str = "a type s") kotlin.collections.List<@util.Anno(str = "a nested type s") kotlin.collections.Collection<@util.Anno(str = "a nested nested type s") kotlin.String>>?
       1: (in util.Pair) operator fun component1(): @util.Anno(str = "a type s") kotlin.collections.List<@util.Anno(str = "a nested type s") kotlin.collections.Collection<@util.Anno(str = "a nested nested type s") kotlin.String>>?
 
@@ -313,6 +333,7 @@ KtValueArgument(498,507): '"c $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       str: kotlin.String
 
@@ -327,7 +348,10 @@ KtDestructuringDeclarationEntry(512,530): '@Anno("d $prop") d'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in util.Pair) operator fun component2(): @util.Anno(str = "b type s") kotlin.Array<@util.Anno(str = "b nested type s") kotlin.collections.List<@util.Anno(str = "b nested nested type s") kotlin.Int>>?
+    resolveToSymbols:
       0: (in util) val d: @util.Anno(str = "b type s") kotlin.Array<@util.Anno(str = "b nested type s") kotlin.collections.List<@util.Anno(str = "b nested nested type s") kotlin.Int>>?
       1: (in util.Pair) operator fun component2(): @util.Anno(str = "b type s") kotlin.Array<@util.Anno(str = "b nested type s") kotlin.collections.List<@util.Anno(str = "b nested nested type s") kotlin.Int>>?
 
@@ -342,6 +366,7 @@ KtValueArgument(518,527): '"d $prop"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       str: kotlin.String
 
@@ -356,6 +381,7 @@ KtCallExpression(534,550): 'Pair(null, null)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

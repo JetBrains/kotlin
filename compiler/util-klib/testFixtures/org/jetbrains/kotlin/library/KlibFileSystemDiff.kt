@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library
 
+import org.jetbrains.kotlin.library.KlibConstants.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.KlibFileSystemDiff.Message.*
 import java.io.File
 import java.nio.file.Files

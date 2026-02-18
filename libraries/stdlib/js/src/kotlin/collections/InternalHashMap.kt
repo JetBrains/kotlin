@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -17,7 +17,7 @@ internal class InternalHashMap<K, V> private constructor(
     private var valuesArray: Array<V>?,
     // hash of a key by its index, -1 if a key at that index was removed
     private var presenceArray: IntArray,
-    // (index + 1) of a key by its hash, 0 if there is no key with that hash, -1 if collision chain continues to the hash-1
+    // (index + 1) of a key by its hash, 0 if there is no key with that hash
     private var hashArray: IntArray,
     // max length of a collision chain
     private var maxProbeDistance: Int,
@@ -298,7 +298,7 @@ internal class InternalHashMap<K, V> private constructor(
         while (true) {
             val index = hashArray[hash]
             if (index == 0) return TOMBSTONE
-            if (index > 0 && keysArray[index - 1] == key) return index - 1
+            if (keysArray[index - 1] == key) return index - 1
             if (--probesLeft < 0) return TOMBSTONE
             if (hash-- == 0) hash = hashSize - 1
         }
@@ -322,7 +322,7 @@ internal class InternalHashMap<K, V> private constructor(
             var probeDistance = 0
             while (true) {
                 val index = hashArray[hash]
-                if (index <= 0) { // claim or reuse hash slot
+                if (index == 0) { // claim or reuse hash slot
                     if (length >= capacity) {
                         ensureExtraCapacity(1)
                         continue@retry
@@ -367,50 +367,32 @@ internal class InternalHashMap<K, V> private constructor(
 
     private fun removeHashAt(removedHash: Int) {
         var hash = removedHash
-        var hole = removedHash // will try to patch the hole in hash array
+        var hole = removedHash // will try to patch the hole in the hash array
         var probeDistance = 0
-        var patchAttemptsLeft = (maxProbeDistance * 2).coerceAtMost(hashSize / 2) // don't spend too much effort
         while (true) {
             if (hash-- == 0) hash = hashSize - 1
-            if (++probeDistance > maxProbeDistance) {
-                // too far away -- can release the hole, bad case will not happen
-                hashArray[hole] = 0
-                return
-            }
             val index = hashArray[hash]
-            if (index == 0) {
-                // end of chain -- can release the hole, bad case will not happen
+            if (++probeDistance > maxProbeDistance) {
+                // too far away - can release the hole, a bad case will not happen
                 hashArray[hole] = 0
                 return
             }
-            if (index < 0) {
-                // TOMBSTONE FOUND
-                //   - <--- [ TS ] ------ [hole] ---> +
-                //             \------------/
-                //             probeDistance
-                // move tombstone into the hole
-                hashArray[hole] = TOMBSTONE
+            if (index == 0) {
+                // end of chain - can release the hole, a bad case will not happen
+                hashArray[hole] = 0
+                return
+            }
+            val otherHash = hash(keysArray[index - 1])
+            // Bad case:
+            //   - <--- [hash] ------ [hole] ------ [otherHash] ---> +
+            //             \------------/
+            //             probeDistance
+            if ((otherHash - hash) and (hashSize - 1) >= probeDistance) {
+                // move otherHash into the hole, move the hole
+                hashArray[hole] = index
+                presenceArray[index - 1] = hole
                 hole = hash
                 probeDistance = 0
-            } else {
-                val otherHash = hash(keysArray[index - 1])
-                // Bad case:
-                //   - <--- [hash] ------ [hole] ------ [otherHash] ---> +
-                //             \------------/
-                //             probeDistance
-                if ((otherHash - hash) and (hashSize - 1) >= probeDistance) {
-                    // move otherHash into the hole, move the hole
-                    hashArray[hole] = index
-                    presenceArray[index - 1] = hole
-                    hole = hash
-                    probeDistance = 0
-                }
-            }
-            // check how long we're patching holes
-            if (--patchAttemptsLeft < 0) {
-                // just place tombstone into the hole
-                hashArray[hole] = TOMBSTONE
-                return
             }
         }
     }

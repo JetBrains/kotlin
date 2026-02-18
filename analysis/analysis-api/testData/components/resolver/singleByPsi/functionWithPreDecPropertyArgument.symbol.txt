@@ -1,0 +1,5 @@
+KtCallExpression(44,64): 'foo(--localProperty)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(i: kotlin.Int): kotlin.Unit
+    ]

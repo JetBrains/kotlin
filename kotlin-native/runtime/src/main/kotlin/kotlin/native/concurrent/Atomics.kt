@@ -225,17 +225,7 @@ public class AtomicNativePtr(@Volatile public var value: NativePtr) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
-    public fun getAndSet(newValue: NativePtr): NativePtr {
-        // Pointer types are allowed for atomicrmw xchg operand since LLVM 15.0,
-        // after LLVM version update, it may be implemented via getAndSetField intrinsic.
-        // Check: https://youtrack.jetbrains.com/issue/KT-57557
-        while (true) {
-            val old = value
-            if (this::value.compareAndSetField(old, newValue)) {
-                return old
-            }
-        }
-    }
+    public fun getAndSet(newValue: NativePtr): NativePtr = this::value.getAndSetField(newValue)
 
     /**
      * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected],

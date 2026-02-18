@@ -155,9 +155,29 @@ KtBlockExpression(174,763): '{'
   null
 
 KtCallExpression(180,749): 'foo1 {'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = (kotlin.Int) -> kotlin.Unit
+            symbol = action: (kotlin.Int) -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = returnPack/foo1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         {
                 foo2 {
                     foo3 {
@@ -190,32 +210,31 @@ KtCallExpression(180,749): 'foo1 {'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = (kotlin.Int) -> kotlin.Unit
-              symbol = action: (kotlin.Int) -> kotlin.Unit
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = returnPack/foo1
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(180,184): 'foo1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = (kotlin.Int) -> kotlin.Unit
+            symbol = action: (kotlin.Int) -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = returnPack/foo1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         {
                 foo2 {
                     foo3 {
@@ -226,7 +245,7 @@ KtNameReferenceExpression(180,184): 'foo1'
                                 return@foo1
                             },
                         )
-
+        
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -234,7 +253,7 @@ KtNameReferenceExpression(180,184): 'foo1'
                             return@foo2
                             return@foo1
                         })
-
+        
                         return@foo3
                         return@foo2
                         return@foo1
@@ -248,27 +267,6 @@ KtNameReferenceExpression(180,184): 'foo1'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = (kotlin.Int) -> kotlin.Unit
-              symbol = action: (kotlin.Int) -> kotlin.Unit
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = returnPack/foo1
-      typeArgumentsMapping = {}
 
 KtLambdaArgument(185,749): '{'
   null
@@ -283,9 +281,29 @@ KtBlockExpression(195,743): 'foo2 {'
   null
 
 KtCallExpression(195,743): 'foo2 {'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = (kotlin.String) -> kotlin.Unit
+            symbol = action: (kotlin.String) -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = returnPack/foo2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         {
                     foo3 {
                         foo1(
@@ -295,7 +313,7 @@ KtCallExpression(195,743): 'foo2 {'
                                 return@foo1
                             },
                         )
-
+        
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -303,7 +321,7 @@ KtCallExpression(195,743): 'foo2 {'
                             return@foo2
                             return@foo1
                         })
-
+        
                         return@foo3
                         return@foo2
                         return@foo1
@@ -316,32 +334,31 @@ KtCallExpression(195,743): 'foo2 {'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = (kotlin.String) -> kotlin.Unit
-              symbol = action: (kotlin.String) -> kotlin.Unit
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = returnPack/foo2
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(195,199): 'foo2'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = (kotlin.String) -> kotlin.Unit
+            symbol = action: (kotlin.String) -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = returnPack/foo2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         {
                     foo3 {
                         foo1(
@@ -351,7 +368,7 @@ KtNameReferenceExpression(195,199): 'foo2'
                                 return@foo1
                             },
                         )
-
+        
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -359,7 +376,7 @@ KtNameReferenceExpression(195,199): 'foo2'
                             return@foo2
                             return@foo1
                         })
-
+        
                         return@foo3
                         return@foo2
                         return@foo1
@@ -372,27 +389,6 @@ KtNameReferenceExpression(195,199): 'foo2'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = (kotlin.String) -> kotlin.Unit
-              symbol = action: (kotlin.String) -> kotlin.Unit
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = returnPack/foo2
-      typeArgumentsMapping = {}
 
 KtLambdaArgument(200,743): '{'
   null
@@ -407,9 +403,29 @@ KtBlockExpression(214,733): 'foo3 {'
   null
 
 KtCallExpression(214,733): 'foo3 {'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = returnPack/foo3(action: (kotlin.Boolean) -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = (kotlin.Boolean) -> kotlin.Unit
+            symbol = action: (kotlin.Boolean) -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = returnPack/foo3
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         {
                         foo1(
                             {
@@ -418,7 +434,7 @@ KtCallExpression(214,733): 'foo3 {'
                                 return@foo1
                             },
                         )
-
+        
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -426,7 +442,7 @@ KtCallExpression(214,733): 'foo3 {'
                             return@foo2
                             return@foo1
                         })
-
+        
                         return@foo3
                         return@foo2
                         return@foo1
@@ -438,32 +454,31 @@ KtCallExpression(214,733): 'foo3 {'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = returnPack/foo3(action: (kotlin.Boolean) -> kotlin.Unit): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = (kotlin.Boolean) -> kotlin.Unit
-              symbol = action: (kotlin.Boolean) -> kotlin.Unit
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = returnPack/foo3
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(214,218): 'foo3'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = returnPack/foo3(action: (kotlin.Boolean) -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = (kotlin.Boolean) -> kotlin.Unit
+            symbol = action: (kotlin.Boolean) -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = returnPack/foo3
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         {
                         foo1(
                             {
@@ -472,7 +487,7 @@ KtNameReferenceExpression(214,218): 'foo3'
                                 return@foo1
                             },
                         )
-
+        
                         foo2(label@ fun(s: String) {
                             return
                             return@label
@@ -480,7 +495,7 @@ KtNameReferenceExpression(214,218): 'foo3'
                             return@foo2
                             return@foo1
                         })
-
+        
                         return@foo3
                         return@foo2
                         return@foo1
@@ -492,27 +507,6 @@ KtNameReferenceExpression(214,218): 'foo3'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = returnPack/foo3(action: (kotlin.Boolean) -> kotlin.Unit): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = (kotlin.Boolean) -> kotlin.Unit
-              symbol = action: (kotlin.Boolean) -> kotlin.Unit
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = returnPack/foo3
-      typeArgumentsMapping = {}
 
 KtLambdaArgument(219,733): '{'
   null
@@ -527,9 +521,29 @@ KtBlockExpression(237,719): 'foo1('
   null
 
 KtCallExpression(237,413): 'foo1('
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = (kotlin.Int) -> kotlin.Unit
+            symbol = action: (kotlin.Int) -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = returnPack/foo1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         {
                                 return@foo3
                                 return@foo2
@@ -542,32 +556,31 @@ KtCallExpression(237,413): 'foo1('
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = (kotlin.Int) -> kotlin.Unit
-              symbol = action: (kotlin.Int) -> kotlin.Unit
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = returnPack/foo1
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(237,241): 'foo1'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = (kotlin.Int) -> kotlin.Unit
+            symbol = action: (kotlin.Int) -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = returnPack/foo1
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         {
                                 return@foo3
                                 return@foo2
@@ -580,27 +593,6 @@ KtNameReferenceExpression(237,241): 'foo1'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = (kotlin.Int) -> kotlin.Unit
-              symbol = action: (kotlin.Int) -> kotlin.Unit
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = returnPack/foo1
-      typeArgumentsMapping = {}
 
 KtValueArgumentList(241,413): '('
   null
@@ -645,9 +637,29 @@ KtLabelReferenceExpression(367,372): '@foo1'
   null
 
 KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = (kotlin.String) -> kotlin.Unit
+            symbol = action: (kotlin.String) -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = returnPack/foo2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         label@ fun(s: String) {
                             return
                             return@label
@@ -662,32 +674,31 @@ KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = (kotlin.String) -> kotlin.Unit
-              symbol = action: (kotlin.String) -> kotlin.Unit
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = returnPack/foo2
-      typeArgumentsMapping = {}
 
 KtNameReferenceExpression(431,435): 'foo2'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
-      argumentMapping = {
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = (kotlin.String) -> kotlin.Unit
+            symbol = action: (kotlin.String) -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = returnPack/foo2
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
         label@ fun(s: String) {
                             return
                             return@label
@@ -702,27 +713,6 @@ KtNameReferenceExpression(431,435): 'foo2'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = (kotlin.String) -> kotlin.Unit
-              symbol = action: (kotlin.String) -> kotlin.Unit
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = returnPack/foo2
-      typeArgumentsMapping = {}
 
 KtValueArgumentList(435,634): '(label@ fun(s: String) {'
   null

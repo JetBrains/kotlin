@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeBlackBoxTest
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.junit.jupiter.api.Tag
@@ -24,7 +24,7 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "FirNativeStressTestGenerated",
                 annotations = listOf(
                     *stress(),
-                    provider<UseStandardTestCaseGroupProvider>(),
+                    provider<UseExtTestCaseGroupProvider>(),
                 )
             ) {
                 model()

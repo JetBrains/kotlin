@@ -9,9 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
-import kotlin.collections.get
-import kotlin.collections.iterator
 
 class FixationOnlyInferenceLogsDumper() : FirInferenceLogsDumper() {
     override fun renderDump(sessionsToLoggers: Map<FirSession, FirInferenceLogger>): String =
@@ -66,18 +63,9 @@ class FixationOnlyInferenceLogsDumper() : FirInferenceLogsDumper() {
     }
 
     private fun InferenceLogger.FixationLogVariableInfo<*>.render(): String {
-        val lines = listOf(renderReadiness(4)) + constraints.mapIndexed { index, constraint ->
-            val operator = when (constraint.kind) {
-                ConstraintKind.LOWER -> ">:"
-                ConstraintKind.UPPER -> "<:"
-                ConstraintKind.EQUALITY -> "="
-            }
-            val suffix = when {
-                index >= constraintsBeforeFixationCount -> " (inferred during fixation)"
-                else -> ""
-            }
-            "     $operator ${constraint.type}$suffix"
-        }
+        val lines = mutableListOf(renderReadiness(4))
+        lines += formattedConstraintsBeforeFixation.values.map { representation -> "     $representation" }
+        lines += freezeConstraintsAfterFixation().map { representation -> "     $representation (inferred during fixation)" }
         return lines.joinToString("\n")
     }
 }

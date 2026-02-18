@@ -6,7 +6,6 @@
 
 // CHECK_BYTECODE_TEXT
 // 1 java/lang/invoke/LambdaMetafactory
-// 1 c2/C2\.access\$test\$s[0-9]+\(\)Ljava/lang/String\;
 
 // FILE: test.kt
 import c2.*

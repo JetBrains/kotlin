@@ -25,10 +25,10 @@ class KDocLexer : MergingLexerAdapter(
     override fun merge(tokenType: SyntaxElementType, lexer: Lexer): SyntaxElementType {
         val nextTokenType = lexer.getTokenType()
         val nextTokenText = lexer.getTokenText()
-        if (tokenType == KDocTokens.CODE_BLOCK_TEXT && nextTokenType == KDocTokens.TEXT && (nextTokenText == "```" || nextTokenText == "~~~")) {
+        if (tokenType == KDocTokens.CODE_BLOCK_TEXT && nextTokenType == KDocTokens.TEXT && nextTokenText.isValidCodeFence()) {
             lexer.advance()
             return KDocTokens.TEXT // Don't treat the trailing line as a part of a code block
-        } else if (tokenType == KDocTokens.CODE_BLOCK_TEXT || tokenType == KDocTokens.TEXT || tokenType == KtTokens.WHITE_SPACE) {
+        } else if (tokenType == KDocTokens.CODE_BLOCK_TEXT || tokenType == KDocTokens.CODE_SPAN_TEXT || tokenType == KDocTokens.TEXT || tokenType == KtTokens.WHITE_SPACE) {
             while (tokenType == lexer.getTokenType()) {
                 lexer.advance()
             }
@@ -36,5 +36,8 @@ class KDocLexer : MergingLexerAdapter(
 
         return tokenType
     }
+
+    private fun String.isValidCodeFence(): Boolean =
+        this.length >= 3 && (this[0] == '`' || this[0] == '~') && this.all { it == this[0] }
 
 }

@@ -9,7 +9,6 @@ import kotlinx.metadata.klib.impl.*
 import kotlinx.metadata.klib.impl.readHeader
 import kotlinx.metadata.klib.impl.writeHeader
 import kotlinx.metadata.klib.impl.KlibMetadataVersionWriteExtension
-import kotlin.metadata.KmAnnotation
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.*
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
@@ -55,7 +54,6 @@ interface KlibModuleFragmentWriteStrategy {
 class KlibModuleMetadata(
     val name: String,
     val fragments: List<KmModuleFragment>,
-    val annotations: List<KmAnnotation>,
     val metadataVersion: KlibMetadataVersion,
     internal val isAllowedToWrite: Boolean = true,
 ) {
@@ -125,20 +123,17 @@ class KlibModuleMetadata(
             checkMetadataVersionForRead(library.metadataVersion, lenient)
 
             val moduleHeaderProto = parseModuleHeader(library.moduleHeaderData)
-            val headerNameResolver = NameResolverImpl(moduleHeaderProto.strings, moduleHeaderProto.qualifiedNames)
-            val moduleHeader = moduleHeaderProto.readHeader(headerNameResolver)
-            val fileIndex = SourceFileIndexReadExtension(moduleHeader.file)
+            val moduleHeader = moduleHeaderProto.readHeader()
             val moduleFragments = moduleHeader.packageFragmentName.flatMap { packageFqName ->
                 library.packageMetadataParts(packageFqName).map { part ->
                     val packageFragment = parsePackageFragment(library.packageMetadata(packageFqName, part))
                     val nameResolver = NameResolverImpl(packageFragment.strings, packageFragment.qualifiedNames)
-                    packageFragment.toKmModuleFragment(nameResolver, listOf(fileIndex))
+                    packageFragment.toKmModuleFragment(nameResolver)
                 }.let(readStrategy::processModuleParts)
             }
             return KlibModuleMetadata(
                 moduleHeader.moduleName,
                 moduleFragments,
-                moduleHeader.annotation,
                 library.metadataVersion,
                 isAllowedToWrite = !lenient,
             )
@@ -164,28 +159,24 @@ class KlibModuleMetadata(
             error("Metadata read in lenient mode cannot be written back")
         }
 
-        val reverseIndex = ReverseSourceFileIndexWriteExtension()
-
         val groupedFragments = fragments
             .groupBy(KmModuleFragment::fqNameOrFail)
             .mapValues { writeStrategy.processPackageParts(it.value) }
 
         val header = KlibHeader(
             name,
-            reverseIndex.fileIndex,
             groupedFragments.map { it.key },
             groupedFragments.filter { it.value.all(KmModuleFragment::isEmpty) }.map { it.key },
-            annotations
         )
         val versionExt = KlibMetadataVersionWriteExtension(metadataVersion)
         val groupedProtos = groupedFragments.mapValues { (_, fragments) ->
             fragments.map { mf ->
-                val c = WriteContext(ApproximatingStringTable(), listOf(reverseIndex, versionExt))
+                val c = WriteContext(ApproximatingStringTable(), listOf(versionExt))
                 KlibModuleFragmentWriter(c.strings as ApproximatingStringTable, c.contextExtensions).also { it.writeModuleFragment(mf) }.write()
             }
         }
         // This context and string table is only required for module-level annotations.
-        val c = WriteContext(ApproximatingStringTable(), listOf(reverseIndex))
+        val c = WriteContext(ApproximatingStringTable())
         return SerializedKlibMetadata(
             header.writeHeader(c).build().toByteArray(),
             groupedProtos.map { it.value.map(ProtoBuf.PackageFragment::toByteArray) },

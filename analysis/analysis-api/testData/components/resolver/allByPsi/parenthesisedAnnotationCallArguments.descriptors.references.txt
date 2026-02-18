@@ -44,8 +44,9 @@ KtValueArgument(175,182): '(("A"))'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      value: kotlin.String
 
 KtNameReferenceExpression(200,206): 'MyAnno'
   KtSimpleNameReference:
@@ -64,6 +65,7 @@ KtNameReferenceExpression(207,212): 'value'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -78,8 +80,9 @@ KtValueArgument(247,268): '(((("A")) as String))'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      value: kotlin.String
 
 KtOperationReferenceExpression(257,259): 'as'
   KtSimpleNameReference:
@@ -106,6 +109,7 @@ KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -119,6 +123,7 @@ KtNameReferenceExpression(316,323): 'arrayOf'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -139,6 +144,7 @@ KtNameReferenceExpression(371,376): 'value'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -146,6 +152,7 @@ KtCallExpression(381,400): 'arrayOf(("A"), "B")'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -159,6 +166,7 @@ KtNameReferenceExpression(381,388): 'arrayOf'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -166,15 +174,17 @@ KtValueArgument(389,394): '("A")'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      vararg value: kotlin.String
 
 KtValueArgument(396,399): '"B"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      vararg value: kotlin.String
 
 KtNameReferenceExpression(420,432): 'MyAnnoKClass'
   KtSimpleNameReference:
@@ -187,8 +197,9 @@ KtValueArgument(433,452): '(((String::class)))'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      value: kotlin.reflect.KClass<*>
 
 KtNameReferenceExpression(436,442): 'String'
   KtSimpleNameReference:
@@ -200,5 +211,6 @@ KtNameReferenceExpression(436,442): 'String'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

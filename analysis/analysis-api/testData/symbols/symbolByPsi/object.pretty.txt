@@ -1,0 +1,31 @@
+interface InterfaceA {
+  fun foo()
+}
+
+object Object : InterfaceA {
+  override fun foo()
+
+  fun function()
+
+  private fun privateFunction()
+
+  internal fun internalFunction()
+
+  var variable: kotlin.Int
+
+  private var privateVariable: kotlin.Int
+
+  internal var internalVariable: kotlin.Int
+
+  class NestedClass
+
+  inner class InnerClass
+
+  object NestedObject
+
+  interface NestedInterface
+
+  annotation class NestedAnnotation
+
+  typealias NestedTypeAlias = kotlin.String
+}

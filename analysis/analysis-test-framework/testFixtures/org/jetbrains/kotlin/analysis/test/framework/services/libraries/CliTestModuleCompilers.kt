@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.NoPreloadingMockLibraryUtil
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -159,7 +158,7 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
         libraryOutputPath: Path,
         extraClasspath: List<String>,
     ) {
-        MockLibraryUtil.compileLibraryToJar(
+        NoPreloadingMockLibraryUtil.compileLibraryToJar(
             sourcesPath = sourcesPath.absolutePathString(),
             contentDir = sourcesPath.toFile(),
             jarName = libraryOutputPath.nameWithoutExtension,
@@ -202,7 +201,7 @@ object JsKlibTestModuleCompiler : CliTestModuleCompiler() {
             addAll(options)
         }
 
-        MockLibraryUtil.runJsCompiler(commands)
+        NoPreloadingMockLibraryUtil.runJsCompiler(commands)
     }
 
     override fun libraryOutputPath(inputPath: Path, libraryName: String): Path =
@@ -236,7 +235,7 @@ object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
             addAll(options)
         }
 
-        MockLibraryUtil.runMetadataCompiler(commands)
+        NoPreloadingMockLibraryUtil.runMetadataCompiler(commands)
     }
 
     override fun libraryOutputPath(inputPath: Path, libraryName: String): Path =

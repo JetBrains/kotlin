@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.analysis.api.resolve.extensions
 import com.intellij.openapi.Disposable
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
+import org.jetbrains.kotlin.analysis.api.KaSpi
+import org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint
 import org.jetbrains.kotlin.name.FqName
 
 /**
@@ -47,7 +48,7 @@ import org.jetbrains.kotlin.name.FqName
  * @see KaResolveExtensionFile
  * @see KaResolveExtensionProvider
  */
-@KaExtensibleApi
+@KaSpi
 @KaExperimentalApi
 public abstract class KaResolveExtension : Disposable {
     /**
@@ -69,11 +70,13 @@ public abstract class KaResolveExtension : Disposable {
      *
      * @see KaResolveExtensionFile
      */
+    @KaSpiExtensionPoint
     public abstract fun getKtFiles(): List<KaResolveExtensionFile>
 
     /**
      * Returns the set of packages that are contained in the files provided by [getKtFiles]. It should be an exact set of all file packages.
      */
+    @KaSpiExtensionPoint
     public abstract fun getContainedPackages(): Set<FqName>
 
     /**
@@ -87,8 +90,10 @@ public abstract class KaResolveExtension : Disposable {
      * covers those externally generated sources. This will prevent collisions between the definitions provided by [getKtFiles] and those
      * provided by the (potentially stale) externally generated sources.
      */
+    @KaSpiExtensionPoint
     public open fun getShadowedScope(): GlobalSearchScope = GlobalSearchScope.EMPTY_SCOPE
 
+    @KaSpiExtensionPoint
     override fun dispose() {
     }
 }

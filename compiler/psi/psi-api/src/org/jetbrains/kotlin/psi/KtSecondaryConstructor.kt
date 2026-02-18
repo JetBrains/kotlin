@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,18 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 
+/**
+ * Represents a secondary constructor declared in the class body.
+ *
+ * ### Example:
+ *
+ * ```kotlin
+ * class Person(val name: String, val age: Int) {
+ *     constructor(name: String) : this(name, 0)
+ * //  ^_______________________________________^
+ * }
+ * ```
+ */
 class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinConstructorStub<KtSecondaryConstructor>) : super(stub, KtStubBasedElementTypes.SECONDARY_CONSTRUCTOR)

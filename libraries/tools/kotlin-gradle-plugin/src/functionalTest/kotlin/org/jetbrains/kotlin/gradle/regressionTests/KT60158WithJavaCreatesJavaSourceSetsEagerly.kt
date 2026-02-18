@@ -7,10 +7,12 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
+import org.junit.jupiter.api.Assumptions
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -18,6 +20,8 @@ import kotlin.test.assertNull
 class KT60158WithJavaCreatesJavaSourceSetsEagerly {
     @Test
     fun `test jvm withJava creates corresponding java source sets eagerly`() = buildProjectWithMPP().runLifecycleAwareTest {
+        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
+
         assertNull(javaSourceSets.findByName("main"))
 
         multiplatformExtension.jvm()

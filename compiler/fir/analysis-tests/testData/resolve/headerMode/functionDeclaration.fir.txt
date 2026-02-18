@@ -1,16 +1,18 @@
 FILE: functionDeclaration.kt
-    public final fun funA(): R|kotlin/String|
+    public final fun funA(): R|kotlin/String| {
+    }
     public final inline fun funB(): R|kotlin/String| {
         ^funB String(funB body)
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun isNotNull(value: R|kotlin/Any?|): R|kotlin/Boolean|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|)) [evaluated = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))]) public final fun isNotNull(value: R|kotlin/Any?|): R|kotlin/Boolean|
         [R|Contract description]
          <
             Returns(TRUE) -> value != null
         >
-
-    private final fun funC(): R|kotlin/String|
-    public final fun funD(): R|kotlin/Int|
+     {
+    }
+    public final fun funD(): R|kotlin/Int| {
+    }
     public final inline fun funE(): R|kotlin/String| {
         local final fun funF(): R|kotlin/String| {
             ^funF String(funF body)
@@ -33,5 +35,7 @@ FILE: functionDeclaration.kt
         lval a: R|<local>/classA| = R|<local>/classA.classA|()
         ^funG R|<local>/a|.R|<local>/funH|()
     }
-    public final fun funI(): R|kotlin/Int|
-    public final fun funJ(): R|kotlin/String|
+    public final fun funI(): R|kotlin/Int| {
+    }
+    public final fun funJ(): R|kotlin/String| {
+    }

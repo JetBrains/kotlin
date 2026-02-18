@@ -4,6 +4,7 @@
 // LANGUAGE: -IrIntraModuleInlinerBeforeKlibSerialization -IrCrossModuleInlinerBeforeKlibSerialization
 // ^^^ in deserialization tests, IR Inliner on 1st stage crashes before IR dumps comparison. So let's test dumps without inliner
 
+// FILE: lib.kt
 interface I<T> {
     val prop: T
     fun h(x: T = prop): Any
@@ -19,4 +20,5 @@ class B : A<Int>(), I2<Int> {
     override val prop get() = "OK"
 }
 
+// FILE: main.kt
 fun box() = B().h()

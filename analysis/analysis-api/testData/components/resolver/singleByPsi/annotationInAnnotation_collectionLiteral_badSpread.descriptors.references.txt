@@ -8,6 +8,7 @@ KtNameReferenceExpression(153,163): 'Annotation'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -15,5 +16,6 @@ KtValueArgument(153,177): 'Annotation(["v1", "v2"])'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      value: Annotation

@@ -1,6 +1,7 @@
 // WITH_STDLIB
+// NO_CHECK_LAMBDA_INLINING
 
-import kotlin.test.*
+// FILE: lib.kt
 
 val sb = StringBuilder()
 
@@ -12,6 +13,8 @@ inline fun <R> call(block: ()->R): R {
     }
 }
 
+// FILE: main.kt
+import kotlin.test.*
 fun box(): String {
     call { class Z(); Z() }
     return sb.toString()

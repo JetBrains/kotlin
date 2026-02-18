@@ -3,6 +3,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in Base) val `super`: kotlin.Int
 
@@ -11,6 +12,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in Base) val `super`: kotlin.Int
 
@@ -19,6 +21,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in Base) val `this`: kotlin.String
 
@@ -27,6 +30,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in Base) val `this`: kotlin.String
 
@@ -35,6 +39,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         extension receiver with type kotlin.Long
 
@@ -44,5 +49,6 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       resolvesByNamesViolations: '<receiver>' !in [this, getThis]
+      attempt: KaSymbolResolutionSuccess
       symbols:
         extension receiver with type kotlin.Long

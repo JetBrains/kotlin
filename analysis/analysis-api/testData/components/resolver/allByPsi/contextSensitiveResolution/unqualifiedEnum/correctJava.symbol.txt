@@ -1,0 +1,56 @@
+KtFile: 'test.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(26,106): 'fun foo(javaEnum: JavaEnum) = when (javaEnum) {'
+  null
+
+KtParameterList(33,53): '(javaEnum: JavaEnum)'
+  null
+
+KtParameter(34,52): 'javaEnum: JavaEnum'
+  null
+
+KtTypeReference(44,52): 'JavaEnum'
+  null
+
+KtUserType(44,52): 'JavaEnum'
+  null
+
+KtNameReferenceExpression(44,52): 'JavaEnum'
+  null
+
+KtWhenExpression(56,106): 'when (javaEnum) {'
+  null
+
+KtNameReferenceExpression(62,70): 'javaEnum'
+  null
+
+KtWhenEntry(78,88): 'FIRST -> 1'
+  null
+
+KtWhenConditionWithExpression(78,83): 'FIRST'
+  null
+
+KtNameReferenceExpression(78,83): 'FIRST'
+  null
+
+KtConstantExpression(87,88): '1'
+  null
+
+KtWhenEntry(93,104): 'SECOND -> 2'
+  null
+
+KtWhenConditionWithExpression(93,99): 'SECOND'
+  null
+
+KtNameReferenceExpression(93,99): 'SECOND'
+  null
+
+KtConstantExpression(103,104): '2'
+  null

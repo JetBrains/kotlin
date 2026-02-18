@@ -1,0 +1,15 @@
+KtCollectionLiteralExpression(173,188): '["1", "2", "3"]'
+  KtCollectionLiteralReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
+    symbols:
+      (in MyList.Companion) operator fun of(vararg vals: kotlin.String): MyList
+
+KtCallExpression(162,189): 'acceptList(["1", "2", "3"])'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    attempt: null
+    symbols:
+      Nothing (Unresolved reference)

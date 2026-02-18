@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 /**
  * A call to a function, a simple/compound access to a property, or a simple/compound access through `get` and `set` convention.
  */
-@OptIn(KaImplementationDetail::class)
+@OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
 public sealed interface KaCall : KaLifetimeOwner
 
 /**
@@ -50,25 +50,115 @@ public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaCallableMemberCa
  * A call to a function within Kotlin code. This includes calls to regular functions, constructors, constructors of superclasses, and
  * annotations.
  */
-public sealed interface KaFunctionCall<S : KaFunctionSymbol> : KaCallableMemberCall<S, KaFunctionSignature<S>> {
+@OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaFunctionCall<S : KaFunctionSymbol> : KaSingleCall<S, KaFunctionSignature<S>>,
+    KaCallableMemberCall<S, KaFunctionSignature<S>> {
+
+    /**
+     * A mapping from the call's argument expressions to their associated parameter symbols in a stable order. In case of `vararg`
+     * parameters, multiple arguments may be mapped to the same [KaValueParameterSymbol].
+     *
+     * @see contextArgumentMapping
+     * @see combinedArgumentMapping
+     */
+    public val valueArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
+
+    /**
+     * A mapping from the call's [explicit context argument](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0448-explicit-context-arguments.md)
+     * expressions to their associated context parameter symbols in a stable order.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * context(a: A, b: B)
+     * fun foo() { ... }
+     *
+     * fun test() {
+     *     with(A()) {
+     *         foo(b = B())  // explicit context argument `b = B()`
+     *     }
+     * }
+     * ```
+     *
+     * For the `foo(b = B())` call, `contextArgumentMapping` contains a single entry mapping the `B()` expression
+     * to the context parameter `b: B`.
+     *
+     * @see valueArgumentMapping
+     * @see combinedArgumentMapping
+     */
+    @KaExperimentalApi
+    public val contextArgumentMapping: Map<KtExpression, KaVariableSignature<KaContextParameterSymbol>>
+
+    /**
+     * A combined mapping from the call's argument expressions to their associated parameter symbols in a stable order.
+     * This includes both [value arguments][valueArgumentMapping] and [context arguments][contextArgumentMapping].
+     *
+     * In case of `vararg` parameters, multiple arguments may be mapped to the same [KaValueParameterSymbol].
+     *
+     * @see valueArgumentMapping
+     * @see contextArgumentMapping
+     */
+    public val combinedArgumentMapping: Map<KtExpression, KaVariableSignature<KaParameterSymbol>>
+
     /**
      * A mapping from the call's argument expressions to their associated parameter symbols in a stable order. In case of `vararg`
      * parameters, multiple arguments may be mapped to the same [KaValueParameterSymbol].
      */
+    @Deprecated("Use 'valueArgumentMapping' or 'combinedArgumentMapping' instead", ReplaceWith("valueArgumentMapping"))
     public val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
+        get() = valueArgumentMapping
+
+    @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead")
+    override val partiallyAppliedSymbol: KaPartiallyAppliedSymbol<S, KaFunctionSignature<S>>
 }
 
 /**
  * A simple, direct call to a function, without any delegation or special syntax involved.
  */
+@Deprecated(
+    message = "Use 'KaFunctionCall' instead",
+    replaceWith = ReplaceWith(
+        expression = "KaFunctionCall<*>",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall"],
+    )
+)
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSimpleFunctionCall : KaFunctionCall<KaFunctionSymbol> {
     /**
      * Whether this function call is an [implicit invoke call](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) on a
      * value that has an `invoke` member function.
      */
+    @Deprecated(
+        message = "Check whether the call is instance of the 'KaImplicitInvokeCall' instead",
+        replaceWith = ReplaceWith(
+            "this is KaImplicitInvokeCall",
+            imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaImplicitInvokeCall"]
+        ),
+    )
     public val isImplicitInvoke: Boolean
 }
+
+/**
+ * A call to an [implicit invoke call](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator).
+ *
+ * ### Example
+ *
+ * ```kotlin
+ * interface Foo {
+ *     operator fun <T> invoke(t: T)
+ * }
+ *
+ * fun test(f: Foo) {
+ *     f("str")
+ * //  ^^^^^^^^
+ * }
+ * ```
+ *
+ * `f("str")` is the implicit form of `f.invoke("")`
+ */
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaImplicitInvokeCall : KaFunctionCall<KaNamedFunctionSymbol>
 
 /**
  * A call to an [annotation constructor](https://kotlinlang.org/docs/annotations.html#constructors).
@@ -121,25 +211,70 @@ public interface KaDelegatedConstructorCall : KaFunctionCall<KaConstructorSymbol
 }
 
 /**
- * An access to variables (including properties).
+ * Access to variables (including properties).
  */
-public sealed interface KaVariableAccessCall : KaCallableMemberCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>
-
-/**
- * A simple read or write to a variable or property.
- */
+@OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaSimpleVariableAccessCall : KaVariableAccessCall {
-    /**
-     * The kind of access to the variable (read or write), alongside additional information.
-     */
-    public val simpleAccess: KaSimpleVariableAccess
+public interface KaVariableAccessCall : KaSingleCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>,
+    KaCallableMemberCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>> {
+
+    @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead")
+    override val partiallyAppliedSymbol: KaPartiallyAppliedSymbol<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>
 
     /**
      * Whether the call was resolved using the [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) feature
      */
     @KaExperimentalApi
     public val isContextSensitive: Boolean
+
+    /**
+     * The kind of access to the variable (read or write), alongside additional information
+     */
+    public val kind: Kind
+
+    /**
+     * Determines the kind of access to the [variable][KaVariableAccessCall] (read or write), alongside additional information
+     *
+     * @see KaVariableAccessCall
+     */
+    public sealed interface Kind {
+        /**
+         * The [variable access][KaVariableAccessCall] reads the variable.
+         */
+        @SubclassOptInRequired(KaImplementationDetail::class)
+        public interface Read : Kind
+
+        /**
+         * The [variable access][KaVariableAccessCall] writes to the variable.
+         */
+        @SubclassOptInRequired(KaImplementationDetail::class)
+        public interface Write : Kind {
+            /**
+             * A [KtExpression] that represents the new value which is assigned to this variable, or `null` if the assignment is incomplete and
+             * lacks the new value.
+             */
+            public val value: KtExpression?
+        }
+    }
+}
+
+/**
+ * A simple read or write to a variable or property.
+ */
+@Deprecated(
+    message = "Use 'KaVariableAccessCall' instead",
+    replaceWith = ReplaceWith(
+        expression = "KaVariableAccessCall",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall"],
+    ),
+)
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaSimpleVariableAccessCall : KaVariableAccessCall {
+    /**
+     * The kind of access to the variable (read or write), alongside additional information.
+     */
+    @Deprecated("Use 'kind' instead", ReplaceWith("kind"))
+    public val simpleAccess: @Suppress("DEPRECATION") KaSimpleVariableAccess
 }
 
 /**
@@ -151,6 +286,12 @@ public interface KaCompoundAccessCall {
      * The corresponding [compound operation][KaCompoundOperation].
      */
     public val compoundOperation: KaCompoundOperation
+
+    /**
+     * Represents a call of the operator
+     */
+    public val operationCall: KaFunctionCall<KaNamedFunctionSymbol>
+        get() = compoundOperation.operationCall
 }
 
 /**
@@ -202,12 +343,19 @@ public interface KaCompoundAccessCall {
  * `m += "a"` is a simple `KaFunctionCall` to `MutableList.plusAssign`, not a `KaCompoundVariableAccessCall`. However, the dispatch receiver
  * of this call, `m`, is a simple read access represented as a `KaVariableAccessCall`.
  */
+@OptIn(KaExperimentalApi::class)
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaCompoundVariableAccessCall : KaCall, KaCompoundAccessCall {
+public interface KaCompoundVariableAccessCall : KaMultiCall, KaCall, KaCompoundAccessCall {
     /**
      * Represents a symbol of the mutated variable.
      */
+    @Deprecated("Use 'variableCall' instead")
     public val variablePartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>
+
+    /**
+     * Represents a call of the mutated variable
+     */
+    public val variableCall: KaVariableAccessCall
 }
 
 /**
@@ -257,8 +405,9 @@ public interface KaCompoundVariableAccessCall : KaCall, KaCompoundAccessCall {
  * The above call is represented as a simple `KaFunctionCall` to `MutableList.plusAssign`, with the dispatch receiver referencing the
  * expression `m["a"]`, which is again a simple `KaFunctionCall` to `ThrowingMap.get`.
  */
+@OptIn(KaExperimentalApi::class)
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaCompoundArrayAccessCall : KaCall, KaCompoundAccessCall {
+public interface KaCompoundArrayAccessCall : KaMultiCall, KaCall, KaCompoundAccessCall {
     /**
      * The arguments representing the indices in the [index access operator](https://kotlinlang.org/docs/operator-overloading.html#indexed-access-operator)
      * call.
@@ -275,11 +424,24 @@ public interface KaCompoundArrayAccessCall : KaCall, KaCompoundAccessCall {
     /**
      * The `get` function that's invoked when reading values corresponding to the given [indexArguments].
      */
+    @Deprecated("Use 'getterCall' instead")
     public val getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
+
+    /**
+     * Represents a call of the `get` function that's invoked when reading values corresponding to the given [indexArguments]
+     */
+    public val getterCall: KaFunctionCall<KaNamedFunctionSymbol>
 
     /**
      * The `set` function that's invoked when writing values corresponding to the given [indexArguments] and the computed value from the
      * operation.
      */
+    @Deprecated("Use 'setterCall' instead")
     public val setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
+
+    /**
+     * Represents a call of the `set` function that's invoked when writing values corresponding to the given [indexArguments] and the computed value from the
+     * operation
+     */
+    public val setterCall: KaFunctionCall<KaNamedFunctionSymbol>
 }

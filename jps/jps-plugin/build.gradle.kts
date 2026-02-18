@@ -76,7 +76,7 @@ dependencies {
         testRuntimeOnly(project(it))
     }
 
-    testImplementation("org.projectlombok:lombok:1.18.16")
+    testImplementation("org.projectlombok:lombok:${rootProject.extra["versions.lombok"]}")
     testImplementation(libs.kotlinx.serialization.json)
 }
 

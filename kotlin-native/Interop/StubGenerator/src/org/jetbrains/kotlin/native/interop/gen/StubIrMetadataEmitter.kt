@@ -19,9 +19,8 @@ class StubIrMetadataEmitter(
         private val bridgeBuilderResult: BridgeBuilderResult
 ) {
     fun emit(): KlibModuleMetadata {
-        val annotations = emptyList<KmAnnotation>()
         val fragments = emitModuleFragments()
-        return KlibModuleMetadata(moduleName, fragments, annotations, context.metadataVersion)
+        return KlibModuleMetadata(moduleName, fragments, context.metadataVersion)
     }
 
     private fun emitModuleFragments(): List<KmModuleFragment> =

@@ -18,6 +18,7 @@ import java.lang.management.ManagementFactory
 import java.lang.management.ThreadMXBean
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.contracts.contract
 
 /**
  * The class is not thread-safe; all functions should be called sequentially phase-by-phase within a specific module
@@ -52,6 +53,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     private var currentDynamicPhaseTime: Time? = null
     private var currentDynamicPhase: String? = null
     private val dynamicPhaseMeasurements = LinkedHashMap<Pair<PhaseType, String>, Time>()
+
+    private val klibElementStats: SortedMap<String, Long> = sortedMapOf()
 
     var isExtendedStatsEnabled: Boolean = false
         private set
@@ -137,6 +140,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
                 val (phaseType, name) = key
                 DynamicStats(phaseType, name, time)
             },
+            klibElementStats.map { (path, size) -> KlibElementStats(path, size) },
             findJavaClassStats,
             findKotlinClassStats,
             gcMeasurements.values.toList(),
@@ -164,6 +168,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
         otherUnitStats.dynamicStats?.forEach { (phaseType, name, time) ->
             dynamicPhaseMeasurements[phaseType to name] = (dynamicPhaseMeasurements[phaseType to name] ?: Time.ZERO) + time
+        }
+
+        otherUnitStats.klibElementStats?.forEach { (path, size) ->
+            klibElementStats[path] = (klibElementStats[path] ?: 0) + size
         }
 
         otherUnitStats.forEachPhaseSideMeasurement { phaseSideType, sideStats ->
@@ -332,6 +340,12 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             }
             phaseSideMeasurements[phaseSideType] =
                 (phaseSideMeasurements[phaseSideType] ?: SideStats.EMPTY) + SideStats(1, elapsedTime)
+        }
+    }
+
+    fun registerKlibElementStats(stats: List<Pair<String, Long>>) {
+        stats.forEach { (path, size) ->
+            klibElementStats[path] = size
         }
     }
 

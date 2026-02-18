@@ -26,6 +26,7 @@ package kaptk2.b458124793;
 
 @MyAnnotation(myType = MyEnum.ENUM_ELEMENT)
 /**
+ * @kaptk2/b458124793/MyAnnotation
  * public abstract interface kaptk2/b458124793/MyAnnotationUser : kotlin/Any {
  *
  *   // module name: main

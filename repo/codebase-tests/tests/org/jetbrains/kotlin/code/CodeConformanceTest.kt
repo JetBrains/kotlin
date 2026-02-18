@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -143,6 +143,7 @@ class CodeConformanceTest : TestCase() {
                 "repo/gradle-build-conventions/buildsrc-compat/build/generated-sources",
                 "repo/gradle-build-conventions/generators/build/generated-sources",
                 "repo/gradle-build-conventions/project-tests-convention/build/generated-sources",
+                "repo/gradle-build-conventions/test-data-manager-convention/build/generated-sources",
                 "repo/gradle-build-conventions/android-sdk-provisioner/build/generated-sources",
                 "repo/gradle-build-conventions/asm-deprecating-transformer/build/generated-sources",
                 "repo/gradle-build-conventions/binaryen-configuration/build/generated-sources",
@@ -190,6 +191,29 @@ class CodeConformanceTest : TestCase() {
             val matcher = canonicalPattern.matcher(sourceFile.readText())
             if (matcher.find()) {
                 fail("KT-69613 canonicalPath and canonicalFile apis should not be used: ${matcher.group()}\nin file: $sourceFile")
+            }
+        }
+    }
+
+    fun testNoDirectPathToStringConversion() {
+        val absolutePathStringPattern = Pattern.compile("\\.absolutePathString\\(\\)", Pattern.MULTILINE)
+
+        val targetDirs = listOf(
+            "compiler/build-tools/kotlin-build-tools-api/src",
+            "compiler/build-tools/kotlin-build-tools-api/gen",
+            "compiler/build-tools/kotlin-build-tools-impl/src",
+            "compiler/build-tools/kotlin-build-tools-impl/gen",
+            "compiler/build-tools/kotlin-build-tools-compat/src",
+            "compiler/build-tools/kotlin-build-tools-compat/gen",
+            "compiler/build-tools/kotlin-build-tools-cri-impl/src",
+        )
+
+        targetDirs.map {
+            FileUtil.findFilesByMask(KOTLIN_FILE_PATTERN, File(it))
+        }.flatten().forEach { sourceFile ->
+            val matcher = absolutePathStringPattern.matcher(sourceFile.readText())
+            if (matcher.find()) {
+                fail("KT-83715 absolutePathString should not be used as it loses information about FileSystem: ${matcher.group()}\nin file: $sourceFile")
             }
         }
     }

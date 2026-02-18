@@ -1,22 +1,70 @@
 /J.kt:(385,407): warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInteger' instead.
 
+/J.kt:(402,403): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+
+/J.kt:(405,406): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+
 /J.kt:(500,524): warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Long' does not have a consistent identity. Consider using 'AtomicLong' instead.
+
+/J.kt:(517,519): warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+
+/J.kt:(521,523): warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
 
 /J.kt:(618,644): warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Char' does not have a consistent identity.
 
+/J.kt:(635,638): warning: This call may have inconsistent results because the type of this argument, 'Char', does not have a consistent identity.
+
+/J.kt:(640,643): warning: This call may have inconsistent results because the type of this argument, 'Char', does not have a consistent identity.
+
 /J.kt:(768,793): warning: This call may have inconsistent results because 'AtomicReferenceArray' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicIntegerArray' instead.
+
+/J.kt:(788,789): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+
+/J.kt:(791,792): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
 
 /J.kt:(895,922): warning: This call may have inconsistent results because 'AtomicReferenceArray' uses identity equality and 'Long' does not have a consistent identity. Consider using 'AtomicLongArray' instead.
 
+/J.kt:(915,917): warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+
+/J.kt:(919,921): warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+
 /J.kt:(1030,1062): warning: This call may have inconsistent results because 'AtomicReferenceArray' uses identity equality and 'Boolean' does not have a consistent identity.
+
+/J.kt:(1050,1054): warning: This call may have inconsistent results because the type of this argument, 'Boolean', does not have a consistent identity.
+
+/J.kt:(1056,1061): warning: This call may have inconsistent results because the type of this argument, 'Boolean', does not have a consistent identity.
 /K.kt:(337,361): warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
+
+/K.kt:(354,357): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+
+/K.kt:(359,360): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
 
 /K.kt:(450,476): warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Long' does not have a consistent identity. Consider using 'AtomicLong' instead.
 
+/K.kt:(467,471): warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+
+/K.kt:(473,475): warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+
 /K.kt:(569,598): warning: This call may have inconsistent results because 'AtomicReference' uses identity equality and 'Boolean' does not have a consistent identity. Consider using 'AtomicBoolean' instead.
+
+/K.kt:(586,591): warning: This call may have inconsistent results because the type of this argument, 'Boolean', does not have a consistent identity.
+
+/K.kt:(593,597): warning: This call may have inconsistent results because the type of this argument, 'Boolean', does not have a consistent identity.
 
 /K.kt:(712,741): warning: This call may have inconsistent results because 'AtomicArray' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicIntArray' instead.
 
+/K.kt:(734,737): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+
+/K.kt:(739,740): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+
 /K.kt:(831,862): warning: This call may have inconsistent results because 'AtomicArray' uses identity equality and 'Long' does not have a consistent identity. Consider using 'AtomicLongArray' instead.
 
+/K.kt:(853,857): warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+
+/K.kt:(859,861): warning: This call may have inconsistent results because the type of this argument, 'Long', does not have a consistent identity.
+
 /K.kt:(956,990): warning: This call may have inconsistent results because 'AtomicArray' uses identity equality and 'Boolean' does not have a consistent identity.
+
+/K.kt:(978,983): warning: This call may have inconsistent results because the type of this argument, 'Boolean', does not have a consistent identity.
+
+/K.kt:(985,989): warning: This call may have inconsistent results because the type of this argument, 'Boolean', does not have a consistent identity.

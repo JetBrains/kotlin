@@ -32,7 +32,7 @@ public class SirTrampolineFunction(
     override val parameters: List<SirParameter> by lazy {
         source.parameters.mapIndexed { index, element ->
             if (element.argumentName == null && element.parameterName == null) {
-                SirParameter(parameterName = "_$index", type = element.type)
+                SirParameter(parameterName = "_$index", type = element.type, isVariadic = element.isVariadic)
             } else {
                 element
             }
@@ -46,18 +46,25 @@ public class SirTrampolineFunction(
     override val bridges: List<SirBridge> = emptyList()
 
     override var body: SirFunctionBody?
-        get() = SirFunctionBody(
-            listOf(
-                "${
-                    "try ".takeIf { source.errorType != SirType.never } ?: ""
-                }${
-                    "await ".takeIf { source.isAsync } ?: ""
-                }${source.swiftFqName}(${
-                    this.allParameters.joinToString { it.forward ?: error("unreachable") }
-                })"
-            )
-        ).takeUnless { attributes.any { it is SirAttribute.Available && it.isUnusable } }
+        get() = when {
+            attributes.any { it is SirAttribute.Available && it.isUnusable } -> null
+            source.parameters.any { it.isVariadic } -> source.body
+            else -> buildTrampolineToSource()
+        }
         set(_) = Unit
+
+    private fun buildTrampolineToSource(): SirFunctionBody = SirFunctionBody(
+        listOf(
+            buildString {
+                if (source.errorType != SirType.never) append("try ")
+                if (source.isAsync) append("await ")
+                append(source.swiftFqName)
+                append("(")
+                append(allParameters.joinToString { it.forward ?: error("unreachable") })
+                append(")")
+            }
+        )
+    )
 }
 
 private val SirParameter.forward: String? get() = this.name?.let { name -> this.argumentName?.let { "$it: $name" } ?: name }

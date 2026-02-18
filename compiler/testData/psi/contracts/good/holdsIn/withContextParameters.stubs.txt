@@ -40,6 +40,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithContextParametersKt]]
     MODIFIER_LIST[inline]
       CONTEXT_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+          MODIFIER_LIST[noinline]
           TYPE_REFERENCE
             FUNCTION_TYPE
               VALUE_PARAMETER_LIST

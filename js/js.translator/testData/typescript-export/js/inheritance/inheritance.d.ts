@@ -210,7 +210,7 @@ declare namespace JS_TESTS {
             constructor();
             process(value: number): void;
             get foo(): number;
-            readonly __doNotUseOrImplementIt: foo.IA["__doNotUseOrImplementIt"] & foo.IG<number>["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.IG<any>["__doNotUseOrImplementIt"] & foo.IA["__doNotUseOrImplementIt"];
         }
         namespace Sixth {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

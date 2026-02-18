@@ -39,11 +39,11 @@ KaNamedFunctionSymbol:
                 psi: KtAnnotationEntry
             ]
             typeArguments: []
-            type: {@R|Anno3|()  SecondTypeAlias=} @R|Anno1|(s = String(s))  @R|Anno2|()  @R|Anno3|()  BaseAnnotation
+            type: {@R|Anno3|()  SecondTypeAlias=} @R|Anno1|(s = String(s) [evaluated = String(s)])  @R|Anno2|()  @R|Anno3|()  BaseAnnotation
         ]
-        type: kotlin/collections/List<{@R|Anno3|()  SecondTypeAlias=} @R|Anno1|(s = String(s))  @R|Anno2|()  @R|Anno3|()  BaseAnnotation>
+        type: kotlin/collections/List<{@R|Anno3|()  SecondTypeAlias=} @R|Anno1|(s = String(s) [evaluated = String(s)])  @R|Anno2|()  @R|Anno3|()  BaseAnnotation>
     ]
-    type: kotlin/collections/List<kotlin/collections/List<{@R|Anno3|()  SecondTypeAlias=} @R|Anno1|(s = String(s))  @R|Anno2|()  @R|Anno3|()  BaseAnnotation>>?
+    type: kotlin/collections/List<kotlin/collections/List<{@R|Anno3|()  SecondTypeAlias=} @R|Anno1|(s = String(s) [evaluated = String(s)])  @R|Anno2|()  @R|Anno3|()  BaseAnnotation>>?
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC

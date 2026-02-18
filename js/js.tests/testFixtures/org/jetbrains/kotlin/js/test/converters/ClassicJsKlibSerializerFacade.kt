@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.diagnostics.impl.deduplicating
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getFriendDependencies
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 
 /**
  * A test facade responsible for serializing IR produced by the classic frontend (psi2ir) into KLIBs.
@@ -51,10 +51,10 @@ class ClassicJsKlibSerializerFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
-        val irDiagnosticReporter =
-            KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
-        val outputFile = JsEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
+        val diagnosticReporter = DiagnosticsCollectorImpl()
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
+        val klibEnvironmentConfigurator = testServices.klibEnvironmentConfigurator
+        val outputFile = klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
 
         if (firstTimeCompilation) {
             serializeModuleIntoKlib(
@@ -63,7 +63,6 @@ class ClassicJsKlibSerializerFacade(
                 diagnosticReporter = irDiagnosticReporter,
                 metadataSerializer = inputArtifact.metadataSerializer,
                 klibPath = outputFile.path,
-                dependencies = emptyList(), // Does not matter.
                 moduleFragment = inputArtifact.irModuleFragment,
                 irBuiltIns = inputArtifact.irBuiltIns,
                 cleanFiles = inputArtifact.icData,
@@ -72,7 +71,7 @@ class ClassicJsKlibSerializerFacade(
             )
         }
 
-        val dependencies = JsEnvironmentConfigurator.getDependencyModulesFor(module, testServices).toList()
+        val dependencies = klibEnvironmentConfigurator.getDependencyModulesFor(module, testServices).toList()
 
         val lib = loadWebKlibsInTestPipeline(
             configuration = configuration,

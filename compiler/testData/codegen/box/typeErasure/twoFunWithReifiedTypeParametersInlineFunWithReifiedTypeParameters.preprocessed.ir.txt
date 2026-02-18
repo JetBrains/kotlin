@@ -14,7 +14,7 @@ FUN name:fBefore visibility:private modality:FINAL returnType:kotlin.reflect.KTy
       RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
         INLINED_BLOCK type=kotlin.reflect.KType origin=null
           inlinedFunctionSymbol: public final fun gBefore <T> (): kotlin.reflect.KType [inline] declared in <root>
-          inlinedFunctionFileEntry: FILE_ENTRY path:twoFunWithReifiedTypeParametersInlineFunWithReifiedTypeParameters.kt
+          inlinedFunctionFileEntry: FILE_ENTRY path:lib.kt
           RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
             CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
               TYPE_ARG T: kotlin.collections.List<kotlin.collections.List<U of <root>.fBefore>>
@@ -33,7 +33,7 @@ FUN name:fAfter visibility:private modality:FINAL returnType:kotlin.reflect.KTyp
       RETURNABLE_BLOCK type=kotlin.reflect.KType origin=null
         INLINED_BLOCK type=kotlin.reflect.KType origin=null
           inlinedFunctionSymbol: public final fun gAfter <T> (): kotlin.reflect.KType [inline] declared in <root>
-          inlinedFunctionFileEntry: FILE_ENTRY path:twoFunWithReifiedTypeParametersInlineFunWithReifiedTypeParameters.kt
+          inlinedFunctionFileEntry: FILE_ENTRY path:lib.kt
           RETURN type=kotlin.Nothing from='{IrReturnableBlockImpl}'
             CALL 'public final fun typeOf <T> (): kotlin.reflect.KType [inline] declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
               TYPE_ARG T: kotlin.collections.List<kotlin.collections.List<U of <root>.fAfter>>

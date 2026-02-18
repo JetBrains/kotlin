@@ -98,7 +98,7 @@ digraph conditionalEffects_kt {
                 32 [label="Function call arguments enter"];
                 33 [label="Access variable R|<local>/x|"];
                 34 [label="Const: Null(null)"];
-                35 [label="Equality operator !="];
+                35 [label="Equality operator !=" style="filled" fillcolor=yellow];
                 36 [label="Function call arguments exit"];
             }
             37 [label="Function call enter: R|kotlin/require|(...)"];
@@ -142,7 +142,7 @@ digraph conditionalEffects_kt {
                     51 [label="Enter right part of &&"];
                     52 [label="Access variable R|<local>/y|"];
                     53 [label="Const: Null(null)"];
-                    54 [label="Equality operator !="];
+                    54 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     55 [label="Exit &&"];
                 }
                 56 [label="Function call arguments exit"];

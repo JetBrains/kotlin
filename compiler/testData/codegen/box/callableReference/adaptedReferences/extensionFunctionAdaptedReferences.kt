@@ -1,11 +1,15 @@
-fun foo1(a:Int, vararg b: String, c: Int = 0): Int = 0
-fun Int.foo2(vararg b: String, c: Int = 0): Int  = 0
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 
 inline fun inlineFoo1(a:Int, vararg b: String, c: Int = 0) = 0
 inline fun Int.inlineFoo2(vararg b: String, c: Int = 0) = 0
 
 inline fun <reified T> inlineReifiedFoo1(a: T, vararg b: String, c: Int = 0) = 0
 inline fun <reified T> T.inlineReifiedFoo2(vararg b: String, c: Int = 0) = 0
+
+// FILE: main.kt
+fun foo1(a:Int, vararg b: String, c: Int = 0): Int = 0
+fun Int.foo2(vararg b: String, c: Int = 0): Int  = 0
 
 fun unitConversion(ref: Int.(Array<String>, Int) -> Unit) = ref
 fun unitAndReceiverConversion(ref: (Int, Array<String>, Int) -> Unit) = ref

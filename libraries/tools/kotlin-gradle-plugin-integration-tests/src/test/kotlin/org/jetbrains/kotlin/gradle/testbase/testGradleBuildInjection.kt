@@ -280,7 +280,7 @@ class GradleProjectBuildScriptInjectionContext(
     val swiftExport get() = kotlinMultiplatform.extensions.getByName("swiftExport") as SwiftExportExtension
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
     val androidApp get() = project.extensions.getByName("android") as AppExtension
-    val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *, *>
+    val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *, *, *>
     val publishing get() = project.extensions.getByName("publishing") as PublishingExtension
     val signing get() = project.extensions.getByName("signing") as SigningExtension
     val dependencies get() = project.dependencies
@@ -567,9 +567,7 @@ fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
             .supportGradleBuiltInPlugins()
             .forEach {
                 val pluginPointer = buildscript.dependencies.create(
-                    group = it.id,
-                    name = "${it.id}.gradle.plugin",
-                    version = it.version,
+                    "${it.id}:${it.id}.gradle.plugin:${it.version}"
                 )
                 buildscript.configurations.getByName("classpath").dependencies.add(pluginPointer)
             }

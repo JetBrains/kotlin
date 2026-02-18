@@ -19,13 +19,12 @@
 
 package kotlin.reflect.full
 
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.utils.DFS
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.DescriptorKCallable
-import kotlin.reflect.jvm.internal.DescriptorKFunction
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+import kotlin.reflect.jvm.internal.ReflectKFunction
 import kotlin.reflect.jvm.internal.types.AbstractKType
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 import kotlin.reflect.jvm.internal.types.allTypeParameters
@@ -37,8 +36,8 @@ import kotlin.reflect.jvm.internal.types.allTypeParameters
  */
 @SinceKotlin("1.1")
 val <T : Any> KClass<T>.primaryConstructor: KFunction<T>?
-    get() = (this as KClassImpl<T>).constructors.firstOrNull {
-        ((it as DescriptorKFunction).descriptor as ConstructorDescriptor).isPrimary
+    get() = constructors.firstOrNull {
+        (it as ReflectKFunction).isPrimaryConstructor
     }
 
 

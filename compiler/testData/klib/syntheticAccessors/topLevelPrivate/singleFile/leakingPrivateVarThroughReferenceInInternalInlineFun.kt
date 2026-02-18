@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 private var privateVar: String = ""
 
 internal inline fun internalInlineFunction() = ::privateVar

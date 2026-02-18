@@ -1,10 +1,11 @@
 // WITH_STDLIB
-
-import kotlin.test.assertEquals
-
+// FILE: lib.kt
 inline fun <R, T> foo(x : R?, block : (R?) -> T) : T {
     return block(x)
 }
+
+// FILE: main.kt
+import kotlin.test.assertEquals
 
 fun box() : String {
     assertEquals(1L, foo(1) { x -> x!!.toLong() })

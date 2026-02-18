@@ -223,6 +223,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DivisionByZero::class
     }
 
+    interface TrimMarginBlankPrefix : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = TrimMarginBlankPrefix::class
+    }
+
     interface ValOrVarOnLoopParameter : KaFirDiagnostic<KtParameter> {
         override val diagnosticClass get() = ValOrVarOnLoopParameter::class
         val valOrVar: KtKeywordToken
@@ -1112,10 +1116,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val callee: KaSymbol
     }
 
-    interface RuntimeAnnotationNotSupported : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = RuntimeAnnotationNotSupported::class
-    }
-
     interface RuntimeAnnotationOnExternalDeclaration : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = RuntimeAnnotationOnExternalDeclaration::class
     }
@@ -1474,6 +1474,53 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface InapplicableLateinitModifier : KaFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = InapplicableLateinitModifier::class
         val reason: String
+    }
+
+    interface PotentiallyNullableReturnTypeOfOperatorOf : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = PotentiallyNullableReturnTypeOfOperatorOf::class
+    }
+
+    interface NullableReturnTypeOfOperatorOf : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = NullableReturnTypeOfOperatorOf::class
+    }
+
+    interface ReturnTypeMismatchOfOperatorOf : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = ReturnTypeMismatchOfOperatorOf::class
+        val outerClass: KaClassLikeSymbol
+    }
+
+    interface NoVarargOverloadOfOperatorOf : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = NoVarargOverloadOfOperatorOf::class
+    }
+
+    interface MultipleVarargOverloadsOfOperatorOf : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = MultipleVarargOverloadsOfOperatorOf::class
+    }
+
+    interface InconsistentReturnTypesInOfOverloads : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = InconsistentReturnTypesInOfOverloads::class
+        val mainOverloadType: KaType
+    }
+
+    interface InconsistentParameterTypesInOfOverloads : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = InconsistentParameterTypesInOfOverloads::class
+        val mainParameterType: KaType
+    }
+
+    interface InconsistentVisibilityInOfOverloads : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = InconsistentVisibilityInOfOverloads::class
+        val mainVisibility: Visibility
+    }
+
+    interface InconsistentSuspendInOfOverloads : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = InconsistentSuspendInOfOverloads::class
+        val overloadSuspendability: String
+        val mainOverloadSuspendability: String
+    }
+
+    interface InconsistentTypeParametersInOfOverloads : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = InconsistentTypeParametersInOfOverloads::class
+        val mainOverload: KaFunctionSymbol
     }
 
     interface RedundantOpenInInterface : KaFirDiagnostic<KtModifierListOwner> {
@@ -1978,12 +2025,30 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val place: String
     }
 
+    interface TypeArgumentsNotAllowedWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = TypeArgumentsNotAllowedWarning::class
+        val place: String
+    }
+
     interface TypeArgumentsForOuterClassWhenNestedReferenced : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = TypeArgumentsForOuterClassWhenNestedReferenced::class
     }
 
     interface WrongNumberOfTypeArguments : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = WrongNumberOfTypeArguments::class
+        val expectedCount: Int
+        val owner: KaSymbol
+    }
+
+    interface WrongNumberOfTypeArgumentsWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = WrongNumberOfTypeArgumentsWarning::class
+        val expectedCount: Int
+        val owner: KaSymbol
+        val type: KaType
+    }
+
+    interface WrongNumberOfTypeArgumentsInLocalClassInLhsWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = WrongNumberOfTypeArgumentsInLocalClassInLhsWarning::class
         val expectedCount: Int
         val owner: KaSymbol
     }
@@ -2352,6 +2417,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val atomicRef: ClassId
         val argumentType: KaType
         val suggestedType: ClassId?
+    }
+
+    interface AtomicRefCallArgumentWithoutConsistentIdentity : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = AtomicRefCallArgumentWithoutConsistentIdentity::class
+        val argumentType: KaType
     }
 
     interface ExtensionInClassReferenceNotAllowed : KaFirDiagnostic<KtExpression> {
@@ -3067,14 +3137,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = PropertyFieldDeclarationMissingInitializer::class
     }
 
-    interface LateinitPropertyFieldDeclarationWithInitializer : KaFirDiagnostic<KtBackingField> {
-        override val diagnosticClass get() = LateinitPropertyFieldDeclarationWithInitializer::class
-    }
-
-    interface LateinitFieldInValProperty : KaFirDiagnostic<KtBackingField> {
-        override val diagnosticClass get() = LateinitFieldInValProperty::class
-    }
-
     interface LateinitNullableBackingField : KaFirDiagnostic<KtBackingField> {
         override val diagnosticClass get() = LateinitNullableBackingField::class
     }
@@ -3664,6 +3726,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val functionName: Name?
     }
 
+    interface ReturnValueNotUsedCoercion : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ReturnValueNotUsedCoercion::class
+        val functionName: Name?
+    }
+
     interface NullForNonnullType : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NullForNonnullType::class
         val expectedType: KaType
@@ -3834,10 +3901,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ConfusingBranchConditionError : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ConfusingBranchConditionError::class
-    }
-
-    interface ConfusingBranchConditionWarning : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = ConfusingBranchConditionWarning::class
     }
 
     interface WrongConditionSuggestGuard : KaFirDiagnostic<PsiElement> {
@@ -4352,6 +4415,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val symbol: KaSymbol
         val visibility: EffectiveVisibility
         val inlineVisibility: EffectiveVisibility
+    }
+
+    interface ContextParameterMustBeNoinline : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = ContextParameterMustBeNoinline::class
+        val parameter: KaSymbol
+        val function: KaSymbol
     }
 
     interface InlineFromHigherPlatform : KaFirDiagnostic<PsiElement> {
@@ -5148,8 +5217,18 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NamedCompanionInExportedInterface::class
     }
 
-    interface NotExportedActualDeclarationWhileExpectIsExported : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = NotExportedActualDeclarationWhileExpectIsExported::class
+    interface NotExportedOrExternalActualDeclarationWhileExpectIsExported : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NotExportedOrExternalActualDeclarationWhileExpectIsExported::class
+    }
+
+    interface ExposedNotExportedSuperInterfaceError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ExposedNotExportedSuperInterfaceError::class
+        val restrictingDeclaration: KaClassLikeSymbol
+    }
+
+    interface ExposedNotExportedSuperInterfaceWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ExposedNotExportedSuperInterfaceWarning::class
+        val restrictingDeclaration: KaClassLikeSymbol
     }
 
     interface NestedJsExport : KaFirDiagnostic<KtElement> {
@@ -5158,6 +5237,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface MultipleJsExportDefaultInOneFile : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = MultipleJsExportDefaultInOneFile::class
+    }
+
+    interface WrongJsExportTargetVisibility : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = WrongJsExportTargetVisibility::class
     }
 
     interface DelegationByDynamic : KaFirDiagnostic<KtElement> {
@@ -5187,6 +5270,39 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface JsStaticOnConst : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = JsStaticOnConst::class
+    }
+
+    interface JsNoRuntimeWrongTarget : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsNoRuntimeWrongTarget::class
+    }
+
+    interface JsNoRuntimeForbiddenIsCheck : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsNoRuntimeForbiddenIsCheck::class
+    }
+
+    interface JsNoRuntimeForbiddenAsCast : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsNoRuntimeForbiddenAsCast::class
+    }
+
+    interface JsNoRuntimeForbiddenClassReference : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsNoRuntimeForbiddenClassReference::class
+    }
+
+    interface JsNoRuntimeUselessOnExternalInterface : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsNoRuntimeUselessOnExternalInterface::class
+    }
+
+    interface JsNoRuntimeInterfaceAsReifiedTypeArgument : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsNoRuntimeInterfaceAsReifiedTypeArgument::class
+        val typeArgument: KaType
+    }
+
+    interface JsActualExternalInterfaceWhileExpectWithoutJsNoRuntime : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = JsActualExternalInterfaceWhileExpectWithoutJsNoRuntime::class
+    }
+
+    interface JsNoRuntimeActualAnnotationsNotMatchExpect : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = JsNoRuntimeActualAnnotationsNotMatchExpect::class
     }
 
     interface Syntax : KaFirDiagnostic<PsiElement> {

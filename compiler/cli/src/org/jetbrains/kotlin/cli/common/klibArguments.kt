@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.cli.common
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS
@@ -19,6 +22,7 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import java.util.EnumMap
 import kotlin.collections.plus
+import kotlin.reflect.KProperty1
 
 /**
  * Important: If you add or remove some argument from [setupCommonKlibArguments],
@@ -52,7 +56,11 @@ fun CompilerConfiguration.setupCommonKlibArguments(
         setupKlibAbiCompatibilityLevel()
     }
 
-    zipFileSystemAccessor = getZipFileSystemAccessor(arguments, messageCollector, rootDisposable)
+    zipFileSystemAccessor = arguments.getZipFileSystemAccessor(
+        zipFileAccessorCacheLimitArgument = CommonKlibBasedCompilerArguments::klibZipFileAccessorCacheLimit,
+        collector = messageCollector,
+        rootDisposable = rootDisposable
+    )
 }
 
 /**
@@ -99,17 +107,19 @@ private fun parseCustomKotlinAbiVersion(customKlibAbiVersion: String?, collector
     return KotlinAbiVersion(version[0], version[1], version[2])
 }
 
-private fun getZipFileSystemAccessor(
-    arguments: CommonKlibBasedCompilerArguments,
+fun <A : CommonCompilerArguments> A.getZipFileSystemAccessor(
+    zipFileAccessorCacheLimitArgument: KProperty1<A, String>,
     collector: MessageCollector,
     rootDisposable: Disposable,
 ): ZipFileSystemAccessor? {
-    val cacheLimit = arguments.klibZipFileAccessorCacheLimit.toIntOrNull()
+    val cacheLimitRawValue: String = zipFileAccessorCacheLimitArgument.get(this)
+    val cacheLimit: Int? = cacheLimitRawValue.toIntOrNull()
+
     if (cacheLimit == null || cacheLimit < 0) {
         collector.report(
             CompilerMessageSeverity.ERROR,
             buildString {
-                append("Cannot parse -Xklib-zip-file-accessor-cache-limit value: \"${arguments.klibZipFileAccessorCacheLimit}\". ")
+                append("Cannot parse ${zipFileAccessorCacheLimitArgument.cliArgument} value: \"$cacheLimitRawValue\". ")
                 append("It must be an integer >= 0.")
             }
         )
@@ -163,8 +173,8 @@ private val LANGUAGE_VERSION_TO_ABI_COMPATIBILITY_LEVEL =
     EnumMap<LanguageVersion, KlibAbiCompatibilityLevel>(LanguageVersion::class.java).apply {
         KlibAbiCompatibilityLevel.entries.associateByTo(this) { abiCompatibilityLevel ->
             when (abiCompatibilityLevel) {
-                KlibAbiCompatibilityLevel.ABI_LEVEL_2_2 -> LanguageVersion.KOTLIN_2_2
                 KlibAbiCompatibilityLevel.ABI_LEVEL_2_3 -> LanguageVersion.KOTLIN_2_3
+                KlibAbiCompatibilityLevel.ABI_LEVEL_2_4 -> LanguageVersion.KOTLIN_2_4
                 // add new entries here as necessary
             }
         }
@@ -183,3 +193,22 @@ private val LANGUAGE_VERSION_TO_ABI_COMPATIBILITY_LEVEL =
             }
         }
     }
+
+fun CompilerConfiguration.checkForUnexpectedKlibLibraries(
+    librariesToCheck: List<String>,
+    librariesToCheckArgument: String,
+    allLibraries: List<String>,
+    allLibrariesArgument: String,
+) {
+    if (librariesToCheck.isEmpty()) return
+
+    val unexpectedLibraries = librariesToCheck subtract allLibraries.toSet()
+    if (unexpectedLibraries.isNotEmpty()) {
+        messageCollector.report(
+            WARNING,
+            "There are libraries in $librariesToCheckArgument CLI argument " +
+                    "that are not included in $allLibrariesArgument CLI argument: " +
+                    unexpectedLibraries.joinToString()
+        )
+    }
+}

@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.Fir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -44,7 +45,7 @@ abstract class Fir2IrCliFacade<Phase, InputPipelineArtifact, OutputPipelineArtif
 
         val messageCollector = cliArtifact.configuration.messageCollector
         val input = cliArtifact.withNewDiagnosticCollector(
-            DiagnosticReporterFactory.createPendingReporter()
+            DiagnosticsCollectorImpl()
         )
         val output = phase.executePhase(input)
             ?: return processErrorFromCliPhase(messageCollector, testServices)
@@ -62,5 +63,5 @@ class Fir2IrCliBasedOutputArtifact<A : Fir2IrPipelineArtifact>(val cliArtifact: 
     override val irMangler: KotlinMangler.IrMangler
         get() = cliArtifact.result.components.irMangler
     override val diagnosticReporter: BaseDiagnosticsCollector
-        get() = cliArtifact.diagnosticCollector
+        get() = cliArtifact.configuration.diagnosticsCollector
 }

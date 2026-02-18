@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // FIR_DUMP
 // LANGUAGE: +ContextParameters
 
@@ -24,8 +23,8 @@ object O : Foo {
 }
 
 class FooImpl2 : Base, Foo {
-    constructor() : super(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>test<!>())
-    constructor(s: String) : super(with(s) { <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>functional<!>() })
+    constructor() : super(<!NO_CONTEXT_ARGUMENT!>test<!>())
+    constructor(s: String) : super(with(s) { <!NO_CONTEXT_ARGUMENT!>functional<!>() })
 
     class Bar {
         fun bar() {

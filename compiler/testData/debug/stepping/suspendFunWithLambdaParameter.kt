@@ -12,6 +12,7 @@ suspend fun box() {
 }
 
 // EXPECTATIONS JVM_IR
+// test.kt:8 box
 // test.kt:9 box
 // test.kt:5 foo
 // EXPECTATIONS ClassicFrontend JVM_IR
@@ -21,6 +22,22 @@ suspend fun box() {
 // EXPECTATIONS JVM_IR
 // test.kt:5 foo
 // test.kt:9 box
+// test.kt:12 box
+
+// EXPECTATIONS NATIVE
+// test.kt:8 box
+// test.kt:8 invokeSuspend
+// test.kt:8 invokeSuspend
+// test.kt:9 invokeSuspend
+// test.kt:4 foo
+// test.kt:5 foo
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:9 invokeSuspend
+// test.kt:9 invokeSuspend
+// test.kt:8 invokeSuspend
+// test.kt:12 invokeSuspend
+// test.kt:8 box
 // test.kt:12 box
 
 // EXPECTATIONS JS_IR

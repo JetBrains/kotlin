@@ -5,6 +5,7 @@
 
 package kotlin.native.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
@@ -300,6 +301,7 @@ public class ObjCErrorException(
 @GCUnsafeCall("Kotlin_ObjCExport_trapOnUndeclaredException")
 @ExportForCppRuntime
 @Escapes.Nothing // this function actually never returns.
+@UsedFromCompilerGeneratedCode
 internal external fun trapOnUndeclaredException(exception: Throwable)
 
 @ExportForCppRuntime

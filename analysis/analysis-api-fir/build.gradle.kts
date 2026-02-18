@@ -5,6 +5,8 @@ plugins {
     id("generated-sources")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-data-manager")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -35,6 +37,7 @@ dependencies {
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:kt-references"))
     implementation(project(":analysis:symbol-light-classes"))
+    implementation(project(":native:native.config"))
     implementation(libs.caffeine)
     implementation(libs.opentelemetry.api)
 
@@ -78,12 +81,31 @@ projectTests {
         jUnitMode = JUnitMode.JUnit5,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
     ) {
-        dependsOn(":dist")
-        workingDir = rootDir
         useJUnitPlatform()
-    }.also { confugureFirPluginAnnotationsDependency(it) }
+
+        extensions.configure<TestInputsCheckExtension> {
+            allowFlightRecorder = true
+        }
+    }
+
+    testGenerator("org.jetbrains.kotlin.analysis.api.fir.test.TestGeneratorKt")
+
+    testData(project.isolated, "testData")
+    testData(project(":analysis:analysis-api").isolated, "testData")
 
     withJvmStdlibAndReflect()
+    withStdlibCommon()
+    withJsRuntime()
+    withWasmRuntime()
+    withTestJar()
+    withAnnotations()
+    withMockJdkRuntime()
+    withMockJdkAnnotationsJar()
+    withScriptRuntime()
+    withPluginSandboxAnnotations()
+
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
 }
 
 testsJar()
@@ -101,6 +123,7 @@ allprojects {
                 "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction",
                 "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
                 "org.jetbrains.kotlin.analysis.api.components.KaSessionComponentImplementationDetail",
+                "org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint",
             )
         )
     }

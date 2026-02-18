@@ -171,13 +171,13 @@ FILE: [ResolvedTo(IMPORTS)] localContextParameters.kt
                 super<R|kotlin/Any|>()
             }
 
-            context([ResolvedTo(BODY_RESOLVE)] par: R|@R|Anno|(s = String(foo))  kotlin/String|)
+            context([ResolvedTo(BODY_RESOLVE)] par: R|@R|Anno|(s = String(foo) [evaluated = String(foo)])  kotlin/String|)
             public final [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/String|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/String| {
                     ^ String(hello)
                 }
 
-            context([ResolvedTo(BODY_RESOLVE)] par: R|@R|Anno|(s = String(baz))  kotlin/String|)
+            context([ResolvedTo(BODY_RESOLVE)] par: R|@R|Anno|(s = String(baz) [evaluated = String(baz)])  kotlin/String|)
             public final [ResolvedTo(BODY_RESOLVE)] fun baz(): R|kotlin/String| {
                 ^baz String(hello)
             }
@@ -188,7 +188,7 @@ FILE: [ResolvedTo(IMPORTS)] localContextParameters.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] localContextParameters.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             super<R|kotlin/Any|>()
         }
@@ -203,13 +203,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localContextParameters.kt
                 super<R|kotlin/Any|>()
             }
 
-            context([ResolvedTo(BODY_RESOLVE)] par: R|@R|Anno|(s = String(foo))  kotlin/String|)
+            context([ResolvedTo(BODY_RESOLVE)] par: R|@R|Anno|(s = String(foo) [evaluated = String(foo)])  kotlin/String|)
             public final [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/String|
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/String| {
                     ^ String(hello)
                 }
 
-            context([ResolvedTo(BODY_RESOLVE)] par: R|@R|Anno|(s = String(baz))  kotlin/String|)
+            context([ResolvedTo(BODY_RESOLVE)] par: R|@R|Anno|(s = String(baz) [evaluated = String(baz)])  kotlin/String|)
             public final [ResolvedTo(BODY_RESOLVE)] fun baz(): R|kotlin/String| {
                 ^baz String(hello)
             }

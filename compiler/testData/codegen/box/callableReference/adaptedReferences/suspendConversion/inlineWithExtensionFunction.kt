@@ -1,5 +1,10 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
+suspend inline fun invokeSuspend(fn: suspend Int.() -> Unit) { fn(1) }
+
+// FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*
 
@@ -12,8 +17,6 @@ var test2 = "failed"
 
 fun foo(a: Int) { test1 = "O" }
 fun Int.bar() { test2 = "K" }
-
-suspend inline fun invokeSuspend(fn: suspend Int.() -> Unit) { fn(1) }
 
 fun box(): String {
     runSuspend {

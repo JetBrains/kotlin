@@ -1,8 +1,28 @@
 KtCallExpression(98,109): 'function(1)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(a: kotlin.Char): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.Char
+              symbol = a: kotlin.Char
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /function
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
           1 -> (KaVariableSignature:
             name = a
             receiverType = null
@@ -10,30 +30,29 @@ KtCallExpression(98,109): 'function(1)'
             symbol = a: kotlin.Char
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /function(a: kotlin.Char): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = kotlin.Char
-                symbol = a: kotlin.Char
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /function
-        typeArgumentsMapping = {},
+        },
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(b: kotlin.Boolean): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = b: kotlin.Boolean
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /function
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
           1 -> (KaVariableSignature:
             name = b
             receiverType = null
@@ -41,30 +60,29 @@ KtCallExpression(98,109): 'function(1)'
             symbol = b: kotlin.Boolean
             contextParameters = []
             callableId = null)
-        }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /function(b: kotlin.Boolean): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = b
-                receiverType = null
-                returnType = kotlin.Boolean
-                symbol = b: kotlin.Boolean
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /function
-        typeArgumentsMapping = {},
+        },
       KaSimpleFunctionCall:
-        argumentMapping = {
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(c: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = kotlin.String
+              symbol = c: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /function
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
           1 -> (KaVariableSignature:
             name = c
             receiverType = null
@@ -73,27 +91,6 @@ KtCallExpression(98,109): 'function(1)'
             contextParameters = []
             callableId = null)
         }
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /function(c: kotlin.String): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = c
-                receiverType = null
-                returnType = kotlin.String
-                symbol = c: kotlin.String
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /function
-        typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     public fun function(b: Boolean): Unit defined in root package in file ambiguous.kt

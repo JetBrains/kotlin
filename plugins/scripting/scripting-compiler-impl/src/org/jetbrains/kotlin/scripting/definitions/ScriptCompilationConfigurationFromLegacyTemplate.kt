@@ -91,6 +91,7 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
         asyncDependenciesResolver(dependencyResolver is AsyncDependenciesResolver || dependencyResolver is ApiChangeDependencyResolverWrapper)
         if (dependencyResolver != DependenciesResolver.NoDependencies) {
             refineConfiguration {
+                @Suppress("DEPRECATION")
                 onAnnotations(dependencyResolver.acceptedAnnotations.map(::KotlinType)) { context ->
                     refineWithResolver(dependencyResolver, context)
                 }
@@ -136,7 +137,7 @@ private class ScriptContentsFromRefinementContext(val context: ScriptConfigurati
     override val file: File?
         get() = (context.script as? FileBasedScriptSource)?.file
     override val annotations: Iterable<Annotation>
-        get() = context.collectedData?.get(ScriptCollectedData.foundAnnotations) ?: emptyList()
+        get() = context.collectedData?.get(ScriptCollectedData.collectedAnnotations)?.map { it.annotation } ?: emptyList()
     override val text: CharSequence
         get() = context.script.text
 }

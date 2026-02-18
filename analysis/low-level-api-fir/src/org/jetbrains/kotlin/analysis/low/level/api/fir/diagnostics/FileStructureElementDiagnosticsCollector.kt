@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilt
 import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.LLFirStructureElementDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 
 internal fun collectForStructureElement(
@@ -25,7 +26,7 @@ internal fun collectForStructureElement(
     collector.collectDiagnostics(firDeclaration, reporter)
     val source = firDeclaration.source
     if (source != null) {
-        reporter.checkAndCommitReportsOn(source, null)
+        reporter.checkAndCommitReportsOn(source, context = DiagnosticContext.Default, commitEverything = true)
     }
     return FileStructureElementDiagnosticList(reporter.committedDiagnostics)
 }

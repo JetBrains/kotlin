@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 class A constructor(val s: String) {
     private val privateVal: String = s
 

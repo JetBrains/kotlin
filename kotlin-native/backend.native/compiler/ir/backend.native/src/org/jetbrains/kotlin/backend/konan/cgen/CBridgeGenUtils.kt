@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.lower.irThrow
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -173,7 +173,7 @@ internal class KotlinCBridgeBuilder(
     fun getKotlinBridge() = kotlinBridgeBuilder.getBridge()
 }
 
-internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, private val symbols: KonanSymbols) {
+internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, private val symbols: BackendNativeSymbols) {
     val prepare = mutableListOf<IrStatement>()
     val arguments = mutableListOf<IrExpression>()
     val cleanup = mutableListOf<IrBuilderWithScope.() -> IrStatement>()

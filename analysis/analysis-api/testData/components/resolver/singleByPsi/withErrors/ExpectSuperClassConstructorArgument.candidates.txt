@@ -1,18 +1,17 @@
 KtNameReferenceExpression(173,176): 'obj'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = obj
-          receiverType = null
-          returnType = kotlin.Any
-          symbol = obj: kotlin.Any
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = obj
+        receiverType = null
+        returnType = kotlin.Any
+        symbol = obj: kotlin.Any
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

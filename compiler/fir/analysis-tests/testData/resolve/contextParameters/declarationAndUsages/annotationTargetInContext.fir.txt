@@ -1,11 +1,11 @@
 FILE: annotationTargetInContext.kt
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final annotation class AnnotationWithValueTarget : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) [evaluated = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)]) public final annotation class AnnotationWithValueTarget : R|kotlin/Annotation| {
         public constructor(): R|AnnotationWithValueTarget| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class AnnotationWithTypeTarget : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final annotation class AnnotationWithTypeTarget : R|kotlin/Annotation| {
         public constructor(): R|AnnotationWithTypeTarget| {
             super<R|kotlin/Any|>()
         }

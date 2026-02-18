@@ -15,12 +15,14 @@ enum class Severity {
     /**
      * see [org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.FIXED_WARNING]
      */
-    FIXED_WARNING;
+    FIXED_WARNING,
+    STRONG_WARNING;
 
     fun toCompilerMessageSeverity(): CompilerMessageSeverity = when (this) {
         INFO -> CompilerMessageSeverity.INFO
         ERROR -> CompilerMessageSeverity.ERROR
         WARNING -> CompilerMessageSeverity.WARNING
+        STRONG_WARNING -> CompilerMessageSeverity.STRONG_WARNING
         FIXED_WARNING -> CompilerMessageSeverity.FIXED_WARNING
     }
 }

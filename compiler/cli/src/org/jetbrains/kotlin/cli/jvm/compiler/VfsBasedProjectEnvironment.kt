@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
 
 class PsiBasedProjectFileSearchScope(val psiSearchScope: GlobalSearchScope) : AbstractProjectFileSearchScope {
 
@@ -124,7 +125,7 @@ open class VfsBasedProjectEnvironment(
                 .toSet()
                 .takeIf { it.isNotEmpty() }
                 ?.let {
-                    KotlinToJVMBytecodeCompiler.DirectoriesScope(project, it)
+                    DirectoriesScope(project, it)
                 } ?: GlobalSearchScope.EMPTY_SCOPE
         )
 
@@ -134,8 +135,11 @@ open class VfsBasedProjectEnvironment(
                 .mapNotNull {
                     // this code is somewhat ad hoc, but currently it is exactly the logic of classpath processing that we're using in
                     // the cli compiler
-                    if (it.isDirectory()) knownFileSystems.findFileByPath(it.toFile().absolutePath, StandardFileSystems.FILE_PROTOCOL)
-                    else knownFileSystems.findFileByPath(it.toFile().absolutePath + JAR_SEPARATOR, StandardFileSystems.JAR_PROTOCOL)
+                    when {
+                        it.isDirectory() -> knownFileSystems.findFileByPath(it.toFile().absolutePath, StandardFileSystems.FILE_PROTOCOL)
+                        !it.isRegularFile() -> null
+                        else -> knownFileSystems.findFileByPath(it.toFile().absolutePath + JAR_SEPARATOR, StandardFileSystems.JAR_PROTOCOL)
+                    }
                 }
                 .takeIf { it.isNotEmpty() }
                 ?.let {
@@ -187,7 +191,7 @@ open class VfsBasedProjectEnvironment(
         PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
 
     override fun getSearchScopeForProjectJavaSources(): AbstractProjectFileSearchScope =
-        PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
+        PsiBasedProjectFileSearchScope(AllJavaSourcesInProjectScope(project))
 
     override fun getFirJavaFacade(
         firSession: FirSession,
@@ -197,6 +201,25 @@ open class VfsBasedProjectEnvironment(
         val javaAnnotationProvider = firSession.javaAnnotationProvider
         val javaClassFinder = project.createJavaClassFinder(fileSearchScope.asPsiSearchScope(), javaAnnotationProvider)
         return FirJavaFacadeForSource(firSession, baseModuleData, javaClassFinder)
+    }
+
+    class DirectoriesScope(
+        project: Project,
+        private val directories: Set<VirtualFile>
+    ) : DelegatingGlobalSearchScope(allScope(project)) {
+        private val fileSystems = directories.mapTo(hashSetOf(), VirtualFile::getFileSystem)
+
+        override fun contains(file: VirtualFile): Boolean {
+            if (file.fileSystem !in fileSystems) return false
+
+            var parent: VirtualFile = file
+            while (true) {
+                if (parent in directories) return true
+                parent = parent.parent ?: return false
+            }
+        }
+
+        override fun toString() = "All files under: $directories"
     }
 }
 
@@ -227,7 +250,7 @@ inline fun <reified T : PsiElementFinder> ExtensionPoint<PsiElementFinder>.unreg
     }
 }
 
-private fun List<VirtualFileSystem>.findFileByPath(
+internal fun List<VirtualFileSystem>.findFileByPath(
     path: String,
     protocolFilter: String? = StandardFileSystems.FILE_PROTOCOL
 ): VirtualFile? =
@@ -235,3 +258,5 @@ private fun List<VirtualFileSystem>.findFileByPath(
         if (protocolFilter != null && it.protocol != protocolFilter) null
         else it.findFileByPath(path)
     }
+
+fun VfsBasedProjectEnvironment.findFileByPath(path: String): VirtualFile? = knownFileSystems.findFileByPath(path)

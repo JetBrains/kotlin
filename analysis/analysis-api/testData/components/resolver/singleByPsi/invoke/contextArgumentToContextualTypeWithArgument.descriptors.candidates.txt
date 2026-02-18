@@ -1,0 +1,44 @@
+KtCallExpression(101,123): 'block(regularArgument)'
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = block
+        isSafeNavigation = false
+        type = @R|kotlin.ContextFunctionTypeParams|(count = Int(1))  kotlin.Function2<kotlin.String, kotlin.Int, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function2.invoke(<dispatch receiver>: kotlin.Function2<P1, P2, R>, p1: P1, p2: P2): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = kotlin.String
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = p2
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = p2: P2
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function2.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        regularArgument -> (KaVariableSignature:
+          name = p1
+          receiverType = null
+          returnType = kotlin.String
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>
+    isInBestCandidates = true

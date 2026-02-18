@@ -2,6 +2,7 @@
 // ISSUE: KT-54227
 // IGNORE_BACKEND_K1: ANY
 
+// FILE: lib.kt
 interface TypeParameter
 
 interface A<OptionalTypeParameter : TypeParameter?> {
@@ -17,6 +18,7 @@ class B : A<Nothing?> {
 
 inline fun <reified T : TypeParameter?> foo(it: A<T>) = "OK"
 
+// FILE: main.kt
 fun box(): String {
     val b = B()
     return foo(b)

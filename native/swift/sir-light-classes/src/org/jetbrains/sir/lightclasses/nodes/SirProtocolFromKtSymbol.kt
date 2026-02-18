@@ -14,35 +14,23 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.builder.buildExtension
 import org.jetbrains.kotlin.sir.builder.buildTypealias
-import org.jetbrains.kotlin.sir.providers.SirSession
-import org.jetbrains.kotlin.sir.providers.extractDeclarations
-import org.jetbrains.kotlin.sir.providers.getSirParent
-import org.jetbrains.kotlin.sir.providers.sirAvailability
-import org.jetbrains.kotlin.sir.providers.sirDeclarationName
-import org.jetbrains.kotlin.sir.providers.sirModule
+import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.source.KotlinMarkerProtocol
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
-import org.jetbrains.kotlin.sir.providers.toSir
-import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
-import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
-import org.jetbrains.kotlin.sir.providers.utils.containingModule
-import org.jetbrains.kotlin.sir.providers.utils.updateImport
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.sir.providers.utils.*
+import org.jetbrains.kotlin.sir.util.SirSwiftConcurrencyModule
 import org.jetbrains.kotlin.sir.util.swiftFqName
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
-import org.jetbrains.sir.lightclasses.nodes.SirExistentialProtocolImplementationFromKtSymbol
 import org.jetbrains.sir.lightclasses.utils.decapitalizeNameSemantically
 import org.jetbrains.sir.lightclasses.utils.objcClassSymbolName
 import org.jetbrains.sir.lightclasses.utils.relocatedDeclarationNamePrefix
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
-import kotlin.lazy
 
 internal open class SirProtocolFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
@@ -80,15 +68,19 @@ internal open class SirProtocolFromKtSymbol(
                     ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name))
                 }
             }
+
     }
 
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
 
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
-        ktSymbol.combinedDeclaredMemberScope
-            .extractDeclarations()
+        ktSymbol.combinedDeclaredMemberScope.extractDeclarations()
             .filter { it !is SirOperatorAuxiliaryDeclaration } // FIXME: rectify where auxiliary declarations should go.
             .toMutableList()
+    }
+
+    internal open val existentialExtension: SirExtension by lazy {
+        SirExistentialProtocolImplementationFromKtSymbol(this)
     }
 
     internal val auxExtension: SirExtension by lazy {
@@ -296,7 +288,7 @@ private class SirRelocatedSubscript(
  *
  * @property targetProtocol Protocol declaration this extension belongs to.
  */
-internal class SirExistentialProtocolImplementationFromKtSymbol(
+internal open class SirExistentialProtocolImplementationFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
     override val sirSession: SirSession,
     private val targetProtocol: SirProtocolFromKtSymbol,
@@ -322,7 +314,7 @@ internal class SirExistentialProtocolImplementationFromKtSymbol(
     override val extendedType: SirType
         get() = SirNominalType(KotlinRuntimeSupportModule.kotlinExistential)
 
-    override val protocols: List<SirProtocol> get() = listOf(targetProtocol)
+    override open val protocols: List<SirProtocol> get() = listOf(targetProtocol)
 
     override val constraints: List<SirTypeConstraint> by lazy {
         listOf(
@@ -396,5 +388,26 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
                 }.also { it.parent = this }
             }
             .toMutableList()
+    }
+}
+
+/**
+ * An ad-hoc translation for kotlinx.coroutines.Flow
+ */
+internal class SirFlowFromKtSymbol(
+    ktSymbol: KaNamedClassSymbol,
+    sirSession: SirSession,
+) : SirProtocolFromKtSymbol(ktSymbol, sirSession), SirFromKtSymbol<KaNamedClassSymbol> {
+    internal inner class SirExistentialProtocolImplementation : SirExistentialProtocolImplementationFromKtSymbol(this@SirFlowFromKtSymbol) {
+        override val protocols: List<SirProtocol>
+            get() = super.protocols + listOf(KotlinCoroutineSupportModule.kotlinFlow, SirSwiftConcurrencyModule.asyncSequence)
+    }
+
+    override val protocols: List<SirProtocol> by lazy {
+        super.protocols + KotlinCoroutineSupportModule.kotlinFlow + SirSwiftConcurrencyModule.asyncSequence
+    }
+
+    override val existentialExtension: SirExtension by lazy {
+        SirExistentialProtocolImplementation()
     }
 }

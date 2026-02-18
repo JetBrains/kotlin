@@ -1,3 +1,4 @@
+// FILE: lib.kt
 class Wrapper<T>(var x: T)
 
 inline fun <reified T> change(w: Wrapper<T>, x: Any?) {
@@ -6,6 +7,7 @@ inline fun <reified T> change(w: Wrapper<T>, x: Any?) {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     val w = Wrapper<String>("FAIL")
     change(w, "OK")

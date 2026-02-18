@@ -33,18 +33,18 @@ gradlePlugin {
 
 pluginApiReference {
     enableForAllGradlePluginVariants()
-    enableKotlinlangDocumentation()
-
     failOnWarning = true
 
     moduleName("The Compose compiler Gradle plugin")
 
     additionalDokkaConfiguration {
-        includes.from("api-reference-description.md")
-        reportUndocumented.set(true)
-        perPackageOption {
-            matchingRegex.set("org\\.jetbrains\\.kotlin\\.compose\\.compiler\\.gradle\\.model(\$|\\.).*")
-            suppress.set(true)
+        dokkaSourceSets.configureEach {
+            includes.from("api-reference-description.md")
+            reportUndocumented.set(true)
+            perPackageOption {
+                matchingRegex.set("org\\.jetbrains\\.kotlin\\.compose\\.compiler\\.gradle\\.model(\$|\\.).*")
+                suppress.set(true)
+            }
         }
     }
 }
@@ -64,7 +64,7 @@ testing {
             dependencies {
                 implementation(project())
                 implementation(gradleKotlinDsl())
-                implementation(project(":compiler:cli-common")) { isTransitive = false }
+                implementation(project(":compiler:cli-base")) { isTransitive = false }
                 implementation(platform(libs.junit.bom))
                 implementation(libs.junit.jupiter.api)
                 implementation("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
@@ -97,6 +97,10 @@ testing {
 
 tasks.named("check") {
     dependsOn(testing.suites.named("functionalTest"))
+}
+
+tasks.withType<Test>().configureEach {
+    javaLauncher.value(project.getToolchainLauncherFor(JdkMajorVersion.JDK_21_0)).disallowChanges()
 }
 
 configurations.all {

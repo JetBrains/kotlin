@@ -1,0 +1,47 @@
+FILE: withSmartCasts.kt
+    public final fun test(): R|kotlin/Unit| {
+        lvar state: R|State| = Q|State|.R|/State.Default.Default|()
+        R|/captureVariable|(<L> = captureVariable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|<local>/state| = Q|State|.R|/State.Custom.Custom|()
+            R|<local>/state|.R|/State.id|
+        }
+        )
+        R|<local>/state|.R|/State.index|
+        R|<local>/state| = Q|State|.R|/State.Default.Default|()
+    }
+    public sealed interface State : R|kotlin/Any| {
+        public abstract val id: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public abstract val index: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public final class Default : R|State| {
+            public constructor(id: R|kotlin/String| = String(default), index: R|kotlin/Int| = Int(0)): R|State.Default| {
+                super<R|kotlin/Any|>()
+            }
+
+            public open override val id: R|kotlin/String| = R|<local>/id|
+                public get(): R|kotlin/String|
+
+            public open override val index: R|kotlin/Int| = R|<local>/index|
+                public get(): R|kotlin/Int|
+
+        }
+
+        public final class Custom : R|State| {
+            public constructor(id: R|kotlin/String| = String(custom), index: R|kotlin/Int| = Int(0)): R|State.Custom| {
+                super<R|kotlin/Any|>()
+            }
+
+            public open override val id: R|kotlin/String| = R|<local>/id|
+                public get(): R|kotlin/String|
+
+            public open override val index: R|kotlin/Int| = R|<local>/index|
+                public get(): R|kotlin/Int|
+
+        }
+
+    }
+    public final fun captureVariable(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }

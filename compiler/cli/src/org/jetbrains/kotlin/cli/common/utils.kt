@@ -23,11 +23,10 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.packageFqName
@@ -145,7 +144,20 @@ fun disposeRootInWriteAction(disposable: Disposable) {
     }
 }
 
-fun CompilerConfiguration.reportIfNeeded(factory: KtSourcelessDiagnosticFactory, message: String) {
-    val effectiveSeverity = factory.getEffectiveSeverity(languageVersionSettings) ?: return
-    messageCollector.report(effectiveSeverity.toCompilerMessageSeverity(), message)
+fun CompilerConfiguration.reportDiagnostic(
+    factory: KtSourcelessDiagnosticFactory,
+    message: String,
+    location: CompilerMessageSourceLocation? = null,
+) {
+    val context = object : DiagnosticBaseContext {
+        override val languageVersionSettings: LanguageVersionSettings
+            get() = this@reportDiagnostic.languageVersionSettings
+    }
+    val diagnostic = factory.create(message, location, context) ?: return
+    FirDiagnosticsCompilerResultsReporter.reportDiagnosticToMessageCollector(
+        diagnostic,
+        location,
+        messageCollector,
+        renderDiagnosticInternalName
+    )
 }

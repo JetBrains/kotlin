@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.klib
 
-import org.jetbrains.kotlin.cli.pipeline.web.computeOutputKlibPath
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.MultiPlatformProjects
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -15,9 +14,8 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.SourcesKind
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.isKtFile
 import org.jetbrains.kotlin.test.services.isLeafModuleInMppGraph
 import org.jetbrains.kotlin.test.services.sourceFileProvider
@@ -84,12 +82,13 @@ abstract class CustomKlibCompilerFirstStageFacade(
 
         val (regularDependencies: Set<String>, friendDependencies: Set<String>) = collectDependencies(module)
 
-        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
-        val outputKlibPath: String = compilerConfiguration.computeOutputKlibPath()
+        val outputKlibPath = testServices.klibEnvironmentConfigurator
+            .getKlibArtifactFile(testServices, module.name)
+            .absolutePath
 
         return compileKlib(
             module = module,
-            customArgs = customArgs,
+            customArgs = customArgs + listOf("-XXLanguage:+MultiPlatformProjects").takeIf { isKmpSupported }.orEmpty(),
             sources = filesToCompile,
             regularDependencies = regularDependencies,
             friendDependencies = friendDependencies,

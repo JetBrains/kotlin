@@ -59,8 +59,7 @@ interface KotlinLibraryResolveResult {
 
     fun filterRoots(predicate: (KotlinResolvedLibrary) -> Boolean): KotlinLibraryResolveResult
 
-    fun getFullList(order: LibraryOrder? = null): List<KotlinLibrary> = getFullResolvedList(order).map { it.library }
-    fun getFullResolvedList(order: LibraryOrder? = null): List<KotlinResolvedLibrary>
+    fun getFullList(order: LibraryOrder? = null): List<KotlinLibrary>
 
     fun forEach(action: (KotlinLibrary, PackageAccessHandler) -> Unit)
 }
@@ -75,7 +74,7 @@ val TopologicalLibraryOrder: LibraryOrder = { input ->
 
     fun visit(node: KotlinResolvedLibrary, result: MutableList<KotlinResolvedLibrary>) {
         if (visited.contains(node)) return
-        if (tempMarks.contains(node)) error("Cyclic dependency in library graph for: ${node.library.libraryName}")
+        if (tempMarks.contains(node)) error("Cyclic dependency in library graph for: ${node.library.location}")
         tempMarks.add(node)
         node.resolvedDependencies.forEach {
             visit(it, result)

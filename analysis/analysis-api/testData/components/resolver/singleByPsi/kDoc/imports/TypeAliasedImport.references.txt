@@ -2,6 +2,7 @@ KDocName(64,67): 'lst'
   KDocReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       0: (in kotlin.collections) fun <T> listOf(element: T): kotlin.collections.List<T>
       1: (in kotlin.collections) fun <T> listOf(vararg elements: T): kotlin.collections.List<T>

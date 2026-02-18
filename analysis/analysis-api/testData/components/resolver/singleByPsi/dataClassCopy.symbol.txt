@@ -1,0 +1,2 @@
+KtNameReferenceExpression(82,86): 'copy'
+  null

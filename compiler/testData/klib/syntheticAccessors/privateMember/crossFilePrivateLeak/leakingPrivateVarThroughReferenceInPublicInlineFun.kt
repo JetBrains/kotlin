@@ -1,3 +1,4 @@
+// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
 // FILE: A.kt
 class A {
     private var privateVar = 22

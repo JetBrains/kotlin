@@ -447,8 +447,8 @@ FILE: [ResolvedTo(IMPORTS)] dataClassConstructor.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
 
     }
-    @R|pack/Anno|[Types](value = Int(0)) public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyData : R|kotlin/Any| {
-        @R|pack/Anno|[Types](value = Int(3)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyData] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](value = Int(1)) p1: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](value = Int(2)) p2: R|kotlin/Int|): R|pack/MyData| {
+    @R|pack/Anno|[Types](value = Int(0) [evaluated = Int(0)]) public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyData : R|kotlin/Any| {
+        @R|pack/Anno|[Types](value = Int(3) [evaluated = Int(3)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyData] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](value = Int(1) [evaluated = Int(1)]) p1: R|kotlin/String|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](value = Int(2) [evaluated = Int(2)]) p2: R|kotlin/Int|): R|pack/MyData| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -486,8 +486,8 @@ FILE: [ResolvedTo(IMPORTS)] dataClassConstructor.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAnno] get(): String
 
     }
-    @R|pack/Anno|[Types](value = Int(0)) public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyData : R|kotlin/Any| {
-        @R|pack/Anno|[Types](value = Int(3)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyData] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](value = Int(1)) p1: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](value = Int(2)) p2: R|kotlin/Int|): R|pack/MyData| {
+    @R|pack/Anno|[Types](value = Int(0) [evaluated = Int(0)]) public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyData : R|kotlin/Any| {
+        @R|pack/Anno|[Types](value = Int(3) [evaluated = Int(3)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyData] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](value = Int(1) [evaluated = Int(1)]) p1: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](value = Int(2) [evaluated = Int(2)]) p2: R|kotlin/Int|): R|pack/MyData| {
             super<R|kotlin/Any|>()
         }
 
@@ -516,7 +516,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] dataClassConstructor.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class PropertyAnno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class PropertyAnno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PropertyAnno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/PropertyAnno.s] s: R|kotlin/String|): R|pack/PropertyAnno| {
             super<R|kotlin/Any|>()
         }
@@ -525,12 +525,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] dataClassConstructor.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PropertyAnno] get(): R|kotlin/String|
 
     }
-    @R|pack/Anno|[Types](value = Int(0)) public final data [ResolvedTo(BODY_RESOLVE)] class MyData : R|kotlin/Any| {
-        @R|pack/Anno|[Types](value = Int(3)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyData] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](value = Int(1)) p1: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](value = Int(2)) p2: R|kotlin/Int|): R|pack/MyData| {
+    @R|pack/Anno|[Types](value = Int(0) [evaluated = Int(0)]) public final data [ResolvedTo(BODY_RESOLVE)] class MyData : R|kotlin/Any| {
+        @R|pack/Anno|[Types](value = Int(3) [evaluated = Int(3)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyData] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p1] @R|pack/Anno|[Types](value = Int(1) [evaluated = Int(1)]) p1: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/MyData.p2] @CONSTRUCTOR_PARAMETER:R|pack/Anno|[Types](value = Int(2) [evaluated = Int(2)]) p2: R|kotlin/Int|): R|pack/MyData| {
             super<R|kotlin/Any|>()
         }
 
-        @R|pack/PropertyAnno|[Types](s = String(str)) public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
+        @R|pack/PropertyAnno|[Types](s = String(str) [evaluated = String(str)]) public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyData.component1, IsFromPrimaryConstructor=true] val p1: R|kotlin/String| = R|<local>/p1|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyData] get(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=pack/MyData.component2, IsFromPrimaryConstructor=true] val p2: R|kotlin/Int| = R|<local>/p2|
@@ -540,6 +540,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] dataClassConstructor.kt
 
         public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Int|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] @R|pack/Anno|[Types](value = Int(1)) p1: R|kotlin/String| = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(BODY_RESOLVE)] @R|pack/Anno|[Types](value = Int(2)) p2: R|kotlin/Int| = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] @R|pack/Anno|[Types](value = Int(1) [evaluated = Int(1)]) p1: R|kotlin/String| = this@R|pack/MyData|.R|pack/MyData.p1|, [ResolvedTo(BODY_RESOLVE)] @R|pack/Anno|[Types](value = Int(2) [evaluated = Int(2)]) p2: R|kotlin/Int| = this@R|pack/MyData|.R|pack/MyData.p2|): R|pack/MyData|
 
     }

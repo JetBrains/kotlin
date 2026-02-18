@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsReporterImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
@@ -28,26 +29,27 @@ fun FirSession.runResolution(firFiles: List<FirFile>): Pair<ScopeSession, List<F
 fun FirSession.runCheckers(
     scopeSession: ScopeSession,
     firFiles: Collection<FirFile>,
-    reporter: BaseDiagnosticsCollector,
+    diagnosticsCollector: BaseDiagnosticsCollector,
     mppCheckerKind: MppCheckerKind
 ): Map<FirFile, List<KtDiagnostic>> {
     val collector = DiagnosticComponentsFactory.create(this, scopeSession, mppCheckerKind)
+    val diagnosticsReporter = PendingDiagnosticsReporterImpl(diagnosticsCollector)
     for (file in firFiles) {
         withFileAnalysisExceptionWrapping(file) {
-            collector.collectDiagnostics(file, reporter)
+            collector.collectDiagnostics(file, diagnosticsReporter)
         }
     }
-    collector.collectDiagnosticsInSettings(reporter)
+    collector.collectDiagnosticsInSettings(diagnosticsReporter)
     return firFiles.associateWith {
         val path = it.sourceFile?.path ?: return@associateWith emptyList()
-        reporter.diagnosticsByFilePath[path] ?: emptyList()
+        diagnosticsCollector.diagnosticsByFilePath[path] ?: emptyList()
     }
 }
 
 fun FirSession.collectLostDiagnosticsOnFile(
     scopeSession: ScopeSession,
     file: FirFile,
-    reporter: BaseDiagnosticsCollector,
+    diagnosticsCollector: BaseDiagnosticsCollector,
 ): List<KtDiagnostic> {
     val collector = CliDiagnosticsCollector(this, scopeSession) { reporter ->
         DiagnosticCollectorComponents(
@@ -55,9 +57,10 @@ fun FirSession.collectLostDiagnosticsOnFile(
             ReportCommitterDiagnosticComponent(this, reporter)
         )
     }
+    val diagnosticsReporter = PendingDiagnosticsReporterImpl(diagnosticsCollector)
     withFileAnalysisExceptionWrapping(file) {
-        collector.collectDiagnostics(file, reporter)
+        collector.collectDiagnostics(file, diagnosticsReporter)
     }
     val path = file.sourceFile?.path ?: return emptyList()
-    return reporter.diagnosticsByFilePath[path] ?: emptyList()
+    return diagnosticsCollector.diagnosticsByFilePath[path] ?: emptyList()
 }

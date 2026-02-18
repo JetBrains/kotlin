@@ -51,4 +51,21 @@ open internal class NonCapturingJointSet(children: List<AbstractSet>, fSet: FSet
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean {
         return matchResult.getConsumed(groupIndex) != 0
     }
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        children.forEach { it.collectProperties(properties, fSet) }
+        // if there are several children nodes, we cannot match if without a backtracking
+        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || children.size > 1
+        properties.tracksConsumption = true
+    }
+
+    /**
+     * If [this] set contains a single child, returns it. Otherwise, returns `null`.
+     */
+    fun getSingleChildOrNull(): AbstractSet? {
+        if (children.size == 1) {
+            return children[0]
+        }
+        return null
+    }
 }

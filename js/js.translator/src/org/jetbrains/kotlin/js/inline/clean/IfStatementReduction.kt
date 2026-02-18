@@ -58,12 +58,13 @@ class IfStatementReduction(private val root: JsStatement) {
                     if (thenStatement.vars.size == 1 && elseStatement.vars.size == 1) {
                         val thenVar = thenStatement.vars[0]
                         val elseVar = elseStatement.vars[0]
+                        val thenVarName = thenVar.name
                         val thenValue = thenVar.initExpression
                         val elseValue = elseVar.initExpression
-                        if (thenVar.name == elseVar.name && thenValue != null && elseValue != null) {
+                        if (thenVar.name == elseVar.name && thenVarName != null && thenValue != null && elseValue != null) {
                             hasChanges = true
                             val ternary = JsConditional(x.ifExpression, thenValue, elseValue)
-                            val replacement = JsAstUtils.newVar(thenVar.name, ternary)
+                            val replacement = JsAstUtils.newVar(thenVarName, ternary)
                             replacement.synthetic = thenStatement.synthetic && elseStatement.synthetic
                             ctx.replaceMe(replacement)
                             accept(replacement)

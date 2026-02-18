@@ -2,7 +2,7 @@
 <results>
   <testsuite name="com.example.MainTest" tests="1" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
     <properties />
-    <testcase name="testHello[node]" classname="com.example.MainTest" time="..." />
+    <testcase name="testHello[js, node]" classname="com.example.MainTest" time="..." />
     <system-out />
     <system-err />
   </testsuite>

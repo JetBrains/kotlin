@@ -1,5 +1,5 @@
 // WITH_STDLIB
-
+// FILE: lib.kt
 import kotlin.test.*
 
 @Suppress("NOTHING_TO_INLINE")
@@ -10,6 +10,10 @@ inline fun <T, C : MutableCollection<in T>> foo(destination: C, predicate: (T) -
     }
     return destination
 }
+
+// FILE: main.kt
+
+import kotlin.test.*
 
 fun bar(): Boolean {
     val result = foo <Int, MutableList<Int>> (mutableListOf(1, 2, 3)) { true }

@@ -1722,6 +1722,12 @@ results in a bunch of repeated ASTORE and ALOAD instructions, which can break ta
 optimization for these cases.
 
 #### Tail-Call Optimization for Functions Returning Unit
+**NOTE:** The implementation for this optimization is being changed, and some statements in this section became obsolete:
+1. There is no `ICONST_2` suspend marker anymore.
+2. There is a new `BIPUSH 11` suspend marker marking Unit-returned suspension points.
+3. Calls of non-Unit functions and lambdas from Unit-returning function are not considered tail-calls anymore.
+
+
 There are some challenges if we want to make suspending functions, returning `Unit` tail-call. Let us have a look at one of them. If the
 function returns `Unit`, `return` keyword is optional:
 ```kotlin

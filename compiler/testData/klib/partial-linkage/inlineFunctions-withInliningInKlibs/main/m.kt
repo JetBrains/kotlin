@@ -333,7 +333,7 @@ fun box() = abiTest {
 
     // inline val
     expectSuccess(true) { createRemovedInlineValReference() is kotlin.reflect.KProperty0<*> }
-    expectFailure(linkage("Reference to property 'removedInlineVal' can not be evaluated: No property found for symbol '/removedInlineVal'")) { removedInlineValReferenceName() }
+    expectSuccess("removedInlineVal") { removedInlineValReferenceName() }
     expectSuccess(321) { removedInlineValReferenceInvoke() }
     expectSuccess(321) { removedInlineValReferenceGet() }
 
@@ -345,7 +345,7 @@ fun box() = abiTest {
 
     // inline var
     expectSuccess(true) { createRemovedInlineVarReference() is kotlin.reflect.KMutableProperty0<*> }
-    expectFailure(linkage("Reference to property 'removedInlineVar' can not be evaluated: No property found for symbol '/removedInlineVar'")) { removedInlineVarReferenceName() }
+    expectSuccess("removedInlineVar") { removedInlineVarReferenceName() }
     expectSuccess(231) { removedInlineVarReferenceInvoke() }
     expectSuccess(231) { removedInlineVarReferenceGet() }
     expectSuccess(Unit) { removedInlineVarReferenceSet() }

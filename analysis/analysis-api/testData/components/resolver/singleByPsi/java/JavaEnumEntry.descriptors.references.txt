@@ -8,5 +8,6 @@ KtNameReferenceExpression(69,76): 'RUNTIME'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

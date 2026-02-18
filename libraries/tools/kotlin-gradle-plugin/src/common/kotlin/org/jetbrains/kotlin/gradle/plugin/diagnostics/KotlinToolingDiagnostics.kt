@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_ALLOW_MULTIPLATFORM_PUBLICATIONS_ON_UNSUPPORTED_HOST
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.C
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.ResolvedVariant
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.UnresolvedComponent
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import java.io.File
 import java.net.URI
 import java.security.MessageDigest
-import java.util.Locale
 import kotlin.KotlinVersion as StdlibKotlinVersion
 
 internal object KotlinToolingDiagnostics {
@@ -206,6 +205,34 @@ internal object KotlinToolingDiagnostics {
 
         val extendedDetailsLogInInfo: String
             get() = "Run the build with '--info' for more details."
+    }
+
+    internal object PublishingDisabledOnUnsupportedHost : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(projectName: String, hostName: String, supportedHosts: List<String>) =
+            build {
+                val supportedHostsList = supportedHosts
+                    .sorted()
+                    .joinToString(separator = "\n* ", prefix = "* ")
+
+                title("Kotlin Multiplatform publishing is disabled")
+                    .description(
+                        """
+                        |The Kotlin/Native compiler does not support your current host platform: $hostName.
+                        |Consequently, publishing for project '$projectName' has been disabled to prevent incomplete artifacts.
+                        |
+                        |Compilation and publication of Kotlin/Native targets is only possible on the following host platforms:
+                        |$supportedHostsList
+                        """.trimMargin()
+                    )
+                    .solutions {
+                        listOf(
+                            "Run the publish task on one of the supported host platforms (listed above).",
+                            "If using a CI/CD service, ensure the agent runs a supported OS (e.g., a Linux x86_64 agent).",
+                            "To force publishing (only for non-native targets), add '$KOTLIN_INTERNAL_ALLOW_MULTIPLATFORM_PUBLICATIONS_ON_UNSUPPORTED_HOST=true' to your Gradle properties."
+                        )
+                    }
+                    .documentationLink(URI("https://kotlinlang.org/docs/native-target-support.html"))
+            }
     }
 
     internal object NativeHostNotSupportedError : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
@@ -418,51 +445,47 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    internal abstract class NativeCacheDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
-        val NativeBinary.binaryBuildType // "DEBUG" -> "debug" -> "Debug"
-            get() = buildType.name.lowercase(Locale.ROOT).replaceFirstChar { it.titlecase(Locale.ROOT) }
-
-        val NativeBinary.targetName
-            get() = target.konanTarget.visibleName
-    }
-
-    internal object NativeCacheDisabledDiagnostic : NativeCacheDiagnostic() {
+    internal object NativeCacheDisabledDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
             kotlinVersion: StdlibKotlinVersion,
-            binary: NativeBinary,
+            buildType: String,
+            binaryName: String,
+            targetName: String,
             reason: String,
             issueUrl: URI?
         ) = build {
-            title("Kotlin/Native cache is disabled for ${binary.binaryBuildType} binary '${binary.name}'")
+            title("Kotlin/Native cache is disabled for $buildType binary '${binaryName}'")
                 .description {
                     """
-                    The Kotlin/Native cache has been disabled for the ${binary.binaryBuildType} binary '${binary.name}' on target '${binary.targetName}'.
-                    Build times for '${binary.targetName}' (${binary.binaryBuildType}) may be slower as a result.
+                    The Kotlin/Native cache has been disabled for the $buildType binary '$binaryName' on target '$targetName'.
+                    Build times for '$targetName' ($buildType) may be slower as a result.
                     
                     Reason: $reason
                     """.trimIndent()
                 }
                 .solution {
-                    "Investigate if '$reason' is still relevant for $kotlinVersion to re-enable caching for '${binary.targetName}'."
+                    "Investigate if '$reason' is still relevant for $kotlinVersion to re-enable caching for '$targetName'."
                 }
                 .documentationLink(issueUrl ?: URI("https://kotl.in/disable-native-cache"))
         }
     }
 
-    internal object NativeCacheRedundantDiagnostic : NativeCacheDiagnostic() {
+    internal object NativeCacheRedundantDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
-            binary: NativeBinary,
+            buildType: String,
+            binaryName: String,
+            targetName: String,
             hostName: String
         ) = build {
-            title("Kotlin/Native cache disable configuration is redundant for ${binary.binaryBuildType} binary '${binary.name}'")
+            title("Kotlin/Native cache disable configuration is redundant for $buildType binary '$binaryName'")
                 .description {
                     """
-                    The Kotlin/Native cache has been explicitly disabled for the ${binary.binaryBuildType} binary '${binary.name}' on target '${binary.targetName}'.
+                    The Kotlin/Native cache has been explicitly disabled for the $buildType binary '$binaryName' on target '$targetName'.
                     However, this target does not support caching on the current host '$hostName' regardless of configuration.
                     """.trimIndent()
                 }
                 .solution {
-                    "Remove the configuration that disables the cache for '${binary.name}'. " +
+                    "Remove the configuration that disables the cache for '$binaryName'. " +
                             "Since caching is not supported for this target on this host, this configuration has no effect."
                 }
                 .documentationLink(URI("https://kotl.in/disable-native-cache"))
@@ -2022,6 +2045,21 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object KMPAndroidTargetIsIncompatibleWithTheNewAgpKMPPlugin :
+        ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            trace: Throwable,
+        ) = build(throwable = trace) {
+            title("Failed to create 'androidTarget()'")
+                .description("Enabled `androidTarget()` target is not compatible with 'com.android.kotlin.multiplatform.library' plugin.")
+                .solution {
+                    "Please migrate your project from using 'androidTarget()' to 'android()' DSL provided by " +
+                            "'com.android.kotlin.multiplatform.library' plugin (see https://kotl.in/gradle/agp-new-kmp for guidance)."
+                }
+                .documentationLink(URI("https://kotl.in/gradle/agp-new-kmp"))
+        }
+    }
+
     internal object NonKmpAgpIsDeprecated : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(androidPluginId: String) = build {
             val titleStep = title(
@@ -2032,7 +2070,7 @@ internal object KotlinToolingDiagnostics {
                 titleStep
                     .description(
                         """
-                        |The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with 'com.android.library' starting with Android Gradle Plugin 9.0.0.
+                        |The 'org.jetbrains.kotlin.multiplatform' plugin is not compatible with 'com.android.library' starting with Android Gradle Plugin 9.0.0.
                         """.trimMargin()
                     )
                     .solution("Please use the 'com.android.kotlin.multiplatform.library' plugin instead of 'com.android.library'.")
@@ -2040,7 +2078,7 @@ internal object KotlinToolingDiagnostics {
                 titleStep
                     .description(
                         """
-                        |The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with '$androidPluginId' starting with Android Gradle Plugin 9.0.0.
+                        |The 'org.jetbrains.kotlin.multiplatform' plugin is not compatible with '$androidPluginId' starting with Android Gradle Plugin 9.0.0.
                         |
                         |Please change the structure of the your project and move the usage of '$androidPluginId' into a separate subproject. The new subproject should add a dependency on this KMP subproject.
                         |
@@ -2152,6 +2190,56 @@ internal object KotlinToolingDiagnostics {
                 )
                 .solution("Select the daemon or in-process compilation modes to allow KGP to run compilation through BTA.")
                 .documentationLink(URI("https://kotl.in/build-tools-api"))
+        }
+    }
+
+    internal object GeneratingCompilerRefIndexWithoutBuildToolsApi : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(projectName: String, projectPath: String) = build {
+            title("Skipping the Compiler Reference Index data generation in '$projectName' ('$projectPath')")
+                .description("Compiler Reference Index data can be generated only when compilation is performed via Build Tools API.")
+                .solution("Please set `kotlin.compiler.runViaBuildToolsApi=true` to enable compilation via Build Tools API.")
+        }
+    }
+
+    internal object OutOfProcessExecutionStrategyUsage : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Kgp.Deprecation,
+    ) {
+        operator fun invoke() = build {
+            title("Deprecated usage of 'out-of-process' Kotlin compiler execution strategy")
+                .description(
+                    """
+                The 'out-of-process' Kotlin compiler execution strategy is deprecated and will be removed in future versions.
+                Consider using a default 'daemon' strategy for improved performance and stability.
+                """.trimIndent()
+                )
+                .solution("Please remove 'kotlin.compiler.executionStrategy=out-of-process' from project 'gradle.properties' file.")
+        }
+    }
+
+    internal object JvmSourceSetCreatedBeforeCompilation : ToolingDiagnosticFactory(
+        FATAL,
+        DiagnosticGroup.Kgp.Misconfiguration
+    ) {
+        operator fun invoke(targetName: String, sourceSetName: String, compilationName: String) = build {
+            title { "The compilation '$compilationName' cannot be created after the source set '$sourceSetName'" }
+                .description {
+                    """
+                        The source set '$sourceSetName' is already created and conflicts with the compilation '$compilationName'.
+                        
+                        Instead of creating the source set '$sourceSetName' manually, consider creating the 'compilation' and resolving
+                        the source set from there.
+                    
+                        kotlin {
+                            val compilation = $targetName().compilations.create("$compilationName")
+                            val sourceSet = compilation.defaultSourceSet
+                        }
+                        """.trimIndent()
+                }
+                .solution("Use the source set created by the compilation instead of creating it manually")
         }
     }
 }

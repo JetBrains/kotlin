@@ -25,7 +25,7 @@ interface JsCommonBackendContext : CommonBackendContext {
 
     override val inlineClassesUtils: JsCommonInlineClassesUtils
 
-    override val symbols: JsCommonSymbols
+    override val symbols: BackendWebSymbols
     val symbolTable: SymbolTable
 
     val jsPromiseSymbol: IrClassSymbol?

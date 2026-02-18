@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.createResolvable
+import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
 
 private const val ABI_TOOLS_DEPENDENCY_CONFIGURATION = "kotlinInternalAbiValidation"
 
@@ -62,8 +63,7 @@ internal fun Project.prepareAbiClasspath(): Configuration {
 
     return configurations.createResolvable(ABI_TOOLS_DEPENDENCY_CONFIGURATION)
         .also {
-            @Suppress("DEPRECATION")
-            it.isVisible = false
+            it.setInvisibleIfSupported()
             it.defaultDependencies { dependencies ->
                 dependencies.add(
                     project.dependencies.create("org.jetbrains.kotlin:abi-tools:$version")

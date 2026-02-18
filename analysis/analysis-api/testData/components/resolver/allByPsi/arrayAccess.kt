@@ -12,3 +12,5 @@ fun foo(i: Int, list: MutableList<Int>) {
 }
 
 // WITH_STDLIB
+// IGNORE_STABILITY_K2: symbol
+// ^ The suppress is about parenthesized array accesses. Not a big problem since the code is incorrect anyway

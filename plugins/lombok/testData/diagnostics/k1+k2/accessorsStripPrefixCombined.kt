@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // KT-46529
 
 // FILE: PrefixJava.java

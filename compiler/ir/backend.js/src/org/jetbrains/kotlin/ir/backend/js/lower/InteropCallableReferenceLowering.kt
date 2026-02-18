@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.functionReferenceReflectedName
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDelegatedPropertiesLowering
-import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -392,12 +391,18 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                 }
 
                 outerReceiverMapping[expression.symbol]?.let {
+                    val receiver = it.receiver?.deepCopyWithSymbols()?.apply {
+                        val oldReceiver = expression.receiver ?: return@apply
+                        startOffset = oldReceiver.startOffset
+                        endOffset = oldReceiver.endOffset
+                    }
+
                     return IrGetFieldImpl(
                         expression.startOffset,
                         expression.endOffset,
                         it.symbol,
                         it.type,
-                        it.receiver?.deepCopyWithSymbols()
+                        receiver
                     )
                 }
 

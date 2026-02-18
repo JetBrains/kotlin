@@ -1,12 +1,14 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.Severity.WARNING
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -14,7 +16,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.util.PrivateForInline
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
 @OptIn(PrivateForInline::class)
@@ -28,7 +35,6 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<FirBasedSymbol<*>>("callee")
         }
-        val RUNTIME_ANNOTATION_NOT_SUPPORTED by warning<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("type")
@@ -112,7 +118,13 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         }
         val NAMED_COMPANION_IN_EXPORTED_INTERFACE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
 
-        val NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val NOT_EXPORTED_OR_EXTERNAL_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+
+        val EXPOSED_NOT_EXPORTED_SUPER_INTERFACE by deprecationError<KtElement>(
+            LanguageFeature.JsExposedNotExportedSuperInterfaceApiByExportedOne
+        ) {
+            parameter<FirClassLikeSymbol<*>>("restrictingDeclaration")
+        }
     }
 
     val DYNAMICS by object : DiagnosticGroup("Dynamics") {
@@ -128,5 +140,18 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val JS_STATIC_NOT_IN_CLASS_COMPANION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
         val JS_STATIC_ON_NON_PUBLIC_MEMBER by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
         val JS_STATIC_ON_CONST by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
+    }
+
+    val NO_RUNTIME by object : DiagnosticGroup("NoRuntime") {
+        val JS_NO_RUNTIME_WRONG_TARGET by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_NO_RUNTIME_FORBIDDEN_IS_CHECK by error<KtElement>()
+        val JS_NO_RUNTIME_FORBIDDEN_AS_CAST by error<KtElement>()
+        val JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE by error<KtElement>()
+        val JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE by warning<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("typeArgument")
+        }
+        val JS_ACTUAL_EXTERNAL_INTERFACE_WHILE_EXPECT_WITHOUT_JS_NO_RUNTIME by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY)
+        val JS_NO_RUNTIME_ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY)
     }
 }

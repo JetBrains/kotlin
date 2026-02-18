@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.diagnostics.impl
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.PendingDiagnosticReporter
 
+/**
+ * [BaseDiagnosticsCollector] is a [DiagnosticReporter] which stores all reported diagnostics inside itself.
+ */
 abstract class BaseDiagnosticsCollector : DiagnosticReporter() {
     abstract val diagnostics: List<KtDiagnostic>
     abstract val diagnosticsByFilePath: Map<String?, List<KtDiagnostic>>

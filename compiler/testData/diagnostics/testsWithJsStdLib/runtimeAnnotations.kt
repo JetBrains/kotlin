@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: +RUNTIME_ANNOTATION_NOT_SUPPORTED
 @Retention(AnnotationRetention.BINARY)
 annotation class X
 
@@ -50,17 +49,17 @@ class C {
     val r: Int = 0
 }
 
-<!RUNTIME_ANNOTATION_NOT_SUPPORTED!>@Y<!>
+@Y
 class D {
-    <!RUNTIME_ANNOTATION_NOT_SUPPORTED!>@Y<!>
+    @Y
     fun f() {}
 
-    <!RUNTIME_ANNOTATION_NOT_SUPPORTED!>@Y<!>
+    @Y
     val p: Int = 0
 
     val q: Int
-      <!RUNTIME_ANNOTATION_NOT_SUPPORTED!>@Y<!> get() = 0
+      @Y get() = 0
 
-    <!RUNTIME_ANNOTATION_NOT_SUPPORTED!>@get:Y<!>
+    @get:Y
     val r: Int = 0
 }

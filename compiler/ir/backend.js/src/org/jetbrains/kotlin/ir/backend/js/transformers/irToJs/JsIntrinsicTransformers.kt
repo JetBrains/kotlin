@@ -103,6 +103,14 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsYieldStar(translateCallArguments(call, context).single())
             }
 
+            add(symbols.jsGenerateInterfaceSymbol) { _, context ->
+                if (backendContext.es6mode) {
+                    JsInvocation(JsNameRef("Symbol"))
+                } else {
+                    JsInvocation(context.getNameForStaticFunction(symbols.generateInterfaceSymbolById.owner).makeRef())
+                }
+            }
+
             add(symbols.jsObjectCreateSymbol) { call, context ->
                 val classToCreate = call.typeArguments[0]!!.classifierOrFail.owner as IrClass
                 val className = classToCreate.getClassRef(context.staticContext)
@@ -275,7 +283,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             addAll(sharedVariableBoxConstructors) { call, context ->
                 val arg = translateCallArguments(call, context).single()
-                JsObjectLiteral(listOf(JsPropertyInitializer(JsStringLiteral(Namer.SHARED_BOX_V), arg)))
+                JsObjectLiteral(listOf(JsPropertyInitializer.KeyValue(JsStringLiteral(Namer.SHARED_BOX_V), arg)))
             }
 
             add(symbols.genericSharedVariableBox.load) { call, context: JsGenerationContext ->
@@ -309,6 +317,23 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(symbols.jsNewAnonymousClass) { call, context ->
                 val baseClass = translateCallArguments(call, context).single() as JsNameRef
                 JsClass(baseClass = baseClass)
+            }
+
+            add(symbols.jsMethodReference) { call, context ->
+                val dispatchReceiver = call.arguments[0] ?: compilationException(
+                    "Call of the jsMethodReference doesn't contain first argument representing dispatchReceiver",
+                    call
+                )
+
+                val rawFunctionReference = call.arguments[1] as? IrRawFunctionReference ?: compilationException(
+                    "Second argument is empty or not an instance of IrRawFunctionReference",
+                    call
+                )
+
+                JsNameRef(
+                    context.getNameForMemberFunction(rawFunctionReference.symbol.owner as IrSimpleFunction),
+                    dispatchReceiver.accept(IrElementToJsExpressionTransformer(), context),
+                )
             }
 
             add(symbols.void.owner.getter!!.symbol) { _, context ->

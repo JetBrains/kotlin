@@ -8,5 +8,6 @@ KtNameReferenceExpression(118,120): 'AA'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

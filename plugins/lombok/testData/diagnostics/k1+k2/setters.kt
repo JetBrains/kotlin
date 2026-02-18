@@ -29,8 +29,7 @@ fun test() {
     obj.<!INVISIBLE_MEMBER!>primitiveBoolean<!> = false
     obj.setPrimitiveBoolean(true)
 
-    //shouldn't be accesible from here
-    obj.<!INVISIBLE_MEMBER!>setName<!>("abc")
+    obj.setName("abc")
 
     OverridenGetterTest().usage()
 }

@@ -37,6 +37,10 @@ internal class PreviousMatchSet : SimpleSet() {
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean = false
     override val name: String
         get() = "PreviousMatchSet"
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        // does nothing interesting
+    }
 }
 
 

@@ -26,7 +26,11 @@ internal open class DescriptorKProperty1<T, out V> : KProperty1<T, V>, Descripto
         container, name, signature, boundReceiver
     )
 
-    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+    constructor(
+        container: KDeclarationContainerImpl,
+        descriptor: PropertyDescriptor,
+        overriddenStorage: KCallableOverriddenStorage,
+    ) : super(container, descriptor, overriddenStorage)
 
     override val getter: Getter<T, V> by lazy(PUBLICATION) { Getter(this) }
 
@@ -38,6 +42,12 @@ internal open class DescriptorKProperty1<T, out V> : KProperty1<T, V>, Descripto
 
     override fun invoke(receiver: T): V = get(receiver)
 
+    override fun shallowCopy(
+        container: KDeclarationContainerImpl,
+        overriddenStorage: KCallableOverriddenStorage,
+    ): DescriptorKProperty1<T, V> =
+        DescriptorKProperty1<T, V>(container, descriptor, overriddenStorage)
+
     class Getter<T, out V>(override val property: DescriptorKProperty1<T, V>) : DescriptorKProperty.Getter<V>(), KProperty1.Getter<T, V> {
         override fun invoke(receiver: T): V = property.get(receiver)
     }
@@ -48,11 +58,21 @@ internal class DescriptorKMutableProperty1<T, V> : DescriptorKProperty1<T, V>, K
         container, name, signature, boundReceiver
     )
 
-    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+    constructor(
+        container: KDeclarationContainerImpl,
+        descriptor: PropertyDescriptor,
+        overriddenStorage: KCallableOverriddenStorage,
+    ) : super(container, descriptor, overriddenStorage)
 
     override val setter: Setter<T, V> by lazy(PUBLICATION) { Setter(this) }
 
     override fun set(receiver: T, value: V) = setter.call(receiver, value)
+
+    override fun shallowCopy(
+        container: KDeclarationContainerImpl,
+        overriddenStorage: KCallableOverriddenStorage,
+    ): DescriptorKMutableProperty1<T, V> =
+        DescriptorKMutableProperty1<T, V>(container, descriptor, overriddenStorage)
 
     class Setter<T, V>(override val property: DescriptorKMutableProperty1<T, V>) : DescriptorKProperty.Setter<V>(), KMutableProperty1.Setter<T, V> {
         override fun invoke(receiver: T, value: V): Unit = property.set(receiver, value)

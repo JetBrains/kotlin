@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// FILE: lib.kt
 inline fun <T> Iterable<T>.myForEach(action: (T) -> Unit): Unit {
     for (element in this) action(element)
 }
@@ -9,6 +10,7 @@ inline fun myRepeat(times: Int, action: (Int) -> Unit) {
     }
 }
 
+// FILE: main.kt
 
 fun box(): String {
     listOf(1).myForEach { size ->

@@ -133,7 +133,6 @@ internal fun reportArgumentsNotAllowed(
         CompilerMessageSeverity.ERROR,
         messageCollector,
         reportingState,
-        K2JVMCompilerArguments::useJavac,
     )
 
 internal fun reportArgumentsIgnoredGenerally(
@@ -159,8 +158,6 @@ internal fun reportArgumentsIgnoredGenerally(
         K2JVMCompilerArguments::disableStandardScript,
         K2JVMCompilerArguments::defaultScriptExtension,
         K2JVMCompilerArguments::disableDefaultScriptingPlugin,
-        K2JVMCompilerArguments::useJavac,
-        K2JVMCompilerArguments::compileJava,
         K2JVMCompilerArguments::reportPerf,
         K2JVMCompilerArguments::dumpPerf
     )
@@ -215,7 +212,7 @@ fun KtDiagnostic.asScriptDiagnostic(sourceCode: SourceCode): ScriptDiagnostic {
     val (diagnosticCode, scriptSeverity) = when (severity) {
         Severity.INFO -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.INFO
         Severity.ERROR -> ScriptDiagnostic.unspecifiedError to ScriptDiagnostic.Severity.ERROR
-        Severity.WARNING, Severity.FIXED_WARNING -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.WARNING
+        Severity.WARNING, Severity.FIXED_WARNING, Severity.STRONG_WARNING -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.WARNING
     }
 
     val textRanges = (this as? KtDiagnosticWithSource)?.textRanges

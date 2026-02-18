@@ -74,6 +74,22 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultEmptyList("annotations", withGetter = true)
         }
 
+        impl(replExpressionReference) {
+            defaultEmptyList("annotations", withGetter = true)
+            default("coneTypeOrNull") {
+                value = "expressionRef.value.coneTypeOrNull"
+                withGetter = true
+            }
+        }
+
+        impl(replPropertyInitializer) {
+            defaultEmptyList("annotations", withGetter = true)
+        }
+
+        impl(replPropertyDelegate) {
+            defaultEmptyList("annotations", withGetter = true)
+        }
+
         impl(import)
 
         impl(resolvedImport) {

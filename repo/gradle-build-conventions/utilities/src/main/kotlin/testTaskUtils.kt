@@ -14,7 +14,8 @@ private val reservedMemoryMb = 9000 // system processes, gradle daemon, kotlin d
 val totalMaxMemoryForTestsMb: Int
     get() {
         val mxbean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
-        return (mxbean.totalPhysicalMemorySize / 1048576 - reservedMemoryMb).toInt()
+        val availableMemoryMb = (mxbean.totalPhysicalMemorySize / 1048576 - reservedMemoryMb).toInt()
+        return availableMemoryMb - (availableMemoryMb % 1024)
     }
 
 fun Project.ideaHomePathForTests(): Provider<Directory> = rootProject.layout.buildDirectory.dir("ideaHomeForTests")

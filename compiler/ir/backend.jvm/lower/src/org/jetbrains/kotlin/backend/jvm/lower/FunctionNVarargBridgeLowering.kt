@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -40,12 +41,16 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
     FileLoweringPass, IrElementTransformerVoidWithContext() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 
+    private fun IrFunctionSymbol.isOneOfFunctionalTypesInvoke() : Boolean {
+        if (owner.name.asString() != "invoke") return false
+        val classSymbol = owner.parentClassOrNull?.defaultType ?: return false
+        return classSymbol.isFunctionOrKFunction() || classSymbol.isSuspendFunctionOrKFunction()
+    }
+
     // Change calls to big arity invoke functions to vararg calls.
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         if (expression.nonDispatchArguments.size < BuiltInFunctionArity.BIG_ARITY ||
-            !(expression.symbol.owner.parentAsClass.defaultType.isFunctionOrKFunction() ||
-                    expression.symbol.owner.parentAsClass.defaultType.isSuspendFunctionOrKFunction()) ||
-            expression.symbol.owner.name.asString() != "invoke"
+            !expression.symbol.isOneOfFunctionalTypesInvoke()
         ) return super.visitFunctionAccess(expression)
 
         return context.createJvmIrBuilder(currentScope!!).run {

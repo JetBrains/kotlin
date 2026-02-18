@@ -61,7 +61,7 @@ private class ModuleDetails(val name: ModuleName, val outputDir: File) {
 }
 
 private fun customCompilerCall(): (PrintStream, Array<String>) -> ExitCode = { printStream: PrintStream, args: Array<String> ->
-    customJsCompilerSettings.customCompiler.callCompiler(printStream, *args)
+    customJsCompilerSettings.customKlibCompiler.callCompiler(printStream, *args)
 }
 
 private fun currentCompilerCall() = { printStream: PrintStream, args: Array<String> ->

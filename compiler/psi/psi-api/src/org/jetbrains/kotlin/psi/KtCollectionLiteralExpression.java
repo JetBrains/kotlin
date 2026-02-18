@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
+import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,12 +24,18 @@ import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.getTrailingCommaByClo
 
 /**
  * Represents a collection literal expression.
- * A collection literal expression is defined using brackets and may contain a list of expressions,
- * such as <code>[1, 2, 3]</code>.
- * <p>
- * The collection literal expression is used in Kotlin to define lists using a concise syntax.
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ * annotation class AnnoWithArray(val arr: IntArray)
+ *
+ * @AnnoWithArray([1, 2, 3])
+ * //             ^_______^
+ * fun foo() {}
+ * }</pre>
  */
-public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinCollectionLiteralExpressionStub> implements KtReferenceExpression {
+public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinCollectionLiteralExpressionStub>
+        implements KtReferenceExpression, KtResolvableCall {
     public KtCollectionLiteralExpression(@NotNull KotlinCollectionLiteralExpressionStub stub) {
         super(stub, KtStubBasedElementTypes.COLLECTION_LITERAL_EXPRESSION);
     }

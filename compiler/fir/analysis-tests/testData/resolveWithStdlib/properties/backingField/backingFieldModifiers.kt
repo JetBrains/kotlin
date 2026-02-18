@@ -25,7 +25,7 @@ class A {
         <!WRONG_MODIFIER_TARGET!>const<!> field = 1
 
     val i: Number
-        <!LATEINIT_FIELD_IN_VAL_PROPERTY, LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER, WRONG_MODIFIER_TARGET!>lateinit<!> field = 1
+        <!WRONG_MODIFIER_TARGET!>lateinit<!> field = 1
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, integerLiteral, propertyDeclaration */

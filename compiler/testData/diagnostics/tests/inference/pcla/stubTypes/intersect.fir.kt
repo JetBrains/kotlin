@@ -1,4 +1,3 @@
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +UnrestrictedBuilderInference
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST -DEPRECATION -OPT_IN_IS_NOT_ENABLED -UNUSED_VARIABLE
@@ -33,7 +32,7 @@ fun <E> intersect(vararg x: In<E>): E = null as E
 fun test() {
     val ret = build {
         emit("1")
-        <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>intersect<!>(getIn(), getIn())
+        intersect(getIn(), getIn())
         intersect(getIn(), Test.foo(getIn()))
         intersect(Test.foo(getIn()), Test.foo(getIn()))
         intersect(Test.foo(getIn()), getIn())

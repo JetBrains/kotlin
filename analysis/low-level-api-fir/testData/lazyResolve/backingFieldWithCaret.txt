@@ -1,0 +1,181 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] x: MutableList<T>): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val prop: Any?
+            private final? [ResolvedTo(RAW_FIR)] backing field field: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): Any?
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] x: MutableList<T>): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val prop: Any?
+            private final? [ResolvedTo(RAW_FIR)] backing field field: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): Any?
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] x: MutableList<T>): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val prop: Any?
+            private final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] backing field field: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] get(): Any?
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] x: MutableList<T>): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(COMPANION_GENERATION)] val prop: Any?
+            private final? [ResolvedTo(COMPANION_GENERATION)] backing field field: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] get(): Any?
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(SUPER_TYPES)] class MyClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] x: MutableList<T>): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(SUPER_TYPES)] val prop: Any?
+            private final? [ResolvedTo(SUPER_TYPES)] backing field field: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] get(): Any?
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(TYPES)] class MyClass<[ResolvedTo(TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(TYPES)] T>([ResolvedTo(RAW_FIR)] x: MutableList<T>): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(TYPES)] val prop: R|kotlin/Any?|
+            private final? [ResolvedTo(TYPES)] backing field field: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(STATUS)] backing field field: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] backing field field: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONTRACTS)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(CONTRACTS)] backing field field: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(CONSTANT_EVALUATION)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] backingFieldWithCaret.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] class MyClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/collections/MutableList<T>|): R|m2/MyClass<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Any?|
+            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|kotlin/collections/MutableList<T>| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Any?|
+
+    }

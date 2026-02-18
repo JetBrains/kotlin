@@ -21,6 +21,7 @@ internal class KotlinPresetEntry(
     val alsoBlockAfterConfiguration: String? = null,
     // Extra declarations will be inserted before functions are generated
     val extraTopLevelDeclarations: List<String> = emptyList(),
+    val kdoc: String? = null,
 ) {
     class Deprecation(
         val message: String,
@@ -59,14 +60,13 @@ internal val androidTargetPresetEntry = KotlinPresetEntry(
     typeName("$MPP_PACKAGE.KotlinAndroidTargetPreset"),
     typeName("$MPP_PACKAGE.KotlinAndroidTarget"),
     entityName = "android",
-    deprecation = KotlinPresetEntry.Deprecation(
-        message = "The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins since " +
-                "Android Gradle Plugin version 9.0.0.\\n\\nPlease use the 'com.android.kotlin.multiplatform.library' plugin instead. " +
-                "Read more: https://kotl.in/gradle/agp-new-kmp\\n\\nThe change may require changing the structure of the your project. " +
-                "Read more: https://kotl.in/kmp-project-structure-migration",
-        messageIsTheCode = false,
-        level = DeprecationLevel.WARNING,
-    )
+    kdoc = """
+    The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins
+    from Android Gradle Plugin version 9.0.0.
+    
+    Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp
+    The change may require changing the structure of your project. Read more: https://kotl.in/kmp-project-structure-migration
+    """.trimIndent(),
 )
 
 // Note: modifying these sets should also be reflected in the MPP plugin code, see 'setupDefaultPresets'

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.test.utils
 
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.junit.Assert
 import kotlin.reflect.KProperty
@@ -79,10 +79,10 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(
         val message = renderer.message
 
         if (factory is KtSourcelessDiagnosticFactory) {
-            if (message != BaseSourcelessDiagnosticFactory.MESSAGE_PLACEHOLDER) {
+            if (message != BaseSourcelessDiagnosticRendererFactory.MESSAGE_PLACEHOLDER) {
                 add(
                     """
-                    ${KtSourcelessDiagnosticFactory::class.simpleName} currently supports only `${BaseSourcelessDiagnosticFactory.MESSAGE_PLACEHOLDER}` placeholder which implies passing particular messages directly to a reporter.
+                    ${KtSourcelessDiagnosticFactory::class.simpleName} currently supports only `${BaseSourcelessDiagnosticRendererFactory.MESSAGE_PLACEHOLDER}` placeholder which implies passing particular messages directly to a reporter.
                     The current value of ${property.name} is `${message}`.
                     """.trimIndent()
                 )

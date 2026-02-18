@@ -125,6 +125,8 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
         STRING -> when (name) {
             "length" -> return (value as String).length
             "toString" -> return (value as String).toString()
+            "trimIndent" -> return (value as String).trimIndent()
+            "trimMargin" -> return (value as String).trimMargin()
         }
         UINT -> when (name) {
             "inv" -> return (value as UInt).inv()
@@ -590,6 +592,7 @@ fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: 
         STRING -> when (rightType) {
             STRING -> when (name) {
                 "compareTo" -> return (left as String).compareTo(right as String)
+                "trimMargin" -> return (left as String).trimMargin(right as String)
             }
             ANY -> when (name) {
                 "equals" -> return (left as String).equals(right)

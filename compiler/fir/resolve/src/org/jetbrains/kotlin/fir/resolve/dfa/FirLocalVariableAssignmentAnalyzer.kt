@@ -594,6 +594,18 @@ internal class FirLocalVariableAssignmentAnalyzer private constructor(
                 replDeclarationReference.symbol.fir.accept(this, data)
             }
 
+            override fun visitReplPropertyInitializer(replPropertyInitializer: FirReplPropertyInitializer, data: MiniCfgData) {
+                replPropertyInitializer.propertySymbol.fir.accept(this, data)
+            }
+
+            override fun visitReplPropertyDelegate(replPropertyDelegate: FirReplPropertyDelegate, data: MiniCfgData) {
+                replPropertyDelegate.propertySymbol.fir.accept(this, data)
+            }
+
+            override fun visitReplExpressionReference(replExpressionReference: FirReplExpressionReference, data: MiniCfgData) {
+                replExpressionReference.expressionRef.value.accept(this, data)
+            }
+
             override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: MiniCfgData) {
                 visitElement(variableAssignment, data)
                 if (variableAssignment.explicitReceiver != null) return

@@ -1,22 +1,21 @@
 KtDotQualifiedExpression(118,123): 'f.foo'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = f
+        isSafeNavigation = false
+        type = Foo<kotlin.String>
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = f
-          isSafeNavigation = false
-          type = Foo<kotlin.String>
-        signature = KaVariableSignature:
-          name = foo
-          receiverType = Foo<TypeVariable(A)>
-          returnType = kotlin.Int
-          symbol = val foo: kotlin.Int
-          contextParameters = []
-          callableId = /foo
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = Foo<TypeVariable(A)>
+        returnType = kotlin.Int
+        symbol = val foo: kotlin.Int
+        contextParameters = []
+        callableId = /foo
       typeArgumentsMapping = {}
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
     public val <A> Foo<TypeVariable(A)>.foo: Int defined in root package
@@ -25,22 +24,21 @@ KtDotQualifiedExpression(118,123): 'f.foo'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = f
+        isSafeNavigation = false
+        type = Foo<kotlin.String>
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = f
-          isSafeNavigation = false
-          type = Foo<kotlin.String>
-        signature = KaVariableSignature:
-          name = foo
-          receiverType = Foo<TypeVariable(B)>
-          returnType = kotlin.String
-          symbol = val foo: kotlin.String
-          contextParameters = []
-          callableId = /foo
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = Foo<TypeVariable(B)>
+        returnType = kotlin.String
+        symbol = val foo: kotlin.String
+        contextParameters = []
+        callableId = /foo
       typeArgumentsMapping = {}
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
     public val <A> Foo<TypeVariable(A)>.foo: Int defined in root package

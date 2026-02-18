@@ -1,0 +1,6 @@
+KtCallExpression(102,124): 'block(regularReceiver)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Function2.invoke(<dispatch receiver>: kotlin.Function2<P1, P2, R>, p1: P1, p2: P2): R
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Int but String was expected>

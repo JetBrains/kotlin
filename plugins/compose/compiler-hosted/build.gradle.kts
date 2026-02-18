@@ -9,7 +9,7 @@ plugins {
 }
 
 repositories {
-    if (!kotlinBuildProperties.isTeamcityBuild) {
+    if (!kotlinBuildProperties.isTeamcityBuild.get()) {
         androidXMavenLocal(androidXMavenLocalPath)
     }
     androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
@@ -41,6 +41,7 @@ dependencies {
     compileOnly(project(":compiler:ir.serialization.js"))
     compileOnly(project(":compiler:backend.jvm.codegen"))
     compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":native:native.config"))
 
     compileOnly(intellijCore())
 
@@ -55,7 +56,7 @@ dependencies {
     testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testImplementation(testFixtures(project(":analysis:low-level-api-fir")))
     testImplementation(testFixtures(project(":compiler:test-infrastructure")))
-    testImplementation(testFixtures(project(":generators:analysis-api-generator")))
+    testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(project(":compiler:plugin-api"))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(testFixtures(project(":js:js.tests")))
@@ -132,7 +133,7 @@ projectTests {
         systemProperty("compose.compiler.hosted.jar.path", runtimeJar.get().outputs.files.singleFile.relativeTo(rootDir))
         systemProperty("compose.compiler.test.js.classpath", testJsRuntime.asPath)
         workingDir = rootDir
-        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+        useJsIrBoxTests(buildDir = layout.buildDirectory)
     }
 
     testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)

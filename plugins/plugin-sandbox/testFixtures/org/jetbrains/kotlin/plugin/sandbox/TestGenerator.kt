@@ -9,15 +9,17 @@ import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.tests.provider
 import org.jetbrains.kotlin.generators.tests.standalone
+import org.jetbrains.kotlin.generators.tests.standaloneNoTR
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 
-fun main() {
-    generateTestGroupSuiteWithJUnit5 {
-        testGroup("plugins/plugin-sandbox/tests-gen", "plugins/plugin-sandbox/testData") {
+fun main(args: Array<String>) {
+    val testsRoot = args[0]
+    generateTestGroupSuiteWithJUnit5(args) {
+        testGroup(testsRoot, "plugins/plugin-sandbox/testData") {
             testClass<AbstractFirPsiPluginDiagnosticTest> {
                 model("diagnostics", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
@@ -53,7 +55,7 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "PluginSandboxNativeTestGenerated",
                 annotations = listOf(
-                    *standalone(),
+                    standalone(),
                     annotation(Tag::class.java, "sandbox-native"),
                     provider<UseExtTestCaseGroupProvider>(),
                     provider<EnforcedHostTarget>(),

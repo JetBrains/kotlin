@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds.BYTE
-import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds.INT
-import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds.LONG
-import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds.SHORT
+import org.jetbrains.kotlin.analysis.api.components.KaStandardTypeClassIds.BYTE
+import org.jetbrains.kotlin.analysis.api.components.KaStandardTypeClassIds.INT
+import org.jetbrains.kotlin.analysis.api.components.KaStandardTypeClassIds.LONG
+import org.jetbrains.kotlin.analysis.api.components.KaStandardTypeClassIds.SHORT
 import org.jetbrains.kotlin.analysis.api.components.isBooleanType
 import org.jetbrains.kotlin.analysis.api.components.isByteType
 import org.jetbrains.kotlin.analysis.api.components.isCharType

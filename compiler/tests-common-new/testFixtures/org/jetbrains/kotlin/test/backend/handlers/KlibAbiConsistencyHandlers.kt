@@ -7,10 +7,12 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.js.config.produceKlibFile
@@ -106,18 +108,19 @@ class FirJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices) :
 
         val tmpConfiguration = cliArtifact.configuration.copy()
 
-        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
         val outputFile = getAbiCheckKlibArtifactFile(module.name)
 
         tmpConfiguration.produceKlibFile = true
         tmpConfiguration.outputDir = outputFile.parentFile
         tmpConfiguration.outputName = outputFile.name.removeSuffix(".klib")
+        tmpConfiguration.diagnosticsCollector = DiagnosticsCollectorImpl()
 
-        val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter, configuration = tmpConfiguration)
+        @OptIn(PipelineArtifact.CliPipelineInternals::class)
+        val input = cliArtifact.withCompilerConfiguration(tmpConfiguration)
 
         WebKlibSerializationPipelinePhase.executePhase(input)
 
-        return BinaryArtifacts.KLib(outputFile, diagnosticReporter)
+        return BinaryArtifacts.KLib(outputFile, tmpConfiguration.diagnosticsCollector)
     }
 }
 

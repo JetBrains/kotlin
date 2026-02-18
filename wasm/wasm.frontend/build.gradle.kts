@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("generated-sources")
 }
 
 dependencies {
@@ -14,3 +15,5 @@ sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
+
+generatedConfigurationKeys("WasmConfigurationKeys")

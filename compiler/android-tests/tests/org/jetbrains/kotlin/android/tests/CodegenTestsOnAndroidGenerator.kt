@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -64,7 +65,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     //keep it globally to avoid test grouping on TC
     private val generatedTestNames = hashSetOf<String>()
 
-    private val commonFlavor = FlavorConfig(TargetBackend.ANDROID, "common", 4)
+    private val commonFlavor = FlavorConfig(TargetBackend.ANDROID, "common", 5)
     private val reflectFlavor = FlavorConfig(TargetBackend.ANDROID, "reflect", 1)
 
     class FlavorConfig(private val backend: TargetBackend, private val prefix: String, val limit: Int) {
@@ -206,6 +207,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 disposable,
                 configuration.copy().apply {
                     put(CommonConfigurationKeys.MODULE_NAME, "android-module-" + currentModuleIndex++)
+                    // KT-84021 Use full K/JVM stdlib, not minimal K/JVM stdlib
+                    addJvmClasspathRoot(ForTestCompileRuntime.runtimeJarForTests())
+                    addJvmClasspathRoot(ForTestCompileRuntime.kotlinTestJarForTests())
                 },
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
             )
@@ -345,6 +349,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     if (module.files.isEmpty()) continue
                     services.registerArtifactsProvider(ArtifactsProvider(services, moduleStructure.modules))
 
+                    // The configuration is used as a key here and not used for the actual compiler invocation
+                    // So if the configuration is created with default services inside, it messes up the
+                    // equals/hashcode.
+                    @OptIn(CompilerConfiguration.Internals::class)
                     val keyConfiguration = CompilerConfiguration()
                     val configuratorForFlags = JvmEnvironmentConfigurator(services)
                     with(configuratorForFlags) {

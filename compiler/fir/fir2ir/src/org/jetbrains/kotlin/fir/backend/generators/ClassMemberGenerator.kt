@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirReplExpressionReference
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
@@ -208,14 +209,15 @@ internal class ClassMemberGenerator(
         val delegate = property.delegate
         val propertyType = property.returnTypeRef.toIrType()
         // REPL snippet properties are initialized within the `$$eval` function.
-        // TODO(KT-82578): split property delcaration and initializer to hopefully simplify FIR2IR
-        val initializerExpression = (initializer ?: delegate)?.takeIf { property.isReplSnippetDeclaration != true }
+        val initializerExpression = (initializer ?: delegate)?.takeIf { it !is FirReplExpressionReference }
         irProperty.initializeBackingField(property, initializerExpression = initializerExpression)
         val needGenerateDefaultGetter = property.getter is FirDefaultPropertyGetter ||
                 (property.getter == null && irProperty.parent is IrScript && property.destructuringDeclarationContainerVariable != null)
 
         irProperty.getter?.setPropertyAccessorContent(
-            property.getter, irProperty, propertyType, isDefault = needGenerateDefaultGetter
+            property.getter, irProperty,
+            fieldType = irProperty.backingField?.type?.takeIf { property.hasExplicitBackingField } ?: propertyType,
+            isDefault = needGenerateDefaultGetter
         )
         // Create fake body for Enum.entries
         if (irProperty.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) {
@@ -225,7 +227,9 @@ internal class ClassMemberGenerator(
 
         if (property.isVar) {
             irProperty.setter?.setPropertyAccessorContent(
-                property.setter, irProperty, propertyType, property.setter is FirDefaultPropertySetter
+                property.setter, irProperty,
+                fieldType = irProperty.backingField?.type?.takeIf { property.hasExplicitBackingField } ?: propertyType,
+                isDefault = property.setter is FirDefaultPropertySetter
             )
         }
         annotationGenerator.generate(irProperty, property)
@@ -275,7 +279,7 @@ internal class ClassMemberGenerator(
     private fun IrSimpleFunction.setPropertyAccessorContent(
         propertyAccessor: FirPropertyAccessor?,
         correspondingProperty: IrProperty,
-        propertyType: IrType,
+        fieldType: IrType,
         isDefault: Boolean
     ) {
         conversionScope.withFunction(this) {
@@ -297,14 +301,14 @@ internal class ClassMemberGenerator(
                                         value = IrGetValueImpl(
                                             startOffset,
                                             endOffset,
-                                            propertyType,
+                                            fieldType,
                                             parameters.first { it.kind == IrParameterKind.Regular }.symbol
                                         )
                                     }
                                 } else {
                                     IrReturnImpl(
                                         startOffset, endOffset, builtins.nothingType, symbol,
-                                        IrGetFieldImpl(startOffset, endOffset, fieldSymbol, propertyType).setReceiver(declaration)
+                                        IrGetFieldImpl(startOffset, endOffset, fieldSymbol, fieldType).setReceiver(declaration)
                                     )
                                 }
                             )

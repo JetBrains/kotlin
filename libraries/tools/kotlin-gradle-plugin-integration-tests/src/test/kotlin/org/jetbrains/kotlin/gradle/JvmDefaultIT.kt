@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.gradle.util.useCompilerVersion
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.appendText
@@ -101,9 +102,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                 """.trimIndent()
             )
             buildScriptInjection {
-                project.applyJvm {
-                    compilerVersion.value("2.2.0-RC")
-                }
+                useCompilerVersion("2.2.0-RC")
             }
             overrideOldGradleBoundLanguageVersionsWith19()
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()

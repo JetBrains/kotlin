@@ -492,8 +492,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         return areFirAnnotationsEqual(
             expectAnnotation.getFirAnnotation(),
             actualAnnotation.getFirAnnotation(),
-            collectionArgumentsCompatibilityCheckStrategy,
-            actualSession
+            collectionArgumentsCompatibilityCheckStrategy
         )
     }
 
@@ -678,6 +677,14 @@ class FirExpectActualMatchingContextImpl private constructor(
                     checkAnnotationsOnTypeRefAndArgumentsImpl(
                         expectContainingSymbol, actualContainingSymbol,
                         expectParam.returnTypeRef, actualParam.returnTypeRef, checker
+                    )
+                }
+                val expectContextParameters = expectDelegatedTypeRef.contextParameterTypeRefs
+                val actualContextParameters = actualDelegatedTypeRef.contextParameterTypeRefs
+                for ((expectParam, actualParam) in expectContextParameters.zipIfSizesAreEqual(actualContextParameters).orEmpty()) {
+                    checkAnnotationsOnTypeRefAndArgumentsImpl(
+                        expectContainingSymbol, actualContainingSymbol,
+                        expectParam, actualParam, checker
                     )
                 }
             }

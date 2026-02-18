@@ -3,15 +3,15 @@ FILE: for.kt
     public? final? fun fooLabeled(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? fun bar(list: List<String>): R|kotlin/Unit| { LAZY_BLOCK }
     public final? data class Some : R|kotlin/Any| {
-        public? constructor(x: Int, y: Int): R|Some| {
+        public? [ContainingClassKey=Some] constructor([CorrespondingProperty=/Some.x] x: Int, [CorrespondingProperty=/Some.y] y: Int): R|Some| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? val x: Int = R|<local>/x|
-            public? get(): Int
+        public? final? [ComponentFunctionSymbolKey=/Some.component1, IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ContainingClassKey=Some] get(): Int
 
-        public? final? val y: Int = R|<local>/y|
-            public? get(): Int
+        public? final? [ComponentFunctionSymbolKey=/Some.component2, IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ContainingClassKey=Some] get(): Int
 
         public? final operator fun component1(): Int
 

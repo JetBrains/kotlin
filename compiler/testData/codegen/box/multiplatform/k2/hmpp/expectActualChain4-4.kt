@@ -73,12 +73,12 @@ fun test_inter1(lc2: LibClass2, lc3: LibClass3, lc6: LibClass6, lic1: LibInterCl
     lic5.foo()
 }
 
-// MODULE: app-inter2(lib-inter2)()(app-common)
+// MODULE: app-inter2(lib-inter2, lib-inter1, lib-common)()(app-common)
 fun test_inter2(lc4: LibClass4, lc5: LibClass5, lc8: LibClass8, lc9: LibClass9, lic7: LibInterClass7, lic8: LibInterClass8, lic9: LibInterClass9) {
     lc4.foo()
     lc5.foo()
     lc8.foo()
-//    lc9.foo() // MISSING_DEPENDENCY_CLASS
+    lc9.foo()
     lic7.foo()
     lic8.foo()
     lic9.foo()

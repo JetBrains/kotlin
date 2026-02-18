@@ -134,6 +134,27 @@ func testImmediateThrowing() async {
     }
 }
 
+@Test
+func testNonExceptionThrowing() async {
+    let task = Task<Int32, any Error>.detached {
+        return try await throwNonException(message: "Foo")
+    }
+
+    let result = await task.result
+
+    if case let .failure(e) = result {
+        #expect(String(describing: e).contains("Foo"), "function should fail with specific exception")
+    } else {
+        Issue.record("function should fail with non-cancellation error")
+    }
+}
+
+@Test
+func testCallingKotlinLambdaThatUsesCoroutines() async throws {
+    let block = testPrimitiveProducedLambda()
+    try #expect(await block() == 42)
+}
+
 func ==<T>(_ lhs: Result<T, any Error>, _ rhs: Result<T, any Error>) -> Bool where T: Equatable {
     switch (lhs, rhs) {
     case (.success(let l), .success(let r)): l == r

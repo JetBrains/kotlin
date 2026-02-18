@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.backend.js.moduleName
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -76,7 +76,7 @@ fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
     val dummyLogger = CliLoggerAdapter(CommonizerLogLevel.Quiet, 2)
     val stdlibModuleProvider = DefaultModulesProvider.forDependencies(listOf(NativeLibrary(stdlib)), dummyLogger)
 
-    return NamedMetadata(stdlib.libraryName, stdlibModuleProvider.loadModuleMetadata(stdlib.moduleName))
+    return NamedMetadata(stdlib.moduleName, stdlibModuleProvider.loadModuleMetadata(stdlib.moduleName))
 }
 
 fun createEmptyModule(name: String, disposable: Disposable): SerializedMetadata {
@@ -175,19 +175,15 @@ fun serializeModuleToMetadata(
         .map { KotlinSourceRoot(it.path, isCommon, hmppModuleName = null) }
         .toList()
 
-    val diagnosticCollector = DiagnosticReporterFactory.createReporter()
     val performanceManager = createPerformanceManagerFor(JvmPlatforms.unspecifiedJvmPlatform)
 
     val phaseConfig = PhaseConfig()
     val context = PipelineContext(
-        configuration.messageCollector,
-        diagnosticCollector,
         performanceManager,
-        renderDiagnosticInternalName = true,
         kaptMode = false,
     )
 
-    val configurationArtifact = ConfigurationPipelineArtifact(configuration, diagnosticCollector, disposable)
+    val configurationArtifact = ConfigurationPipelineArtifact(configuration, disposable)
     val serializationPipeline = MetadataFrontendPipelinePhase thenMaybe firTransformationPhase then MetadataKlibInMemorySerializerPhase
     return configuration to serializationPipeline.invokeToplevel(phaseConfig, context, configurationArtifact)
 }

@@ -105,6 +105,14 @@ fun createTextForCoroutineHelpers(checkStateMachine: Boolean, checkTailCallOptim
             |import kotlin.coroutines.intrinsics.*
             |${if (checkTailCallOptimization) "import kotlin.coroutines.jvm.internal.*" else ""}
             |
+            |fun <T> runBlocking(block: suspend () -> T): T {
+            |    var res: Result<T>? = null
+            |    block.startCoroutine(Continuation(EmptyCoroutineContext) {
+            |        res = it
+            |    })
+            |    return res!!.getOrThrow()
+            |}
+            |
             |fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {
             |    override val context = EmptyCoroutineContext
             |    ${continuationBody("T") { "x($it)" }}

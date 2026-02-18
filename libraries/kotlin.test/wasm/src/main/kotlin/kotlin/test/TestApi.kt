@@ -3,8 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("INVISIBLE_REFERENCE")
 package kotlin.test
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.WasmExport
 
 internal expect fun adapter(): FrameworkAdapter
@@ -29,20 +31,24 @@ internal expect fun adapter(): FrameworkAdapter
  * }
  */
 
+@UsedFromCompilerGeneratedCode
 internal fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
     adapter().suite(name, ignored, suiteFn)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
     adapter().test(name, ignored, testFn)
 }
 
 private val rootSuiteBlocks: MutableMap<String, MutableList<() -> Unit>> = mutableMapOf()
 
+@UsedFromCompilerGeneratedCode
 internal fun registerRootSuiteBlock(suiteName: String, block: () -> Unit) {
     rootSuiteBlocks.getOrPut(suiteName, ::mutableListOf).add(block)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun runRootSuites() {
     rootSuiteBlocks.entries.forEach { (suiteName, block) ->
         suite(name = suiteName, ignored = false) {

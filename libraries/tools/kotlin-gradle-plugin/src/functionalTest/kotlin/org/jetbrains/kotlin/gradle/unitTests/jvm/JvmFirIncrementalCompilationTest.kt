@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests.jvm
 
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.junit.Test
+import kotlin.test.Test
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.utils.withType
 import kotlin.test.assertFalse

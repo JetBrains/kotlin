@@ -21,11 +21,7 @@ fun TestGroupSuite.forEachTestClassParallel(f: (TestGroup.TestClass) -> Unit) {
         .forEach(f)
 }
 
-class TestGroupSuite(val mode: Mode) {
-    enum class Mode {
-        LegacyJUnit4, JUnit5
-    }
-
+class TestGroupSuite(val testInfraRevision: TestInfraRevision, val defaultSkipTestAllFilesCheck: Boolean) {
     private val _testGroups = mutableListOf<TestGroup>()
     val testGroups: List<TestGroup>
         get() = _testGroups
@@ -40,7 +36,8 @@ class TestGroupSuite(val mode: Mode) {
             testsRoot,
             testDataRoot,
             testRunnerMethodName,
-            mode,
+            testInfraRevision,
+            defaultSkipTestAllFilesCheck,
         ).apply(init)
     }
 }
@@ -49,8 +46,8 @@ class TestGroup(
     private val testsRoot: String,
     val testDataRoot: String,
     val testRunnerMethodName: String,
-    val mode: TestGroupSuite.Mode,
-    val annotations: List<AnnotationModel> = emptyList(),
+    val testInfraRevision: TestInfraRevision,
+    val defaultSkipTestAllFilesCheck: Boolean,
 ) {
     private val _testClasses: MutableList<TestClass> = mutableListOf()
     val testClasses: List<TestClass>
@@ -134,19 +131,19 @@ class TestGroup(
             targetBackend: TargetBackend? = null,
             excludeDirs: List<String> = listOf(),
             excludeDirsRecursively: List<String> = listOf(),
-            skipTestAllFilesCheck: Boolean = false,
+            skipTestAllFilesCheck: Boolean = defaultSkipTestAllFilesCheck,
         ) {
             val rootFile = File("$testDataRoot/$relativeRootPath")
             val compiledPattern = Pattern.compile(pattern)
             val compiledExcludedPattern = excludedPattern?.let { Pattern.compile(it) }
             val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
             require(targetBackend != TargetBackend.ANY) { "TargetBackend.ANY is not allowed, please specify target backend explicitly" }
-            if (mode == TestGroupSuite.Mode.JUnit5) {
+            if (testInfraRevision == TestInfraRevision.StandardJUnit5) {
                 require(targetBackend == null) { "TargetBackend shouldn't be defined for JUnit5" }
             }
             testModels.add(
                 SimpleTestClassModel(
-                    rootFile, recursive, excludeParentDirs,
+                    testInfraRevision, rootFile, recursive, excludeParentDirs,
                     compiledPattern, compiledExcludedPattern, testMethod, className,
                     targetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, annotations,
                     extractTagsFromDirectory(rootFile), methodModels, skipTestAllFilesCheck

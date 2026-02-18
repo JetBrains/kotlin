@@ -13,7 +13,7 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets.commonMain.get().dependencies {
-        implementation("org.jetbrains.sample:producer:1.0.0-SNAPSHOT")
+        implementation("org.jetbrains.sample:producer:1.0.0")
     }
 
     targets.withType<KotlinNativeTarget>().all {

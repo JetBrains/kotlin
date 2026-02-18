@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Tests for Mpp unsupported host platforms")
-@MppGradlePluginTests
-class MppUnsupportedKotlinNativeHostIT : KGPBaseTest() {
+class MppUnsupportedKotlinNativeHostIT : KGPDaemonsBaseTest() {
 
     /**
      * Defines the parameters for a Linux RISCV64 host environment.
@@ -40,7 +39,7 @@ class MppUnsupportedKotlinNativeHostIT : KGPBaseTest() {
             "empty",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             plugins {
                 kotlin("multiplatform")

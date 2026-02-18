@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.wasm.ir.WasmExport
 import org.jetbrains.kotlin.wasm.ir.WasmFunction
 import org.jetbrains.kotlin.wasm.ir.WasmGlobal
 
-class WasmFileCodegenContextWithExport(
+open class WasmFileCodegenContextWithExport(
     wasmFileFragment: WasmCompiledFileFragment,
     idSignatureRetriever: IdSignatureRetriever,
+    private val moduleReferencedDeclarations: ModuleReferencedDeclarations,
 ) : WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever) {
     override fun defineFunction(irFunction: IrFunctionSymbol, wasmFunction: WasmFunction) {
         super.defineFunction(irFunction, wasmFunction)
@@ -29,6 +30,26 @@ class WasmFileCodegenContextWithExport(
                 name = "${WasmServiceImportExportKind.FUNC.prefix}$signature"
             )
         )
+    }
+
+    override fun referenceFunction(irFunction: IrFunctionSymbol): FuncSymbol {
+        moduleReferencedDeclarations.referencedFunction.add(irFunction.getReferenceKey())
+        return super.referenceFunction(irFunction)
+    }
+
+    override fun referenceGlobalVTable(irClass: IrClassSymbol): VTableGlobalSymbol {
+        moduleReferencedDeclarations.referencedGlobalVTable.add(irClass.getReferenceKey())
+        return super.referenceGlobalVTable(irClass)
+    }
+
+    override fun referenceGlobalClassITable(irClass: IrClassSymbol): ClassITableGlobalSymbol {
+        moduleReferencedDeclarations.referencedGlobalClassITable.add(irClass.getReferenceKey())
+        return super.referenceGlobalClassITable(irClass)
+    }
+
+    override fun referenceRttiGlobal(irClass: IrClassSymbol): RttiGlobalSymbol {
+        moduleReferencedDeclarations.referencedRttiGlobal.add(irClass.getReferenceKey())
+        return super.referenceRttiGlobal(irClass)
     }
 
     override fun defineGlobalVTable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {

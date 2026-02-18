@@ -1,0 +1,7 @@
+<caret_1>:
+  KDocName(25,38): 'Storage.value'
+    null
+
+<caret_2>:
+  KDocName(44,59): 'Storage2.value2'
+    null

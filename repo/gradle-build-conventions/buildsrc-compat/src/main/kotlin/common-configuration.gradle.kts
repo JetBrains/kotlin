@@ -36,7 +36,7 @@ fun Project.addImplicitDependenciesConfiguration() {
         isCanBeResolved = false
     }
 
-    if (kotlinBuildProperties.isInIdeaSync) {
+    if (kotlinBuildProperties.isInIdeaSync.get()) {
         afterEvaluate {
             // IDEA manages to download dependencies from `implicitDependencies`, even if it is created with `isCanBeResolved = false`
             // Clear `implicitDependencies` to avoid downloading unnecessary dependencies during import
@@ -110,14 +110,11 @@ fun Project.configureKotlinCompilationOptions() {
             "-opt-in=kotlin.RequiresOptIn",
             "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false },
             "-Xdont-warn-on-error-suppression",
-            "-Xmulti-dollar-interpolation", // KT-2425
-            "-Xwhen-guards", // KT-13626
-            "-Xnon-local-break-continue", // KT-1436
             "-Xcontext-parameters", // KT-72222
         )
 
         val kotlinLanguageVersion: String by rootProject.extra
-        val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
+        val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames.get())
 
         tasks.withType<KotlinCompilationTask<*>>().configureEach {
             compilerOptions {
@@ -136,7 +133,7 @@ fun Project.configureKotlinCompilationOptions() {
 
             val layout = project.layout
             val rootDir = rootDir
-            val useAbsolutePathsInKlib = kotlinBuildProperties.getBoolean("kotlin.build.use.absolute.paths.in.klib")
+            val useAbsolutePathsInKlib = kotlinBuildProperties.booleanProperty("kotlin.build.use.absolute.paths.in.klib").get()
 
             // Workaround to avoid remote build cache misses due to absolute paths in relativePathBaseArg
             // This is a workaround for KT-50876, but with no clear explanation why doFirst is used.
@@ -293,20 +290,13 @@ fun Project.configureTests() {
         "concurrencyLimitService",
         ConcurrencyLimitService::class
     ) {
-        maxParallelUsages = 1
+        maxParallelUsages.set(1)
     }
 
     tasks.withType<Test>().configureEach {
         val notCacheableTestProjects: List<String> = listOf(
-            ":analysis:analysis-api",
-            ":analysis:analysis-api-fe10",
-            ":analysis:analysis-api-fir",
-            ":analysis:analysis-api-standalone",
             ":analysis:analysis-api-standalone:analysis-api-standalone-native",
-            ":analysis:low-level-api-fir",
-            ":analysis:low-level-api-fir:low-level-api-fir-native",
-            ":analysis:stubs",
-            ":analysis:symbol-light-classes",
+            ":analysis:low-level-api-fir:low-level-api-fir-native-compiler-tests",
             ":compiler",
             ":compiler:android-tests",
             ":compiler:arguments",
@@ -320,19 +310,15 @@ fun Project.configureTests() {
             ":compiler:incremental-compilation-impl",
             ":compiler:ir.backend.common",
             ":compiler:multiplatform-parsing",
-            ":compiler:psi:psi-api",
             ":compiler:test-infrastructure-utils",
-            ":compiler:tests-different-jdk",
             ":compiler:tests-integration",
             ":compose-compiler-gradle-plugin",
             ":examples:scripting-jvm-embeddable-host",
             ":examples:scripting-jvm-maven-deps-host",
             ":examples:scripting-jvm-simple-script-host",
             ":generators",
-            ":generators:analysis-api-generator:generator-kotlin-native",
             ":jps:jps-common",
             ":jps:jps-plugin",
-            ":kotlin-allopen-compiler-plugin",
             ":kotlin-annotation-processing",
             ":kotlin-annotation-processing-base",
             ":kotlin-annotation-processing-cli",
@@ -349,7 +335,6 @@ fun Project.configureTests() {
             ":kotlin-gradle-plugin-idea-proto",
             ":kotlin-gradle-plugin-integration-tests",
             ":kotlin-gradle-statistics",
-            ":kotlin-lombok-compiler-plugin",
             ":kotlin-main-kts",
             ":kotlin-main-kts-test",
             ":kotlin-metadata-jvm",
@@ -361,7 +346,6 @@ fun Project.configureTests() {
             ":kotlin-native:libclangInterop",
             ":kotlin-native:llvmInterop",
             ":kotlin-native:tools:kdumputil",
-            ":kotlin-sam-with-receiver-compiler-plugin",
             ":kotlin-scripting-common",
             ":kotlin-scripting-compiler",
             ":kotlin-scripting-dependencies",
@@ -382,6 +366,7 @@ fun Project.configureTests() {
             ":kotlinx-serialization-compiler-plugin",
             ":libraries:tools:abi-validation:abi-tools",
             ":libraries:tools:abi-validation:abi-tools-api",
+            ":libraries:tools:abi-validation:abi-tools-tests",
             ":libraries:tools:abi-validation:kgp-integration-tests",
             ":libraries:tools:analysis-api-based-klib-reader",
             ":native:kotlin-klib-commonizer",
@@ -402,11 +387,9 @@ fun Project.configureTests() {
             ":native:swift:swift-export-standalone-integration-tests:simple",
             ":plugins:compose-compiler-plugin:compiler-hosted",
             ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
-            ":plugins:js-plain-objects:compiler-plugin",
             ":plugins:jvm-abi-gen",
             ":plugins:parcelize:parcelize-compiler",
             ":plugins:plugins-interactions-testing",
-            ":plugins:plugin-sandbox",
             ":plugins:plugin-sandbox:plugin-sandbox-ic-test",
             ":plugins:scripting:scripting-tests",
             ":repo:artifacts-tests",

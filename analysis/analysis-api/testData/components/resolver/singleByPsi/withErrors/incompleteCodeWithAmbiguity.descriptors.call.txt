@@ -1,52 +1,50 @@
 KtCallExpression(89,100): 'Foo<String>'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
-        argumentMapping = {}
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = Foo<TypeVariable(T)>
-            symbol = <constructor>(len: kotlin.Int): Foo<T>
-            valueParameters = [
-              KaVariableSignature:
-                name = len
-                receiverType = null
-                returnType = kotlin.Int
-                symbol = len: kotlin.Int
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = null
-        typeArgumentsMapping = {},
-      KaSimpleFunctionCall:
-        argumentMapping = {}
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = Foo<TypeVariable(T)>
-            symbol = <constructor>(s: kotlin.String): Foo<T>
-            valueParameters = [
-              KaVariableSignature:
-                name = s
-                receiverType = null
-                returnType = kotlin.String
-                symbol = s: kotlin.String
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = null
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Foo<TypeVariable(T)>
+          symbol = <constructor>(len: kotlin.Int): Foo<T>
+          valueParameters = [
+            KaVariableSignature:
+              name = len
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = len: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
         typeArgumentsMapping = {}
+        valueArgumentMapping = {},
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Foo<TypeVariable(T)>
+          symbol = <constructor>(s: kotlin.String): Foo<T>
+          valueParameters = [
+            KaVariableSignature:
+              name = s
+              receiverType = null
+              returnType = kotlin.String
+              symbol = s: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     public constructor Foo<T>(len: Int) defined in Foo

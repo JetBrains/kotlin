@@ -1,11 +1,19 @@
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_STDLIB
 // WITH_REFLECT
-@file:OptIn(ExperimentalStdlibApi::class)
+
+// FILE: lib.kt
 import kotlin.reflect.typeOf
 
 inline fun <reified T1> gBefore(x: T1) = typeOf<T1>()
 inline fun <reified T2, T3> fBefore(x: T2, y: T3) = gBefore(Pair(x, y))
+
+inline fun <reified T1> gAfter(x: T1) = typeOf<T1>()
+inline fun <reified T2, T3> fAfter(x: T2, y: T3) = gAfter(Pair(x, y))
+
+// FILE: main.kt
+@file:OptIn(ExperimentalStdlibApi::class)
+import kotlin.reflect.typeOf
 
 fun box(): String {
     val arguments = listOf<Any?>(0, "", null, true, Pair(42, 4.2))
@@ -21,6 +29,3 @@ fun box(): String {
     }
     return "OK"
 }
-
-inline fun <reified T1> gAfter(x: T1) = typeOf<T1>()
-inline fun <reified T2, T3> fAfter(x: T2, y: T3) = gAfter(Pair(x, y))

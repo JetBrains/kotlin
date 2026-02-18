@@ -70,8 +70,24 @@ val SirType.swiftName
         ).joinToString("")
         is SirErrorType -> "ERROR_TYPE"
         is SirUnsupportedType -> "Swift.Never"
-        is SirFunctionalType -> "(${parameterTypes.joinToString { it.swiftName }})${" async".takeIf { isAsync } ?: ""} -> ${returnType.swiftName}"
+        is SirFunctionalType -> {
+            val parameters = parameterTypes.joinToString { it.annotatedSwiftName }
+            val async = " async".takeIf { isAsync } ?: ""
+            val throws = when (errorType) {
+                SirType.never -> ""
+                SirType.any -> " throws"
+                else -> " throws(${errorType.swiftName})"
+            }
+            val returnType = returnType.swiftName
+            "($parameters)$async$throws -> $returnType"
+        }
     }
+
+val SirType.annotatedSwiftName
+    get(): String = (this.attributes.map {
+        assert(it.arguments.isNullOrEmpty()) { "Rendering swift attributes with arguments is not supported" }
+        "@${it.identifier.swiftIdentifier}${it.arguments?.let { "()" } ?: ""}"
+    } + this.swiftName).joinToString(" ")
 
 val SirDeclaration.swiftParentNamePrefix: String?
     get() = this.parent.swiftFqNameOrNull

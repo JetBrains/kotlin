@@ -3,6 +3,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in test) fun kotlin.Any.function()
         1: (in test) fun test.Base.function(i: kotlin.Int)
@@ -12,6 +13,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         0: (in test) fun kotlin.Any.function()
         1: (in test) fun test.Base.function(i: kotlin.Int)
@@ -21,6 +23,7 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in test.Base) fun function()
 
@@ -29,5 +32,6 @@
     KDocReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
+      attempt: KaSymbolResolutionSuccess
       symbols:
         (in test.Base) fun function()

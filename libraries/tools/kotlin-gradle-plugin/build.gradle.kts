@@ -1,3 +1,4 @@
+import com.github.jengelman.gradle.plugins.shadow.ShadowBasePlugin.Companion.shadow
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import gradle.GradlePluginVariant
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
@@ -51,7 +52,7 @@ registerKotlinSourceForVersionRange(
 )
 
 tasks.test {
-    useJUnit {
+    useJUnitPlatform {
         exclude("**/*LincheckTest.class")
     }
     val jdk8Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
@@ -62,15 +63,21 @@ tasks.test {
     }
 }
 
-tasks.register<Test>("lincheckTest") {
-    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+tasks.withType<Test>().configureEach {
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_21_0))
+}
 
+tasks.register<Test>("lincheckTest") {
+    classpath = sourceSets.test.get().runtimeClasspath
+    testClassesDirs = sourceSets.test.get().output.classesDirs
     jvmArgs(
         "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
         "--add-exports", "java.base/jdk.internal.util=ALL-UNNAMED",
         "--add-exports", "java.base/sun.security.action=ALL-UNNAMED"
     )
-    filter { include("**/*LincheckTest.class") }
+    useJUnitPlatform {
+        include("**/*LincheckTest.class")
+    }
 }
 
 binaryCompatibilityValidator {
@@ -110,7 +117,8 @@ binaryCompatibilityValidator {
 val unpublishedCompilerRuntimeDependencies = listOf(
     // TODO: remove in KT-70247
     ":compiler:cli", // for MessageRenderer, related to MessageCollector usage
-    ":compiler:cli-common", // for compiler arguments setup, for logging via MessageCollector, CompilerSystemProperties, ExitCode
+    ":compiler:cli-base", // for compiler arguments setup, for logging via MessageCollector, CompilerSystemProperties, ExitCode
+    ":compiler:arguments.common", // for compiler arguments parser setup (using `@Enables`, `@Disables` and other annotations)
     ":compiler:compiler.version", // for user projects buildscripts, `loadCompilerVersion`
     ":compiler:config", // for CommonCompilerArguments initialization
     ":compiler:config.jvm", // for K2JVMCompilerArguments initialization
@@ -121,6 +129,7 @@ val unpublishedCompilerRuntimeDependencies = listOf(
     ":core:descriptors", // for `fromUIntToLong`
     ":core:util.runtime", // for stdlib extensions
     ":kotlin-build-common", // for incremental compilation setup
+    ":js:js.config", // for k/js task
     ":wasm:wasm.config", // for k/js task
 )
 
@@ -222,13 +231,16 @@ dependencies {
     testImplementation(testFixtures(project(":kotlin-build-common")))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(project(":kotlin-compiler-runner"))
-    testImplementation(kotlin("test-junit", coreDepsVersion))
+    testImplementation(kotlin("test-junit5", coreDepsVersion))
     testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
 
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
     testImplementation(libs.lincheck)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testImplementation(libs.slf4j.api)
+
 }
 
 configurations.commonCompileClasspath.get().exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
@@ -372,6 +384,11 @@ tasks {
                 exclusions.forEach { exclude(it) }
             }
         }
+
+        /*
+        Disable Kotlin Module remapping to allow our own 'KotlinModuleMetadataVersionBasedSkippingTransformer' to run
+         */
+        enableKotlinModuleRemapping = false
         transform(KotlinModuleMetadataVersionBasedSkippingTransformer::class.java) {
             /*
              * This excludes .kotlin_module files for compiler modules from the fat jars.
@@ -438,7 +455,7 @@ tasks.named("validatePlugins") {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
         workingDir = rootDir
     }
 }
@@ -540,6 +557,7 @@ sourceSets.getByName("testFixtures") {
     dependencies {
         add(implementationConfigurationName, commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
         add(implementationConfigurationName, gradleApi())
+        add(implementationConfigurationName, libs.junit.jupiter.api)
     }
 }
 
@@ -575,11 +593,14 @@ functionalTestCompilation.associateWith(testFixturesCompilation)
 
 tasks.register<Test>("functionalTest") {
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+    systemProperty("konanProperties", rootDir.resolve("kotlin-native/konan/konan.properties"))
+    useJUnitPlatform()
 }
 
 tasks.register<Test>("functionalUnitTest") {
     include("**/org/jetbrains/kotlin/gradle/unitTests/**")
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+    systemProperty("konanProperties", rootDir.resolve("kotlin-native/konan/konan.properties"))
 }
 
 tasks.register<Test>("functionalRegressionTest") {
@@ -602,9 +623,6 @@ tasks.withType<Test>().configureEach {
     testClassesDirs = functionalTestSourceSet.output.classesDirs
     classpath = functionalTestSourceSet.runtimeClasspath
     workingDir = projectDir
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    })
     dependsOnKotlinGradlePluginInstall()
     androidSdkProvisioner {
         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
@@ -637,9 +655,9 @@ dependencies {
     val implementation = project.configurations.getByName(functionalTestSourceSet.implementationConfigurationName)
     val compileOnly = project.configurations.getByName(functionalTestSourceSet.compileOnlyConfigurationName)
 
-    implementation("com.android.tools.build:gradle:8.8.1")
-    implementation("com.android.tools.build:gradle-api:8.8.1")
-    compileOnly("com.android.tools:common:31.7.2")
+    implementation(libs.android.gradle.plugin.gradle)
+    implementation(libs.android.gradle.plugin.gradle.api)
+    compileOnly(libs.android.tools.common)
     implementation(gradleKotlinDsl())
     implementation(project(":kotlin-gradle-plugin-tcs-android"))
     implementation(project(":kotlin-tooling-metadata"))
@@ -651,6 +669,7 @@ dependencies {
     implementation(project(":compose-compiler-gradle-plugin"))
     implementation(libs.kotlinx.serialization.json)
     implementation(intellijPlatformUtil())
+    implementation(libs.junit.jupiter.engine)
 }
 
 tasks.named("check") {

@@ -1,0 +1,22 @@
+FILE: annotationClassWithInner.kt
+    public final val a: R|kotlin/String| = String(OK)
+        public get(): R|kotlin/String|
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public [ContainingClassKey=Anno] constructor(): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class Inner : R|kotlin/Any| {
+            public [ContainingClassKey=Inner] constructor(): R|Anno.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val shouldNotBeEvaluated: R|kotlin/String| = R|/a|
+                public [ContainingClassKey=Inner] get(): R|kotlin/String|
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box Q|Anno|.R|/Anno.Inner.Inner|().R|/Anno.Inner.shouldNotBeEvaluated|
+    }

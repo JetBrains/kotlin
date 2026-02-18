@@ -8,5 +8,6 @@ KtNameReferenceExpression(31,37): 'SOURCE'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DONT_SORT_DECLARATIONS
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.WITH_SIGNATURES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
@@ -33,11 +32,9 @@ class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHand
 
     private val multiModuleInfoDumper = MultiModuleInfoDumper()
 
-    private var irDumpEnabled = false
     private var firDumpEnabled = false
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
-        irDumpEnabled = irDumpEnabled || DUMP_IR in module.directives
         firDumpEnabled = firDumpEnabled || FIR_DUMP in module.directives
         if (CHECK_BYTECODE_LISTING !in module.directives) return
 
@@ -68,28 +65,14 @@ class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHand
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val sourceFile = testServices.moduleStructure.originalTestDataFiles.first()
         val defaultTxtFile = sourceFile.withExtension(".txt")
-        val irTxtFile = sourceFile.withExtension(".ir.txt")
         val firTxtFile = sourceFile.withExtension(".fir.txt")
 
         val isFir = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
-        val isIr = testServices.defaultsProvider.targetBackend?.isIR == true
 
-        val actualFile = when {
-            isFir -> firTxtFile.takeIf { it.exists() } ?: irTxtFile.takeIf { it.exists() } ?: defaultTxtFile
-            isIr -> irTxtFile.takeIf { it.exists() } ?: defaultTxtFile
-            else -> defaultTxtFile
-        }
-
-        val goldenFile = when {
-            isFir -> irTxtFile.takeIf { it.exists() } ?: defaultTxtFile
-            else -> defaultTxtFile
-        }
+        val actualFile = firTxtFile.takeIf { isFir && it.exists() } ?: defaultTxtFile
 
         if (multiModuleInfoDumper.isEmpty()) {
-            if (!irDumpEnabled && actualFile == irTxtFile ||
-                !firDumpEnabled && actualFile == firTxtFile ||
-                actualFile == defaultTxtFile
-            ) {
+            if (actualFile == defaultTxtFile || (!firDumpEnabled && actualFile == firTxtFile)) {
                 assertions.assertFileDoesntExist(actualFile, CHECK_BYTECODE_LISTING)
             }
             return
@@ -97,9 +80,9 @@ class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHand
 
         assertions.assertEqualsToFile(actualFile, multiModuleInfoDumper.generateResultingDump())
 
-        if (actualFile != goldenFile) {
-            if (actualFile.readText().trim() == goldenFile.readText().trim()) assertions.fail {
-                "JVM and JVM_IR golden files are identical. Remove $actualFile."
+        if (isFir && actualFile == firTxtFile) {
+            if (firTxtFile.readText().trim() == defaultTxtFile.readText().trim()) assertions.fail {
+                "K1 and FIR golden files are identical. Remove $firTxtFile."
             }
         }
     }

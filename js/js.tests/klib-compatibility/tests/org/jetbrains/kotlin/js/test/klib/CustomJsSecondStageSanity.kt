@@ -11,6 +11,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @Tag("sanity")
+@Tag("aggregate")
 class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTest() {
     private val testDataRoot = "compiler/testData/klib/klib-compatibility/sanity/"
 
@@ -70,6 +71,14 @@ class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTes
         // Some tests cannot be compiled with previous LV, so the frontend errors must be muted
         val exception = assertThrows<TestAbortedException> {
             runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
+        }
+        assertEquals(null, exception.message)
+    }
+
+    @Test
+    fun checkRecompileIgnored() {
+        val exception = assertThrows<TestAbortedException> {
+            runTest(testDataRoot + "recompile.kt")
         }
         assertEquals(null, exception.message)
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,6 +19,17 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
+/**
+ * Represents a destructuring declaration that unpacks an object into multiple variables.
+ *
+ * <h3>Example:</h3>
+ * <pre>{@code
+ *    val (x, y) = pair
+ * // ^_______________^
+ * }</pre>
+ *
+ * @see KtDestructuringDeclarationEntry
+ */
 public class KtDestructuringDeclaration extends KtDeclarationImpl
         implements KtValVarKeywordOwner, KtDeclarationWithInitializer, KtDeclarationWithReturnType {
 

@@ -2,6 +2,7 @@
 // IGNORE_BACKEND_K1: ANY
 // KT-51271
 
+// FILE: lib.kt
 class Context {
     fun c() = 1
 }
@@ -24,6 +25,7 @@ context(context: Context, a: A)
 inline fun Int.testInlineWithExtensionAndMultipleContextsAndArgs(i1: Int = 1, i2: Int = 2) =
     this@testInlineWithExtensionAndMultipleContextsAndArgs + i1 + i2 + context.c() + if (a.a == null) 0 else 1
 
+// FILE: main.kt
 fun box(): String = with(Context()) {
     var result = 0
     result += testInline()

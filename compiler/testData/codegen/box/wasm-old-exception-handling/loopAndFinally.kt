@@ -1,6 +1,6 @@
 // TARGET_BACKEND: WASM
 // USE_OLD_EXCEPTION_HANDLING_PROPOSAL
-// WASM_FAILS_IN: Wasmtime
+// WASM_FAILS_IN: Wasmtime, WasmEdge
 
 //KT-3869 Loops and finally: outer finally block not run
 

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
@@ -67,6 +68,7 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
+            ::JvmForeignAnnotationsConfigurator,
             ::JvmEnvironmentConfigurator,
             ::ScriptingEnvironmentConfigurator
         )

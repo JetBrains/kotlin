@@ -1,0 +1,9 @@
+/insideGenericClass.kt:(183,184): error: One type argument expected for 'class L<Outer(T), Outer(U)> : Any'.
+
+/insideGenericClass.kt:(212,217): warning: No type arguments expected for 'class L<Outer(T), Outer(U)> : Any'. Try to use a lambda expression instead. This will become an error in language version 2.5. See https://youtrack.jetbrains.com/issue/KTLC-388.
+
+/insideGenericClass.kt:(244,256): error: One type argument expected for 'class L<Outer(T), Outer(U)> : Any'.
+
+/insideGenericClass.kt:(293,296): error: Argument type mismatch: actual type is 'L<T (of fun <T> foo), U (of class C<U>)>', but 'L<Int, *>' was expected.
+
+/insideGenericClass.kt:(308,311): error: Argument type mismatch: actual type is 'L<T (of fun <T> foo), U (of class C<U>)>', but 'L<Int, Long>' was expected.

@@ -873,8 +873,9 @@ open class LocalDeclarationsLowering(
             val parametersForCapturedValues = capturedValues.map { capturedValue ->
                 val p = capturedValue.owner
                 buildValueParameter(newDeclaration) {
-                    startOffset = p.startOffset
-                    endOffset = p.endOffset
+                    // The offsets must be UNDEFINED because a local declaration could've been inlined from another file with its own file entry
+                    startOffset = UNDEFINED_OFFSET
+                    endOffset = UNDEFINED_OFFSET
                     origin =
                         if (p is IrValueParameter &&
                             p.kind in listOf(IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver) &&

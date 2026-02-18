@@ -9,17 +9,19 @@ plugins {
 
 pluginApiReference {
     enableForAllGradlePluginVariants()
-    enableKotlinlangDocumentation()
 
     failOnWarning = true
     moduleName("The Kotlin Gradle plugins API")
 
     additionalDokkaConfiguration {
-        reportUndocumented.set(true)
-        if (name != "main") {
-            includes.setFrom("api-reference-description.md")
-        } else if (name == "main") {
-            suppress = true
+        dokkaSourceSets.configureEach {
+            if (name != "common") {
+                suppress = true
+                return@configureEach
+            }
+
+            reportUndocumented = true
+            includes.from("api-reference-description.md")
         }
     }
 
@@ -58,7 +60,7 @@ registerKotlinSourceForVersionRange(
 generatedSourcesTask(
     taskName = "generateKotlinVersionConstant",
     generatorProject = ":gradle:generators:native-cache-kotlin-version",
-    generatorRoot = "gradle/generators/native-cache-kotlin-version/src",
+    generatorRoot = "libraries/tools/gradle/generators/native-cache-kotlin-version/src",
     generatorMainClass = "org.jetbrains.kotlin.gradle.generators.native.cache.version.MainKt",
     argsProvider = { generationRoot ->
         listOf(
@@ -68,6 +70,17 @@ generatedSourcesTask(
         )
     }
 )
+
+// 1. Trigger apiDump after generation
+tasks.named("generateKotlinVersionConstant").configure {
+    finalizedBy("apiDump")
+}
+
+// 2. Resolve implicit dependency conflict
+// apiDump writes the file, apiCheck reads it. If both run, Dump must run first.
+tasks.named("apiCheck").configure {
+    mustRunAfter("apiDump")
+}
 
 configurations.all {
     resolutionStrategy.eachDependency {
@@ -102,7 +115,7 @@ fun Project.generatedSourcesTask(
     generatorRoot: String,
     generatorMainClass: String,
     argsProvider: JavaExec.(generationRoot: Directory) -> List<String> = { listOf(it.toString()) },
-    dependOnTaskOutput: Boolean = true
+    dependOnTaskOutput: Boolean = true,
 ): TaskProvider<JavaExec> {
     val generatorClasspath: Configuration by configurations.creating
 

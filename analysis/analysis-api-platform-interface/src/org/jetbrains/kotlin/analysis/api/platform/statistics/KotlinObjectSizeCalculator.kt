@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.platform.statistics
 
 import com.intellij.openapi.components.serviceOrNull
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponent
 
 /**
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinOptionalPlatformComponen
  *
  * *This interface is not intended to be used in production. It should only be used for statistics purposes.*
  */
+@KaPlatformInterface
 public interface KotlinObjectSizeCalculator : KotlinOptionalPlatformComponent {
     /**
      * Calculates the shallow runtime size of the given [value] in bytes.
@@ -22,6 +24,7 @@ public interface KotlinObjectSizeCalculator : KotlinOptionalPlatformComponent {
      */
     public fun shallowSize(value: Any): Long
 
+    @KaPlatformInterface
     public companion object {
         public fun getInstance(project: Project): KotlinObjectSizeCalculator? = project.serviceOrNull()
     }

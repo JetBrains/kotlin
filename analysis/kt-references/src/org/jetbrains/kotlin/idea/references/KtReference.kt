@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getLabeledParent
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isInImportDirective
+import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @SubclassOptInRequired(KtImplementationDetail::class)
@@ -182,5 +183,6 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
 @SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtSimpleReference<T : KtReferenceExpression>(expression: T) : AbstractKtReference<T>(expression)
 
+@OptIn(KtExperimentalApi::class)
 @SubclassOptInRequired(KtImplementationDetail::class)
-abstract class KtMultiReference<T : KtElement>(expression: T) : AbstractKtReference<T>(expression)
+abstract class KtMultiReference<T : KtElement>(expression: T) : AbstractKtReference<T>(expression), KtResolvable

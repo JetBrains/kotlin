@@ -1413,6 +1413,21 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>,
+        ): List<TextRange> {
+            val selector = tree.selector(node)
+            val nodeToMark =
+                tree.findChildByType(selector ?: node, KtNodeTypes.TYPE_ARGUMENT_LIST) ?: selector ?: node
+
+            return markElement(nodeToMark, startOffset, endOffset, tree, node)
+        }
+    }
+
     val PACKAGE_DIRECTIVE_NAME_EXPRESSION: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,

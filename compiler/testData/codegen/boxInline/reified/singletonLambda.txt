@@ -7,7 +7,7 @@ public final class _2Kt$box$$inlined$foo$1 {
     static method <clinit>(): void
     public method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -25,7 +25,7 @@ public final class test/_1Kt$foo$x$1 {
     static method <clinit>(): void
     public method <init>(): void
     public synthetic bridge method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull method invoke(): java.lang.String
+    public final method invoke(): java.lang.String
 }
 
 @kotlin.Metadata

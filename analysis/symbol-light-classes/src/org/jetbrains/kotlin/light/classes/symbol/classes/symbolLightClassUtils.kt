@@ -27,10 +27,13 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.findEntry
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.config.jvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.annotations.getIntroducedAtVersionFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmSyntheticAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.copy
@@ -41,6 +44,7 @@ import org.jetbrains.kotlin.light.classes.symbol.isJvmField
 import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
@@ -222,17 +226,191 @@ internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
     val pickMask = BitSet(parameterCount)
     pickMask.set(0, parameterCount)
 
+    val parameterMaskFilter = valueParameterMaskFilter(valueParameters, parameterCount)
+
     for (index in parameterCount - 1 downTo 0) {
         val valueParameter = valueParameters[index]
-        if (!valueParameter.hasDeclaredDefaultValue) continue
+        if (!valueParameter.hasDeclaredDefaultValue || !pickMask[index]) continue
         pickMask.clear(index)
 
-        lightMethodCreator.create(
-            methodIndex = methodIndex++,
-            valueParameterPickMask = pickMask.copy(),
-            hasValueClassInParameterType = hasValueClassInParameterType || valueClassMask?.intersects(pickMask) == true,
-        )
+        if (parameterMaskFilter.accepts(pickMask)) {
+            lightMethodCreator.create(
+                methodIndex = methodIndex++,
+                valueParameterPickMask = pickMask.copy(),
+                hasValueClassInParameterType = hasValueClassInParameterType || valueClassMask?.intersects(pickMask) == true,
+            )
+        }
     }
+}
+
+private sealed class ValueParameterMaskFilter {
+    abstract fun accepts(pickMask: BitSet): Boolean
+
+    object AcceptAll : ValueParameterMaskFilter() {
+        override fun accepts(pickMask: BitSet): Boolean = true
+    }
+}
+
+
+private val ERROR_CLASS_ID: ClassId = ClassId.topLevel(StandardNames.NON_EXISTENT_CLASS)
+
+/**
+ * Represents a filter for value parameter masks based on [IntroducedAt] annotations.
+ *
+ * @param deprecatedMasks a set of masks that represent deprecated versions of the method
+ * @param valueParameters value parameters of the method
+ * @param isAscending whether the version ordering is ascending (from oldest to newest)
+ * @param session the session in which [valueParameters] were obtained
+ */
+private class ValueParameterMaskFilterByIntroducedAt(
+    private val deprecatedMasks: Set<BitSet>,
+    private val valueParameters: List<KaValueParameterSymbol>,
+    isAscending: Boolean,
+    private val session: KaSession,
+) : ValueParameterMaskFilter() {
+    /**
+     * In the case of non-ascending version order, it is not enough to just check the signature mask because
+     * the real deprecated mask might be different if the parameter types are the same.
+     *
+     * ### Example
+     * ```kotlin
+     * @JvmOverloads
+     * fun randomSameType(
+     *     a: Int = 1,
+     *     @IntroducedAt("3") b: Int = 3,
+     *     @IntroducedAt("2") c: Int = 2,
+     *     @IntroducedAt("4") d: Int = 4,
+     * ) {
+     * }
+     * ```
+     *
+     * in this case the basic ([deprecatedMasks]) will cover only [(1000), (1010), (1110)] cases, but the real
+     * deprecated mask will be [(1000), (1100), (1110)] since we have parameter types clash.
+     */
+    private val nonAscendingDeprecatedSignatures = if (isAscending) {
+        null
+    } else {
+        lazy(LazyThreadSafetyMode.NONE) {
+            deprecatedMasks.mapTo(HashSet()) { pickMask ->
+                createSignature(pickMask)
+            }
+        }
+    }
+
+    /**
+     * Represents a value-parameter-only signature of a method.
+     *
+     * The dedicated class is mostly needed to improve performance
+     */
+    private class MethodSignature(private val parameterClassIds: List<ClassId>) {
+        override fun equals(other: Any?): Boolean = when {
+            this === other -> true
+            other !is MethodSignature -> false
+            else -> {
+                val otherParameterClassIds = other.parameterClassIds
+                parameterClassIds.size == otherParameterClassIds.size && parameterClassIds == other.parameterClassIds
+            }
+        }
+
+        private var hashCode: Int? = null
+        override fun hashCode(): Int = hashCode ?: parameterClassIds.hashCode().also { hashCode = it }
+    }
+
+    private fun createSignature(pickMask: BitSet): MethodSignature {
+        val classIds = if (pickMask.isEmpty) {
+            emptyList()
+        } else {
+            valueParameters.mapIndexedNotNullTo(ArrayList(pickMask.length())) { index, symbol ->
+                if (pickMask[index]) with(session) {
+                    symbol.returnType.expandedSymbol?.classId ?: ERROR_CLASS_ID
+                } else {
+                    null
+                }
+            }
+        }
+
+        return classIds.let(::MethodSignature)
+    }
+
+    override fun accepts(pickMask: BitSet): Boolean {
+        if (pickMask in deprecatedMasks) {
+            return false
+        }
+
+        val deprecatedSignatures = nonAscendingDeprecatedSignatures?.value ?: return true
+        val signatureToCheck = createSignature(pickMask)
+        return signatureToCheck !in deprecatedSignatures
+    }
+}
+
+/**
+ * Returns a set of parameter masks for already generated by [IntroducedAt] feature hidden functions
+ */
+context(session: KaSession)
+private fun valueParameterMaskFilter(
+    valueParameters: List<KaValueParameterSymbol>,
+    parameterCount: Int,
+): ValueParameterMaskFilter {
+    val versionSortedMap = TreeMap<MavenComparableVersion?, MutableList<Int>>(
+        nullsFirst(compareBy { it }),
+    ).apply {
+        // We always have the base method without versions
+        put(null, mutableListOf())
+
+        valueParameters.forEachIndexed { index, valueParameter ->
+            val version = if (valueParameter.hasDeclaredDefaultValue) {
+                valueParameter.getIntroducedAtVersionFromAnnotation()?.let(::MavenComparableVersion)
+            } else {
+                null
+            }
+
+            getOrPut(version) { mutableListOf() }.add(index)
+        }
+    }
+
+    val lastIndex = versionSortedMap.size - 1
+
+    // We always have the base method without versions
+    val hasVersioning = lastIndex > 0
+    return if (hasVersioning) {
+        var isAscending = true
+        val deprecatedMaks = HashSet<BitSet>().apply {
+            var currentMask = BitSet(parameterCount)
+            versionSortedMap.values.forEachIndexed { index, indices ->
+                // The last iteration represents the actual non-deprecated method
+                if (index == lastIndex) {
+                    return@forEachIndexed
+                }
+
+                // To accurately exclude the exact method signature
+                val newMask = currentMask.copyAndModify {
+                    indices.forEach(this::set)
+                }
+
+                currentMask = newMask.also(this::add)
+
+                // The last parameter wasn't changed -> the change is not ascending
+                if (currentMask.length() == newMask.length()) {
+                    isAscending = false
+                }
+            }
+        }
+
+        ValueParameterMaskFilterByIntroducedAt(
+            deprecatedMasks = deprecatedMaks,
+            valueParameters = valueParameters,
+            isAscending = isAscending,
+            session = session,
+        )
+    } else {
+        ValueParameterMaskFilter.AcceptAll
+    }
+}
+
+private inline fun BitSet.copyAndModify(block: BitSet.() -> Unit): BitSet {
+    val copy = clone() as BitSet
+    block(copy)
+    return copy
 }
 
 internal fun createAndAddField(

@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.fir.dataframe.services
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -49,7 +50,7 @@ class ExperimentalExtensionRegistrarConfigurator(testServices: TestServices) : E
 
         val testData = mapOf("Schema" to schema)
         val dumpSchemas = testServices.moduleStructure.allDirectives.contains(DataFrameDirectives.DUMP_SCHEMAS)
-        FirExtensionRegistrarAdapter.registerExtension(
+        FirExtensionRegistrar.registerExtension(
             FirDataFrameExtensionRegistrar(
                 isTest = true,
                 dumpSchemas,

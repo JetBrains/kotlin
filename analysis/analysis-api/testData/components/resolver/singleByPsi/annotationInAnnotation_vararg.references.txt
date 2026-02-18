@@ -9,5 +9,6 @@ KtValueArgument(131,153): 'Annotation("v1", "v2")'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       value: Annotation

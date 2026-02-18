@@ -23,7 +23,7 @@ kotlin {
 }
 
 /* This module is just for local development / prototyping and demos */
-if (!kotlinBuildProperties.isTeamcityBuild) {
+if (!kotlinBuildProperties.isTeamcityBuild.get()) {
     publish()
     standardPublicJars()
 }

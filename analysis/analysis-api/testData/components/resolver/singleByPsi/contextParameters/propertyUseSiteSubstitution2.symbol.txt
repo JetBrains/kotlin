@@ -1,0 +1,2 @@
+KtNameReferenceExpression(170,173): 'foo'
+  null

@@ -92,7 +92,6 @@ internal class KotlinpBasedMetadataDumper(
                 }
             }
         }.sortedBy { it.fqName.orEmpty() },
-        annotations = originalModuleMetadata.annotations,
         metadataVersion = originalModuleMetadata.metadataVersion,
     )
 
@@ -101,7 +100,7 @@ internal class KotlinpBasedMetadataDumper(
             private val metadata = library.metadata
             override val moduleHeaderData get() = metadata.moduleHeaderData
             override val metadataVersion = KlibMetadataVersion((library.metadataVersion?.toArray()
-                    ?: error("No metadata version specified in ${library.libraryName}")))
+                    ?: error("No metadata version specified in ${library.location}")))
             override fun packageMetadata(fqName: String, partName: String) = metadata.getPackageFragment(fqName, partName)
             override fun packageMetadataParts(fqName: String) = metadata.getPackageFragmentNames(fqName)
         }

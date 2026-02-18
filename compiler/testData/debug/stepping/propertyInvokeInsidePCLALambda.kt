@@ -66,6 +66,35 @@ fun box(): String {
 // test.kt:19 bar
 // test.kt:27 box
 
+// EXPECTATIONS NATIVE
+// test.kt:22 box
+// test.kt:22 box
+// test.kt:23 box
+// test.kt:13 bar
+// test.kt:16 bar
+// test.kt:5 generate
+// test.kt:6 generate
+// test.kt:3 <init>
+// test.kt:6 generate
+// test.kt:16 invoke
+// test.kt:17 invoke
+// test.kt:11 foo
+// test.kt:9 <init>
+// test.kt:11 foo
+// test.kt:17 invoke
+// test.kt:23 invoke
+// test.kt:24 invoke
+// test.kt:9 <get-r>
+// test.kt:24 invoke
+// test.kt:25 invoke
+// test.kt:18 invoke
+// test.kt:7 generate
+// test.kt:19 bar
+// test.kt:23 box
+// test.kt:27 box
+// test.kt:27 box
+// test.kt:28 box
+
 // EXPECTATIONS JS_IR
 // test.kt:22 box
 // test.kt:23 box

@@ -88,6 +88,10 @@ public fun ProtoBuf.Class.toKmClass(
     @[Suppress("DEPRECATION") OptIn(ExperimentalContextReceivers::class)]
     contextReceiverTypes(c.types).mapTo(v.contextReceiverTypes) { it.toKmType(c) }
     versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
+    compilerPluginDataList.associateByTo(v.compilerPluginMetadata,
+        keySelector = { c[it.pluginId] },
+        valueTransform = { it.data.toByteArray() }
+    )
 
     c.extensions.forEach { it.readClassExtensions(v, this, c) }
 
@@ -178,6 +182,10 @@ private fun ProtoBuf.Constructor.toKmConstructor(c: ReadContext): KmConstructor 
     val v = KmConstructor(flags)
     valueParameterList.mapTo(v.valueParameters) { it.toKmValueParameter(c) }
     versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
+    compilerPluginDataList.associateByTo(v.compilerPluginMetadata,
+        keySelector = { c[it.pluginId] },
+        valueTransform = { it.data.toByteArray() }
+    )
 
     c.extensions.forEach { it.readConstructorExtensions(v, this, c) }
 
@@ -204,6 +212,10 @@ private fun ProtoBuf.Function.toKmFunction(outer: ReadContext): KmFunction {
     }
 
     versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
+    compilerPluginDataList.associateByTo(v.compilerPluginMetadata,
+        keySelector = { c[it.pluginId] },
+        valueTransform = { it.data.toByteArray() }
+    )
 
     c.extensions.forEach { it.readFunctionExtensions(v, this, c) }
 
@@ -227,6 +239,10 @@ public fun ProtoBuf.Property.toKmProperty(outer: ReadContext): KmProperty {
     }
     v.returnType = returnType(c.types).toKmType(c)
     versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
+    compilerPluginDataList.associateByTo(v.compilerPluginMetadata,
+        keySelector = { c[it.pluginId] },
+        valueTransform = { it.data.toByteArray() }
+    )
 
     c.extensions.forEach { it.readPropertyExtensions(v, this, c) }
 
@@ -253,6 +269,10 @@ private fun ProtoBuf.TypeAlias.toKmTypeAlias(outer: ReadContext): KmTypeAlias {
     annotationList.mapTo(v.annotations) { it.readAnnotation(c.strings) }
 
     versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
+    compilerPluginDataList.associateByTo(v.compilerPluginMetadata,
+        keySelector = { c[it.pluginId] },
+        valueTransform = { it.data.toByteArray() }
+    )
 
     c.extensions.forEach { it.readTypeAliasExtensions(v, this, c) }
 
@@ -372,6 +392,7 @@ private fun ProtoBuf.Contract.toKmContract(c: ReadContext): KmContract {
             ProtoBuf.Effect.EffectType.RETURNS_CONSTANT -> KmEffectType.RETURNS_CONSTANT
             ProtoBuf.Effect.EffectType.CALLS -> KmEffectType.CALLS
             ProtoBuf.Effect.EffectType.RETURNS_NOT_NULL -> KmEffectType.RETURNS_NOT_NULL
+            ProtoBuf.Effect.EffectType.RETURNS_RESULT_OF -> KmEffectType.RETURNS_RESULT_OF
         }
 
         val effectKind = if (!effect.hasKind()) null else when (requireNotNull(effect.kind)) {

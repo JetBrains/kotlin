@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyAnnotationArgument.kt
         public? final? [ResolvedTo(RAW_FIR)] val CONST: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|) public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] R|T|.foo: R|kotlin/Int|
+        @R|pack/Anno|[Types](value = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST| [evaluated = this@R|pack/TopLevelClass|.R|pack/TopLevelClass.CONST|]) public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(BODY_RESOLVE)] R|T|.foo: R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ Int(0)
             }

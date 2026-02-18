@@ -129,6 +129,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNMENT_IN_EXP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNMENT_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGN_OPERATOR_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BACKING_FIELD_FOR_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BACKING_FIELD_IN_INTERFACE
@@ -183,7 +184,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_OVERL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_UPPER_BOUNDS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFUSING_BRANCH_CONDITION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFUSING_BRANCH_CONDITION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION
@@ -195,6 +196,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_NO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXTUAL_OVERLOAD_SHADOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETERS_WITH_BACKING_FIELD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_MUST_BE_NOINLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITHOUT_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTEXT_RECEIVERS_DEPRECATED
@@ -423,6 +425,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_BACKING_FIELD_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_PARAMETER_TYPES_IN_OF_OVERLOADS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_RETURN_TYPES_IN_OF_OVERLOADS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_SUSPEND_IN_OF_OVERLOADS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETERS_IN_OF_OVERLOADS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_VISIBILITY_IN_OF_OVERLOADS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_VALUES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_CHARACTER_LITERAL
@@ -484,13 +491,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KCLASS_WITH_NULLA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LABEL_NAME_CLASH
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_FIELD_IN_VAL_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_NULLABLE_BACKING_FIELD
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_PROPERTY_WITHOUT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKED_IN_PLACE_LAMBDA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LESS_VISIBLE_TYPE_ACCESS_IN_INLINE
@@ -533,6 +538,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED
@@ -612,8 +618,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_TAIL_CALLS_FOU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_THIS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_TYPE_ARGUMENTS_ON_RHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_VALUE_FOR_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_VARARG_OVERLOAD_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_INLINE_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_ON_DEFINITELY_NOT_NULLABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_RETURN_TYPE_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS
@@ -657,6 +665,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLACEHOLDER_PROJE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NULLABLE_RETURN_TYPE_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRE_RELEASE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_CLASS_MEMBER_FROM_INLINE
@@ -726,9 +735,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTIO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_BY_DELEGATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_VALUE_NOT_USED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_VALUE_NOT_USED_COERCION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ROOT_IDE_PACKAGE_DEPRECATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SAFE_CALLABLE_REFERENCE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL
@@ -769,6 +780,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TAIL_RECURSION_IN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.THROWABLE_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOO_MANY_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TRIM_MARGIN_BLANK_PREFIX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION
@@ -779,6 +791,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_SHOULD_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_CANT_BE_USED_FOR_CONST_VAL
@@ -899,6 +912,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_LONG_SUFFIX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_MODIFIER_CONTAINING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_MODIFIER_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_LOCAL_CLASS_IN_LHS_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETURN_TYPE
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -969,6 +984,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Type of constant expression cannot be resolved. Make sure you have the required dependencies for unsigned types in the classpath."
         )
         map.put(DIVISION_BY_ZERO, "Division by zero.")
+        map.put(TRIM_MARGIN_BLANK_PREFIX, "Prefix for trimMargin cannot be blank.")
         map.put(VAL_OR_VAR_ON_LOOP_PARAMETER, "''{0}'' on loop parameter is prohibited.", TO_STRING)
         map.put(VAL_OR_VAR_ON_FUN_PARAMETER, "''{0}'' on function parameter is prohibited.", TO_STRING)
         map.put(VAL_OR_VAR_ON_CATCH_PARAMETER, "''{0}'' on catch parameter is prohibited.", TO_STRING)
@@ -1480,7 +1496,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DSL_MARKER_APPLIED_TO_WRONG_TARGET,
-            "Applying DSL marker annotation ''{0}'' to target ''{1}'' has no effect. DSL marker annotations must only be applied to types.",
+            "Applying DSL marker annotation ''{0}'' to target ''{1}'' has no effect. DSL marker annotations must only be applied to types. " +
+            "See https://youtrack.jetbrains.com/issue/KT-81567 for further information.",
             DECLARATION_NAME,
             TO_STRING,
         )
@@ -1640,6 +1657,46 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             STRING,
         )
         map.put(INAPPLICABLE_LATEINIT_MODIFIER, "''lateinit'' modifier {0}.", TO_STRING)
+        map.put(
+            RETURN_TYPE_MISMATCH_OF_OPERATOR_OF,
+            "Return type of ''operator of'' must match outer classifier ''{0}''.",
+            DECLARATION_NAME,
+        )
+        map.put(
+            POTENTIALLY_NULLABLE_RETURN_TYPE_OF_OPERATOR_OF,
+            "Return type of operator 'of' is inferred from a platform call, which can lead to unchecked nullability issues. Specify return type explicitly."
+        )
+        map.put(NULLABLE_RETURN_TYPE_OF_OPERATOR_OF, "Return type of 'operator fun of' cannot be nullable.")
+        map.put(NO_VARARG_OVERLOAD_OF_OPERATOR_OF, "One of the overloads of operator 'of' must have a single 'vararg' parameter.")
+        map.put(MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF, "Only one overload of operator 'of' is allowed to have 'vararg' parameters.")
+
+        map.put(
+            INCONSISTENT_RETURN_TYPES_IN_OF_OVERLOADS,
+            "Return type of operator ''of'' must match return type of overload with ''vararg'' parameter: ''{0}'' expected.",
+            RENDER_TYPE,
+        )
+        map.put(
+            INCONSISTENT_PARAMETER_TYPES_IN_OF_OVERLOADS,
+            "Parameter types in operator ''of'' must match the type of ''vararg'' parameter: ''{0}'' expected.",
+            RENDER_TYPE,
+        )
+        map.put(
+            INCONSISTENT_VISIBILITY_IN_OF_OVERLOADS,
+            "Visibility of operator ''of'' must be the same for all overloads: ''{0}'' expected.",
+            VISIBILITY,
+        )
+        map.put(
+            INCONSISTENT_SUSPEND_IN_OF_OVERLOADS,
+            "Overload of operator ''of'' is {0} while the overload with ''vararg'' parameter is {1}.",
+            STRING,
+            STRING,
+        )
+        map.put(
+            INCONSISTENT_TYPE_PARAMETERS_IN_OF_OVERLOADS,
+            "Type parameters of operator ''of'' must match type parameters of overload with ''vararg'' parameter: ''{0}''.",
+            SYMBOL,
+        )
+
         map.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members.")
         map.put(OPERATOR_CALL_ON_CONSTRUCTOR, "Constructor of ''{0}'' cannot be used as an operator.", STRING)
         map.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE, "Visibility must be specified in explicit API mode.")
@@ -1959,11 +2016,31 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE,
         )
         map.put(TYPE_ARGUMENTS_NOT_ALLOWED, "Type arguments are not allowed {0}.", STRING)
+        map.put(
+            TYPE_ARGUMENTS_NOT_ALLOWED_WARNING,
+            "Type arguments are not allowed {0}.".toDeprecationWarningMessage(LanguageFeature.ForbidUselessTypeArgumentsIn25),
+            STRING,
+        )
         map.put(TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, "Type arguments for outer class are redundant when nested class is referenced.")
         val wrongNumberOfTypeArguments = "{0,choice,0#No type arguments|1#One type argument|1<{0,number,integer} type arguments} expected"
         map.put(
             WRONG_NUMBER_OF_TYPE_ARGUMENTS,
             "$wrongNumberOfTypeArguments for ''{1}''.",
+            null,
+            SYMBOL,
+        )
+        map.put(
+            WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING,
+            "$wrongNumberOfTypeArguments for ''{1}''. Use the full type ''{2}'' instead."
+                .toDeprecationWarningMessage(LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS),
+            null,
+            SYMBOL,
+            RENDER_TYPE,
+        )
+        map.put(
+            WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_LOCAL_CLASS_IN_LHS_WARNING,
+            "$wrongNumberOfTypeArguments for ''{1}''. Try to use a lambda expression instead."
+                .toDeprecationWarningMessage(LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS),
             null,
             SYMBOL,
         )
@@ -2199,6 +2276,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             CLASS_ID_RELATIVE_NAME_ONLY,
             RENDER_TYPE,
             suggestIfNotNull(" Consider using ''{0}'' instead.", CLASS_ID_RELATIVE_NAME_ONLY),
+        )
+        map.put(
+            ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY,
+            "This call may have inconsistent results because the type of this argument, ''{0}'', does not have a consistent identity.",
+            RENDER_TYPE,
         )
 
         // Reflection
@@ -2727,6 +2809,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, "Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.")
 
         map.put(RETURN_VALUE_NOT_USED, "Unused return value{0}.", OF_OPTIONAL_NAME)
+        map.put(
+            RETURN_VALUE_NOT_USED_COERCION,
+            "Unused return value{0}. It was coerced to ''Unit'' due to a functional parameter type.",
+            OF_OPTIONAL_NAME
+        )
 
         map.put(MUST_BE_INITIALIZED, "Property must be initialized.")
         map.put(
@@ -2806,14 +2893,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER,
             "Property backing field declaration must have an initializer."
-        )
-        map.put(
-            LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER,
-            "'lateinit' backing field cannot have an initializer."
-        )
-        map.put(
-            LATEINIT_FIELD_IN_VAL_PROPERTY,
-            "Only mutable properties can have a mutable backing field. Consider changing 'val' to 'var'."
         )
         map.put(
             LATEINIT_NULLABLE_BACKING_FIELD,
@@ -3209,7 +3288,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             STRING
         )
         map.put(
-            CONFUSING_BRANCH_CONDITION,
+            CONFUSING_BRANCH_CONDITION_ERROR,
             "Logical expression in when-with-subject. The branch will be matched by comparing the result of the logical expression with the subject. To suppress the diagnostic, wrap the expression with parentheses."
         )
         map.put(
@@ -3518,6 +3597,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             NULLABLE_INLINE_PARAMETER,
             "Inline parameter ''{0}'' of ''{1}'' cannot be nullable. Add ''noinline'' modifier to the parameter declaration or make its type not nullable.",
+            SYMBOL,
+            SYMBOL
+        )
+        map.put(
+            CONTEXT_PARAMETER_MUST_BE_NOINLINE,
+            "Context parameter ''{0}'' of ''{1}'' must be ''noinline''. Inlining context parameters is not yet supported.",
             SYMBOL,
             SYMBOL
         )

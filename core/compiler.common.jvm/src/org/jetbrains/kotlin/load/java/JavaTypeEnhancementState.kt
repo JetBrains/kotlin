@@ -20,6 +20,6 @@ class JavaTypeEnhancementState(
     }
 
     override fun toString(): String {
-        return "JavaTypeEnhancementState(jsr305=$jsr305, getReportLevelForAnnotation=$getReportLevelForAnnotation)"
+        return "JavaTypeEnhancementState(jsr305=$jsr305)"
     }
 }

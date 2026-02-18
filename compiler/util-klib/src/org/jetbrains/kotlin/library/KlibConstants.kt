@@ -6,5 +6,11 @@
 package org.jetbrains.kotlin.library
 
 object KlibConstants {
+    const val KLIB_FILE_EXTENSION = "klib"
+    const val KLIB_FILE_EXTENSION_WITH_DOT = ".$KLIB_FILE_EXTENSION"
+
+    const val KLIB_DEFAULT_COMPONENT_NAME = "default"
+
     const val KLIB_MANIFEST_FILE_NAME = "manifest"
+    const val KLIB_RESOURCES_FOLDER_NAME = "resources"
 }

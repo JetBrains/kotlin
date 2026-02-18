@@ -1,11 +1,13 @@
 
 // WITH_STDLIB
 
-import kotlin.test.assertEquals
-
+// FILE: lib.kt
 inline fun<reified T> checkcast(x: Any?): T {
     return x as T
 }
+
+// FILE: main.kt
+import kotlin.test.assertEquals
 
 fun box(): String {
     val x = checkcast<String>("abc")

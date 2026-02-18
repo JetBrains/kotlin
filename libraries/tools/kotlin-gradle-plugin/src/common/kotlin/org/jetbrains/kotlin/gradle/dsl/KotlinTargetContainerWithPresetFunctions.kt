@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.dsl
 import javax.inject.Inject
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainer
@@ -41,29 +42,55 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 
     fun jvm(configure: Action<KotlinJvmTarget>) = jvm { configure.execute(this) }
 
-    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins since Android Gradle Plugin version 9.0.0.\n\nPlease use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp\n\nThe change may require changing the structure of the your project. Read more: https://kotl.in/kmp-project-structure-migration", level = DeprecationLevel.WARNING)
+    /**
+     * The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins
+     * from Android Gradle Plugin version 9.0.0.
+     * 
+     * Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp
+     * The change may require changing the structure of your project. Read more: https://kotl.in/kmp-project-structure-migration
+     */
     fun androidTarget(
         name: String = "android",
         configure: KotlinAndroidTarget.() -> Unit = { }
     ): KotlinAndroidTarget
 
-    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins since Android Gradle Plugin version 9.0.0.\n\nPlease use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp\n\nThe change may require changing the structure of the your project. Read more: https://kotl.in/kmp-project-structure-migration", level = DeprecationLevel.WARNING)
-    @Suppress("DEPRECATION")
+    /**
+     * The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins
+     * from Android Gradle Plugin version 9.0.0.
+     * 
+     * Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp
+     * The change may require changing the structure of your project. Read more: https://kotl.in/kmp-project-structure-migration
+     */
     fun androidTarget() = androidTarget("android") { }
 
-    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins since Android Gradle Plugin version 9.0.0.\n\nPlease use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp\n\nThe change may require changing the structure of the your project. Read more: https://kotl.in/kmp-project-structure-migration", level = DeprecationLevel.WARNING)
-    @Suppress("DEPRECATION")
+    /**
+     * The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins
+     * from Android Gradle Plugin version 9.0.0.
+     * 
+     * Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp
+     * The change may require changing the structure of your project. Read more: https://kotl.in/kmp-project-structure-migration
+     */
     fun androidTarget(name: String) = androidTarget(name) { }
 
-    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins since Android Gradle Plugin version 9.0.0.\n\nPlease use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp\n\nThe change may require changing the structure of the your project. Read more: https://kotl.in/kmp-project-structure-migration", level = DeprecationLevel.WARNING)
-    @Suppress("DEPRECATION")
+    /**
+     * The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins
+     * from Android Gradle Plugin version 9.0.0.
+     * 
+     * Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp
+     * The change may require changing the structure of your project. Read more: https://kotl.in/kmp-project-structure-migration
+     */
     fun androidTarget(
         name: String,
         configure: Action<KotlinAndroidTarget>
     ) = androidTarget(name) { configure.execute(this) }
 
-    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins since Android Gradle Plugin version 9.0.0.\n\nPlease use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp\n\nThe change may require changing the structure of the your project. Read more: https://kotl.in/kmp-project-structure-migration", level = DeprecationLevel.WARNING)
-    @Suppress("DEPRECATION")
+    /**
+     * The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins
+     * from Android Gradle Plugin version 9.0.0.
+     * 
+     * Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp
+     * The change may require changing the structure of your project. Read more: https://kotl.in/kmp-project-structure-migration
+     */
     fun androidTarget(configure: Action<KotlinAndroidTarget>) = androidTarget { configure.execute(this) }
 
     fun androidNativeX64(
@@ -450,12 +477,14 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 }
 
 internal fun ObjectFactory.DefaultKotlinTargetContainerWithPresetFunctions(
-    targets: NamedDomainObjectCollection<KotlinTarget>
-): DefaultKotlinTargetContainerWithPresetFunctions = newInstance<DefaultKotlinTargetContainerWithPresetFunctions>(targets)
+    targets: NamedDomainObjectCollection<KotlinTarget>,
+    project: Project,
+): DefaultKotlinTargetContainerWithPresetFunctions = newInstance<DefaultKotlinTargetContainerWithPresetFunctions>(targets, project)
 
 internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject constructor(
     objectFactory: ObjectFactory,
     override val targets: NamedDomainObjectCollection<KotlinTarget>,
+    private val project: Project,
 ) : KotlinTargetContainerWithPresetFunctions, KotlinTargetsContainer {
 
     val presets: NamedDomainObjectCollection<InternalKotlinTargetPreset<*>> =
@@ -468,10 +497,17 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("jvm") as KotlinJvmTargetPreset,
+            project,
             configure
         )
 
-    @Deprecated("The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins since Android Gradle Plugin version 9.0.0.\n\nPlease use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp\n\nThe change may require changing the structure of the your project. Read more: https://kotl.in/kmp-project-structure-migration", level = DeprecationLevel.WARNING)
+    /**
+     * The 'org.jetbrains.kotlin.multiplatform' plugin will not be compatible with most of the Android Gradle plugins
+     * from Android Gradle Plugin version 9.0.0.
+     * 
+     * Please use the 'com.android.kotlin.multiplatform.library' plugin instead. Read more: https://kotl.in/gradle/agp-new-kmp
+     * The change may require changing the structure of your project. Read more: https://kotl.in/kmp-project-structure-migration
+     */
     override fun androidTarget(
         name: String,
         configure: KotlinAndroidTarget.() -> Unit
@@ -479,6 +515,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("android") as KotlinAndroidTargetPreset,
+            project,
             configure
         )
 
@@ -489,6 +526,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("androidNativeX64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -499,6 +537,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("androidNativeX86") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -509,6 +548,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("androidNativeArm32") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -519,6 +559,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("androidNativeArm64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -529,6 +570,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("iosArm64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -540,6 +582,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("iosX64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            project,
             configure
         )
 
@@ -550,6 +593,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("iosSimulatorArm64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            project,
             configure
         )
 
@@ -560,6 +604,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("watchosArm32") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -570,6 +615,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("watchosArm64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -581,6 +627,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("watchosX64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            project,
             configure
         )
 
@@ -591,6 +638,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("watchosSimulatorArm64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            project,
             configure
         )
 
@@ -601,6 +649,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("watchosDeviceArm64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -611,6 +660,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("tvosArm64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -622,6 +672,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("tvosX64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            project,
             configure
         )
 
@@ -632,6 +683,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("tvosSimulatorArm64") as KotlinNativeTargetWithSimulatorTestsPreset,
+            project,
             configure
         )
 
@@ -642,6 +694,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("linuxX64") as KotlinNativeTargetWithHostTestsPreset,
+            project,
             configure
         )
 
@@ -652,6 +705,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("mingwX64") as KotlinNativeTargetWithHostTestsPreset,
+            project,
             configure
         )
 
@@ -663,6 +717,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("macosX64") as KotlinNativeTargetWithHostTestsPreset,
+            project,
             configure
         )
 
@@ -673,6 +728,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("macosArm64") as KotlinNativeTargetWithHostTestsPreset,
+            project,
             configure
         )
 
@@ -683,6 +739,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("linuxArm64") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 
@@ -694,6 +751,7 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("linuxArm32Hfp") as KotlinNativeTargetPreset,
+            project,
             configure
         )
 

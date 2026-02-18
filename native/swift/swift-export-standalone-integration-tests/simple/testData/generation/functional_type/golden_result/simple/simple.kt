@@ -28,8 +28,8 @@ public fun __root___foo_1(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___foo_consume_consuming__TypesOfArguments__U2828Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__")
-public fun __root___foo_consume_consuming__TypesOfArguments__U2828Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___foo_consume_consuming__TypesOfArguments__U2840escapingU2028Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__")
+public fun __root___foo_consume_consuming__TypesOfArguments__U2840escapingU2028Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Unit {
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Unit>(block);
         { arg0: Function2<UInt, UInt, kotlin.ranges.IntRange> ->
@@ -40,8 +40,8 @@ public fun __root___foo_consume_consuming__TypesOfArguments__U2828Swift_UInt32_U
     foo_consume_consuming(__block)
 }
 
-@ExportedBridge("__root___foo_consume_consuming_2__TypesOfArguments__U2828Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__")
-public fun __root___foo_consume_consuming_2__TypesOfArguments__U2828Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___foo_consume_consuming_2__TypesOfArguments__U2840escapingU2028Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__")
+public fun __root___foo_consume_consuming_2__TypesOfArguments__U2840escapingU2028Swift_UInt32_U20Swift_UInt32U29202D_U20Swift_ClosedRange_Swift_Int32_U29202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Unit {
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Unit>(block);
         { arg0: Function2<UInt, UInt, kotlin.ranges.IntRange> ->

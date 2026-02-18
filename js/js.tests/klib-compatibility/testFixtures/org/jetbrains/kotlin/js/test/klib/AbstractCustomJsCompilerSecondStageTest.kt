@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.test.runners.commonConfigurationForJsTest
 import org.jetbrains.kotlin.js.test.runners.configureJsBoxHandlers
 import org.jetbrains.kotlin.js.test.runners.setUpDefaultDirectivesForJsBoxTest
-import org.jetbrains.kotlin.js.test.services.configuration.UnsupportedFeaturesTestConfigurator
+import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -86,11 +86,6 @@ open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerWithT
             // where `X.Y.Z` matches to `customJsCompilerSettings.version`
             ::CustomKlibCompilerSecondStageTestSuppressor.bind(customJsCompilerSettings.defaultLanguageVersion),
         )
-        forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
-            defaultDirectives {
-                LANGUAGE with "+ExplicitBackingFields"
-            }
-        }
     }
 }
 
@@ -99,7 +94,7 @@ open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerWithT
  * In the pure test pipeline the same is done in `JsIrLoweringFacade.compileIrToJs()` by passing `exportedDeclarations` param to `jsCompileKt.compileIr()`
  */
 class JsExportBoxPreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {
-    private val topLevelBoxRegex = Regex("(^|\n)fun box\\(\\)")
+    private val topLevelBoxRegex = Regex("(^|\n|public\\s+)fun box\\(\\)")
     private val topLevelBoxReplacement = "\n@JsExport fun box()"
 
     override fun process(file: TestFile, content: String): String {

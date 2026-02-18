@@ -1,8 +1,0 @@
-$TESTDATA_DIR$/firLightTree.kt
--Xuse-fir-lt=true
--ir-output-dir
-$TEMP_DIR$
--ir-output-name
-fir
--libraries
-libraries/stdlib/build/classes/kotlin/js/main

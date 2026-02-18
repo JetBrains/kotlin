@@ -147,3 +147,16 @@ abstract class Money<T : Money<T, Array<T>>, I: Array<T>> protected constructor(
 object Zero : Money<Zero, Array<Zero>>() {
     override val amount = 0f
 }
+
+@JsExport
+abstract class AbstractClassWithProtected {
+    protected abstract fun protectedAbstractFun(): Int
+    protected abstract val protectedAbstractVal: Int
+}
+
+@JsExport
+object ObjectWithProtected : AbstractClassWithProtected {
+    override fun protectedAbstractFun(): Int = 42
+    override val protectedAbstractVal: Int
+        get() = 42
+}

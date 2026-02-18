@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.js.reportCollectedDiagnostics
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinLibraryFile
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFileMap
@@ -416,7 +417,7 @@ abstract class AbstractInvalidationTest(
     ) {
         val outputStream = ByteArrayOutputStream()
         val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
-        val diagnosticCollector = DiagnosticReporterFactory.createPendingReporter()
+        val diagnosticCollector = DiagnosticsCollectorImpl()
         val performanceManager = createPerformanceManagerFor(configuration.targetPlatform ?: error("Expected a target platform"))
         val phaseConfig = createPhaseConfig(stepId, buildDir)
 
@@ -424,6 +425,7 @@ abstract class AbstractInvalidationTest(
         configuration.produceKlibFile = true
         configuration.outputDir = outputKlibFile.parentFile
         configuration.phaseConfig = phaseConfig
+        configuration.renderDiagnosticInternalName = true
 
         val klibSerializationCompoundPhase = WebFrontendPipelinePhase then
                 WebFir2IrPipelinePhase then
@@ -434,13 +436,10 @@ abstract class AbstractInvalidationTest(
             klibSerializationCompoundPhase.invokeToplevel(
                 phaseConfig,
                 context = PipelineContext(
-                    configuration.messageCollector,
-                    diagnosticCollector,
                     performanceManager,
-                    renderDiagnosticInternalName = true,
                     kaptMode = false,
                 ),
-                input = ConfigurationPipelineArtifact(configuration, diagnosticCollector, rootDisposable),
+                input = ConfigurationPipelineArtifact(configuration, rootDisposable),
             )
         } catch (_: PipelineStepException) {
             // Some pipeline step did not produce any output because of an error.

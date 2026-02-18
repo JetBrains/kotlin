@@ -193,9 +193,5 @@ fun ConeKotlinType.arrayElementTypeArgument(checkUnsignedArrays: Boolean = true)
     val elementType = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: runIf(checkUnsignedArrays) {
         StandardClassIds.elementTypeByUnsignedArrayType[classId]
     }
-    if (elementType != null) {
-        return elementType.constructClassLikeType(emptyArray(), isMarkedNullable = false)
-    }
-
-    return null
+    return elementType?.constructClassLikeType(emptyArray(), isMarkedNullable = false)
 }

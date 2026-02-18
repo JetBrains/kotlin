@@ -58,6 +58,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_LET = "let".toCharArray();
     private static final char[] CHARS_CONST = "const".toCharArray();
     private static final char[] CHARS_WHILE = "while".toCharArray();
+    private static final char[] CHARS_ELLIPSIS = "...".toCharArray();
     private static final char[] HEX_DIGITS = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     private static final Map<Character, Integer> COMMON_ESCAPE_MAPPING = createCommonEscapeMapping();
@@ -390,6 +391,18 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         popSourceInfo();
     }
 
+    @Override
+    public void visitSpread(@NotNull JsSpread x) {
+        pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
+
+        ellipsis();
+        printPair(x, x.getExpression());
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
     private void continueOrBreakLabel(JsContinue x) {
         JsNameRef label = x.getLabel();
         if (label != null) {
@@ -441,7 +454,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print(CHARS_CATCH);
         space();
         leftParen();
-        nameDef(x.getParameter().getName());
+        accept(x.getParameter().getAssignable());
 
         rightParen();
         space();
@@ -673,15 +686,15 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         space();
         leftParen();
 
-        JsName name = x.getBindingVarName();
+        JsAssignable assignable = x.getBindingAssignable();
         JsVars.Variant variant = x.getBindingVarVariant();
         JsExpression bindingExpression = x.getBindingExpression();
         JsExpression iterableExpression = x.getIterableExpression();
 
-        if (name != null && variant != null) {
+        if (assignable != null && variant != null) {
             varModifier(variant);
             space();
-            nameDef(name);
+            accept(assignable);
 
             if (bindingExpression != null) {
                 space();
@@ -1097,30 +1110,37 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
             pushSourceInfo(item.getSource());
 
-            JsExpression labelExpr = item.getLabelExpr();
+            if (item instanceof JsPropertyInitializer.Spread) {
+                JsExpression expression = ((JsPropertyInitializer.Spread)item).getExpression();
+                ellipsis();
+                accept(expression);
+            } else if (item instanceof JsPropertyInitializer.KeyValue) {
+                JsPropertyInitializer.KeyValue keyValue = (JsPropertyInitializer.KeyValue)item;
+                JsExpression labelExpr = keyValue.getLabelExpr();
 
-            if (labelExpr instanceof JsStringLiteral) {
-                JsStringLiteral stringLiteral = (JsStringLiteral) labelExpr;
-                String value = stringLiteral.getValue();
-                if (IdentifierPolicyKt.isValidES5Identifier(value)) {
-                    String escaped = IdentifierPolicyKt.getRESERVED_KEYWORDS().contains(value) ? "'" + value + "'" : value;
-                    labelExpr = new JsNameRef(escaped).withMetadataFrom(stringLiteral);
+                if (labelExpr instanceof JsStringLiteral) {
+                    JsStringLiteral stringLiteral = (JsStringLiteral) labelExpr;
+                    String value = stringLiteral.getValue();
+                    if (IdentifierPolicyKt.isValidES5Identifier(value)) {
+                        String escaped = IdentifierPolicyKt.getRESERVED_KEYWORDS().contains(value) ? "'" + value + "'" : value;
+                        labelExpr = new JsNameRef(escaped).withMetadataFrom(stringLiteral);
+                    }
+                    accept(labelExpr);
+                } else if (labelExpr instanceof JsNumberLiteral || labelExpr instanceof JsBigIntLiteral) {
+                    accept(labelExpr);
+                } else {
+                    leftSquare();
+                    accept(labelExpr);
+                    rightSquare();
                 }
-                accept(labelExpr);
-            } else if (labelExpr instanceof JsNumberLiteral || labelExpr instanceof JsBigIntLiteral) {
-                accept(labelExpr);
-            } else {
-                leftSquare();
-                accept(labelExpr);
-                rightSquare();
-            }
-            _colon();
-            space();
-            JsExpression valueExpr = item.getValueExpr();
-            boolean wasEnclosed = parenPushIfCommaExpression(valueExpr);
-            accept(valueExpr);
-            if (wasEnclosed) {
-                rightParen();
+                _colon();
+                space();
+                JsExpression valueExpr = keyValue.getValueExpr();
+                boolean wasEnclosed = parenPushIfCommaExpression(valueExpr);
+                accept(valueExpr);
+                if (wasEnclosed) {
+                    rightParen();
+                }
             }
 
             popSourceInfo();
@@ -1140,7 +1160,25 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitParameter(@NotNull JsParameter x) {
         pushSourceInfo(x.getSource());
-        nameOf(x);
+
+        if (x.isRest()) {
+            ellipsis();
+        }
+
+        accept(x.getAssignable());
+
+        JsExpression defaultValue = x.getDefaultValue();
+        if (defaultValue != null) {
+            space();
+            assignment();
+            space();
+            boolean wasEnclosed = parenPushIfCommaExpression(defaultValue);
+            accept(defaultValue);
+            if (wasEnclosed) {
+                rightParen();
+            }
+        }
+
         popSourceInfo();
     }
 
@@ -1347,7 +1385,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         pushSourceInfo(var.getSource());
         printCommentsBeforeNode(var);
 
-        nameOf(var);
+        accept(var.getAssignable());
         JsExpression initExpr = var.getInitExpression();
         if (initExpr != null) {
             space();
@@ -1570,6 +1608,82 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
 
         p.print(javaScriptString(jsImport.getModule()));
+    }
+
+    @Override
+    public void visitNamedAssignable(@NotNull JsAssignable.Named assignable) {
+        nameDef(assignable.getName());
+    }
+
+    @Override
+    public void visitArrayPatternAssignable(@NotNull JsAssignable.ArrayPattern pattern) {
+        pushSourceInfo(pattern.getSource());
+        printCommentsBeforeNode(pattern);
+
+        p.print('[');
+
+        boolean notFirst = false;
+        for (JsBindingArrayItem item : pattern.getElements()) {
+            notFirst = sepCommaSpace(notFirst);
+
+            if (item instanceof JsBindingArrayItem.Hole) {
+                continue;
+            }
+
+            JsBindingElement element = ((JsBindingArrayItem.Element) item).getElement();
+            visitBindingElement(element);
+        }
+
+        p.print(']');
+
+        printCommentsAfterNode(pattern);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitObjectPatternAssignable(@NotNull JsAssignable.ObjectPattern pattern) {
+        pushSourceInfo(pattern.getSource());
+        printCommentsBeforeNode(pattern);
+
+        p.print('{');
+
+        boolean notFirst = false;
+        for (JsBindingProperty property : pattern.getProperties()) {
+            notFirst = sepCommaSpace(notFirst);
+
+            JsExpression propertyName = property.getPropertyName();
+            JsBindingElement element = property.getElement();
+
+            if (propertyName != null) {
+                propertyName.accept(this);
+                _colon();
+                space();
+            }
+
+            visitBindingElement(element);
+        }
+
+        p.print('}');
+
+        printCommentsAfterNode(pattern);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitBindingElement(@NotNull JsBindingElement element) {
+        if (element.isSpread()) {
+            ellipsis();
+        }
+
+        element.getTarget().accept(this);
+
+        JsExpression defaultValue = element.getDefaultValue();
+        if (defaultValue != null) {
+            space();
+            assignment();
+            space();
+            accept(defaultValue);
+        }
     }
 
     private void newline() {
@@ -1920,4 +2034,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private void _while() {
         p.print(CHARS_WHILE);
     }
+
+    private void ellipsis() { p.print(CHARS_ELLIPSIS); }
 }

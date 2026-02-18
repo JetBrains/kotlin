@@ -13,15 +13,17 @@ import java.io.File
 import kotlin.test.fail
 
 sealed interface WasmOptimizer {
-    fun run(wasmInput: WasmBinaryData, withText: Boolean = false): OptimizationResult
+    fun run(wasmInput: WasmBinaryData, withText: Boolean, multiModule: Boolean): OptimizationResult
 
     data class OptimizationResult(val wasm: WasmBinaryData, val wat: String?)
 
     object Binaryen : WasmOptimizer {
         private val binaryenPath = System.getProperty("binaryen.path")
 
-        override fun run(wasmInput: WasmBinaryData, withText: Boolean): OptimizationResult {
-            val command = arrayOf(binaryenPath, *BinaryenConfig.binaryenArgs.toTypedArray())
+        override fun run(wasmInput: WasmBinaryData, withText: Boolean, multiModule: Boolean): OptimizationResult {
+            val args = if (multiModule) BinaryenConfig.binaryenMultimoduleArgs else BinaryenConfig.binaryenArgs
+
+            val command = arrayOf(binaryenPath, *args.toTypedArray())
             return OptimizationResult(
                 exec(command, wasmInput).let { WasmBinaryData(it, it.size) },
                 runIf(withText) { exec(command + "-S", wasmInput).toString(Charsets.UTF_8) }

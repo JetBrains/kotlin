@@ -89,6 +89,10 @@ fun main(args: Array<String>) {
                 model("codegen/box", excludeDirs = k2BoxTestDir)
             }
 
+            testClass<AbstractDirectivesValidatorTest> {
+                model("codegen/box")
+            }
+
             testClass<AbstractIrSteppingTest> {
                 model("debug/stepping")
             }
@@ -122,10 +126,6 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
-                model("codegen/boxInline")
-            }
-
-            testClass<AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest> {
                 model("codegen/boxInline")
             }
 
@@ -169,11 +169,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirBlackBoxInlineCodegenTestWithInlineScopes> {
                 model("codegen/boxInline", excludeDirs = k2BoxTestDir)
-            }
-
-            testClass<AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopes> {
-                model("codegen/box")
-                model("codegen/boxInline")
             }
 
             testClass<AbstractFirBlackBoxCodegenTestWithInlineScopes>("FirBlackBoxModernJdkCodegenTestGeneratedWithInlineScopes") {

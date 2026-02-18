@@ -68,7 +68,6 @@ projectTests {
         )
     ) {
         useJUnitPlatform()
-        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
     }
 
     testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFirAnalysisTestsKt", generateTestsInBuildDirectory = true)
@@ -86,6 +85,7 @@ projectTests {
     withScriptingPlugin()
     withMockJdkRuntime()
     withStdlibCommon()
+    withStdlibWeb()
     withAnnotations()
     withThirdPartyJsr305()
     withThirdPartyAnnotations()

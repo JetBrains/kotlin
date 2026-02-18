@@ -18,6 +18,10 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/scripting/scripting-tests/testData/codegen/testScripts")
 @TestDataPath("$PROJECT_ROOT")
 public class ScriptWithCustomDefBlackBoxCodegenTestGenerated extends AbstractScriptWithCustomDefBlackBoxCodegenTest {
+  private void run(String fileName) {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInTestScripts() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/codegen/testScripts"), Pattern.compile("^(.+)\\.kts$"), null, true);
@@ -26,60 +30,60 @@ public class ScriptWithCustomDefBlackBoxCodegenTestGenerated extends AbstractScr
   @Test
   @TestMetadata("annotations.test.kts")
   public void testAnnotations_test() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/annotations.test.kts");
+    run("annotations.test.kts");
   }
 
   @Test
   @TestMetadata("declarationsOrderExtension.test.kts")
   public void testDeclarationsOrderExtension_test() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/declarationsOrderExtension.test.kts");
+    run("declarationsOrderExtension.test.kts");
   }
 
   @Test
   @TestMetadata("declarationsOrderSingleExpression.test.kts")
   public void testDeclarationsOrderSingleExpression_test() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/declarationsOrderSingleExpression.test.kts");
+    run("declarationsOrderSingleExpression.test.kts");
   }
 
   @Test
   @TestMetadata("declarationsOrderTopLevelProperty.test.kts")
   public void testDeclarationsOrderTopLevelProperty_test() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/declarationsOrderTopLevelProperty.test.kts");
+    run("declarationsOrderTopLevelProperty.test.kts");
   }
 
   @Test
   @TestMetadata("declarationsOrderWith.test.kts")
   public void testDeclarationsOrderWith_test() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/declarationsOrderWith.test.kts");
+    run("declarationsOrderWith.test.kts");
   }
 
   @Test
   @TestMetadata("empty.test.kts")
   public void testEmpty_test() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/empty.test.kts");
+    run("empty.test.kts");
   }
 
   @Test
   @TestMetadata("params.test.kts")
   public void testParams_test() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/params.test.kts");
+    run("params.test.kts");
   }
 
   @Test
   @TestMetadata("reflect.test.kts")
   public void testReflect_test() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/reflect.test.kts");
+    run("reflect.test.kts");
   }
 
   @Test
   @TestMetadata("simple.test.kts")
   public void testSimple_test() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/simple.test.kts");
+    run("simple.test.kts");
   }
 
   @Test
   @TestMetadata("unnamedLocalVariables.test.kts")
   public void testUnnamedLocalVariables_test() {
-    runTest("plugins/scripting/scripting-tests/testData/codegen/testScripts/unnamedLocalVariables.test.kts");
+    run("unnamedLocalVariables.test.kts");
   }
 }

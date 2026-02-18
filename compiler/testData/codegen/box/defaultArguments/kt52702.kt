@@ -1,6 +1,8 @@
 // Check that local variables for inline functions and inline default lambdas start
 // after they are initialized.
+// NO_CHECK_LAMBDA_INLINING
 
+// FILE: lib.kt
 inline fun spray() {
     val a = Any()
     val b = Any()
@@ -11,6 +13,7 @@ inline fun spray() {
 
 inline fun f(block: () -> String = { "OK" }): String = block()
 
+// FILE: main.kt
 fun box(): String {
     // On the JVM, this call adds some locals with reference types to the LVT
     // which end after the call returns.

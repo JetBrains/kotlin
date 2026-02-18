@@ -5,7 +5,7 @@ plugins {
 }
 
 repositories {
-    if (!kotlinBuildProperties.isTeamcityBuild) {
+    if (!kotlinBuildProperties.isTeamcityBuild.get()) {
         androidXMavenLocal(androidXMavenLocalPath)
     }
     androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
@@ -46,6 +46,7 @@ kotlin {
                 runtimeOnly(jpsModelImpl())
                 implementation(project(":compiler:ir.backend.common"))
                 implementation(project(":compiler:cli"))
+                implementation(project(":compiler:cli-jvm"))
                 implementation(project(":compiler:backend.jvm"))
                 implementation(project(":compiler:fir:fir2ir:jvm-backend"))
                 implementation(project(":compiler:backend.jvm.entrypoint"))
@@ -59,6 +60,9 @@ kotlin {
                 // Compose compiler deps
                 implementation(project(":plugins:compose-compiler-plugin:compiler-hosted"))
                 implementation(project(":plugins:compose-compiler-plugin:group-mapping"))
+
+                // protobuf dependencies for tests
+                implementation(libs.protobuf.java.lite)
                 implementation(project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes"))
 
                 // coroutines for runtime tests
@@ -94,7 +98,7 @@ tasks.withType(Test::class.java).configureEach {
     this.jvmArgs("--add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED")
     // ensure that debugger tests don't launch a separate window
     this.systemProperty("java.awt.headless", "true")
-    this.environment("CI", kotlinBuildProperties.isTeamcityBuild)
+    this.environment("CI", kotlinBuildProperties.isTeamcityBuild.get())
     if (project.providers.gradleProperty("generate.golden").orElse("false").get().toBooleanStrict()) {
         this.environment("GENERATE_GOLDEN", "true")
     }

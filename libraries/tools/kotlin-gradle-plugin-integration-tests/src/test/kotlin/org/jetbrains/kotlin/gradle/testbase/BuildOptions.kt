@@ -439,6 +439,9 @@ fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSu
 fun BuildOptions.enableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.ENABLED)
 fun BuildOptions.disableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.DISABLED)
 
+// KT-75899: Support Gradle Project Isolation in KGP JS & Wasm
+fun BuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899() = disableIsolatedProjects()
+
 /**
  * Before 8.12 Gradle fails IP CC serialization with "cannot access 'Project.group' functionality on another project"
  */

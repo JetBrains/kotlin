@@ -30,8 +30,11 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
+import kotlin.metadata.KmConstructor
+import kotlin.metadata.KmFunction
 import kotlin.metadata.KmProperty
 import kotlin.metadata.isVar
+import kotlin.metadata.jvm.signature
 import kotlin.reflect.KProperty0
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
@@ -44,6 +47,12 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     protected open val methodOwner: Class<*>
         get() = jClass.wrapperByPrimitive ?: jClass
+
+    abstract val functionsMetadata: Collection<KmFunction>
+
+    abstract val propertiesMetadata: Collection<KmProperty>
+
+    abstract val constructorsMetadata: Collection<KmConstructor>
 
     abstract val constructorDescriptors: Collection<ConstructorDescriptor>
 
@@ -67,6 +76,23 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             KotlinKMutableProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty)
         else
             KotlinKProperty0<Any?>(this, signature, rawBoundReceiver = null, kmProperty)
+    }
+
+    fun findPropertyMetadata(name: String, signature: String): KmProperty {
+        // For class properties, we'll also need to support the case when there are several properties with the same name,
+        // see `findPropertyDescriptor`.
+        require(this is KPackageImpl) { "Only top-level properties are supported for now: $this/$name ($signature)" }
+
+        val properties = propertiesMetadata.filter { it.name == name && it.computeJvmSignature(this) == signature }
+        if (properties.isEmpty()) {
+            throw KotlinReflectionInternalError("Property '$name' (JVM signature: $signature) not resolved in $this")
+        }
+
+        if (properties.size > 1) {
+            throw KotlinReflectionInternalError("Property '$name' (JVM signature: $signature) resolved in several methods in $this")
+        }
+
+        return properties.single()
     }
 
     fun findPropertyDescriptor(name: String, signature: String): PropertyDescriptor {
@@ -118,6 +144,23 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         return properties.single()
     }
 
+    fun findFunctionMetadata(name: String, signature: String): KmFunction {
+        require(this is KPackageImpl) { "Only top-level functions are supported for now: $this/$name ($signature)" }
+
+        val functions = functionsMetadata.filter { it.name == name && it.signature.toString() == signature }
+        if (functions.size != 1) {
+            val allMembers = functionsMetadata.joinToString("\n") { function ->
+                function.name + " | " + function.signature
+            }
+            throw KotlinReflectionInternalError(
+                "Function '$name' (JVM signature: $signature) not resolved in $this:" +
+                        if (allMembers.isEmpty()) " no members found" else " several matching members found:\n$allMembers"
+            )
+        }
+
+        return functions.single()
+    }
+
     fun findFunctionDescriptor(name: String, signature: String): FunctionDescriptor {
         val members = if (name == "<init>") constructorDescriptors.toList() else getFunctions(Name.identifier(name))
         val functions = members.filter { descriptor ->
@@ -136,6 +179,24 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
         return functions.single()
     }
+
+    fun findConstructorMetadata(signature: String): KmConstructor =
+        constructorsMetadata.singleOrNull { it.signature.toString() == signature } ?: run {
+            val allMembers = constructorsMetadata.joinToString("\n") { constructor -> constructor.signature.toString() }
+            throw KotlinReflectionInternalError(
+                "Constructor (JVM signature: $signature) not resolved in $this:" +
+                        if (allMembers.isEmpty()) " no constructors found" else " several matching constructors found:\n$allMembers"
+            )
+        }
+
+    fun findJavaConstructor(signature: String): Constructor<*> =
+        jClass.declaredConstructors.singleOrNull { it.jvmSignature == signature } ?: run {
+            val allMembers = jClass.declaredConstructors.joinToString("\n") { constructor -> constructor.jvmSignature }
+            throw KotlinReflectionInternalError(
+                "Constructor (JVM signature: $signature) not resolved in $this:" +
+                        if (allMembers.isEmpty()) " no constructors found" else "\n$allMembers"
+            )
+        }
 
     private fun Class<*>.lookupMethod(
         name: String, parameterTypes: Array<Class<*>>, returnType: Class<*>, isStaticDefault: Boolean,

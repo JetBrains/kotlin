@@ -19,3 +19,13 @@ class Accessor(vararg val x: Int) {
 
     inner class Inner(val y: Double, vararg var z: Boolean)
 }
+
+fun setTag(vararg tag: String) {
+    val a = "this is a test"
+    a.length
+}
+
+fun setTag(tags: List<String>) {
+    val a = "this is another test"
+    a.length
+}

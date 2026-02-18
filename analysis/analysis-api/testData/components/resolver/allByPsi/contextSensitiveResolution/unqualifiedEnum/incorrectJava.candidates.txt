@@ -31,19 +31,18 @@ KtWhenExpression(62,114): 'when (javaEnum) {'
 KtNameReferenceExpression(68,76): 'javaEnum'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = javaEnum
-          receiverType = null
-          returnType = JavaEnum
-          symbol = javaEnum: JavaEnum
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = javaEnum
+        receiverType = null
+        returnType = JavaEnum
+        symbol = javaEnum: JavaEnum
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -74,22 +73,21 @@ KtWhenConditionWithExpression(101,107): 'second'
 KtNameReferenceExpression(101,107): 'second'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = second
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = second
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = second
-          receiverType = null
-          returnType = JavaEnum!
-          symbol = var second: JavaEnum!
-          contextParameters = []
-          callableId = /JavaEnum.second
-      simpleAccess = Read
+      kind = Read
+      signature = KaVariableSignature:
+        name = second
+        receiverType = null
+        returnType = JavaEnum!
+        symbol = var second: JavaEnum!
+        contextParameters = []
+        callableId = /JavaEnum.second
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -106,9 +105,6 @@ private class LLFirSuperTypeTargetResolver(
     }
 
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
-        val isVisited = !visitedElements.add(target)
-        if (isVisited) return true
-
         when (target) {
             is FirRegularClass -> performResolve(
                 declaration = target,
@@ -159,6 +155,10 @@ private class LLFirSuperTypeTargetResolver(
         // To avoid redundant work, because a publication won't be executed
         if (checkAnalysisReadiness(declaration, containingDeclarations, resolverPhase)) return
 
+        // After the readiness check to properly log information,
+        // but the check itself is still required since performResolve might lead to SOE due to the outer class resolution
+        if (declaration in visitedElements) return
+
         declaration.lazyResolveToPhase(resolverPhase.previous)
 
         var superTypeRefs: S? = null
@@ -168,6 +168,10 @@ private class LLFirSuperTypeTargetResolver(
 
         // "null" means that some other thread is already resolved [declaration] to [resolverPhase]
         if (superTypeRefs == null) return
+
+        // The declaration is marked as visited as soon as the real resolution has started.
+        // Not early to not mark already resolved declarations as visited since they have to be processed separately
+        visitedElements += declaration
 
         // 1. Resolve declaration super type refs
         @Suppress("UNCHECKED_CAST")
@@ -235,47 +239,49 @@ private class LLFirSuperTypeTargetResolver(
         if (classLikeDeclaration !is FirClassLikeDeclaration) return
         if (classLikeDeclaration in visitedElements) return
 
-        if (classLikeDeclaration.resolvePhase >= resolverPhase) {
-            visitedElements += classLikeDeclaration
-            if (classLikeDeclaration is FirJavaClass) {
-                // We do not have phases guarantees for Java classes, so we should process them with an assumption
-                // that there are some unresolved supertypes from the declaration site point of view
-                supertypeComputationSession.withDeclarationSession(classLikeDeclaration) {
-                    crawlSupertypeFromResolvedDeclaration(classLikeDeclaration)
-                }
-            } else {
-                crawlSupertypeFromResolvedDeclaration(classLikeDeclaration)
-            }
-
-            return
-        }
-
         val resolveTarget = classLikeDeclaration.asResolveTarget()
         if (resolveTarget != null) {
             resolveToSupertypePhase(resolveTarget)
         }
+
+        /**
+         * [resolveToSupertypePhase] doesn't guarantee that the declaration is checked since at that moment it might
+         * be already resolved, so the explicit traversal is required.
+         * [visitedElements] guarantees that the declaration is present in the set only if it wasn't resolved yet
+         */
+        val crawlIsRequired = visitedElements.add(classLikeDeclaration)
+        if (crawlIsRequired && classLikeDeclaration.resolvePhase >= resolverPhase) {
+            crawlSupertypeFromResolvedDeclaration(classLikeDeclaration)
+        }
     }
 
+    /**
+     * We should process [classLikeDeclaration] with an assumption that there are some unresolved supertypes from
+     * the declaration site point of view since the phase provide guarantees only for Kotlin classes that are entry points to the hierarchy.
+     * In other words, classes for which [lazyResolveToPhase] with [FirResolvePhase.SUPER_TYPES] was called
+     */
     private fun crawlSupertypeFromResolvedDeclaration(classLikeDeclaration: FirClassLikeDeclaration) {
-        val parentClass = classLikeDeclaration.outerClass()
-        if (parentClass != null) {
-            crawlSupertype(parentClass.defaultType())
-        }
-
-        val superTypeRefs = when (classLikeDeclaration) {
-            is FirTypeAlias -> listOf(classLikeDeclaration.expandedTypeRef)
-            is FirClass -> classLikeDeclaration.superTypeRefs
-        }
-
-        for (typeRef in superTypeRefs) {
-            val coneType = typeRef.coneTypeOrNull ?: errorWithFirSpecificEntries(
-                "The declaration super type must be resolved, but the actual type reference is not resolved",
-                fir = classLikeDeclaration,
-            ) {
-                withFirEntry("typeRef", typeRef)
+        supertypeComputationSession.withDeclarationSession(classLikeDeclaration) {
+            val parentClass = classLikeDeclaration.outerClass()
+            if (parentClass != null) {
+                crawlSupertype(parentClass.defaultType())
             }
 
-            crawlSupertype(coneType)
+            val superTypeRefs = when (classLikeDeclaration) {
+                is FirTypeAlias -> listOf(classLikeDeclaration.expandedTypeRef)
+                is FirClass -> classLikeDeclaration.superTypeRefs
+            }
+
+            for (typeRef in superTypeRefs) {
+                val coneType = typeRef.coneTypeOrNull ?: errorWithFirSpecificEntries(
+                    "The declaration super type must be resolved, but the actual type reference is not resolved",
+                    fir = classLikeDeclaration,
+                ) {
+                    withFirEntry("typeRef", typeRef)
+                }
+
+                crawlSupertype(coneType)
+            }
         }
     }
 

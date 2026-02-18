@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.test.klib
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.WrappedException
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.junit.jupiter.api.Assumptions
 
 /**
@@ -106,6 +108,13 @@ class CustomKlibCompilerFirstStageTestSuppressor(
     private fun processNonFirstStageException(wrappedException: WrappedException): List<WrappedException> {
         if (testServices.versionAndTargetAreIgnored(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE, defaultLanguageVersion))
             return emptyList()
+
+        if (testServices.moduleStructure.modules.any {
+                it.files.any { file -> JsEnvironmentConfigurationDirectives.RECOMPILE in file.directives }
+            }) {
+            // Backward compatibility is not provided for incremental caches, so these tests may fail during backward compatibility testing
+            return emptyList()
+        }
 
         return listOf(wrappedException)
     }

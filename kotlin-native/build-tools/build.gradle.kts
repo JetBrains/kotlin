@@ -6,7 +6,6 @@
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.util.Properties
 
 buildscript {
     val rootBuildDirectory by extra(project.file("../.."))
@@ -34,7 +33,7 @@ dependencies {
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
     api("org.jetbrains.kotlin:kotlin-stdlib:${coreDepsVersion}")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${coreDepsVersion}") { isTransitive = false }
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
     implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
 
     // To build Konan Gradle plugin
@@ -77,10 +76,6 @@ gradlePlugin {
             id = "compile-to-bitcode"
             implementationClass = "org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin"
         }
-        create("runtimeTesting") {
-            id = "runtime-testing"
-            implementationClass = "org.jetbrains.kotlin.testing.native.RuntimeTestingPlugin"
-        }
         create("compilationDatabase") {
             id = "compilation-database"
             implementationClass = "org.jetbrains.kotlin.cpp.CompilationDatabasePlugin"
@@ -104,6 +99,14 @@ gradlePlugin {
         create("platformManager") {
             id = "platform-manager"
             implementationClass = "org.jetbrains.kotlin.PlatformManagerPlugin"
+        }
+    }
+}
+
+project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Main") {
+    resolutionStrategy {
+        eachDependency {
+            if (this.requested.group == "org.jetbrains.kotlin") useVersion(libs.versions.kotlin.`for`.gradle.plugins.compilation.get())
         }
     }
 }

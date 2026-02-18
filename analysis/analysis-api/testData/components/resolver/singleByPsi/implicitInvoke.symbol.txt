@@ -1,0 +1,5 @@
+KtCallExpression(110,117): 'x(true)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      x(b: kotlin.Boolean): kotlin.Unit
+    ]

@@ -4,7 +4,7 @@
 
 interface MyList {
     companion object {
-        <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun of(vararg args: String): MyList = <!INTERFACE_AS_FUNCTION!>MyList<!>()
+        <!UNSUPPORTED_FEATURE!>operator<!> fun of(vararg args: String): MyList = <!INTERFACE_AS_FUNCTION!>MyList<!>()
     }
 }
 

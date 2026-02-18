@@ -9,52 +9,64 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
-import org.jetbrains.kotlin.generators.kotlinpoet.annotation
-import org.jetbrains.kotlin.generators.kotlinpoet.function
-import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
-import org.jetbrains.kotlin.generators.kotlinpoet.property
+import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
+import kotlin.reflect.full.primaryConstructor
 
 internal class BtaApiGenerator(
     private val targetPackage: String,
     private val skipXX: Boolean,
-    private val kotlinVersion: KotlinReleaseVersion
+    private val kotlinVersion: KotlinReleaseVersion,
 ) : BtaGenerator {
     private val outputs = mutableListOf<Pair<Path, String>>()
 
-    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?): GeneratorOutputs {
+    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: ClassName?): GeneratorOutputs {
         val className = level.name.capitalizeAsciiOnly()
         val mainFileAppendable = createGeneratedFileAppendable()
         val mainFile = FileSpec.builder(targetPackage, className).apply {
-            addType(
-                TypeSpec.interfaceBuilder(className).apply {
-                    addKdoc(KDOC_SINCE_2_3_0)
-                    if (level.name in experimentalLevelNames) {
-                        addAnnotation(ANNOTATION_EXPERIMENTAL)
-                    }
-                    parentClass?.let { addSuperinterface(it) }
-                    val argument =
-                        generateArgumentType(
-                            className,
-                            includeSinceVersion = true,
-                            registerAsKnownArgument = false,
-                            CodeBlock.of(KDOC_BASE_OPTIONS_CLASS, ClassName(targetPackage, className))
-                        )
-                    val argumentTypeName = ClassName(targetPackage, className, argument)
-                    if (parentClass == null) {
-                        addToArgumentStringsFun()
-                        maybeAddApplyArgumentStringsFun()
-                    }
+            interfaceType(className) {
+                addKdoc(KDOC_SINCE_2_3_0)
+                if (level.name in experimentalLevelNames) {
+                    addAnnotation(ANNOTATION_EXPERIMENTAL)
+                }
+                parentClass?.let { addSuperinterface(it) }
+                val argument =
+                    generateArgumentType(
+                        className,
+                        includeSinceVersion = true,
+                        registerAsKnownArgument = false,
+                        CodeBlock.of(KDOC_BASE_OPTIONS_CLASS, ClassName(targetPackage, className))
+                    )
+                val argumentTypeName = ClassName(targetPackage, className, argument)
+                if (parentClass == null) {
+                    addToArgumentStringsFun()
+                    maybeAddApplyArgumentStringsFun(deprecated = true)
+                }
+                interfaceType("Builder") {
+                    addKdoc("A builder for [$className].\n\n@since 2.3.20")
                     generateGetPutFunctions(argumentTypeName)
-                    addType(TypeSpec.companionObjectBuilder().apply {
-                        generateOptions(level.transformApiArguments(), argumentTypeName)
-                    }.build())
-                }.build()
-            )
+                    if (level.isLeaf()) {
+                        function("build") {
+                            addKdoc("Constructs a new immutable [$className] instance with the options set in this builder.")
+                            addModifiers(KModifier.ABSTRACT)
+                            returns(ClassName(targetPackage, className))
+                        }
+                    }
+                    if (parentClass == null) {
+                        maybeAddApplyArgumentStringsFun()
+                    } else {
+                        addSuperinterface(parentClass.nestedClass("Builder"))
+                    }
+                }
+                generateGetPutFunctions(argumentTypeName, deprecateSet = true)
+                addType(TypeSpec.companionObjectBuilder().apply {
+                    generateOptions(level.transformApiArguments(), argumentTypeName)
+                }.build())
+            }
         }.build()
         mainFile.writeTo(mainFileAppendable)
         outputs += Path(mainFile.relativePath) to mainFileAppendable.toString()
@@ -67,6 +79,8 @@ internal class BtaApiGenerator(
     ) {
         val enumsToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
         val enumsExperimental = mutableMapOf<KClass<*>, Boolean>()
+        val customTypesToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
+        val customTypesExperimental = mutableMapOf<KClass<*>, Boolean>()
 
         arguments.forEach { argument ->
             val name = argument.extractName()
@@ -89,6 +103,21 @@ internal class BtaApiGenerator(
                 return type.toBtaEnumClassName()
             }
 
+            /**
+             * Marks custom types to be generated and returns its name
+             */
+            fun generatedCustomType(type: KClass<*>): ClassName {
+                customTypesToGenerate[type] = generateCustomTypeBuilder(type)
+                if (type !in customTypesExperimental && experimental) {
+                    customTypesExperimental[type] = true
+                } else if (type in customTypesExperimental && !experimental) {
+                    // if at least one option that is NOT experimental uses the type,
+                    // then the type is not experimental itself
+                    customTypesExperimental[type] = false
+                }
+                return type.toBtaCustomClassName()
+            }
+
             // argument is newer than current version
             if (argument.introducedSinceVersion > kotlinVersion) {
                 return@forEach
@@ -108,11 +137,19 @@ internal class BtaApiGenerator(
             val argumentTypeParameter = when (argument.valueType) {
                 is BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType -> {
                     val argumentType = argument.valueType.kType
-                    if (argumentType.isCompilerEnum) {
-                        val type = argumentType.classifier as KClass<*>
-                        generatedEnumType(type)
-                    } else {
-                        argumentType.asTypeName()
+
+                    when {
+                        argumentType.isCompilerEnum -> {
+                            val type = argumentType.classifier as KClass<*>
+                            generatedEnumType(type)
+                        }
+                        argumentType.isCustomType -> {
+                            val type = argumentType.classifier as KClass<*>
+                            generatedCustomType(type)
+                        }
+                        else -> {
+                            argumentType.asTypeName()
+                        }
                     }
                 }
                 is BtaCompilerArgumentValueType.CustomArgumentValueType -> argument.valueType.type
@@ -144,6 +181,14 @@ internal class BtaApiGenerator(
                 typeSpecBuilder.addAnnotation(ANNOTATION_EXPERIMENTAL)
             }
             writeEnumFile(typeSpecBuilder.build(), type)
+        }
+
+        customTypesToGenerate.forEach { (type, typeSpecBuilder) ->
+            if (customTypesExperimental.getOrDefault(type, false)) {
+                typeSpecBuilder.addAnnotation(ANNOTATION_EXPERIMENTAL)
+            }
+
+            writeCustomClassFile(typeSpecBuilder.build(), type)
         }
     }
 
@@ -200,7 +245,52 @@ internal class BtaApiGenerator(
         outputs += Path(enumFile.relativePath) to enumFileAppendable.toString()
     }
 
-    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
+    private fun generateCustomTypeBuilder(sourceClass: KClass<*>): TypeSpec.Builder {
+        val className = sourceClass.toBtaCustomClassName()
+
+        return TypeSpec.classBuilder(className).apply {
+            addKdoc(KDOC_SINCE_2_4_0)
+            if (sourceClass.isData) {
+                addModifiers(KModifier.DATA)
+            }
+
+            val constructor =
+                requireNotNull(sourceClass.primaryConstructor) {
+                    "Class ${sourceClass.qualifiedName} must have a primary constructor"
+                }
+            val parameters = constructor.parameters
+
+            primaryConstructor(
+                FunSpec.constructorBuilder().apply {
+                    parameters.forEach { param ->
+                        addParameter(requireNotNull(param.name), param.type.asTypeName())
+                    }
+                }.build()
+            )
+
+            parameters.forEach { param ->
+                val paramType = param.type.asTypeName()
+                val parameterName = requireNotNull(param.name)
+                addProperty(
+                    PropertySpec.builder(parameterName, paramType)
+                        .initializer(parameterName)
+                        .build()
+                )
+            }
+        }
+    }
+
+    private fun writeCustomClassFile(typeSpec: TypeSpec, sourceClass: KClass<*>) {
+        val className = sourceClass.toBtaCustomClassName()
+        val fileAppendable = createGeneratedFileAppendable()
+        val file = FileSpec.builder(className).apply {
+            addType(typeSpec)
+        }.build()
+        file.writeTo(fileAppendable)
+        outputs += Path(file.relativePath) to fileAppendable.toString()
+    }
+
+    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, deprecateSet: Boolean = false) {
         function("get") {
             addKdoc(KDOC_OPTIONS_GET)
             addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
@@ -210,6 +300,7 @@ internal class BtaApiGenerator(
             addParameter("key", parameter.parameterizedBy(typeParameter))
         }
         function("set") {
+            maybeAddMutabilityDeprecationAnnotation(deprecateSet)
             addKdoc(KDOC_OPTIONS_SET)
             addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
             val typeParameter = TypeVariableName("V")
@@ -267,8 +358,9 @@ private fun FunSpec.Builder.addParameterIf(name: String, type: ClassName, condit
     return this
 }
 
-private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun() {
+private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(deprecated: Boolean = false) {
     function("applyArgumentStrings") {
+        maybeAddMutabilityDeprecationAnnotation(deprecated)
         addKdoc("Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.")
         addParameter(
             ParameterSpec.builder("arguments", listTypeNameOf<String>())
@@ -283,5 +375,16 @@ private fun TypeSpec.Builder.addToArgumentStringsFun() {
         addKdoc("Converts the options to a list of string arguments recognized by the Kotlin CLI compiler.")
         returns(listTypeNameOf<String>())
         this.addModifiers(KModifier.ABSTRACT)
+    }
+}
+
+private fun FunSpec.Builder.maybeAddMutabilityDeprecationAnnotation(deprecated: Boolean) {
+    if (deprecated) {
+        annotation<Deprecated> {
+            addMember(
+                "message = %S", "Compiler argument classes will become immutable in an upcoming release. " +
+                        "Use a Builder instance to create and modify compiler arguments."
+            )
+        }
     }
 }

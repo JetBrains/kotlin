@@ -38,7 +38,7 @@ fun box(): String {
     assertEquals("kotlin.String", type.toString())
 
     val expected =
-        if (System.getProperty("kotlin.reflect.jvm.useK1Implementation")?.toBoolean() == true)
+        if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true)
             // Type annotations were ignored in the legacy implementation of `createType`.
             "[]"
         else

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -45,11 +44,10 @@ private fun ConeKotlinType.getClassRepresentativeForContextSensitiveResolution(s
 
         is ConeIntersectionType -> {
             val representativesForComponents =
-                intersectedTypes.map { it.getClassRepresentativeForContextSensitiveResolution(session) }
-
-            if (representativesForComponents.any { it == null }) return null
-            @Suppress("UNCHECKED_CAST") // See the check above
-            representativesForComponents as List<FirClassSymbol<*>>
+                intersectedTypes.map {
+                    it.getClassRepresentativeForContextSensitiveResolution(session)
+                        ?: return@getClassRepresentativeForContextSensitiveResolution null
+                }
 
             representativesForComponents.firstOrNull { candidate ->
                 representativesForComponents.all { other ->

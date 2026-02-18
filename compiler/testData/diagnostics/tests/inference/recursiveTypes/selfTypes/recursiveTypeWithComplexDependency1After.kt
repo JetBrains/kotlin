@@ -4,7 +4,7 @@
 // LANGUAGE: +FixationEnhancementsIn22
 // DUMP_INFERENCE_LOGS: FIXATION
 
-interface RecordId<T, Self : RecordId<T, Self>>
+interface RecordId<Y, Self : RecordId<Y, Self>>
 
 class MyRecordId : RecordId<String, MyRecordId>
 

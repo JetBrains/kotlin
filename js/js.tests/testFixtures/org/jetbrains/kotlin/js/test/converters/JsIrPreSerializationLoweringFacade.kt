@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.IrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 
 class JsIrPreSerializationLoweringFacade(
     testServices: TestServices,
@@ -34,9 +34,7 @@ class JsIrPreSerializationLoweringFacade(
             "Fir2IrCliBasedOutputArtifact should have JsFir2IrPipelineArtifact as cliArtifact, but has ${cliArtifact::class}"
         }
         // Attach a new empty diagnosticReporter to prevent double-reporting of diagnostics from Fir2IR phase.
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
-        val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter)
+        val input = cliArtifact.withNewDiagnosticCollector(DiagnosticsCollectorImpl())
 
         val output = WebKlibInliningPipelinePhase.executePhase(input)
 

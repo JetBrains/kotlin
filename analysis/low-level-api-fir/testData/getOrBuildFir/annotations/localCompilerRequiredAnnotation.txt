@@ -3,7 +3,7 @@ FIR element: FirAnnotationCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|MyAnno|[Types](value = String(str))
+@R|MyAnno|[Types](value = String(str) [evaluated = String(str)])
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] localCompilerRequiredAnnotation.kt
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] localCompilerRequiredAnnotation.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
-        @R|MyAnno|[Types](value = String(str)) local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any|, R|foo/MyInterface| {
+        @R|MyAnno|[Types](value = String(str) [evaluated = String(str)]) local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any|, R|foo/MyInterface| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                 super<R|kotlin/Any|>()
             }

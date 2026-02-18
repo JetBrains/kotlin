@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSo
 import org.jetbrains.kotlin.gradle.plugin.sources.android.singleTargetAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.setMultiplatformAndroidSourceSetLayoutVersion
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 

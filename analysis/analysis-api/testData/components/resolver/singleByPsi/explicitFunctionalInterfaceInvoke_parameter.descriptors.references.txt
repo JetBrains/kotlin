@@ -8,5 +8,6 @@ KtNameReferenceExpression(77,83): 'invoke'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

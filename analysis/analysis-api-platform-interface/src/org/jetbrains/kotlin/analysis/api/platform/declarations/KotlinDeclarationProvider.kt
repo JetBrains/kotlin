@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProvider
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.psi.*
  * This allows a declaration provider to cache values without worrying about invalidation as it can assume an immutable module/project
  * state.
  */
+@KaPlatformInterface
 public interface KotlinDeclarationProvider : KotlinComposableProvider {
     /**
      * Returns a [KtClassLikeDeclaration] that has the given [classId], or `null` if no such declaration exists.

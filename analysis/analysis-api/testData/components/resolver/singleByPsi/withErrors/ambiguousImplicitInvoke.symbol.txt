@@ -1,0 +1,13 @@
+KtCallExpression(134,137): 'x()'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      invoke(<extension receiver>: kotlin.Int, a: kotlin.String): kotlin.Unit,
+      invoke(<extension receiver>: kotlin.Int, b: kotlin.Boolean): kotlin.Unit
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+    
+    fun Int.invoke(a: String): Unit:
+      No value passed for parameter 'a'.
+    
+    fun Int.invoke(b: Boolean): Unit:
+      No value passed for parameter 'b'.>

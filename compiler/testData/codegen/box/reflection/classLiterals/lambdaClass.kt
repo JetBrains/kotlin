@@ -1,9 +1,11 @@
 // KT-33992
-
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
 class P<T>(val a: T, val b: T)
 
 inline fun foo(x: () -> Any) = P(x(), x())
 
+// FILE: main.kt
 fun box(): String {
     val p1 = foo {
         class C

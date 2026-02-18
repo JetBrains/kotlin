@@ -1,0 +1,6 @@
+KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /C.set(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String, value: kotlin.Boolean): kotlin.Unit
+    ]
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun set(a: Int, b: String, value: Boolean): Unit'.>

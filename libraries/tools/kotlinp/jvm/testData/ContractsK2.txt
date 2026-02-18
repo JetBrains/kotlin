@@ -1,0 +1,19 @@
+// ContractsK2Kt.class
+// ------------------------------------------
+package {
+
+  // signature: returnsResultOfContract(Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+  public final fun <T#0 /* T */> returnsResultOfContract(block: kotlin/Function0<T#0>): T#0
+    contract {
+      returnsResultOf(p#1)
+    }
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    ContractsK2Kt
+  }
+}

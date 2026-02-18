@@ -43,20 +43,6 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
         builder.useAdditionalSourceProviders(::TestUtilsSourceProvider)
     }
 
-    // TODO re-enable once toDataFrame {} is updated in the compiler plugin
-    private val ignoredTests = setOf(
-        "plugins/kotlin-dataframe/testData/box/emptyColumnGroup.kt",
-        "plugins/kotlin-dataframe/testData/box/emptyFrameColumn.kt",
-        "plugins/kotlin-dataframe/testData/box/toDataFrame_dsl.kt",
-    )
-
-    override fun runTest(filePath: String) {
-        if (filePath in ignoredTests) {
-            throw AssumptionViolatedException("Temporarily ignored test")
-        }
-        super.runTest(filePath)
-    }
-
     class SelectionDslUtilsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
         companion object {
             const val SELECTION_DSL_UTILS = "selectionDslTestUtils.kt"

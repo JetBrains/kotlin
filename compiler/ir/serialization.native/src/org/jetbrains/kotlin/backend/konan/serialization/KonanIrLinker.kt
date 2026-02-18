@@ -12,17 +12,21 @@ import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class KonanIrLinker(
@@ -41,7 +45,10 @@ class KonanIrLinker(
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
 ) : KotlinIrLinker(currentModule, messageCollector, builtIns, symbolTable, exportedDependencies) {
 
-    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean = moduleDescriptor.isNativeStdlib()
+    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
+        val klib = (moduleDescriptor.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library ?: return false
+        return klib.isNativeStdlib
+    }
 
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let {
         KonanForwardDeclarationModuleDeserializer(it, this, stubGenerator)
@@ -54,8 +61,16 @@ class KonanIrLinker(
         typeSystem = IrTypeSystemContextImpl(builtIns),
         friendModules = friendModules,
         partialLinkageSupport = partialLinkageSupport,
-        platformSpecificClassFilter = KonanFakeOverrideClassFilter,
+        platformSpecificClassFilter = K1LazyFakeOverrideClassFilter,
         externalOverridabilityConditions = externalOverridabilityConditions,
+        isMultipleInheritedImplementationsAllowed = {
+            // Properties of ObjC protocols are serialized as final, along with their getters and setters.
+            // In case of intersection override, the usual logic of IrLinkerFakeOverrideBuilderStrategy.postProcessGeneratedFakeOverride()
+            // will raise AMBIGUOUS_NON_OVERRIDDEN_CALLABLE_MEMBER, since properties in protocols are non-abstract.
+            // So such properties are allowed to form intersection overrides without a partial linkage error. Native backend will handle them correctly.
+            // However, this predicate is much wider to cover also other similar usecases.
+            it.parentAsClass.isObjCClass()
+        },
     )
 
     val moduleDeserializers = mutableMapOf<ModuleDescriptor, KonanPartialModuleDeserializer>()
@@ -106,7 +121,7 @@ class KonanIrLinker(
                 .filter { !it.key.isForwardDeclarationModuleName && it.value.moduleDescriptor !== currentModule }
                 .forEach {
                     val klib = it.value.klib
-                    this[klib.libraryName] = it.value.moduleFragment
+                    this[klib.location.path] = it.value.moduleFragment
                 }
         }
 }

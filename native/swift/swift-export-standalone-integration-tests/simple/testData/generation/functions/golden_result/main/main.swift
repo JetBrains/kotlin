@@ -129,6 +129,28 @@ public func setFoo(
 ) -> Swift.Void {
     return __root___foo_set__TypesOfArguments__Swift_Optional_main_Foo__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? nil, v)
 }
+extension ExportedKotlinPackages.inline {
+    public final class Bar: KotlinRuntime.KotlinBase {
+        public init() {
+            if Self.self != ExportedKotlinPackages.inline.Bar.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.inline.Bar ") }
+            let __kt = inline_Bar_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+            inline_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+        public func bar() -> Swift.String {
+            return inline_Bar_bar(self.__externalRCRef())
+        }
+    }
+    public static func foo() -> Swift.String {
+        return inline_foo()
+    }
+}
 extension ExportedKotlinPackages.namespace1.local_functions {
     public static func foo() -> Swift.Void {
         return namespace1_local_functions_foo()

@@ -18,7 +18,7 @@ FILE: main.kt
                 }
             }
 
-            ^foo Q|Subscribers|.R|/Subscribers.mapping*s|<R|java/io/InputStream!|, R|H!|>(R|<local>/subscriber|, <L> = SAM(mapping@fun <anonymous>(it: R|@EnhancedNullability java/io/InputStream!|): R|@EnhancedNullability H!| <inline=NoInline>  {
+            ^foo Q|Subscribers|.R|/Subscribers.mapping*s|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=java/io/InputStream?, relevantFeature=DontMakeExplicitJavaTypeArgumentsFlexible) java/io/InputStream!|, R|H!|>(R|<local>/subscriber|, <L> = SAM(mapping@fun <anonymous>(it: R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=java/io/InputStream?, relevantFeature=DontMakeExplicitJavaTypeArgumentsFlexible) @EnhancedNullability java/io/InputStream!|): R|@EnhancedNullability H!| <inline=NoInline>  {
                 ^ this@R|/Handler|.R|/Handler.reader|.R|SubstitutionOverride<kotlin/Function1.invoke: R|H|>|(R|<local>/it|)
             }
             ))

@@ -660,7 +660,8 @@ fun KtExpression.getLabeledParent(labelName: String): KtLabeledExpression? {
 
 fun PsiElement.astReplace(newElement: PsiElement) = parent.node.replaceChild(node, newElement.node)
 
-var KtElement.parentSubstitute: PsiElement? by UserDataProperty(Key.create<PsiElement>("PARENT_SUBSTITUTE"))
+@Deprecated("The API is deprecated and is preserved only for compatibility with K1")
+var KtElement.parentSubstitute: PsiElement? by UserDataProperty(Key.create("PARENT_SUBSTITUTE"))
 
 private val HARD_KEYWORDS: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
     KtTokens.KEYWORDS.types.mapTo(HashSet()) { (it as KtKeywordToken).value }

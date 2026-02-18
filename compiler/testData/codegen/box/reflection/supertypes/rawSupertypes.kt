@@ -138,7 +138,7 @@ fun box(): String {
         TestF.TestInner::class.allSupertypes.toString(),
     )
 
-    if (System.getProperty("kotlin.reflect.jvm.useK1Implementation")?.toBoolean() == true) {
+    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
         assertEquals("[test.GImpl.InnerImpl, test.G<kotlin.Any!>.Inner, kotlin.Any]", TestG.TestInner::class.allSupertypes.toString())
     } else {
         // The new implementation seems more correct here, but in reality it's unlikely to affect anything.

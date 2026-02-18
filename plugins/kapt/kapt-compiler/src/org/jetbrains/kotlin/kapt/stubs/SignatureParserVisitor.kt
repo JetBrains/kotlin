@@ -266,8 +266,7 @@ private fun smartList() = SmartList<SignatureNode>()
 
 private fun SignatureNode.split(l1: MutableList<SignatureNode>, e1: ElementKind, l2: MutableList<SignatureNode>, e2: ElementKind) {
     for (child in children) {
-        val kind = child.kind
-        when (kind) {
+        when (val kind = child.kind) {
             e1 -> l1 += child
             e2 -> l2 += child
             else -> error("Unknown kind: $kind")
@@ -284,8 +283,7 @@ private fun SignatureNode.split(
     e3: ElementKind
 ) {
     for (child in children) {
-        val kind = child.kind
-        when (kind) {
+        when (val kind = child.kind) {
             e1 -> l1 += child
             e2 -> l2 += child
             e3 -> l3 += child
@@ -305,8 +303,7 @@ private fun SignatureNode.split(
     e4: ElementKind
 ) {
     for (child in children) {
-        val kind = child.kind
-        when (kind) {
+        when (val kind = child.kind) {
             e1 -> l1 += child
             e2 -> l2 += child
             e3 -> l3 += child
@@ -328,7 +325,7 @@ private class SignatureParserVisitor : SignatureVisitor(Opcodes.API_VERSION) {
         }
     }
 
-    private fun popUntil(vararg kinds: ElementKind) {
+    private fun popUntil(kinds: Collection<ElementKind>) {
         while (stack.peek().kind !in kinds) {
             stack.pop()
         }
@@ -367,12 +364,12 @@ private class SignatureParserVisitor : SignatureVisitor(Opcodes.API_VERSION) {
     }
 
     override fun visitTypeArgument() {
-        popUntil(ClassType, InnerClass)
+        popUntil(listOf(ClassType, InnerClass))
         push(TypeArgument)
     }
 
     override fun visitTypeArgument(variance: Char): SignatureVisitor {
-        popUntil(ClassType, InnerClass)
+        popUntil(listOf(ClassType, InnerClass))
         push(TypeArgument, name = variance.toString())
         return super.visitTypeArgument(variance)
     }

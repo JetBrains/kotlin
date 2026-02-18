@@ -6,4 +6,4 @@ out
 -libraries
 libraries/stdlib/build/classes/kotlin/js/main
 -Xklib-ir-inliner=intra-module
--Xexplicit-api=disable
+

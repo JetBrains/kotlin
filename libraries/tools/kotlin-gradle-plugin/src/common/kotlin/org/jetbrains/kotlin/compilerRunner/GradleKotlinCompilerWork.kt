@@ -177,6 +177,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         ) {
             compileInProcess(messageCollector) to KotlinCompilerExecutionStrategy.IN_PROCESS
         } else {
+            @Suppress("DEPRECATION")
             compileOutOfProcess() to KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
         }
     }

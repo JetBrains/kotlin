@@ -1,0 +1,100 @@
+Module: lib
+FILE: lib.kt
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.BINARY|]) public final annotation class TypeAnnotation : R|kotlin/Annotation| {
+        public [ContainingClassKey=TypeAnnotation] constructor([CorrespondingProperty=/TypeAnnotation.str] str: R|kotlin/String|): R|TypeAnnotation| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+            public [ContainingClassKey=TypeAnnotation] get(): R|kotlin/String|
+
+    }
+    public open class A : R|kotlin/Any| {
+        public [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+    }
+    public final class C : R|@R|TypeAnnotation|(str = <strcat>(String(AClass), String(Anno)) [evaluated = String(AClassAnno)])  A|, R|@R|TypeAnnotation|(str = <strcat>(String(BInterface), String(Anno)) [evaluated = String(BInterfaceAnno)])  B| {
+        public [ContainingClassKey=C] constructor(): R|C| {
+            super<R|@R|TypeAnnotation|(str = <strcat>(String(AClass), String(Anno)) [evaluated = String(AClassAnno)])  A|>()
+        }
+
+    }
+    public final val a: R|@R|TypeAnnotation|(str = <strcat>(String(Int), String(Anno)) [evaluated = String(IntAnno)])  kotlin/Int| = Int(1)
+        public get(): R|@R|TypeAnnotation|(str = <strcat>(String(Int), String(Anno)) [evaluated = String(IntAnno)])  kotlin/Int|
+    public final var b: R|@R|TypeAnnotation|(str = <strcat>(String(List), String(Anno)) [evaluated = String(ListAnno)])  kotlin/collections/List<@R|TypeAnnotation|(str = <strcat>(String(Pair), String(Anno)) [evaluated = String(PairAnno)])  kotlin/Pair<@R|TypeAnnotation|(str = <strcat>(String(PairInt1), String(Anno)) [evaluated = String(PairInt1Anno)])  kotlin/Int, @R|TypeAnnotation|(str = <strcat>(String(PairInt2), String(Anno)) [evaluated = String(PairInt2Anno)])  kotlin/Int>>?| = Null(null)
+        public get(): R|@R|TypeAnnotation|(str = <strcat>(String(List), String(Anno)) [evaluated = String(ListAnno)])  kotlin/collections/List<@R|TypeAnnotation|(str = <strcat>(String(Pair), String(Anno)) [evaluated = String(PairAnno)])  kotlin/Pair<@R|TypeAnnotation|(str = <strcat>(String(PairInt1), String(Anno)) [evaluated = String(PairInt1Anno)])  kotlin/Int, @R|TypeAnnotation|(str = <strcat>(String(PairInt2), String(Anno)) [evaluated = String(PairInt2Anno)])  kotlin/Int>>?|
+        public set(value: R|@R|TypeAnnotation|(str = <strcat>(String(List), String(Anno)) [evaluated = String(ListAnno)])  kotlin/collections/List<@R|TypeAnnotation|(str = <strcat>(String(Pair), String(Anno)) [evaluated = String(PairAnno)])  kotlin/Pair<@R|TypeAnnotation|(str = <strcat>(String(PairInt1), String(Anno)) [evaluated = String(PairInt1Anno)])  kotlin/Int, @R|TypeAnnotation|(str = <strcat>(String(PairInt2), String(Anno)) [evaluated = String(PairInt2Anno)])  kotlin/Int>>?|): R|kotlin/Unit|
+    public final fun foo(a: R|@R|TypeAnnotation|(str = <strcat>(String(String), String(Anno)) [evaluated = String(StringAnno)])  kotlin/String|): R|@R|TypeAnnotation|(str = <strcat>(String(Any), String(Anno)) [evaluated = String(AnyAnno)])  kotlin/Any| {
+        lval b: R|@R|TypeAnnotation|(str = <strcat>(String(Double), String(Anno)) [evaluated = String(DoubleAnno)])  kotlin/Double| = Double(1.0)
+        ^foo R|<local>/b|
+    }
+    public final fun <T : R|@R|TypeAnnotation|(str = <strcat>(String(SuperT), String(Anno)) [evaluated = String(SuperTAnno)])  kotlin/Any|> bar(a: R|@R|TypeAnnotation|(str = <strcat>(String(T), String(Anno)) [evaluated = String(TAnno)])  T|): R|kotlin/Unit| {
+    }
+    public final fun example(computeAny: R|@R|TypeAnnotation|(str = <strcat>(String(Fun), String(Anno)) [evaluated = String(FunAnno)])  () -> kotlin/Any|): R|kotlin/Unit| {
+        lval memoizedFoo: R|@R|TypeAnnotation|(str = <strcat>(String(LocalDelegate), String(Anno)) [evaluated = String(LocalDelegateAnno)])  kotlin/Any|by R|kotlin/lazy|<R|kotlin/Any|>(R|<local>/computeAny|)
+            local get(): R|@R|TypeAnnotation|(str = <strcat>(String(LocalDelegate), String(Anno)) [evaluated = String(LocalDelegateAnno)])  kotlin/Any| {
+                ^ D|<local>/memoizedFoo|.R|kotlin/getValue|<R|@R|TypeAnnotation|(str = <strcat>(String(LocalDelegate), String(Anno)) [evaluated = String(LocalDelegateAnno)])  kotlin/Any|>(Null(null), ::R|<local>/memoizedFoo|)
+            }
+
+    }
+    public final typealias Fun = R|@R|TypeAnnotation|(str = <strcat>(String(TypeAlias), String(Anno)) [evaluated = String(TypeAliasAnno)])  (kotlin/Int, kotlin/Int) -> kotlin/Int|
+    public final fun memberAccess(): R|kotlin/Unit| {
+        R|/bar|<R|@R|TypeAnnotation|(str = <strcat>(String(Float), String(Anno)) [evaluated = String(FloatAnno)])  kotlin/Float|>(Float(1.0))
+    }
+    public final val typeOperator: R|@R|TypeAnnotation|(str = <strcat>(String(Long), String(Anno)) [evaluated = String(LongAnno)])  kotlin/Long| = (Long(1) as R|@R|TypeAnnotation|(str = <strcat>(String(Long), String(Anno)) [evaluated = String(LongAnno)])  kotlin/Long|)
+        public get(): R|@R|TypeAnnotation|(str = <strcat>(String(Long), String(Anno)) [evaluated = String(LongAnno)])  kotlin/Long|
+    public final fun withVararg(vararg args: R|kotlin/ByteArray|): R|kotlin/Unit| {
+    }
+    public final fun withAnonymousObject(): R|kotlin/Unit| {
+        object : R|kotlin/Any| {
+            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun bar(): R|kotlin/Unit| {
+                lval a: R|@R|TypeAnnotation|(str = <strcat>(String(InsideObject), String(Anno)) [evaluated = String(InsideObjectAnno)])  A?| = Null(null)
+            }
+
+        }
+
+    }
+    public final class Outer : R|kotlin/Any| {
+        public [ContainingClassKey=Outer] constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner : R|kotlin/Any| {
+            public [ContainingClassKey=Inner] Outer.constructor(): R|Outer.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|@R|TypeAnnotation|(str = <strcat>(String(InsideInner), String(Anno)) [evaluated = String(InsideInnerAnno)])  kotlin/Int| {
+                ^foo Int(0)
+            }
+
+        }
+
+    }
+    public final fun functionWithLambda(action: R|(kotlin/Int, kotlin/String) -> kotlin/Any|): R|kotlin/Unit| {
+        R|<local>/action|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Any|>|(Int(0), String())
+    }
+    public final fun lambda(): R|kotlin/Unit| {
+        R|/functionWithLambda|(<L> = [MatchingParameterFunctionTypeKey=(kotlin/Int, kotlin/String) -> kotlin/Any] functionWithLambda@fun <anonymous>(integer: R|@R|TypeAnnotation|(str = <strcat>(String(InsideLambdaInt), String(Anno)) [evaluated = String(InsideLambdaIntAnno)])  kotlin/Int|, string: R|kotlin/String|): R|kotlin/Any| <inline=NoInline>  {
+            lval a: R|@R|TypeAnnotation|(str = <strcat>(String(InsideLambda), String(Anno)) [evaluated = String(InsideLambdaAnno)])  kotlin/Int| = Int(0)
+            ^ R|<local>/a|
+        }
+        )
+    }
+    public final val inProjection: R|kotlin/collections/MutableList<in @R|TypeAnnotation|(str = <strcat>(String(InProjection), String(Anno)) [evaluated = String(InProjectionAnno)])  kotlin/String>| = R|kotlin/collections/mutableListOf|<R|@R|TypeAnnotation|(str = <strcat>(String(InProjection), String(Anno)) [evaluated = String(InProjectionAnno)])  kotlin/String|>()
+        public get(): R|kotlin/collections/MutableList<in @R|TypeAnnotation|(str = <strcat>(String(InProjection), String(Anno)) [evaluated = String(InProjectionAnno)])  kotlin/String>|
+    public final val outProjection: R|kotlin/collections/MutableList<out @R|TypeAnnotation|(str = <strcat>(String(OutProjection), String(Anno)) [evaluated = String(OutProjectionAnno)])  kotlin/String>| = R|kotlin/collections/mutableListOf|<R|@R|TypeAnnotation|(str = <strcat>(String(OutProjection), String(Anno)) [evaluated = String(OutProjectionAnno)])  kotlin/String|>()
+        public get(): R|kotlin/collections/MutableList<out @R|TypeAnnotation|(str = <strcat>(String(OutProjection), String(Anno)) [evaluated = String(OutProjectionAnno)])  kotlin/String>|
+Module: main
+FILE: main.kt
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

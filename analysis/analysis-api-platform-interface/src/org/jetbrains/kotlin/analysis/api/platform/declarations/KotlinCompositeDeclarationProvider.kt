@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.platform.declarations
 
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProvider
 import org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProviderFactory
 import org.jetbrains.kotlin.name.CallableId
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.utils.flatMapToNullableSet
  * A composite [KotlinDeclarationProvider] which combines all declarations provided by its child [providers]. It should be created with
  * [KotlinCompositeDeclarationProvider.create].
  */
+@KaPlatformInterface
 public class KotlinCompositeDeclarationProvider private constructor(
     override val providers: List<KotlinDeclarationProvider>
 ) : KotlinDeclarationProvider, KotlinCompositeProvider<KotlinDeclarationProvider> {
@@ -87,6 +89,7 @@ public class KotlinCompositeDeclarationProvider private constructor(
         return providers.flatMapToNullableSet { it.computePackageNamesWithTopLevelCallables() }
     }
 
+    @KaPlatformInterface
     public companion object {
         public val factory: KotlinCompositeProviderFactory<KotlinDeclarationProvider> = KotlinCompositeProviderFactory(
             KotlinEmptyDeclarationProvider,

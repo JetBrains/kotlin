@@ -48,32 +48,40 @@ class VariableReadinessCalculator(
         // A proper trivial constraint from arguments, except for `T >: Nothing(?)`
         // It does however include `T = Nothing(?)` and `T <: Nothing(?)`
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS,
-        HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE,
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND,
 
-        // K1 used this for reified type parameters, mainly to get `discriminateNothingForReifiedParameter.kt` working.
-        // KT-55691 lessens the need for this readiness kind in K2, however it still needs it for, e.g., `reifiedToNothing.kt`.
-        // TODO: consider deprioritizing Nothing in relation systems like `Nothing <: T <: SomeType` (see KT-76443)
-        //  and not using anymore this readiness kind in K2.
-        //  Related issues: KT-32358 (especially kt32358_3.kt test)
-        REIFIED,
+        // Starts fixation of variables with a LOWER flexible constraint even if
+        // they have LOWER constraints referring to some others: this makes fixing
+        // them into the flexible type rather than a potential nullable counterpart
+        // coming from fixing those other variables more likely.
+        // This bit supersedes the default EQUALITY > LOWER prioritization to support
+        // a single Java-related edge case.
+        // See: `javaFunctionParamNullability.kt`, KT-82574.
+        // TODO: KT-84257.
+        HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT,
 
-        // *** "ready for fixation" kinds ***
-        // Prefer `LOWER` `T :> SomeRegularType` to `UPPER` `T <: SomeRegularType` for KT-41934.
-        // Prefer `LOWER` constraint also to `EQUALS` `T = SomeRegularType` because of the test
-        // FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated.testJavaFunctionParamNullability.
-        // TODO: KT-82574 (consider preferring EQUALS constraints)
-        HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT,
-
-        // *** The following block constitutes what "with complex dependency" used to mean in the old fixation code ***
-        // Prioritizers needed for KT-67335 (the `greater.kt` case with ILTs).
         // ILT type = Integer literal type = yet unknown choice from Byte/Short/Int/Long (at least two of them)
-        // Any proper constraint can be here which isn't bound to ILT type
+        // Any proper constraint not bound to an ILT type can be here.
+        // See: `greater.kt`, KT-67335.
         HAS_PROPER_NON_ILT_CONSTRAINT,
 
-        // Any proper constraint `T = ...` can be here which isn't bound to ILT type
-        // When this one is true, HAS_PROPER_NON_ILT_CONSTRAINT is also true
-        HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT,
+        // Explicit lower `Nothing` constraints tend to always fix to `Nothing`
+        // (if there's an explicit one, then the user wrote it on purpose somewhere),
+        // which may "poison" other type variables depending on the current one.
+        // This entry de-prioritizes variables that have `:> Nothing(?)` constraints
+        // (both nullable and not null).
+        // See: `reifiedToNothing.kt` (KT-76443) and `lambdaParameterTypeInElvis.kt`.
+        HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT,
+
+        // An explicit prioritizer of `EQUALITY` constraints that guarantees
+        // they take precedence over both `LOWER` and `UPPER` constraints.
+        // See: `flatMapWithReverseOrder.kt`, KT-71854.
+        HAS_PROPER_EQUALITY_CONSTRAINT,
+
+        // Prefer `LOWER` `T :> SomeRegularType` to `UPPER` `T <: SomeRegularType`
+        // because `LOWER` constraints tend to lead to more specific fixations.
+        // See `preferLowerToUpperConstraint.kt`, KT-41934.
+        HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT,
         ;
 
         init {
@@ -103,6 +111,7 @@ class VariableReadinessCalculator(
         val forbidden = !c.notFixedTypeVariables.contains(this)
                 || dependencyProvider.isVariableRelatedToTopLevelType(this)
                 || hasUnprocessedConstraintsInForks()
+                || dependencyProvider.isRelatedToCollectionLiteral(this)
         val areAllProperConstraintsSelfTypeBased = areAllProperConstraintsSelfTypeBased()
 
         // These values go in the same order as they are defined in `TypeVariableFixationReadinessQuality`,
@@ -110,6 +119,8 @@ class VariableReadinessCalculator(
 
         readiness[Q.ALLOWED] = !forbidden
         if (forbidden) return readiness
+
+        val constraints = c.notFixedTypeVariables.getValue(this).constraints
 
         readiness[Q.HAS_PROPER_CONSTRAINTS] = hasProperArgumentConstraints() || areAllProperConstraintsSelfTypeBased
         readiness[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] = !dependencyProvider.isRelatedToOuterTypeVariable(this)
@@ -122,32 +133,30 @@ class VariableReadinessCalculator(
             readiness[Q.HAS_PROPER_CONSTRAINTS] && !areAllProperConstraintsSelfTypeBased
         readiness[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables()
         readiness[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS] = !allConstraintsTrivialOrNonProper()
-        readiness[Q.HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE] = !dependencyProvider.isVariableRelatedToAnyOutputType(this)
         readiness[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] =
             !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
 
-        readiness[Q.REIFIED] = isReified()
-        readiness[Q.HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT] = hasLowerNonNothingNonIltProperConstraint()
+        readiness[Q.HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT] = constraints
+            .any { it.kind.isLower() && it.isProperArgumentConstraint() && it.type.isFlexible() }
 
-        val (hasProperNonIltEqualityConstraint, hasProperNonIltConstraint) = computeIltConstraintsRelatedFlags()
-        readiness[Q.HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT] = hasProperNonIltEqualityConstraint
+        val (_, hasProperNonIltConstraint) = computeIltConstraintsRelatedFlags()
         readiness[Q.HAS_PROPER_NON_ILT_CONSTRAINT] = hasProperNonIltConstraint
+
+        readiness[Q.HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT] = hasNoExplicitLowerNothingConstraint()
+
+        readiness[Q.HAS_PROPER_EQUALITY_CONSTRAINT] = constraints
+            .any { it.kind.isEqual() && it.isProperArgumentConstraint() }
+        readiness[Q.HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT] = constraints
+            .any { !it.kind.isUpper() && it.isProperArgumentConstraint() && !it.type.typeConstructor().isNothingConstructor() }
 
         return readiness
     }
 
     context(c: Context)
-    private fun TypeConstructorMarker.hasLowerNonNothingNonIltProperConstraint(): Boolean {
-        val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
-
-        return constraints.any { constraint ->
-            // TODO: KT-82574 (it's strange that lower constraint is stronger than equals constraint here)
-            constraint.kind.isLower()
-                    && constraint.isProperArgumentConstraint()
-                    && !constraint.type.typeConstructor().isNothingConstructor()
-                    && !constraint.type.contains { it.typeConstructor().isIntegerLiteralTypeConstructor() }
-        }
-    }
+    private fun TypeConstructorMarker.hasNoExplicitLowerNothingConstraint(): Boolean =
+        c.notFixedTypeVariables[this]?.constraints
+            ?.none { it.kind.isLower() && it.type.typeConstructor().isNothingConstructor() }
+            ?: true
 
     context(c: Context)
     override fun typeVariableHasProperConstraint(

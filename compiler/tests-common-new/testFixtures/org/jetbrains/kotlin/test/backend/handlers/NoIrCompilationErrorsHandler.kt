@@ -38,9 +38,10 @@ class NoIrCompilationErrorsHandler(testServices: TestServices) : BackendInputHan
                     diagnostic.severity == Severity.ERROR &&
                     diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factoryName, diagnostic.severity)
                 ) {
+                    val factoryName = diagnostic.factoryName
                     val severity = diagnostic.severity.toCompilerMessageSeverity().toString().toLowerCaseAsciiOnly()
                     val message = diagnostic.renderMessage()
-                    error("/$file:${diagnostic.firstRange}: $severity: $message")
+                    error("/$file:[$factoryName] ${diagnostic.firstRange}: $severity: $message")
                 }
             }
         }

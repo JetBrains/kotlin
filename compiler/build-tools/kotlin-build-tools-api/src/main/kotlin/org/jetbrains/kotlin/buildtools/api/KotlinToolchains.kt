@@ -8,7 +8,13 @@ package org.jetbrains.kotlin.buildtools.api
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Companion.loadImplementation
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Toolchain
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
+import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
+import org.jetbrains.kotlin.buildtools.api.internal.wrappers.Kotlin230AndBelowWrapper
+import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinBelow240Wrapper
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * The main entry point to the Build Tools API.
@@ -26,9 +32,14 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
  * An example of the basic usage is:
  *  ```
  *   val toolchain = KotlinToolchains.loadImplementation(ClassLoader.getSystemClassLoader())
- *   val operation = toolchains.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
+ *   val operation = toolchains.jvm.jvmCompilationOperationBuilder(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory")).build()
  *   toolchain.createBuildSession().use { it.executeOperation(operation) }
  *  ```
+ *
+ * Please note that currently all `Path`s
+ * passed in as arguments or options in all Build Tools API classes must point to the default [java.nio.file.FileSystem],
+ * as they will be converted to absolute path strings for the compiler.
+ * Using `Path`s on other `FileSystem`s will result in an [UnsupportedOperationException].
  *
  * @since 2.3.0
  */
@@ -66,7 +77,15 @@ public interface KotlinToolchains {
      *
      * @see BuildSession.executeOperation
      */
+    @Deprecated("Use daemonExecutionPolicyBuilder instead", ReplaceWith("daemonExecutionPolicyBuilder()"))
     public fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon
+
+    /**
+     * Creates a builder for [ExecutionPolicy.WithDaemon] which allows executing operations using a Kotlin daemon.
+     *
+     * @see BuildSession.executeOperation
+     */
+    public fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder
 
     /**
      * Returns the version of the Kotlin compiler used to run compilation.
@@ -103,7 +122,7 @@ public interface KotlinToolchains {
          * Execute the given [operation] using [ExecutionPolicy.InProcess].
          *
          * @param operation the [BuildOperation] to execute.
-         * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.createJvmCompilationOperation]
+         * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.jvmCompilationOperationBuilder]
          */
         public fun <R> executeOperation(
             operation: BuildOperation<R>,
@@ -113,8 +132,8 @@ public interface KotlinToolchains {
          * Execute the given [operation] using the given [executionPolicy].
          *
          * @param operation the [BuildOperation] to execute.
-         * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.createJvmCompilationOperation]
-         * @param executionPolicy an [ExecutionPolicy] obtained from [createInProcessExecutionPolicy] or [createDaemonExecutionPolicy]
+         * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.jvmCompilationOperationBuilder]
+         * @param executionPolicy an [ExecutionPolicy] obtained from [createInProcessExecutionPolicy] or [daemonExecutionPolicyBuilder]
          * @param logger an optional [KotlinLogger]
          */
         public fun <R> executeOperation(
@@ -140,14 +159,27 @@ public interface KotlinToolchains {
          * If executing operations using [ExecutionPolicy.WithDaemon], a [java.net.URLClassLoader] must be used here.
          */
         @JvmStatic
-        public fun loadImplementation(classLoader: ClassLoader): KotlinToolchains =
-            try {
-                loadImplementation(KotlinToolchains::class, classLoader)
-            } catch (_: NoImplementationFoundException) {
-                @Suppress("DEPRECATION")
-                classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1Adapter").constructors.first()
-                    .newInstance(CompilationService.loadImplementation(classLoader)) as KotlinToolchains
+        public fun loadImplementation(classLoader: ClassLoader): KotlinToolchains = try {
+            val baseImplementation = loadImplementation(KotlinToolchains::class, classLoader)
+            val kotlinCompilerVersion = KotlinCompilerVersion(baseImplementation.getCompilerVersion())
+            when {
+                kotlinCompilerVersion <= KotlinCompilerVersion(2, 3, 0, null) -> {
+                    Kotlin230AndBelowWrapper(baseImplementation)
+                }
+                kotlinCompilerVersion < KotlinCompilerVersion(2, 4, 0, null) -> {
+                    KotlinBelow240Wrapper(baseImplementation)
+                }
+                else -> baseImplementation
             }
+        } catch (_: NoImplementationFoundException) {
+            try {
+                classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1Adapter")
+                    .constructors.first()
+                    .newInstance(@Suppress("DEPRECATION_ERROR") CompilationService.loadImplementation(classLoader)) as KotlinToolchains
+            } catch (e: ClassNotFoundException) {
+                throw NoImplementationFoundException(KotlinToolchains::class).initCause(e)
+            }
+        }
     }
 }
 
@@ -161,4 +193,19 @@ public interface KotlinToolchains {
 @ExperimentalBuildToolsApi
 public inline fun <reified T : Toolchain> KotlinToolchains.getToolchain(): T {
     return getToolchain(T::class.java)
+}
+
+/**
+ * Convenience function for creating an [ExecutionPolicy.WithDaemon] with options configured by [builderAction].
+ *
+ * @return an immutable `ExecutionPolicy.WithDaemon`.
+ * @see KotlinToolchains.daemonExecutionPolicyBuilder
+ */
+@OptIn(ExperimentalContracts::class)
+@ExperimentalBuildToolsApi
+public inline fun KotlinToolchains.daemonExecutionPolicy(builderAction: ExecutionPolicy.WithDaemon.Builder.() -> Unit): ExecutionPolicy.WithDaemon {
+    contract {
+        callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
+    }
+    return daemonExecutionPolicyBuilder().apply(builderAction).build()
 }

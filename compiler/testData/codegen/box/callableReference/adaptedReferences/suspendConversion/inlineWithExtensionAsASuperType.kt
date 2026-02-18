@@ -5,6 +5,14 @@
 // ^ IMPLEMENTING_FUNCTION_INTERFACE: Implementing function interface is prohibited in JavaScript
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^^^ Source code is not compiled in JS.
+// NO_CHECK_LAMBDA_INLINING
+// FILE: lib.kt
+import helpers.*
+import kotlin.coroutines.*
+
+suspend inline fun invokeSuspend(fn: suspend Int.() -> Unit) { fn(1) }
+
+// FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*
 
@@ -26,8 +34,6 @@ class B: (Int) -> Unit {
         test2 = "K"
     }
 }
-
-suspend inline fun invokeSuspend(fn: suspend Int.() -> Unit) { fn(1) }
 
 fun box(): String {
     runSuspend {

@@ -6,10 +6,12 @@ KaValueParameterSymbol:
   generatedPrimaryConstructorProperty: null
   hasDeclaredDefaultValue: false
   hasDefaultValue: false
+  hasSynthesizedName: false
   isActual: false
   isCrossinline: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isImplicitLambdaParameter: true
   isNoinline: false
   isVal: true

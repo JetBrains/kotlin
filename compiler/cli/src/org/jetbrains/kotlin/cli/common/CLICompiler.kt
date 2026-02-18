@@ -21,11 +21,13 @@ package org.jetbrains.kotlin.cli.common
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
@@ -35,7 +37,6 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.progress.CompilationCanceledException
@@ -96,7 +97,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
             performanceManager.enableExtendedStats()
         }
 
-        val configuration = CompilerConfiguration()
+        val configuration = CompilerConfiguration.create()
 
         configuration.put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, messageCollector)
 
@@ -322,9 +323,11 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
 
             errStream.print(messageRenderer.renderPreamble())
 
-            val errorMessage = validateArguments(arguments.errors)
-            if (errorMessage != null) {
-                collector.report(ERROR, errorMessage, null)
+            val errorMessages = validateArgumentsAllErrors(arguments.errors)
+            if (errorMessages.isNotEmpty()) {
+                errorMessages.forEach {
+                    collector.report(ERROR, it, null)
+                }
                 collector.report(INFO, "Use -help for more information", null)
                 return COMPILATION_ERROR
             }
@@ -461,7 +464,7 @@ fun checkPluginsArguments(
     }
 
     if (pluginConfigurations.isNotEmpty()) {
-        configuration.reportIfNeeded(CliDiagnostics.COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL, "Argument -Xcompiler-plugin is experimental")
+        configuration.reportDiagnostic(CliDiagnostics.COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL, "Argument -Xcompiler-plugin is experimental")
 
         if (!useK2) {
             hasErrors = true

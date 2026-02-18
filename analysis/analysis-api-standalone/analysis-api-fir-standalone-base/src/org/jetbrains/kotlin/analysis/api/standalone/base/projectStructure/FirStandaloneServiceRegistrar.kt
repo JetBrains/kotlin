@@ -23,12 +23,10 @@ object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
     }
 
     override fun registerProjectExtensionPoints(project: MockProject) {
-        PluginStructureProvider.registerProjectExtensionPoints(project, PLUGIN_RELATIVE_PATH)
     }
 
     override fun registerProjectServices(project: MockProject) {
         PluginStructureProvider.registerProjectServices(project, PLUGIN_RELATIVE_PATH)
-        PluginStructureProvider.registerProjectListeners(project, PLUGIN_RELATIVE_PATH)
     }
 
     @OptIn(KaExperimentalApi::class)
@@ -38,7 +36,5 @@ object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
             registerExtension(JavaElementFinder(project), disposable)
             registerExtension(PsiElementFinderImpl(project), disposable)
         }
-
-        PluginStructureProvider.registerProjectExtensionPointImplementations(project, PLUGIN_RELATIVE_PATH)
     }
 }

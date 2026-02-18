@@ -32,7 +32,7 @@ object FirJvmPackageNameAnnotationsChecker : FirAnnotationChecker(MppCheckerKind
         val lookupTag = expression.annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return
         if (lookupTag.classId != jvmPackageNameClassId) return
 
-        val nameValue = expression.getStringArgument(StandardNames.NAME, context.session) ?: return
+        val nameValue = expression.getStringArgument(StandardNames.NAME) ?: return
         if (nameValue.isEmpty()) {
             reporter.reportOn(expression.source, FirJvmErrors.JVM_PACKAGE_NAME_CANNOT_BE_EMPTY)
         } else if (!isValidJavaFqName(nameValue)) {

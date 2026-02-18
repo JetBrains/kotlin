@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 kotlin {
@@ -9,10 +9,9 @@ kotlin {
         binaries.executable()
         nodejs {
         }
+        yarn
     }
 }
-
-yarn
 
 rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
     the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec>().downloadBaseUrl.set(null as String?)

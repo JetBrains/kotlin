@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.cri
 import org.jetbrains.kotlin.buildtools.api.cri.FileIdToPathEntry
 import org.jetbrains.kotlin.buildtools.api.cri.LookupEntry
 import org.jetbrains.kotlin.buildtools.api.cri.SubtypeEntry
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.name.FqName
@@ -171,6 +172,22 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
             val afterRebuildBaseSubtypeEntry = assertNotNull(afterRebuildSubtypes.singleOrNull { it.fqNameHashCode == baseHash })
             // stale `Derived` entry should not be there anymore
             assertEquals(listOf("Derived2"), afterRebuildBaseSubtypeEntry.subtypes)
+        }
+    }
+
+    @GradleTest
+    @DisplayName("CRI generation can't be enabled without BTA. KT-83161")
+    fun testCriWithoutBta(gradleVersion: GradleVersion) {
+        project(
+            "kotlinProject",
+            gradleVersion,
+        ) {
+            build("assemble", buildOptions = buildOptions.copy(runViaBuildToolsApi = false)) {
+                assertHasDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
+            }
+            build("assemble", buildOptions = buildOptions.copy(runViaBuildToolsApi = true)) {
+                assertNoDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
+            }
         }
     }
 

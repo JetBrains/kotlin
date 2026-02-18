@@ -56,6 +56,35 @@ fun nop() {}
 // test.kt:31 nop
 // test.kt:22 box
 
+// EXPECTATIONS NATIVE
+// test.kt:4 box
+// test.kt:25 box
+// test.kt:4 box
+// test.kt:5 box
+// test.kt:31 nop
+// test.kt:5 box
+// test.kt:9 box
+// test.kt:25 box
+// test.kt:9 box
+// test.kt:29 box
+// test.kt:9 box
+// test.kt:10 box
+// test.kt:25 box
+// test.kt:10 box
+// test.kt:12 box
+// test.kt:31 nop
+// test.kt:12 box
+// test.kt:17 box
+// test.kt:25 box
+// test.kt:17 box
+// test.kt:16 box
+// test.kt:28 box
+// test.kt:18 box
+// test.kt:20 box
+// test.kt:31 nop
+// test.kt:20 box
+// test.kt:22 box
+
 // EXPECTATIONS JS_IR
 // test.kt:5 box
 // test.kt:31 nop

@@ -4,7 +4,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_TAIL_CALL_OPTIMIZATION
-// API_VERSION: LATEST
+// LANGUAGE: +WrapContinuationForTailCallFunctions
 
 // Using internal ModuleNameRetriever in stdlib replacement
 // DISABLE_IR_VISIBILITY_CHECKS: JVM_IR
@@ -50,6 +50,6 @@ suspend fun some(a: String = "OK") = suspendThere(a)
 
 fun box(): String {
     Wrapper(::some)
-    TailCallOptimizationChecker.checkStateMachineIn("box\$some")
+    TailCallOptimizationChecker.checkStateMachineIn("invoke")
     return result
 }

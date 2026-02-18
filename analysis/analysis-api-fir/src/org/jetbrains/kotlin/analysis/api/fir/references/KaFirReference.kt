@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 @OptIn(KtImplementationDetail::class)
-internal interface KaFirReference : KtReference, KaSymbolBasedReference {
+internal sealed interface KaFirReference : KtReference, KaSymbolBasedReference {
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> = withValidityAssertion {
         check(this is KaFirSession)
         this.cacheStorage.resolveToSymbolsCache.value.getOrPut(this@KaFirReference) {

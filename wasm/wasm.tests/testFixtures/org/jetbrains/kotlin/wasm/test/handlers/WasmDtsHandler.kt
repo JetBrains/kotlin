@@ -24,7 +24,7 @@ class WasmDtsHandler(testServices: TestServices) : WasmBinaryArtifactHandler(tes
             .resolve("index.d.mts")
             .run { takeIf { it.exists() } ?: error("'${path}' doesn't exist") }
 
-        val generatedDts = info.compilerResult.dts
+        val generatedDts = info.compilation.compilerResult.dts
             ?: error("Can't find generated .d.ts file")
 
         TestDataAssertions.assertEqualsToFile(referenceDtsFile, generatedDts)

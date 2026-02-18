@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpWithBuiltInKotlinAppliedCheck.checkIfNewDslIsUsed
+import org.jetbrains.kotlin.gradle.internal.diagnostics.AgpWithBuiltInKotlinAppliedCheck.reportKotlinAndroidDeprecation
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin.Companion.dynamicallyApplyWhenAndroidPluginIsApplied
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.AndroidGradlePluginIsMissing
@@ -38,7 +39,9 @@ internal abstract class KotlinAndroidTargetPreset @Inject constructor(
             project.reportDiagnostic(AndroidGradlePluginIsMissing(Throwable()))
         } else {
             project.checkIfNewDslIsUsed(isKmpProject = true)
-            project.reportDiagnostic(KotlinToolingDiagnostics.NonKmpAgpIsDeprecated(androidPluginId))
+            project.reportKotlinAndroidDeprecation(
+                KotlinToolingDiagnostics.NonKmpAgpIsDeprecated(androidPluginId)
+            )
         }
 
         return project.objects.KotlinAndroidTarget(project, name, true).apply {

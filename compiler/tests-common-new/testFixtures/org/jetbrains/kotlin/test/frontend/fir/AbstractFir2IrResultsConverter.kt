@@ -10,13 +10,14 @@ import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationEx
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
@@ -28,8 +29,8 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -85,7 +86,7 @@ abstract class AbstractFir2IrResultsConverter(
         val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val irMangler = createIrMangler()
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
+        val diagnosticReporter = DiagnosticsCollectorImpl()
 
         val fir2IrExtensions = createFir2IrExtensions(compilerConfiguration)
 
@@ -102,7 +103,7 @@ abstract class AbstractFir2IrResultsConverter(
         val fir2irResult = firResult.convertToIrAndActualize(
             fir2IrExtensions,
             fir2IrConfiguration,
-            module.irGenerationExtensions(testServices),
+            compilerConfiguration.getCompilerExtensions(IrGenerationExtension),
             irMangler,
             createFir2IrVisibilityConverter(),
             builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
@@ -148,10 +149,12 @@ abstract class AbstractFir2IrResultsConverter(
         languageVersionSettings: LanguageVersionSettings,
         testServices: TestServices
     ): Pair<List<ModuleDescriptor>, KotlinBuiltIns?> {
-        var builtInsModule: KotlinBuiltIns? = null
+        val stdlib: KotlinLibrary? = libraries.firstOrNull { it.isAnyPlatformStdlib }
+
+        var builtIns: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
-        return libraries.map { library ->
+        fun loadDescriptor(library: KotlinLibrary): ModuleDescriptorImpl =
             testServices.libraryProvider.getOrCreateStdlibByPath(library.libraryFile.absolutePath) {
                 // TODO: check safety of the approach of creating a separate storage manager per library
                 val storageManager = LockBasedStorageManager("ModulesStructure")
@@ -160,25 +163,30 @@ abstract class AbstractFir2IrResultsConverter(
                     library,
                     languageVersionSettings,
                     storageManager,
-                    builtInsModule,
+                    builtIns,
                     packageAccessHandler = null,
                     lookupTracker = LookupTracker.DO_NOTHING
                 )
                 dependencies += moduleDescriptor
-                moduleDescriptor.setDependencies(ArrayList(dependencies))
+                moduleDescriptor.setDependencies(dependencies.toList())
 
                 Pair(moduleDescriptor, library)
-            }.also { moduleDescriptor ->
-                val isBuiltIns = library.unresolvedDependencies.isEmpty()
-                if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
-            }
-        } to builtInsModule
-    }
-}
+            } as ModuleDescriptorImpl
 
-// TODO: move somewhere
-fun TestModule.irGenerationExtensions(testServices: TestServices): Collection<IrGenerationExtension> {
-    return IrGenerationExtension.getInstances(testServices.compilerConfigurationProvider.getProject(this))
+        val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
+        if (stdlib != null) {
+            val stdlibModuleDescriptor = loadDescriptor(stdlib)
+            moduleDescriptors += stdlibModuleDescriptor
+            builtIns = stdlibModuleDescriptor.builtIns
+        }
+
+        libraries.forEach { library ->
+            if (library == stdlib) return@forEach
+            moduleDescriptors += loadDescriptor(library)
+        }
+
+        return moduleDescriptors to builtIns
+    }
 }
 
 fun FirOutputArtifact.toFirResult(): AllModulesFrontendOutput {

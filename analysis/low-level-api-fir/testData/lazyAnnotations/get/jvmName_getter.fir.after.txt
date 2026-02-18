@@ -1,1 +1,1 @@
-@R|kotlin/jvm/JvmName|[Types](name = String(getter)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+@R|kotlin/jvm/JvmName|[Types](name = String(getter) [evaluated = String(getter)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|

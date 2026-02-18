@@ -1,0 +1,43 @@
+<caret_1>:
+  KtNameReferenceExpression(147,156): 'something'
+    null
+
+<caret_2>:
+  KtNameReferenceExpression(172,181): 'something'
+    null
+
+<caret_3>:
+  KtNameReferenceExpression(200,209): 'something'
+    null
+
+<caret_4>:
+  KtNameReferenceExpression(229,238): 'something'
+    null
+
+<caret_5>:
+  KtNameReferenceExpression(257,266): 'something'
+    null
+
+<caret_6>:
+  KtNameReferenceExpression(271,280): 'something'
+    null
+
+<caret_7>:
+  KtNameReferenceExpression(384,393): 'something'
+    null
+
+<caret_8>:
+  KtNameReferenceExpression(415,424): 'something'
+    null
+
+<caret_9>:
+  KtNameReferenceExpression(449,458): 'something'
+    null
+
+<caret_10>:
+  KtNameReferenceExpression(484,493): 'something'
+    null
+
+<caret_11>:
+  KtNameReferenceExpression(518,527): 'something'
+    null

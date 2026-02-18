@@ -30,7 +30,10 @@ KtCallExpression(276,293): 'lEnum(EnumValue1)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in kotlin.Function1) operator fun invoke(p1: P1): R
+    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(276,281): 'lEnum'
@@ -51,7 +54,10 @@ KtCallExpression(298,315): 'lEnum(EnumValue2)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
+      (in kotlin.Function1) operator fun invoke(p1: P1): R
+    resolveToSymbols:
       Nothing (Unresolved reference)
 
 KtNameReferenceExpression(298,303): 'lEnum'
@@ -79,6 +85,7 @@ KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -107,6 +114,7 @@ KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -135,6 +143,7 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

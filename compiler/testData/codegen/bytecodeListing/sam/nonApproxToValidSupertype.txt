@@ -29,8 +29,7 @@ final class NonApproxToValidSupertypeKt$test$1 {
     inner (anonymous) class NonApproxToValidSupertypeKt$test$1
     static method <clinit>(): void
     method <init>(): void
-    public synthetic bridge method accept(p0: X): void
-    public final method accept(p0: java.lang.Object): void
+    public final method accept(p0: X): void
 }
 
 @kotlin.Metadata

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -100,7 +100,7 @@ abstract class DefaultArgumentFunctionFactory(
         forceSetOverrideSymbols: Boolean,
         visibility: DescriptorVisibility,
         useConstructorMarker: Boolean,
-        copiedAnnotations: List<IrConstructorCall>,
+        copiedAnnotations: List<IrAnnotation>,
     ): IrFunction? {
         if (skipInlineMethods && declaration.isInline) return null
         if (skipExternalMethods && declaration.isExternalOrInheritedFromExternal()) return null
@@ -173,7 +173,7 @@ abstract class DefaultArgumentFunctionFactory(
         declaration: IrFunction,
         newOrigin: IrDeclarationOrigin,
         newVisibility: DescriptorVisibility,
-        copiedAnnotations: List<IrConstructorCall>,
+        copiedAnnotations: List<IrAnnotation>,
         isFakeOverride: Boolean,
         useConstructorMarker: Boolean,
     ): IrFunction {

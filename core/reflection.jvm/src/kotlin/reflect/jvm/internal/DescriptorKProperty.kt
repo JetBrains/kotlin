@@ -36,17 +36,23 @@ internal abstract class DescriptorKProperty<out V> private constructor(
     override val signature: String,
     descriptorInitialValue: PropertyDescriptor?,
     override val rawBoundReceiver: Any?,
-) : DescriptorKCallable<V>(), ReflectKProperty<V> {
+    overriddenStorage: KCallableOverriddenStorage,
+) : DescriptorKCallable<V>(overriddenStorage), ReflectKProperty<V> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : this(
-        container, name, signature, null, boundReceiver,
+        container, name, signature, null, boundReceiver, KCallableOverriddenStorage.EMPTY
     )
 
-    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : this(
+    constructor(
+        container: KDeclarationContainerImpl,
+        descriptor: PropertyDescriptor,
+        overriddenStorage: KCallableOverriddenStorage,
+    ) : this(
         container,
         descriptor.name.asString(),
         RuntimeTypeMapper.mapPropertySignature(descriptor).asString(),
         descriptor,
         CallableReference.NO_RECEIVER,
+        overriddenStorage,
     )
 
     override val javaField: Field? by lazy(PUBLICATION) {
@@ -97,7 +103,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
 
     override val caller: Caller<*> get() = getter.caller
 
-    override val defaultCaller: Caller<*>? get() = getter.defaultCaller
+    override val callerWithDefaults: Caller<*>? get() = getter.callerWithDefaults
 
     override fun computeReturnType(): DescriptorKType =
         DescriptorKType(descriptor.returnType!!, if (isLocalDelegated) null else fun(): Type {
@@ -122,14 +128,16 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         ReflectionObjectRenderer.renderProperty(this)
 
     abstract class Accessor<out PropertyType, out ReturnType> :
-        DescriptorKCallable<ReturnType>(), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
+        DescriptorKCallable<ReturnType>(KCallableOverriddenStorage.EMPTY),
+        KProperty.Accessor<PropertyType>,
+        KFunction<ReturnType> {
         abstract override val property: DescriptorKProperty<PropertyType>
 
         abstract override val descriptor: PropertyAccessorDescriptor
 
         override val container: KDeclarationContainerImpl get() = property.container
 
-        override val defaultCaller: Caller<*>? get() = null
+        override val callerWithDefaults: Caller<*>? get() = null
 
         override val rawBoundReceiver: Any? get() = property.rawBoundReceiver
 
@@ -142,6 +150,12 @@ internal abstract class DescriptorKProperty<out V> private constructor(
 
     abstract class Getter<out V> : Accessor<V, V>(), KProperty.Getter<V> {
         override val name: String get() = "<get-${property.name}>"
+
+        final override fun shallowCopy(
+            container: KDeclarationContainerImpl,
+            overriddenStorage: KCallableOverriddenStorage,
+        ): DescriptorKCallable<V> =
+            error("Property accessors can only be copied by copying the corresponding property")
 
         override val descriptor: PropertyGetterDescriptor by ReflectProperties.lazySoft {
             property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor, Annotations.EMPTY).apply {
@@ -167,6 +181,12 @@ internal abstract class DescriptorKProperty<out V> private constructor(
 
     abstract class Setter<V> : Accessor<V, Unit>(), KMutableProperty.Setter<V> {
         override val name: String get() = "<set-${property.name}>"
+
+        final override fun shallowCopy(
+            container: KDeclarationContainerImpl,
+            overriddenStorage: KCallableOverriddenStorage,
+        ): DescriptorKCallable<Unit> =
+            error("Property accessors can only be copied by copying the corresponding property")
 
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {
             property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY, Annotations.EMPTY)

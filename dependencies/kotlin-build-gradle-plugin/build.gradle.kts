@@ -12,7 +12,7 @@ How to Publish
 2. Prepare publication credentials for https://jetbrains.team/p/kt/packages/maven/kotlin-dependencies/org.jetbrains.kotlin/kotlin-build-gradle-plugin
 3. Execute `./gradlew -p dependencies/kotlin-build-gradle-plugin publish -PkotlinSpaceUsername=usr -PkotlinSpacePassword=token`
  */
-version = "0.0.40"
+version = "0.0.42"
 
 repositories {
     mavenCentral()
@@ -20,16 +20,10 @@ repositories {
 
 dependencies {
     implementation(gradleApi())
+    compileOnly(kotlin("stdlib"))
 }
 
-tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-}
+kotlin.jvmToolchain(17)
 
 java {
     withSourcesJar()
@@ -57,7 +51,7 @@ publishing {
         maven {
             name = "kotlinSpace"
             url = uri("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
-            credentials(org.gradle.api.artifacts.repositories.PasswordCredentials::class)
+            credentials(PasswordCredentials::class)
         }
     }
 }

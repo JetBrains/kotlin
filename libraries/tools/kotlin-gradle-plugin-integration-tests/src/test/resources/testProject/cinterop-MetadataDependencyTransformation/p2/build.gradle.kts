@@ -113,7 +113,7 @@ kotlin {
 
             "repository" -> {
                 logger.quiet("dependencyMode = 'repository'")
-                api("kotlin-multiplatform-projects:p1:1.0.0-SNAPSHOT")
+                api("kotlin-multiplatform-projects:p1:1.0.0")
             }
         }
     }

@@ -143,7 +143,7 @@ class JavaClassCacheManager(val file: File) : Closeable {
                 ObjectInputStream(BufferedInputStream(aptCacheFile.inputStream())).use {
                     it.readObject() as IncrementalAptCache
                 }
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
                 // cache corrupt
                 IncrementalAptCache()
             }

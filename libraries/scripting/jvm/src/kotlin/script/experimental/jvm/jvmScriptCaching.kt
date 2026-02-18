@@ -14,6 +14,7 @@ interface CompiledJvmScriptsCache {
     fun get(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript?
     fun store(compiledScript: CompiledScript, script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration)
 
+    @Suppress("unused") // may have external uses
     object NoCache : CompiledJvmScriptsCache {
         override fun get(
             script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration
@@ -27,4 +28,6 @@ interface CompiledJvmScriptsCache {
 }
 
 val JvmScriptingHostConfigurationKeys.compilationCache by PropertiesCollection.key<CompiledJvmScriptsCache>(isTransient = true)
+
+val JvmScriptingHostConfigurationKeys.disableCompilationCache by PropertiesCollection.key<Boolean>(false)
 

@@ -1,0 +1,6 @@
+KtCallExpression(78,85): 'block()'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/Function2.invoke(<dispatch receiver>: kotlin.Function2<P1, P2, R>, p1: P1, p2: P2): R
+    ]
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'p1'>

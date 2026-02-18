@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
@@ -288,6 +289,8 @@ class BodyResolveContext(
 
     @PrivateForInline
     fun storeFunction(function: FirNamedFunction, session: FirSession) {
+        // REPL-level declarations are already part of REPL class member scope.
+        if (function.isReplSnippetDeclaration == true) return
         updateLastScope { storeFunction(function, session) }
     }
 
@@ -387,11 +390,15 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     fun storeClassOrTypealiasIfNotNested(classOrTypeAlias: FirClassLikeDeclaration, session: FirSession) {
         if (containerIfAny is FirClass) return
+        // REPL-level declarations are already part of REPL class member scope.
+        if (classOrTypeAlias.isReplSnippetDeclaration == true) return
         updateLastScope { storeClassOrTypeAlias(classOrTypeAlias, session) }
     }
 
     @OptIn(PrivateForInline::class)
     fun storeVariable(variable: FirVariable, session: FirSession) {
+        // REPL-level declarations are already part of REPL class member scope.
+        if (variable.isReplSnippetDeclaration == true) return
         replaceTowerDataContext(towerDataContext.addLocalVariable(variable, session))
     }
 

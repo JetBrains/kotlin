@@ -1,0 +1,7 @@
+/misplacedArgumentsInChain.kt:(317,323): warning: One type argument expected for 'inner class Middle<B, Outer(A)> : Any'. Use the full type 'Outer<Int>.Middle<String>.Inner<Char>' instead. This will become an error in language version 2.5. See https://youtrack.jetbrains.com/issue/KTLC-388.
+
+/misplacedArgumentsInChain.kt:(353,358): warning: One type argument expected for 'class Outer<A> : Any'. Use the full type 'Outer<Int>.Middle<String>.Inner<Char>' instead. This will become an error in language version 2.5. See https://youtrack.jetbrains.com/issue/KTLC-388.
+
+/misplacedArgumentsInChain.kt:(405,424): warning: One type argument expected for 'class Outer<A> : Any'. Use the full type 'Outer<Int>.Middle<String>.Inner<Char>' instead. This will become an error in language version 2.5. See https://youtrack.jetbrains.com/issue/KTLC-388.
+
+/misplacedArgumentsInChain.kt:(447,452): warning: One type argument expected for 'class Outer<A> : Any'. Use the full type 'Outer<Int>.Middle<String>.Inner<Char>' instead. This will become an error in language version 2.5. See https://youtrack.jetbrains.com/issue/KTLC-388.

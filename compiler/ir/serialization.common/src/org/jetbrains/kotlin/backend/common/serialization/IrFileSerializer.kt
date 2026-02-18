@@ -112,7 +112,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommo
 import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression as ProtoNullableIrExpression
 
 open class IrFileSerializer(
-    private val settings: IrSerializationSettings,
+    protected val settings: IrSerializationSettings,
     private val declarationTable: DeclarationTable<*>,
 ) {
     private val loopIndex = hashMapOf<IrLoop, Int>()
@@ -326,8 +326,7 @@ open class IrFileSerializer(
                         recordInSignatureClashDetector = isDeclared,
                     )
 
-                    symbolOwner is IrReturnableBlock && settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_3) ->
-                        declarationTable.signatureByReturnableBlock(symbolOwner)
+                    symbolOwner is IrReturnableBlock -> declarationTable.signatureByReturnableBlock(symbolOwner)
 
                     else -> error("Expected symbol owner: ${symbolOwner.render()}")
                 }
@@ -506,8 +505,6 @@ open class IrFileSerializer(
     }
 
     private fun serializeReturnableBlock(returnableBlock: IrReturnableBlock): ProtoReturnableBlock {
-        requireAbiAtLeast(ABI_LEVEL_2_3) { returnableBlock }
-
         val proto = ProtoReturnableBlock.newBuilder()
         proto.symbol = serializeIrSymbol(returnableBlock.symbol)
         proto.base = serializeBlock(returnableBlock)
@@ -515,8 +512,6 @@ open class IrFileSerializer(
     }
 
     private fun serializeInlinedFunctionBlock(inlinedFunctionBlock: IrInlinedFunctionBlock): ProtoInlinedFunctionBlock {
-        requireAbiAtLeast(ABI_LEVEL_2_3) { inlinedFunctionBlock }
-
         val proto = ProtoInlinedFunctionBlock.newBuilder()
         inlinedFunctionBlock.inlinedFunctionSymbol?.let { proto.setInlinedFunctionSymbol(serializeIrSymbol(it)) }
 
@@ -646,8 +641,6 @@ open class IrFileSerializer(
     }
 
     private fun serializeRichFunctionReference(callable: IrRichFunctionReference): ProtoRichFunctionReference {
-        requireAbiAtLeast(ABI_LEVEL_2_3) { callable }
-
         return ProtoRichFunctionReference.newBuilder().apply {
             callable.reflectionTargetSymbol?.let { reflectionTargetSymbol = serializeIrSymbol(it) }
             overriddenFunctionSymbol = serializeIrSymbol(callable.overriddenFunctionSymbol)
@@ -661,8 +654,6 @@ open class IrFileSerializer(
     }
 
     private fun serializeRichPropertyReference(callable: IrRichPropertyReference): ProtoRichPropertyReference {
-        requireAbiAtLeast(ABI_LEVEL_2_3) { callable }
-
         return ProtoRichPropertyReference.newBuilder().apply {
             callable.reflectionTargetSymbol?.let { reflectionTargetSymbol = serializeIrSymbol(it) }
             for (boundValue in callable.boundValues) {
@@ -1163,10 +1154,6 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrValueParameter(parameter: IrValueParameter): ProtoValueParameter {
-        if (parameter.kind == IrParameterKind.Context) {
-            requireAbiAtLeast(ABI_LEVEL_2_3, { "Context parameter" }) { parameter.parent }
-        }
-
         val proto = ProtoValueParameter.newBuilder()
             .setBase(serializeIrDeclarationBase(parameter, ValueParameterFlags.encode(parameter)))
             .setNameType(serializeNameAndType(parameter.name, parameter.type))
@@ -1264,13 +1251,8 @@ open class IrFileSerializer(
             .setBase(serializeIrDeclarationBase(variable, LocalVariableFlags.encode(variable)))
             .setNameType(serializeNameAndType(variable.name, variable.type))
 
-        when (val delegate = variable.delegate) {
-            null -> requireAbiAtLeast(
-                abiCompatibilityLevel = ABI_LEVEL_2_3,
-                prefix = { "Nullable 'delegate' property in ${it::class.simpleName}" },
-                irNode = { variable }
-            )
-            else -> proto.delegate = serializeIrVariable(delegate)
+        variable.delegate?.let { delegate ->
+            proto.delegate = serializeIrVariable(delegate)
         }
 
         proto.getter = serializeIrFunction(variable.getter)
@@ -1465,23 +1447,16 @@ open class IrFileSerializer(
         val name = entry.matchAndNormalizeFilePath()
         return ProtoFileEntry.newBuilder()
             .apply {
-                if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_3))
-                    setName(serializeString(name))
-                else
-                    setNameOld(name)
+                setName(serializeString(name))
             }
             .applyIf(includeLineStartOffsets) {
                 val firstRelevantLineIndex = relevantLinesRange?.first ?: entry.firstRelevantLineIndex
                 runIf(firstRelevantLineIndex != 0) { setFirstRelevantLineIndex(firstRelevantLineIndex) }
                 val lineOffsets = getRelevantOffsets(entry, relevantLinesRange)
-                if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_3)) {
-                    var lastOffset = 0
-                    for (offset in lineOffsets) {
-                        addLineStartOffsetDelta(offset - lastOffset)
-                        lastOffset = offset
-                    }
-                } else {
-                    addAllLineStartOffset(lineOffsets)
+                var lastOffset = 0
+                for (offset in lineOffsets) {
+                    addLineStartOffsetDelta(offset - lastOffset)
+                    lastOffset = offset
                 }
                 this
             }

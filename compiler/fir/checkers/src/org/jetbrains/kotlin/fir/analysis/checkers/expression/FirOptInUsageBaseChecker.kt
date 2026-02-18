@@ -346,7 +346,7 @@ object FirOptInUsageBaseChecker {
         val levelName = levelArgument?.extractEnumValueArgumentInfo()?.enumEntryName?.asString()
 
         val severity = Experimentality.Severity.entries.firstOrNull { it.name == levelName } ?: Experimentality.DEFAULT_SEVERITY
-        val message = experimental.getStringArgument(MESSAGE, session)
+        val message = experimental.getStringArgument(MESSAGE)
         return Experimentality(classId, severity, message, annotatedOwnerClassName)
     }
 
@@ -423,11 +423,6 @@ object FirOptInUsageBaseChecker {
                 reporter.reportOn(symbol.source, diagnostic, annotationClassId, message)
             }
         }
-    }
-
-    fun FirAnnotationCall.getSourceForIsMarkerDiagnostic(argumentIndex: Int): KtSourceElement? {
-        val markerArgumentsSources = this.getMarkerArgumentsSources()
-        return markerArgumentsSources[argumentIndex]
     }
 
     context(context: CheckerContext)

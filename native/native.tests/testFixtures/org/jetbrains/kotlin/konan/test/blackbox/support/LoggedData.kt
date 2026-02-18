@@ -281,6 +281,16 @@ abstract class LoggedData {
             appendLine("========== END: $subject ==========")
         }
 
+        val dummyCompilerCall = CompilationToolCall(
+            toolName = "Compiler",
+            input = null,
+            parameters = LoggedData.CompilerParameters(KotlinNativeHome(dir = File("DummyFile")), arrayOf()),
+            exitCode = ExitCode.OK,
+            toolOutput = "",
+            toolOutputHasErrors = false,
+            duration = Duration.ZERO
+        )
+
         private const val MAX_PRINTED_OUTPUT_LENGTH = 8 * 1024
     }
 }

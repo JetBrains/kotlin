@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // IGNORE_HEADER_MODE: JVM_IR
-//   Reason: KT-82376
+//   Reason: KT-82404
 
 // MODULE: lib
 // FILE: lib.kt

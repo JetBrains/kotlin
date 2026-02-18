@@ -107,13 +107,15 @@ KtValueArgument(438,447): '[1, 2, 3]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      arr: kotlin.IntArray
 
 KtCollectionLiteralExpression(438,447): '[1, 2, 3]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
@@ -134,6 +136,7 @@ KtNameReferenceExpression(464,467): 'arr'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -141,6 +144,7 @@ KtCollectionLiteralExpression(470,479): '[4, 5, 6]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
@@ -155,13 +159,15 @@ KtValueArgument(496,515): 'intArrayOf(7, 8, 9)'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      arr: kotlin.IntArray
 
 KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -175,6 +181,7 @@ KtNameReferenceExpression(496,506): 'intArrayOf'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -182,22 +189,25 @@ KtValueArgument(507,508): '7'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      arr: kotlin.IntArray
 
 KtValueArgument(510,511): '8'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      arr: kotlin.IntArray
 
 KtValueArgument(513,514): '9'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      arr: kotlin.IntArray
 
 KtNameReferenceExpression(518,532): 'AnnoWithKClass'
   KtSimpleNameReference:
@@ -210,8 +220,9 @@ KtValueArgument(533,554): 'AnnoWithKClass::class'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      k: kotlin.reflect.KClass<*>
 
 KtNameReferenceExpression(533,547): 'AnnoWithKClass'
   KtSimpleNameReference:
@@ -223,6 +234,7 @@ KtNameReferenceExpression(533,547): 'AnnoWithKClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -237,8 +249,9 @@ KtValueArgument(573,598): 'one.AnnoWithKClass::class'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      k: kotlin.reflect.KClass<*>
 
 KtNameReferenceExpression(573,576): 'one'
   KtSimpleNameReference:
@@ -250,6 +263,7 @@ KtNameReferenceExpression(573,576): 'one'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -263,6 +277,7 @@ KtNameReferenceExpression(577,591): 'AnnoWithKClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -277,13 +292,15 @@ KtValueArgument(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      a: kotlin.Array<kotlin.reflect.KClass<*>>
 
 KtCollectionLiteralExpression(624,674): '[AnnoWithKClass::class, one.AnnoWithKClass::class]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
 
@@ -297,6 +314,7 @@ KtNameReferenceExpression(625,639): 'AnnoWithKClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -310,6 +328,7 @@ KtNameReferenceExpression(648,651): 'one'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -323,6 +342,7 @@ KtNameReferenceExpression(652,666): 'AnnoWithKClass'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -337,13 +357,15 @@ KtValueArgument(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArra
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      another: kotlin.Array<one.AnnoWithArray>
 
 KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15)))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -357,6 +379,7 @@ KtNameReferenceExpression(703,710): 'arrayOf'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -364,8 +387,9 @@ KtValueArgument(711,742): 'one.AnnoWithArray([10, 11, 12])'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      another: kotlin.Array<one.AnnoWithArray>
 
 KtNameReferenceExpression(711,714): 'one'
   KtSimpleNameReference:
@@ -377,6 +401,7 @@ KtNameReferenceExpression(711,714): 'one'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -384,6 +409,7 @@ KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -397,6 +423,7 @@ KtNameReferenceExpression(715,728): 'AnnoWithArray'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -404,13 +431,15 @@ KtValueArgument(729,741): '[10, 11, 12]'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      another: kotlin.Array<one.AnnoWithArray>
 
 KtCollectionLiteralExpression(729,741): '[10, 11, 12]'
   KtCollectionLiteralReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) fun intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
@@ -418,13 +447,15 @@ KtValueArgument(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      another: kotlin.Array<one.AnnoWithArray>
 
 KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -438,6 +469,7 @@ KtNameReferenceExpression(744,757): 'AnnoWithArray'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -445,13 +477,15 @@ KtValueArgument(758,780): 'intArrayOf(13, 14, 15)'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      another: kotlin.Array<one.AnnoWithArray>
 
 KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -465,6 +499,7 @@ KtNameReferenceExpression(758,768): 'intArrayOf'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
@@ -472,22 +507,25 @@ KtValueArgument(769,771): '13'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      another: kotlin.Array<one.AnnoWithArray>
 
 KtValueArgument(773,775): '14'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      another: kotlin.Array<one.AnnoWithArray>
 
 KtValueArgument(777,779): '15'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      another: kotlin.Array<one.AnnoWithArray>
 
 KtNameReferenceExpression(785,799): 'AnnoWithString'
   KtSimpleNameReference:
@@ -500,8 +538,9 @@ KtValueArgument(800,825): 'stringConstant + " 1.2.3"'
   KtDefaultAnnotationArgumentReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      str: kotlin.String
 
 KtNameReferenceExpression(800,814): 'stringConstant'
   KtSimpleNameReference:
@@ -513,6 +552,7 @@ KtNameReferenceExpression(800,814): 'stringConstant'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

@@ -16,6 +16,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
@@ -83,6 +84,41 @@ class ScriptLightVirtualFile(name: String, private val _path: String?, text: Str
     override fun getCanonicalPath() = path
 }
 
+class GenericKtSourceFileScriptSource(val ktSourceFile: KtSourceFile) : SourceCode {
+    override val text: String by lazy { ktSourceFile.getContentsAsStream().reader().readText() }
+    override val name: String get() = ktSourceFile.name
+    override val locationId: String? get() = ktSourceFile.path
+}
+
+open class LazyTextScriptSource(
+    override val name: String? = null,
+    locationId: String? = null,
+    getSource: () -> String,
+) : SourceCode {
+
+    override val text: String by lazy { getSource() }
+
+    override val locationId: String? = locationId ?: name ?: "\$${System.identityHashCode(this).toHexString()}.kts"
+
+    override fun equals(other: Any?): Boolean =
+        this === other || (other as? StringScriptSource)?.let { name == it.name && locationId == it.locationId } == true
+
+    override fun hashCode(): Int = name.hashCode() * 17 + locationId.hashCode() * 23
+}
+
+
+fun KtSourceFile.toSourceCode(): SourceCode = when (this) {
+    is KtPsiSourceFile -> {
+        val originalFile = psiFile.originalFile
+        (originalFile as? KtFile)?.let(::KtFileScriptSource) ?: VirtualFileScriptSource(originalFile.virtualFile)
+    }
+    is KtVirtualFileSourceFile -> VirtualFileScriptSource(virtualFile)
+    is KtIoFileSourceFile -> FileScriptSource(file)
+    is KtInMemoryTextSourceFile -> LazyTextScriptSource(name, path) { text.toString() }
+    else -> LazyTextScriptSource(name, path) { getContentsAsStream().reader().readText() }
+}
+
+@Deprecated("Use APIs that return ScriptCompilationConfiguration or ResultWithDiagnostics<ScriptCompilationConfiguration> instead")
 class ScriptCompilationConfigurationWrapper(
     val script: SourceCode,
     val configuration: ScriptCompilationConfiguration?,
@@ -114,8 +150,10 @@ class ScriptCompilationConfigurationWrapper(
     override fun hashCode(): Int = script.hashCode()
 }
 
+@Deprecated("Use APIs that return ScriptCompilationConfiguration or ResultWithDiagnostics<ScriptCompilationConfiguration> instead")
 typealias ScriptCompilationConfigurationResult = ResultWithDiagnostics<ScriptCompilationConfigurationWrapper>
 
+// TODO consider dropping and using disambiguation of the sources collection (KT-83502)
 val ScriptCompilationConfigurationKeys.resolvedImportScripts by PropertiesCollection.key<List<SourceCode>>(isTransient = true)
 
 // left for binary compatibility with Kotlin Notebook plugin
@@ -128,7 +166,6 @@ fun refineScriptCompilationConfiguration(
     return refineScriptCompilationConfiguration(script, definition, project, providedConfiguration, null)
 }
 
-@Suppress("DEPRECATION")
 fun refineScriptCompilationConfiguration(
     script: SourceCode,
     definition: ScriptDefinition,
@@ -141,7 +178,7 @@ fun refineScriptCompilationConfiguration(
     val compilationConfiguration = providedConfiguration ?: definition.compilationConfiguration
     val collectedData =
         runReadAction {
-            getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, project, definition.contextClassLoader)
+            getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, definition.contextClassLoader)
         }
     return compilationConfiguration.refineOnAnnotations(script, collectedData)
         .onSuccess {
@@ -206,7 +243,7 @@ fun ScriptCompilationConfiguration.resolveImportsToVirtualFiles(
     return updatedConfiguration.asSuccess()
 }
 
-fun SourceCode.getVirtualFile(definition: ScriptDefinition): VirtualFile {
+fun SourceCode.getVirtualFile(definition: ScriptDefinition?): VirtualFile {
     if (this is VirtualFileScriptSource) return virtualFile
     if (this is KtFileScriptSource) {
         return virtualFile
@@ -215,18 +252,18 @@ fun SourceCode.getVirtualFile(definition: ScriptDefinition): VirtualFile {
         val vFile = LocalFileSystem.getInstance().findFileByIoFile(file)
         if (vFile != null) return vFile
     }
-    val scriptName = withCorrectExtension(name ?: definition.defaultClassName, definition.fileExtension)
+    val scriptName = withCorrectExtension(name ?: definition?.defaultClassName ?: "script", definition?.fileExtension)
     val scriptPath = when (this) {
         is FileScriptSource -> file.path
         is ExternalSourceCode -> externalLocation.toString()
         else -> null
     }
-    val scriptText = getMergedScriptText(this, definition.compilationConfiguration)
+    val scriptText = getMergedScriptText(this, definition?.compilationConfiguration)
 
     return ScriptLightVirtualFile(scriptName, scriptPath, scriptText)
 }
 
-fun SourceCode.getKtFile(definition: ScriptDefinition, project: Project): KtFile =
+fun SourceCode.getKtFile(definition: ScriptDefinition?, project: Project): KtFile =
     if (this is KtFileScriptSource) ktFile
     else {
         val file = getVirtualFile(definition)
@@ -244,7 +281,6 @@ fun SourceCode.toKtFileSource(definition: ScriptDefinition, project: Project): K
 fun getScriptCollectedData(
     scriptFile: KtFile,
     compilationConfiguration: ScriptCompilationConfiguration,
-    project: Project,
     contextClassLoader: ClassLoader?,
 ): ScriptCollectedData {
     val hostConfiguration =
@@ -262,16 +298,11 @@ fun getScriptCollectedData(
     val annotations = scriptFile.annotationEntries.construct(
         contextClassLoader,
         acceptedAnnotations,
-        project,
+        scriptFile.project,
         scriptFile.viewProvider.document,
         scriptFile.virtualFilePath
     )
-    return ScriptCollectedData(
-        mapOf(
-            ScriptCollectedData.collectedAnnotations to annotations,
-            ScriptCollectedData.foundAnnotations to annotations.map { it.annotation }
-        )
-    )
+    return ScriptCollectedData(mapOf(ScriptCollectedData.collectedAnnotations to annotations))
 }
 
 private fun Iterable<KtAnnotationEntry>.construct(

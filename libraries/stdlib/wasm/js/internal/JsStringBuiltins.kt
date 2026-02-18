@@ -7,7 +7,7 @@
 
 package kotlin.wasm.internal
 
-import kotlin.internal.IntrinsicConstEvaluation
+import kotlin.internal.UsedFromCompilerGeneratedCode
 
 /**
  * The following Js builtins are internal and used for the implementation of String class in Wasm target.
@@ -16,7 +16,6 @@ import kotlin.internal.IntrinsicConstEvaluation
  */
 private const val jsStringModuleName = "js-string"
 
-@IntrinsicConstEvaluation
 @JsBuiltin(
     jsStringModuleName,
     "length",
@@ -25,12 +24,12 @@ private const val jsStringModuleName = "js-string"
 internal external fun jsLength(a: JsString): Int
 
 
-@IntrinsicConstEvaluation
 @JsBuiltin(
     jsStringModuleName,
     "concat",
     "export const concat = (a, b) => a + b"
 )
+@UsedFromCompilerGeneratedCode
 internal external fun jsConcat(a: JsString, b: JsString): JsStringRef
 
 

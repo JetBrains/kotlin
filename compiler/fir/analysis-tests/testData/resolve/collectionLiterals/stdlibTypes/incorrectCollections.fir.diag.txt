@@ -1,0 +1,33 @@
+/incorrectCollections.kt:(191,192): error: Initializer type mismatch: expected 'List<Int>', actual 'List<Int?>'.
+
+/incorrectCollections.kt:(234,235): error: Initializer type mismatch: expected 'MutableList<Any>', actual 'MutableList<Nothing?>'.
+
+/incorrectCollections.kt:(266,267): error: Initializer type mismatch: expected 'Set<String>', actual 'Set<Int>'.
+
+/incorrectCollections.kt:(302,303): error: Initializer type mismatch: expected 'MutableSet<String>', actual 'MutableSet<CharSequence>'.
+
+/incorrectCollections.kt:(350,351): error: Initializer type mismatch: expected 'Sequence<Int>', actual 'Sequence<Long>'.
+
+/incorrectCollections.kt:(399,401): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(427,429): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(455,458): error: Argument type mismatch: actual type is 'Double', but 'Long' was expected.
+
+/incorrectCollections.kt:(485,498): error: Argument type mismatch: actual type is 'Int', but 'Short' was expected.
+
+/incorrectCollections.kt:(582,586): error: Argument type mismatch: actual type is 'Unit', but 'Boolean' was expected.
+
+/incorrectCollections.kt:(613,636): error: Argument type mismatch: actual type is 'java.lang.Float', but 'kotlin.Float' was expected.
+
+/incorrectCollections.kt:(621,636): warning: This class is not recommended for use in Kotlin. Use 'kotlin.Float' instead.
+
+/incorrectCollections.kt:(664,666): error: Argument type mismatch: actual type is 'Int', but 'Double' was expected.
+
+/incorrectCollections.kt:(699,701): error: Argument type mismatch: actual type is 'Int', but 'UInt' was expected.
+
+/incorrectCollections.kt:(728,731): error: Argument type mismatch: actual type is 'Long', but 'ULong' was expected.
+
+/incorrectCollections.kt:(759,771): error: Argument type mismatch: actual type is 'Short', but 'UShort' was expected.
+
+/incorrectCollections.kt:(798,800): error: Argument type mismatch: actual type is '() -> Unit', but 'UByte' was expected.

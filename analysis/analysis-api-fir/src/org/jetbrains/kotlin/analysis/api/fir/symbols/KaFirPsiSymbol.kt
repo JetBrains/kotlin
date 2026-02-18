@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
+import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
@@ -38,9 +41,11 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 /**
@@ -163,6 +168,63 @@ internal fun KaFirSession.hasDeclarationStatusCompilerPlugin(declaration: KtDecl
     val declarationSiteModule = getModule(declaration)
     val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
     return declarationSiteSession.extensionService.statusTransformerExtensions.isNotEmpty()
+}
+
+/**
+ * Executes [action] if the declaration has no compiler plugin that may transform its status.
+ *
+ * @see hasDeclarationStatusCompilerPlugin
+ */
+@OptIn(ExperimentalContracts::class)
+context(symbol: KaFirSymbol<*>)
+internal inline fun <T> KtDeclaration.ifNoStatusCompilerPluginPresent(action: () -> T): T? {
+    contract { callsInPlace(action, InvocationKind.AT_MOST_ONCE) }
+
+    return if (symbol.analysisSession.hasDeclarationStatusCompilerPlugin(this)) {
+        null
+    } else {
+        action()
+    }
+}
+
+/**
+ * Determines the visibility of a callable declaration based on its PSI structure if possible.
+ *
+ * @param isOverride whether [this] declaration overrides something
+ */
+context(symbol: KaFirSymbol<*>)
+internal fun KtCallableDeclaration.psiBasedVisibility(isOverride: () -> Boolean): Visibility? = when (this) {
+    is KtNamedFunction if isLocal -> Visibilities.Local
+    is KtProperty if isLocal -> Visibilities.Local
+    else -> visibilityByModifiers
+} ?: ifNoStatusCompilerPluginPresent {
+    Visibilities.Public.takeUnless { isOverride() }
+}
+
+/**
+ * Determines the default modality of a callable declaration based on its PSI structure if possible.
+ *
+ * @param isOverride whether [this] declaration overrides something
+ */
+context(symbol: KaFirSymbol<*>)
+internal fun KtCallableDeclaration.psiBasedDefaultKaModality(
+    isOverride: () -> Boolean,
+): KaSymbolModality? = ifNoStatusCompilerPluginPresent {
+    val containingClassOrObject = containingClassOrObject
+    when {
+        containingClassOrObject == null -> KaSymbolModality.FINAL
+        containingClassOrObject is KtClass && containingClassOrObject.isInterface() -> {
+            when {
+                hasModifier(KtTokens.PRIVATE_KEYWORD) -> KaSymbolModality.FINAL
+                this is KtNamedFunction && !hasBody() -> KaSymbolModality.ABSTRACT
+                this is KtProperty && !hasBody() -> KaSymbolModality.ABSTRACT
+                else -> KaSymbolModality.OPEN
+            }
+        }
+
+        isOverride() -> KaSymbolModality.OPEN
+        else -> KaSymbolModality.FINAL
+    }
 }
 
 internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperTypes(): List<KaType> {

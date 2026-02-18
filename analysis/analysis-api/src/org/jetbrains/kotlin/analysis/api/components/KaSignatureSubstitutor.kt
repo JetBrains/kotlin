@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -71,9 +71,9 @@ public interface KaSignatureSubstitutor : KaSessionComponent {
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCallableSignature<S> {
-    return with(s) {
+    return with(session) {
         substitute(
             substitutor = substitutor,
         )
@@ -88,9 +88,9 @@ public fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCa
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun <S : KaFunctionSymbol> S.substitute(substitutor: KaSubstitutor): KaFunctionSignature<S> {
-    return with(s) {
+    return with(session) {
         substitute(
             substitutor = substitutor,
         )
@@ -105,9 +105,9 @@ public fun <S : KaFunctionSymbol> S.substitute(substitutor: KaSubstitutor): KaFu
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableSignature<S> {
-    return with(s) {
+    return with(session) {
         substitute(
             substitutor = substitutor,
         )
@@ -120,9 +120,9 @@ public fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVa
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun <S : KaCallableSymbol> S.asSignature(): KaCallableSignature<S> {
-    return with(s) {
+    return with(session) {
         asSignature()
     }
 }
@@ -133,9 +133,9 @@ public fun <S : KaCallableSymbol> S.asSignature(): KaCallableSignature<S> {
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun <S : KaFunctionSymbol> S.asSignature(): KaFunctionSignature<S> {
-    return with(s) {
+    return with(session) {
         asSignature()
     }
 }
@@ -146,9 +146,9 @@ public fun <S : KaFunctionSymbol> S.asSignature(): KaFunctionSignature<S> {
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun <S : KaVariableSymbol> S.asSignature(): KaVariableSignature<S> {
-    return with(s) {
+    return with(session) {
         asSignature()
     }
 }

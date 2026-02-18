@@ -68,3 +68,8 @@ public interface I3 {
     public abstract method setProperty(@org.jetbrains.annotations.NotNull p0: java.lang.Number): void
     public synthetic bridge method setProperty(p0: java.lang.Object): void
 }
+
+@kotlin.Metadata
+public interface I4 {
+    // source: 'interfaceBridges.kt'
+}

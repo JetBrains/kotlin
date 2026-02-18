@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 
 @Deprecated(
-    "Preserved for binary compatibility with existing versions of the kotlinx-benchmarks Gradle plugin. See KT-82882.",
-    level = DeprecationLevel.HIDDEN
+    "Preserved for binary compatibility with existing versions of the kotlinx-benchmarks Gradle plugin. See KT-82882." +
+            "\nPlease use KlibLoader.load() instead.",
+    replaceWith = ReplaceWith("KlibLoader.load()", imports = ["org.jetbrains.kotlin.library.loader.KlibLoader"]),
+    level = DeprecationLevel.ERROR
 )
 fun createKotlinLibraryComponents(
     libraryFile: File,

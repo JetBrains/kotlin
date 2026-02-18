@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
-import org.junit.Test
+import kotlin.test.Test
 
 class PreciseCompilationOutputsBackupTest {
     @Test
@@ -34,11 +34,10 @@ class PreciseCompilationOutputsBackupTest {
     }
 
     private fun testPropertyUsage(propertyKey: String, propertyValue: String) {
-        buildProjectWithJvm(preApplyCode = {
+        val project = buildProjectWithJvm(preApplyCode = {
             extraProperties.set(propertyKey, propertyValue)
-        }) {
-            assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties)
-        }
+        }).evaluate()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties)
     }
 
     @Test

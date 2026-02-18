@@ -1,0 +1,6 @@
+KtSuperTypeCallEntry(93,106): 'Foo<String>()'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(x: T): Foo<T>
+    ]
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'.>

@@ -2546,6 +2546,7 @@ public final class kotlin/collections/MapsKt {
 	public static final fun any (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun asSequence (Ljava/util/Map;)Lkotlin/sequences/Sequence;
 	public static final fun build (Ljava/util/Map;)Ljava/util/Map;
+	public static final fun copy (Ljava/util/Map$Entry;)Ljava/util/Map$Entry;
 	public static final fun count (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)I
 	public static final fun createMapBuilder ()Ljava/util/Map;
 	public static final fun createMapBuilder (I)Ljava/util/Map;
@@ -2561,9 +2562,11 @@ public final class kotlin/collections/MapsKt {
 	public static final fun flatMapSequenceTo (Ljava/util/Map;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun flatMapTo (Ljava/util/Map;Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Collection;
 	public static final fun forEach (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)V
+	public static final fun getOrDefaultImpl (Ljava/util/Map;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun getOrImplicitDefaultNullable (Ljava/util/Map;Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun getOrPut (Ljava/util/Map;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public static final fun getOrPut (Ljava/util/concurrent/ConcurrentMap;Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+	public static final fun getOrPutIfNullImpl (Ljava/util/concurrent/ConcurrentMap;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun getValue (Ljava/util/Map;Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun hashMapOf ([Lkotlin/Pair;)Ljava/util/HashMap;
 	public static final fun linkedMapOf ([Lkotlin/Pair;)Ljava/util/LinkedHashMap;
@@ -3018,6 +3021,7 @@ public abstract interface class kotlin/contracts/ContractBuilder {
 	public abstract fun returns ()Lkotlin/contracts/Returns;
 	public abstract fun returns (Ljava/lang/Object;)Lkotlin/contracts/Returns;
 	public abstract fun returnsNotNull ()Lkotlin/contracts/ReturnsNotNull;
+	public abstract fun returnsResultOf (Lkotlin/Function;)V
 }
 
 public final class kotlin/contracts/ContractBuilder$DefaultImpls {
@@ -3274,6 +3278,10 @@ public abstract interface annotation class kotlin/experimental/ExperimentalObjCR
 }
 
 public abstract interface annotation class kotlin/experimental/ExperimentalTypeInference : java/lang/annotation/Annotation {
+}
+
+public final class kotlin/internal/ConstantsKt {
+	public static final field MISSING_VALUE Ljava/lang/Object;
 }
 
 public final class kotlin/internal/PlatformImplementationsKt {
@@ -3553,6 +3561,9 @@ public abstract interface annotation class kotlin/js/ExperimentalJsExport : java
 }
 
 public abstract interface annotation class kotlin/js/ExperimentalJsFileName : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class kotlin/js/ExperimentalJsNoRuntime : java/lang/annotation/Annotation {
 }
 
 public abstract interface annotation class kotlin/js/ExperimentalJsReflectionCreateInstance : java/lang/annotation/Annotation {
@@ -5175,6 +5186,7 @@ public abstract interface class kotlin/reflect/KMutableProperty$Setter : kotlin/
 }
 
 public abstract interface class kotlin/reflect/KMutableProperty0 : kotlin/reflect/KMutableProperty, kotlin/reflect/KProperty0 {
+	public synthetic fun getSetter ()Lkotlin/reflect/KMutableProperty$Setter;
 	public abstract fun getSetter ()Lkotlin/reflect/KMutableProperty0$Setter;
 	public abstract fun set (Ljava/lang/Object;)V
 }
@@ -5183,6 +5195,7 @@ public abstract interface class kotlin/reflect/KMutableProperty0$Setter : kotlin
 }
 
 public abstract interface class kotlin/reflect/KMutableProperty1 : kotlin/reflect/KMutableProperty, kotlin/reflect/KProperty1 {
+	public synthetic fun getSetter ()Lkotlin/reflect/KMutableProperty$Setter;
 	public abstract fun getSetter ()Lkotlin/reflect/KMutableProperty1$Setter;
 	public abstract fun set (Ljava/lang/Object;Ljava/lang/Object;)V
 }
@@ -5191,6 +5204,7 @@ public abstract interface class kotlin/reflect/KMutableProperty1$Setter : kotlin
 }
 
 public abstract interface class kotlin/reflect/KMutableProperty2 : kotlin/reflect/KMutableProperty, kotlin/reflect/KProperty2 {
+	public synthetic fun getSetter ()Lkotlin/reflect/KMutableProperty$Setter;
 	public abstract fun getSetter ()Lkotlin/reflect/KMutableProperty2$Setter;
 	public abstract fun set (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
 }
@@ -5233,6 +5247,7 @@ public abstract interface class kotlin/reflect/KProperty$Getter : kotlin/reflect
 public abstract interface class kotlin/reflect/KProperty0 : kotlin/jvm/functions/Function0, kotlin/reflect/KProperty {
 	public abstract fun get ()Ljava/lang/Object;
 	public abstract fun getDelegate ()Ljava/lang/Object;
+	public synthetic fun getGetter ()Lkotlin/reflect/KProperty$Getter;
 	public abstract fun getGetter ()Lkotlin/reflect/KProperty0$Getter;
 }
 
@@ -5242,6 +5257,7 @@ public abstract interface class kotlin/reflect/KProperty0$Getter : kotlin/jvm/fu
 public abstract interface class kotlin/reflect/KProperty1 : kotlin/jvm/functions/Function1, kotlin/reflect/KProperty {
 	public abstract fun get (Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun getDelegate (Ljava/lang/Object;)Ljava/lang/Object;
+	public synthetic fun getGetter ()Lkotlin/reflect/KProperty$Getter;
 	public abstract fun getGetter ()Lkotlin/reflect/KProperty1$Getter;
 }
 
@@ -5251,6 +5267,7 @@ public abstract interface class kotlin/reflect/KProperty1$Getter : kotlin/jvm/fu
 public abstract interface class kotlin/reflect/KProperty2 : kotlin/jvm/functions/Function2, kotlin/reflect/KProperty {
 	public abstract fun get (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun getDelegate (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public synthetic fun getGetter ()Lkotlin/reflect/KProperty$Getter;
 	public abstract fun getGetter ()Lkotlin/reflect/KProperty2$Getter;
 }
 
@@ -6280,12 +6297,15 @@ public final class kotlin/time/ClocksKt {
 }
 
 public abstract interface class kotlin/time/ComparableTimeMark : java/lang/Comparable, kotlin/time/TimeMark {
+	public synthetic fun compareTo (Ljava/lang/Object;)I
 	public abstract fun compareTo (Lkotlin/time/ComparableTimeMark;)I
 	public abstract fun equals (Ljava/lang/Object;)Z
 	public abstract fun hashCode ()I
 	public abstract fun minus-LRDsOJo (J)Lkotlin/time/ComparableTimeMark;
+	public synthetic fun minus-LRDsOJo (J)Lkotlin/time/TimeMark;
 	public abstract fun minus-UwyO8pc (Lkotlin/time/ComparableTimeMark;)J
 	public abstract fun plus-LRDsOJo (J)Lkotlin/time/ComparableTimeMark;
+	public synthetic fun plus-LRDsOJo (J)Lkotlin/time/TimeMark;
 }
 
 public final class kotlin/time/ComparableTimeMark$DefaultImpls {
@@ -6489,6 +6509,7 @@ public final class kotlin/time/TimeSource$Monotonic$ValueTimeMark : kotlin/time/
 
 public abstract interface class kotlin/time/TimeSource$WithComparableMarks : kotlin/time/TimeSource {
 	public abstract fun markNow ()Lkotlin/time/ComparableTimeMark;
+	public synthetic fun markNow ()Lkotlin/time/TimeMark;
 }
 
 public final class kotlin/time/TimedValue {

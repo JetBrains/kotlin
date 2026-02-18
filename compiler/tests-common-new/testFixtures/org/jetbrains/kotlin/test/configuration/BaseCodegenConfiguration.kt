@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKE
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -84,9 +86,9 @@ fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDebugTest(t
 
     useConfigurators(
         ::CommonEnvironmentConfigurator,
+        ::JvmForeignAnnotationsConfigurator,
         ::JvmEnvironmentConfigurator,
         ::ScriptingEnvironmentConfigurator,
-        ::JvmForeignAnnotationsConfigurator,
     )
 
     useAdditionalSourceProviders(
@@ -227,9 +229,10 @@ fun TestConfigurationBuilder.baseFirBlackBoxCodegenTestDirectivesConfiguration()
         }
     }
 
-    forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
+    forTestsMatching("compiler/testData/codegen/box/evaluate/*") {
         defaultDirectives {
-            LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
+            +FIR_DUMP
+            +RENDER_FIR_DECLARATION_ATTRIBUTES
         }
     }
 }
@@ -249,6 +252,7 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
 
     defaultDirectives {
         +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+        +WITH_STDLIB
     }
 
     forTestsNotMatching(
@@ -273,15 +277,6 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
         defaultDirectives {
             +ENABLE_FOREIGN_ANNOTATIONS
             ForeignAnnotationsDirectives.ANNOTATIONS_PATH with JavaForeignAnnotationType.Annotations
-        }
-    }
-
-    forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
-        configureFirHandlersStep {
-            useHandlers(::FirInterpreterDumpHandler)
-        }
-        configureJvmArtifactsHandlersStep {
-            useHandlers(::JvmIrInterpreterDumpHandler)
         }
     }
 }

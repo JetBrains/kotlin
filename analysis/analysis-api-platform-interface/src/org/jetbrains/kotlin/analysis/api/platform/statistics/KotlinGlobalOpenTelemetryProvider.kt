@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.analysis.api.platform.statistics
 
 import io.opentelemetry.api.GlobalOpenTelemetry
 import io.opentelemetry.api.OpenTelemetry
+import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 
 /**
  * Provides the global [OpenTelemetry] instance as the platform's instance. This approach requires the platform to initialize the
  * OpenTelemetry SDK as a global instance.
  */
+@KaPlatformInterface
 public class KotlinGlobalOpenTelemetryProvider : KotlinOpenTelemetryProvider {
     override val openTelemetry: OpenTelemetry
         get() = GlobalOpenTelemetry.get()

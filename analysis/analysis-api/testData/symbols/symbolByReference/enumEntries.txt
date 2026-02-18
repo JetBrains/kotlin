@@ -14,6 +14,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
@@ -73,9 +74,7 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: MyKotlinEnum
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getEntries
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: MyKotlinEnum.entries

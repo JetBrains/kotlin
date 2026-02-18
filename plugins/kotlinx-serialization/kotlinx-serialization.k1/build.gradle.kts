@@ -8,8 +8,9 @@ dependencies {
     compileOnly(project(":core:compiler.common.jvm"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":js:js.frontend"))
-    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":compiler:config.jvm"))
+    compileOnly(project(":native:native.config"))
     compileOnly(project(":compiler:ir.backend.common")) // needed for CompilationException
     compileOnly(project(":core:deserialization.common.jvm")) // needed for CompilationException
 

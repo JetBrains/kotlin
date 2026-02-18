@@ -16,6 +16,7 @@ KtCallExpression(78,104): 'print(javaClass.something)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 

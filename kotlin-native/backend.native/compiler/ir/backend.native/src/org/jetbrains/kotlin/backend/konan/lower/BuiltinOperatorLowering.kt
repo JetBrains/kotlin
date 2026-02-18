@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -61,14 +60,6 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
 
             else -> expression
         }
-    }
-
-    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
-        expression.transformChildrenVoid(this)
-        if (expression.argument.type.isNothing()) {
-            return expression.argument
-        }
-        return expression
     }
 
     private val ieee754EqualsSymbols: Set<IrSimpleFunctionSymbol> =

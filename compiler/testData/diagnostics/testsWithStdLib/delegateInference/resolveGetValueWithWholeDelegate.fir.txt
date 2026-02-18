@@ -30,6 +30,10 @@ FILE: resolveGetValueWithWholeDelegate.kt
             ^ R|/State.State|<R|kotlin/collections/List<kotlin/Int>|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1)))
         }
         )
+            local get(): R|kotlin/collections/List<kotlin/Int>| {
+                ^ D|<local>/list1|.R|/getValue|<R|kotlin/collections/List<kotlin/Int>|>(Null(null), ::R|<local>/list1|)
+            }
+
         R|/expectInt|(R|/list0|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/Int|>|(Int(0)))
         R|/expectInt|(R|<local>/list1|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/Int|>|(Int(0)))
     }

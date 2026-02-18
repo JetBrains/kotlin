@@ -98,14 +98,14 @@ class KlibLayoutReaderFactory(
     private val zipFileSystemAccessor: ZipFileSystemAccessor,
 ) {
     fun <KCL : KlibComponentLayout> createLayoutReader(layoutBuilder: (KlibFile) -> KCL): KlibLayoutReader<KCL> {
-        return if (klibFile.isFile) {
-            KlibLayoutReader.FromZipArchive(
+        return when (KlibFormat.guessBy(klibFile)) {
+            KlibFormat.ZipArchive -> KlibLayoutReader.FromZipArchive(
                 klibArchive = klibFile,
                 zipFileSystemAccessor = zipFileSystemAccessor,
                 layoutBuilder = layoutBuilder
             )
-        } else {
-            KlibLayoutReader.FromDirectory(
+
+            KlibFormat.Directory -> KlibLayoutReader.FromDirectory(
                 klibDir = klibFile,
                 layoutBuilder = layoutBuilder
             )

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 internal class KaFe10PsiPropertySetterSymbol(
     override val psi: KtPropertyAccessor,
@@ -66,6 +67,11 @@ internal class KaFe10PsiPropertySetterSymbol(
 
     override val isOverride: Boolean
         get() = withValidityAssertion { psi.property.hasModifier(KtTokens.OVERRIDE_KEYWORD) }
+
+    override val isExternal: Boolean
+        get() = withValidityAssertion {
+            psi.hasModifier(KtTokens.EXTERNAL_KEYWORD) || descriptor?.isEffectivelyExternal() == true
+        }
 
     @Deprecated("Use `isCustom` instead", replaceWith = ReplaceWith("isCustom"))
     override val hasBody: Boolean

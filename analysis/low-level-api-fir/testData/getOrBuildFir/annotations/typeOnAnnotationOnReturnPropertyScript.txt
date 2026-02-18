@@ -3,7 +3,7 @@ FIR element: FirAnnotationCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|Anno|[Types](s = String(ab))
+@R|Anno|[Types](s = String(ab) [evaluated = String(ab)])
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReturnPropertyScript.kts
@@ -11,8 +11,8 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReturnPropertyScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] val i: R|@R|Anno|(s = String(ab))  kotlin/Int| = LAZY_EXPRESSION
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(s = String(ab))  kotlin/Int|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] val i: R|@R|Anno|(s = String(ab) [evaluated = String(ab)])  kotlin/Int| = LAZY_EXPRESSION
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(s = String(ab) [evaluated = String(ab)])  kotlin/Int|
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeOnAnnotationOnReturnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {

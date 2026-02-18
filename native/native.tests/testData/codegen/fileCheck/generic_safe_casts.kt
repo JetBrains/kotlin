@@ -4,6 +4,7 @@
 
 value class Foo(val value: Int)
 // CHECK-LABEL: define ptr @"kfun:Foo#$<bridge-NU>toString(){}kotlin.String(){}kotlin.String
+// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-LABEL: call ptr @"kfun:Foo#toString(){}kotlin.String
@@ -11,8 +12,9 @@ value class Foo(val value: Int)
 
 // CHECK-LABEL: define i32 @"kfun:#foo(kotlin.Any){}kotlin.Int
 fun foo(x: Any) = x as Int
-// CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-DEBUG: call ptr @"kfun:kotlin.native.internal#downcast
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
+// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:kotlin#<Int-unbox>(kotlin.Any){}kotlin.Int
@@ -26,6 +28,7 @@ open class B : A(42)
 fun bar() = B()
 
 // CHECK-LABEL: define ptr @"kfun:#baz(){}A
+// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-LABEL: epilogue:

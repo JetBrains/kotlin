@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// FILE: lib.kt
+import kotlin.coroutines.*
 
 /**
  * _Example_
@@ -20,5 +22,6 @@ inline fun <T> Iterator<T>.stopAfter(crossinline predicate: (T) -> Boolean): Ite
   }
 }
 
+// FILE: main.kt
 fun box() =
   listOf("OK", "fail").iterator().stopAfter { it == "OK" }.next()

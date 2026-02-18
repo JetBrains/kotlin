@@ -83,7 +83,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
                 targetSymbol == null || overriddenSymbol == null -> return
                 (targetSymbol as? FirConstructorSymbol)?.isPrimary == true -> return
                 !overriddenSymbol.isPresentInGeneratedCode(context.session) && overriddenSymbol.isFinal -> return
-                else -> FirJsStableName.createStableNameOrNull(overriddenSymbol, context.session) ?: return
+                else -> FirJsStableName.createStableNameOrNull(overriddenSymbol) ?: return
             }
 
             if (stableName.isPresentInGeneratedCode) {
@@ -95,7 +95,6 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
                 }
                 val inheritedExternalName = stableName.copy(
                     symbol = targetSymbol,
-                    canBeMangled = false,
                     isPresentInGeneratedCode = isPresentInGeneratedCode
                 )
                 add(inheritedExternalName)
@@ -136,7 +135,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
         fun processStableJavaScriptNamesForMembers(declaration: FirClass) {
             declaration.symbol.processAllClassifiers(context.session) { classMemberSymbol ->
                 if (classMemberSymbol is FirClassLikeSymbol) {
-                    jsStableNames.addIfNotNull(FirJsStableName.createStableNameOrNull(classMemberSymbol, context.session))
+                    jsStableNames.addIfNotNull(FirJsStableName.createStableNameOrNull(classMemberSymbol))
                 }
             }
 

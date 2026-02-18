@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.jvm.compiler
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -54,7 +55,7 @@ class CoreJrtFsTest {
      */
     @Test
     fun testClassVersionsInJavaLangOfJdk11() {
-        val configuration = CompilerConfiguration()
+        val configuration = CompilerConfiguration.create()
         val jdkHome = JvmEnvironmentConfigurator.getJdkHome(TestJdkKind.FULL_JDK_11)
         requireNotNull(jdkHome)
         configuration.put(JVMConfigurationKeys.JDK_HOME, jdkHome)

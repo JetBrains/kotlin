@@ -81,7 +81,7 @@ fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
     }
 
 @RunWith(JUnit4::class)
-abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest(useFir = false) {
+abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest(useFir = true) {
     @JvmField
     @Rule
     val sourceDirectory = TemporaryFolder()
@@ -100,7 +100,6 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest(useFi
                 .joinToString(File.pathSeparator) { it.absolutePath },
             "-Xplugin=${Classpath.jarFor<ComposePluginRegistrar>().absolutePath}",
             "-Xuse-ir",
-            "-language-version=1.9"
         )
 
         val jvmOnlyArgs = arrayOf("-no-stdlib")

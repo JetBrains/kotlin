@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -26,13 +26,13 @@ internal class PropertyReferencesConstructorsSet(
     )
 }
 
-internal val KonanSymbols.immutablePropertiesConstructors
+internal val BackendNativeSymbols.immutablePropertiesConstructors
     get() = PropertyReferencesConstructorsSet(
             kLocalDelegatedPropertyImpl,
             listOf(kProperty0Impl, kProperty1Impl, kProperty2Impl)
     )
 
-internal val KonanSymbols.mutablePropertiesConstructors
+internal val BackendNativeSymbols.mutablePropertiesConstructors
     get() = PropertyReferencesConstructorsSet(
             kLocalDelegatedMutablePropertyImpl,
             listOf(kMutableProperty0Impl, kMutableProperty1Impl, kMutableProperty2Impl)

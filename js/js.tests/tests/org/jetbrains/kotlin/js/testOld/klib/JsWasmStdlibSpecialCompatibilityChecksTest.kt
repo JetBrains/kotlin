@@ -6,9 +6,22 @@
 package org.jetbrains.kotlin.js.testOld.klib
 
 @Suppress("JUnitTestCaseWithNoTests")
-class JsWasmStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
+class JsStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
+    override val isWasm: Boolean = false
+
     override val originalLibraryPath: String
         get() = patchedJsStdlibWithoutJarManifest
+
+    override val libraryDisplayName: String
+        get() = "standard"
+}
+
+@Suppress("JUnitTestCaseWithNoTests")
+class WasmStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
+    override val isWasm: Boolean = true
+
+    override val originalLibraryPath: String
+        get() = patchedWasmStdlibWithoutJarManifest
 
     override val libraryDisplayName: String
         get() = "standard"

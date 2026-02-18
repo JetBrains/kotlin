@@ -1,0 +1,139 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.konan.test.klib
+
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK_STAGE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.withPlatformLibs
+import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
+import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
+import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
+import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
+
+/**
+ * An implementation of [CustomKlibCompilerSecondStageFacade] for Native.
+ * Suits any version backend version: either current, or old released. It's specified by `nativeCompilerSettings` param.
+ */
+class NativeCompilerSecondStageFacade(
+    testServices: TestServices,
+    private val customNativeCompilerSettings: CustomNativeCompilerSettings,
+) : CustomKlibCompilerSecondStageFacade<BinaryArtifacts.Native>(testServices) {
+
+    val testRunSettings = testServices.testRunSettings
+    val cacheMode = testRunSettings.get<CacheMode>()
+    val optimizationMode = testRunSettings.get<OptimizationMode>()
+    val optimizationArgument = if (optimizationMode == OptimizationMode.OPT)
+        K2NativeCompilerArguments::optimization
+    else
+        K2NativeCompilerArguments::debug
+    val nativeHome = customNativeCompilerSettings.nativeHome
+    val kotlinNativeTargets = testRunSettings.get<KotlinNativeTargets>()
+    val withPlatformLibs = testRunSettings.withPlatformLibs
+
+    override val outputKind get() = ArtifactKinds.Native
+    override fun isMainModule(module: TestModule) = NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)
+    override fun collectDependencies(module: TestModule) = module.collectDependencies(testServices)
+
+    fun getNativeArtifactsOutputDir(testServices: TestServices, moduleName: String): File {
+        return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(moduleName)
+    }
+
+    override fun compileBinary(
+        module: TestModule,
+        customArgs: List<String>,
+        mainLibrary: String,
+        regularDependencies: Set<String>,
+        friendDependencies: Set<String>,
+    ): BinaryArtifacts.Native {
+        val executableFile = getNativeArtifactsOutputDir(testServices, File(mainLibrary).name).resolve(module.name + ".kexe")
+        val fileCheckStage = module.fileCheckStage()
+
+        val compilerXmlOutput = ByteArrayOutputStream()
+
+        val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
+            val regularAndFriendDependencies = regularDependencies + friendDependencies
+            customNativeCompilerSettings.compiler.callCompiler(
+                output = printStream,
+                listOfNotNull(
+                    K2NativeCompilerArguments::kotlinHome.cliArgument, nativeHome.absolutePath,
+                    optimizationArgument.cliArgument,
+                    K2NativeCompilerArguments::binaryOptions.cliArgument("runtimeAssertionsMode=panic"),
+                    K2NativeCompilerArguments::verifyIr.cliArgument("error"),
+                    K2NativeCompilerArguments::llvmVariant.cliArgument("dev"),
+                    K2NativeCompilerArguments::produce.cliArgument, "program",
+                    K2NativeCompilerArguments::outputName.cliArgument, executableFile.path,
+                    K2NativeCompilerArguments::generateTestRunner.cliArgument,
+                    K2NativeCompilerArguments::includes.cliArgument(mainLibrary),
+                    K2NativeCompilerArguments::autoCacheableFrom.cliArgument(nativeHome.resolve("klib").absolutePath)
+                        .takeIf { cacheMode.useStaticCacheForDistributionLibraries },
+                    K2NativeCompilerArguments::enableAssertions.cliArgument.takeIf {
+                        AssertionsMode.ALWAYS_DISABLE !in module.directives[ASSERTIONS_MODE]
+                    },
+                    K2NativeCompilerArguments::target.cliArgument, kotlinNativeTargets.testTarget.name,
+                    K2NativeCompilerArguments::nodefaultlibs.cliArgument.takeIf {
+                        !withPlatformLibs && !module.directives.contains(WITH_PLATFORM_LIBS)
+                    },
+                ),
+                regularAndFriendDependencies.flatMap {
+                    listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
+                },
+                friendDependencies.flatMap {
+                    listOf(K2NativeCompilerArguments::friendModules.cliArgument, it)
+                },
+                module.directives[LanguageSettingsDirectives.LANGUAGE].map {
+                    CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it"
+                },
+                module.directives[FREE_COMPILER_ARGS],
+                customArgs,
+                fileCheckStage?.let { listOf(
+                        K2NativeCompilerArguments::saveLlvmIrAfter.cliArgument(it),
+                        K2NativeCompilerArguments::saveLlvmIrDirectory.cliArgument(executableFile.fileCheckDump(fileCheckStage).parent),
+                    )},
+            )
+        }
+
+        if (exitCode == ExitCode.OK) {
+            // Successfully compiled. Return the artifact.
+
+            return BinaryArtifacts.Native(executableFile)
+        } else {
+            // Throw an exception to abort further test execution.
+            throw CustomKlibCompilerException(exitCode, compilerXmlOutput.toString(Charsets.UTF_8.name()))
+        }
+    }
+}
+
+internal fun TestModule.fileCheckStage(): String? {
+    if (!directives.contains(FILECHECK_STAGE))
+        return null
+    return directives[FILECHECK_STAGE].singleOrNull()
+        ?: error("Exactly one argument for FILECHECK directive is needed: LLVM stage name to dump bitcode after, in files: $files")
+}
+
+/**
+ * Constructs file check dump path for the given executable file and stage
+ */
+internal fun File.fileCheckDump(fileCheckStage: String): File = this.resolveSibling("out.$fileCheckStage.ll")

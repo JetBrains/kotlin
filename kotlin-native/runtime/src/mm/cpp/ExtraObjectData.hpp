@@ -81,6 +81,7 @@ public:
     // info must be equal to objHeader->type_info(), but it needs to be loaded in advance to avoid data races
     explicit ExtraObjectData(ObjHeader* objHeader, const TypeInfo* info) noexcept :
         typeInfo_(nullptr), weakReferenceOrBaseObject_(objHeader) {
+        static_assert(offsetof(ExtraObjectData, typeInfo_) == offsetof(TypeInfo, typeInfo_), "typeInfo_ must be at the same offset as in TypeInfo");
         std_support::atomic_ref{typeInfo_}.store(info, std::memory_order_release);
     }
     ~ExtraObjectData();

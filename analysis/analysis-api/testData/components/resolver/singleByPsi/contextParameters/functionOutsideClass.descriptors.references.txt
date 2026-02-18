@@ -8,5 +8,6 @@ KtNameReferenceExpression(205,214): 'funMember'
   SyntheticPropertyAccessorReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)

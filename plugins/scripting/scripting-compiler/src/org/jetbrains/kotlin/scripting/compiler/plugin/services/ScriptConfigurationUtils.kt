@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.valueOrNull
 
+@Deprecated("Use ScriptingHost based provider and cache, see `scriptCompilationConfigurationProvider` and `scriptRefinedCompilationConfigurationsCache`")
 fun FirSession.getScriptCompilationConfiguration(
     sourceCode: SourceCode?,
-    getDefault: FirScriptDefinitionProviderService.() -> ScriptCompilationConfiguration? = { definitionProvider?.getDefaultDefinition()?.compilationConfiguration }
-) =
-    scriptDefinitionProviderService?.let { providerService ->
-        sourceCode?.let { script ->
-            val ktFile = (script as? KtFileScriptSource)?.ktFile ?: error("only PSI scripts are supported at the moment")
-            providerService.configurationProvider?.getScriptConfigurationResult(ktFile)?.valueOrNull()?.configuration
-                ?: providerService.getDefault()
-        } ?: providerService.getDefault()
-    }
+    getDefault: FirScriptDefinitionProviderService.() -> ScriptCompilationConfiguration? = { getDefaultConfiguration().valueOrNull() }
+): ScriptCompilationConfiguration? {
+    return scriptDefinitionProviderService?.let { providerService ->
+            sourceCode?.let { script ->
+                providerService.getRefinedConfiguration(script)?.valueOrNull()
+                    ?: providerService.getBaseConfiguration(script)?.valueOrNull()
+                    ?: providerService.getDefaultConfiguration().valueOrNull()
+            } ?: providerService.getDefault()
+        }
+}

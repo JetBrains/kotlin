@@ -13,19 +13,19 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.IncompatibleU
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.serializeToZipArchive
 import org.jetbrains.kotlin.gradle.util.assertIsInstance
 import org.jetbrains.kotlin.incremental.createDirectory
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
 import kotlin.test.Test
+import java.io.File
 import kotlin.test.assertEquals
 
 class UklibSerializationTests {
 
-    @get:Rule
-    val temporaryFolder = TemporaryFolder()
+    @field:TempDir
+    lateinit var temporaryFolder: File
 
     @Test
     fun `missing file`() {
-        val temp = temporaryFolder.newFolder("temp")
+        val temp = temporaryFolder.resolve("temp").also { it.mkdirs() }
         val missing = temp.resolve("doesnt_exist")
 
         assertEquals(
@@ -54,7 +54,7 @@ class UklibSerializationTests {
 
     @Test
     fun `invalid file`() {
-        val temp = temporaryFolder.newFolder("temp")
+        val temp = temporaryFolder.resolve("temp").also { it.mkdirs() }
         val invalid = temp.resolve("foo.invalid")
         invalid.createNewFile()
 
@@ -85,7 +85,7 @@ class UklibSerializationTests {
     // Just check that we can don't fail to pack a directory
     @Test
     fun `pack directory`() {
-        val temp = temporaryFolder.newFolder("temp")
+        val temp = temporaryFolder.resolve("temp").also { it.mkdirs() }
         val dir = temp.resolve("foo")
         dir.createDirectory()
         dir.resolve("marker").writeText("test")

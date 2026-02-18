@@ -42,8 +42,6 @@ private class ConstGetElementPtr(llvm: CodegenLlvmHelpers, pointeeType: LLVMType
     // TODO: squash multiple GEPs
 }
 
-internal fun ConstPointer.bitcast(toType: LLVMTypeRef) = constPointer(LLVMConstBitCast(this.llvm, toType)!!)
-
 internal class ConstArray(elementType: LLVMTypeRef?, val elements: List<ConstValue>) : ConstValue {
     init {
         elements.forEach {
@@ -85,10 +83,6 @@ internal class Zero(val type: LLVMTypeRef) : ConstValue {
     override val llvm = LLVMConstNull(type)!!
 }
 
-internal class NullPointer(pointeeType: LLVMTypeRef): ConstPointer {
-    override val llvm = LLVMConstNull(pointerType(pointeeType))!!
-}
-
 internal fun constValue(value: LLVMValueRef) = object : ConstValue {
     init {
         assert (LLVMIsConstant(value) == 1)
@@ -101,28 +95,14 @@ internal val RuntimeAware.kTypeInfo: LLVMTypeRef
     get() = runtime.typeInfoType
 internal val RuntimeAware.kObjHeader: LLVMTypeRef
     get() = runtime.objHeaderType
-internal val RuntimeAware.kObjHeaderPtr: LLVMTypeRef
-    get() = runtime.objHeaderPtrType
 internal val RuntimeAware.kObjHeaderPtrReturnType: LlvmRetType
-    get() = LlvmRetType(kObjHeaderPtr, isObjectType = true)
-internal val RuntimeAware.kObjHeaderPtrPtr: LLVMTypeRef
-    get() = runtime.objHeaderPtrPtrType
+    get() = LlvmRetType(runtime.pointerType, isObjectType = true)
 internal val RuntimeAware.kArrayHeader: LLVMTypeRef
     get() = runtime.arrayHeaderType
-internal val RuntimeAware.kArrayHeaderPtr: LLVMTypeRef
-    get() = pointerType(kArrayHeader)
-internal val RuntimeAware.kTypeInfoPtr: LLVMTypeRef
-    get() = pointerType(kTypeInfo)
-internal val RuntimeAware.kNullObjHeaderPtr: LLVMValueRef
-    get() = LLVMConstNull(kObjHeaderPtr)!!
-internal val RuntimeAware.kNullObjHeaderPtrPtr: LLVMValueRef
-    get() = LLVMConstNull(kObjHeaderPtrPtr)!!
 
 // Nothing type has no values, but we do generate unreachable code and thus need some fake value:
 internal val RuntimeAware.kNothingFakeValue: LLVMValueRef
-    get() = LLVMGetUndef(kObjHeaderPtr)!!
-
-internal fun pointerType(pointeeType: LLVMTypeRef) = LLVMPointerType(pointeeType, 0)!!
+    get() = LLVMGetUndef(runtime.pointerType)!!
 
 fun extractConstUnsignedInt(value: LLVMValueRef): Long {
     assert(LLVMIsConstant(value) != 0)

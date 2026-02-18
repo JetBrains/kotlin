@@ -18,6 +18,10 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/compose/compiler-hosted/testData/js")
 @TestDataPath("$PROJECT_ROOT")
 public class JsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends AbstractJsLightTreePluginBlackBoxCodegenForComposeTest {
+  private void run(String fileName) {
+    runTest("plugins/compose/compiler-hosted/testData/js/" + fileName);
+  }
+
   @Test
   public void testAllFilesPresentInJs() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/compose/compiler-hosted/testData/js"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -26,12 +30,12 @@ public class JsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends Abs
   @Test
   @TestMetadata("testOverrideLambda.kt")
   public void testTestOverrideLambda() {
-    runTest("plugins/compose/compiler-hosted/testData/js/testOverrideLambda.kt");
+    run("testOverrideLambda.kt");
   }
 
   @Test
   @TestMetadata("testValueClassJs.kt")
   public void testTestValueClassJs() {
-    runTest("plugins/compose/compiler-hosted/testData/js/testValueClassJs.kt");
+    run("testValueClassJs.kt");
   }
 }

@@ -49,6 +49,12 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         get() = _blockCheckers
     override val replDeclarationReferenceCheckers: Set<FirReplDeclarationReferenceChecker>
         get() = _replDeclarationReferenceCheckers
+    override val replPropertyInitializerCheckers: Set<FirReplPropertyInitializerChecker>
+        get() = _replPropertyInitializerCheckers
+    override val replPropertyDelegateCheckers: Set<FirReplPropertyDelegateChecker>
+        get() = _replPropertyDelegateCheckers
+    override val replExpressionReferenceCheckers: Set<FirReplExpressionReferenceChecker>
+        get() = _replExpressionReferenceCheckers
     override val annotationCheckers: Set<FirAnnotationChecker>
         get() = _annotationCheckers
     override val annotationCallCheckers: Set<FirAnnotationCallChecker>
@@ -106,6 +112,9 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
     private val _returnExpressionCheckers: MutableSet<FirReturnExpressionChecker> = mutableSetOf()
     private val _blockCheckers: MutableSet<FirBlockChecker> = mutableSetOf()
     private val _replDeclarationReferenceCheckers: MutableSet<FirReplDeclarationReferenceChecker> = mutableSetOf()
+    private val _replPropertyInitializerCheckers: MutableSet<FirReplPropertyInitializerChecker> = mutableSetOf()
+    private val _replPropertyDelegateCheckers: MutableSet<FirReplPropertyDelegateChecker> = mutableSetOf()
+    private val _replExpressionReferenceCheckers: MutableSet<FirReplExpressionReferenceChecker> = mutableSetOf()
     private val _annotationCheckers: MutableSet<FirAnnotationChecker> = mutableSetOf()
     private val _annotationCallCheckers: MutableSet<FirAnnotationCallChecker> = mutableSetOf()
     private val _checkNotNullCallCheckers: MutableSet<FirCheckNotNullCallChecker> = mutableSetOf()
@@ -145,6 +154,9 @@ class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boole
         checkers.returnExpressionCheckers.filterTo(_returnExpressionCheckers, predicate)
         checkers.blockCheckers.filterTo(_blockCheckers, predicate)
         checkers.replDeclarationReferenceCheckers.filterTo(_replDeclarationReferenceCheckers, predicate)
+        checkers.replPropertyInitializerCheckers.filterTo(_replPropertyInitializerCheckers, predicate)
+        checkers.replPropertyDelegateCheckers.filterTo(_replPropertyDelegateCheckers, predicate)
+        checkers.replExpressionReferenceCheckers.filterTo(_replExpressionReferenceCheckers, predicate)
         checkers.annotationCheckers.filterTo(_annotationCheckers, predicate)
         checkers.annotationCallCheckers.filterTo(_annotationCallCheckers, predicate)
         checkers.checkNotNullCallCheckers.filterTo(_checkNotNullCallCheckers, predicate)

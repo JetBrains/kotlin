@@ -1,4 +1,5 @@
 // TARGET_BACKEND: WASM
+// ^^ KT-83093
 // LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 
 // MODULE: export_invalid_name_function

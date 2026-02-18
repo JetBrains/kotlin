@@ -89,6 +89,42 @@ public var lateinit_foo: any KotlinRuntimeSupport._KotlinBridgeable {
         return __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.__externalRCRef())
     }
 }
+extension ExportedKotlinPackages.inline {
+    public static var bar: Swift.Int32 {
+        get {
+            return inline_bar_get()
+        }
+        set {
+            return inline_bar_set__TypesOfArguments__Swift_Int32__(newValue)
+        }
+    }
+    public static var barGet: Swift.Int32 {
+        get {
+            return inline_barGet_get()
+        }
+        set {
+            return inline_barGet_set__TypesOfArguments__Swift_Int32__(newValue)
+        }
+    }
+    public static var barSet: Swift.Int32 {
+        get {
+            return inline_barSet_get()
+        }
+        set {
+            return inline_barSet_set__TypesOfArguments__Swift_Int32__(newValue)
+        }
+    }
+    public static var foo: Swift.String {
+        get {
+            return inline_foo_get()
+        }
+    }
+    public static var fooGet: Swift.String {
+        get {
+            return inline_fooGet_get()
+        }
+    }
+}
 extension ExportedKotlinPackages.namespace.main {
     public static var bar: Swift.Int32 {
         get {

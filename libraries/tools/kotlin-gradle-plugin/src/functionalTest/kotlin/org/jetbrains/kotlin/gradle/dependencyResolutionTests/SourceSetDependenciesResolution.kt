@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.targets
 import org.jetbrains.kotlin.test.TestDataAssertions
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 
 abstract class SourceSetDependenciesResolution {
-    @get:Rule
-    val tempFolder = TemporaryFolder()
+    @field:TempDir
+    lateinit var tempFolder: File
 
     class SourceSetDependenciesDsl(
         private val project: Project
@@ -59,7 +59,7 @@ abstract class SourceSetDependenciesResolution {
         sanitize: String.() -> String = { this },
         configure: SourceSetDependenciesDsl.(Project) -> Unit
     ) {
-        val repoRoot = tempFolder.newFolder()
+        val repoRoot = tempFolder.resolve("repo").also { it.mkdirs() }
         val project = withProject ?: buildProject {
             // Disable stdlib and kotlin-dom-api for default tests, as they just pollute dependencies dumps
             enableDefaultStdlibDependency(false)

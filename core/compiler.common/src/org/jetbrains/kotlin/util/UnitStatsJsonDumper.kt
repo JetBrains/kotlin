@@ -42,6 +42,13 @@ object UnitStatsJsonDumper {
                         }
                     }
 
+                    klibElementStats?.let {
+                        appendArray(::klibElementStats, klibElementStats, indent = 1, trailingComma = true) {
+                            appendKeyValue(it::path, it.path, indent = 3)
+                            appendKeyValue(it::size, it.size, indent = 3, trailingComma = false)
+                        }
+                    }
+
                     findJavaClassStats?.let { appendSideStats(::findJavaClassStats, it, indent = 1, trailingComma = true) }
                     findKotlinClassStats?.let { appendSideStats(::findKotlinClassStats, it, indent = 1, trailingComma = true) }
 

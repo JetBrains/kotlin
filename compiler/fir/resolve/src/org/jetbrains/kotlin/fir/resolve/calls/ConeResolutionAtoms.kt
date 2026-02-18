@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaRetur
 import org.jetbrains.kotlin.fir.resolve.shouldBeResolvedInContextSensitiveMode
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.resolve.calls.model.CollectionLiteralAtomMarker
 import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
@@ -306,7 +307,7 @@ class ConeResolvedCallableReferenceAtom(
 
     val isPostponedBecauseOfAmbiguity: Boolean get() = state == State.POSTPONED_BECAUSE_OF_AMBIGUITY
 
-    val needsResolution: Boolean get() = state.needsResolution
+    override val needsResolution: Boolean get() = state.needsResolution
 
     var resultingReference: FirNamedReference? = null
         private set
@@ -372,7 +373,7 @@ class ConeCollectionLiteralAtom(
     override val expression: FirCollectionLiteral,
     override val expectedType: ConeKotlinType?,
     val containingCallCandidate: Candidate,
-) : ConePostponedResolvedAtom() {
+) : ConePostponedResolvedAtom(), CollectionLiteralAtomMarker {
     override val inputTypes: Collection<ConeKotlinType> = listOfNotNull(expectedType)
     override val outputType: ConeKotlinType?
         get() = null

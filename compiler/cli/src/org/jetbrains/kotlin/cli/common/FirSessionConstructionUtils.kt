@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.cli.common
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.createLibraryListForJvm
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.FrontendContext
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.CliOnlyLanguageVersionSettingsCheckers
@@ -46,58 +43,6 @@ val GroupedKtSources.isCommonSourceForLt: (KtSourceFile) -> Boolean
 
 val GroupedKtSources.fileBelongsToModuleForLt: (KtSourceFile, String) -> Boolean
     get() = { file, moduleName -> sourcesByModuleName[moduleName].orEmpty().contains(file) }
-
-/**
- * Creates library session and sources session for JVM platform
- * Number of created session depends on mode of MPP:
- *   - disabled
- *   - legacy (one platform and one common module)
- *   - HMPP (multiple number of modules)
- */
-@LegacyK2CliPipeline
-fun <F> FrontendContext.prepareJvmSessions(
-    files: List<F>,
-    rootModuleNameAsString: String,
-    friendPaths: List<String>,
-    librariesScope: AbstractProjectFileSearchScope,
-    isCommonSource: (F) -> Boolean,
-    isScript: (F) -> Boolean,
-    fileBelongsToModule: (F, String) -> Boolean,
-    createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
-): List<SessionWithSources<F>> {
-    val libraryList = createLibraryListForJvm(rootModuleNameAsString, configuration, friendPaths)
-    val rootModuleName = Name.special("<$rootModuleNameAsString>")
-    return prepareJvmSessions(
-        files, rootModuleName, librariesScope, libraryList,
-        isCommonSource, isScript, fileBelongsToModule, createProviderAndScopeForIncrementalCompilation
-    )
-}
-
-@LegacyK2CliPipeline
-fun <F> FrontendContext.prepareJvmSessions(
-    files: List<F>,
-    rootModuleName: Name,
-    librariesScope: AbstractProjectFileSearchScope,
-    libraryList: DependencyListForCliModule,
-    isCommonSource: (F) -> Boolean,
-    isScript: (F) -> Boolean,
-    fileBelongsToModule: (F, String) -> Boolean,
-    createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
-): List<SessionWithSources<F>> {
-    return JvmFrontendPipelinePhase.prepareJvmSessions(
-        files,
-        rootModuleName,
-        configuration,
-        projectEnvironment,
-        librariesScope,
-        libraryList,
-        isCommonSource,
-        isScript,
-        fileBelongsToModule,
-        createProviderAndScopeForIncrementalCompilation,
-    )
-}
-
 
 /**
  * Creates library session and sources session for JS platform

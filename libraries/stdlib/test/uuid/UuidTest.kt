@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -395,7 +395,6 @@ class UuidTest {
         }
     }
 
-    @Ignore // temporary ignored, see KTI-2674
     @Test
     fun testV7UuidGenerationForNonMonotonicClock() {
         var clock: NonMonotonicClock
@@ -443,10 +442,22 @@ class UuidTest {
             "Uuids should have different timestamps, but they do not: ${uuidFromPast.toHexDashString()}, ${uuidFromTheFuture.toHexDashString()}"
         )
 
-        assertTrue(
-            uuidFromPast.mostSignificantBits.and(0x03FFL) != uuidFromTheFuture.mostSignificantBits.and(0x03FFL),
-            "Uuids should have different rand_a values, but they do not: ${uuidFromPast.toHexDashString()}, ${uuidFromTheFuture.toHexDashString()}"
-        )
+        // While it is significantly low,
+        // the probability of a collision when generating rand_a part is non-zero (it should be 1 / (2^12) = 1 / 4096).
+        // Thus, the check may occasionally fail.
+        // Instead, we check that rand_a differs for a set of Uuids generated with different timestamps.
+        //
+        // assertTrue(
+        //    uuidFromPast.mostSignificantBits.and(0x03FFL) != uuidFromTheFuture.mostSignificantBits.and(0x03FFL),
+        //    "Uuids should have different rand_a values, but they do not: ${uuidFromPast.toHexDashString()}, ${uuidFromTheFuture.toHexDashString()}"
+        // )
+        val randAValues = mutableSetOf<Int>()
+        repeat(1000) {
+            clock.inc(1)
+            val uuid = Uuid.generateV7(clock)
+            randAValues += uuid.mostSignificantBits.and(0x03FFL).toInt()
+        }
+        assertTrue(randAValues.size > 1, "All rand_a values are equal: ${randAValues.first()}")
 
         // now let's check that generation won't stuck if clocks will stuck forever
         var previousUuid = Uuid.generateV7(clock)

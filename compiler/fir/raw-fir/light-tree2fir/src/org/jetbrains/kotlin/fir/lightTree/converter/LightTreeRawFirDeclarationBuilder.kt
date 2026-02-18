@@ -1817,11 +1817,7 @@ class LightTreeRawFirDeclarationBuilder(
             }
         }
         val calculatedModifiers = modifiers ?: ModifierList()
-        var componentVisibility = calculatedModifiers.getVisibility()
-        if (componentVisibility == Visibilities.Unknown) {
-            componentVisibility = Visibilities.Private
-        }
-        val status = obtainPropertyComponentStatus(componentVisibility, calculatedModifiers, propertyModifiers)
+        val status = obtainPropertyComponentStatus(Visibilities.Private, calculatedModifiers, propertyModifiers)
         val sourceElement = this?.toFirSourceElement()
         return if (this != null) {
             buildBackingField {

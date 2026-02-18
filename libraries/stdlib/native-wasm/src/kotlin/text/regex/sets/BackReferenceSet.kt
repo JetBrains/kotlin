@@ -94,4 +94,10 @@ open internal class BackReferenceSet(val referencedGroup: Int, val consCounter: 
         matchResult.setConsumed(consCounter, -1)
         return result
     }
+
+    override fun reportOwnProperties(properties: SetProperties) {
+        properties.tracksConsumption = true
+        // TODO: investigate further; can the group value change in a way the backtracking is needed?
+        properties.nonTrivialBacktracking = true
+    }
 }

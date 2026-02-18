@@ -121,13 +121,13 @@ fun checkSteppingTestResult(
 
     var currentBackends = listOf(BackendWithDirectives(TargetBackend.ANY))
     var currentFrontends = listOf(frontendKind)
+    var putExceedingActualLinesAtIndex = -1
     for (line in lineIterator) {
         if (line.isEmpty()) {
             actual.add(line)
             continue
         }
         if (line.startsWith(EXPECTATIONS_MARKER)) {
-            actual.add(line)
             val options = line.removePrefix(EXPECTATIONS_MARKER).splitToSequence(Regex("\\s+")).filter { it.isNotEmpty() }
             val backends = mutableListOf<BackendWithDirectives>()
             val frontends = mutableListOf<FrontendKind<*>>()
@@ -155,23 +155,33 @@ fun checkSteppingTestResult(
 
             currentBackends = backends.takeIf { it.isNotEmpty() } ?: listOf(BackendWithDirectives(TargetBackend.ANY))
             currentFrontends = frontends.takeIf { it.isNotEmpty() } ?: listOf(frontendKind)
-            continue
         }
 
-        val containsBackend =
+        val isUnderTargetBackend =
             currentBackends.any {
                 it.backend == TargetBackend.ANY || (targetBackend.isTransitivelyCompatibleWith(it.backend) && it.contains(directives, directivesInTestFile))
             }
-        if (containsBackend && currentFrontends.contains(frontendKind)) {
+        val isUnderTargetBlock = isUnderTargetBackend && currentFrontends.contains(frontendKind)
+
+        if (line.startsWith(EXPECTATIONS_MARKER)) {
+            actual.add(line)
+            if (isUnderTargetBlock) {
+                putExceedingActualLinesAtIndex = actual.size
+            }
+        } else if (isUnderTargetBlock) {
             if (actualLineNumbersIterator.hasNext()) {
                 actual.add(actualLineNumbersIterator.next())
+                putExceedingActualLinesAtIndex = actual.size
             }
         } else {
             actual.add(line)
         }
     }
 
-    actualLineNumbersIterator.forEach { actual.add(it) }
+    if (putExceedingActualLinesAtIndex != -1) {
+        actual.addAll(putExceedingActualLinesAtIndex, actualLineNumbersIterator.asSequence().toList())
+    }
+
     if (actual.last().isNotBlank()) {
         actual.add("")
     }

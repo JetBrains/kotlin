@@ -236,7 +236,7 @@ public interface MutableMap</*0*/ K, /*1*/ V> : kotlin.collections.Map<K, V> {
     public abstract fun putAll(/*0*/ from: kotlin.collections.Map<out K, V>): kotlin.Unit
     public open fun putIfAbsent(/*0*/ p0: K, /*1*/ p1: V): V?
     @kotlin.IgnorableReturnValue public abstract fun remove(/*0*/ key: K): V?
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent public open fun remove(/*0*/ key: K, /*1*/ value: V): kotlin.Boolean
+    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent @kotlin.IgnorableReturnValue public open fun remove(/*0*/ key: K, /*1*/ value: V): kotlin.Boolean
     public open fun replace(/*0*/ p0: K, /*1*/ p1: V): V?
     public open fun replace(/*0*/ p0: K, /*1*/ p1: V, /*2*/ p2: V): kotlin.Boolean
     public open fun replaceAll(/*0*/ p0: java.util.function.BiFunction<in K, in V, out V>): kotlin.Unit

@@ -39,6 +39,35 @@ fun box() {
 // test.kt:17 box
 // test.kt:18 box
 
+// EXPECTATIONS NATIVE
+// test.kt:15 box
+// test.kt:5 <get-$companion>
+// test.kt:1 <get-$companion>
+// test.kt:11 <get-$companion>
+// test.kt:15 box
+// test.kt:6 <get-prop0>
+// test.kt:15 box
+// test.kt:16 box
+// test.kt:5 <get-$companion>
+// test.kt:1 <get-$companion>
+// test.kt:11 <get-$companion>
+// test.kt:16 box
+// test.kt:7 <get-prop1>
+// test.kt:16 box
+// test.kt:17 box
+// test.kt:5 <get-$companion>
+// test.kt:1 <get-$companion>
+// test.kt:11 <get-$companion>
+// test.kt:17 box
+// test.kt:8 foo
+// test.kt:9 foo
+// test.kt:6 <get-prop0>
+// test.kt:9 foo
+// test.kt:7 <get-prop1>
+// test.kt:9 foo
+// test.kt:10 foo
+// test.kt:18 box
+
 // EXPECTATIONS JS_IR
 // test.kt:15 box
 // test.kt:6 <init>

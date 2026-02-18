@@ -6,8 +6,10 @@ description = "JavaScript Plain Objects Compiler Plugin"
 
 plugins {
     kotlin("jvm")
+    id("java-test-fixtures")
     id("d8-configuration")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val jsoIrRuntimeForTests by configurations.creating {
@@ -24,15 +26,14 @@ dependencies {
     embedded(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.backend")) { isTransitive = false }
     embedded(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli")) { isTransitive = false }
 
-    testImplementation(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":js:js.tests")))
 
-    testImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesImplementation(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    testImplementation(testFixtures(project(":js:js.tests")))
-    testFixtures(testFixtures(project(":generators:test-generator")))
-
+    testFixturesApi(libs.junit.jupiter.api)
     testImplementation(platform(libs.junit.bom))
-    testFixtures(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     jsoIrRuntimeForTests(project(":plugins:js-plain-objects:runtime")) { isTransitive = false }
@@ -51,11 +52,7 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        java.srcDirs("testFixtures")
-        generatedTestDir()
-    }
+    "testFixtures" { projectDefault() }
 }
 
 publish {
@@ -69,18 +66,14 @@ testsJar()
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
-        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
-
-        workingDir = rootDir
-
-        dependsOn(jsoIrRuntimeForTests)
-
-        val localJsPlainObjectsIrRuntimePath: FileCollection = jsoIrRuntimeForTests
-
-        doFirst {
-            systemProperty("jso.runtime.path", localJsPlainObjectsIrRuntimePath.asPath)
-        }
+        useJsIrBoxTests(buildDir = layout.buildDirectory)
+        addClasspathProperty(jsoIrRuntimeForTests, "jso.runtime.path")
     }
 
-    testGenerator("org.jetbrains.kotlinx.jspo.TestGeneratorKt", doNotSetFixturesSourceSetDependency = true)
+    testGenerator("org.jetbrains.kotlinx.jspo.TestGeneratorKt", generateTestsInBuildDirectory = true)
+
+    withJsRuntime()
+
+    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
+    testData(project(":plugins:js-plain-objects:compiler-plugin").isolated, "testData")
 }
