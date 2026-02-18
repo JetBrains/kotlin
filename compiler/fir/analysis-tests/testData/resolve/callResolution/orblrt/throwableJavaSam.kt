@@ -49,8 +49,8 @@ fun myUnitFun() {}
 fun main(app: Application) {
     app.runSomething { "" }
     app.runSomething { myUnitFun() }
-    app.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething2<!> { "" }
-    app.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething2<!> { myUnitFun() }
+    app.runSomething2 { "" }
+    app.runSomething2 { myUnitFun() }
     app.runSomething3 { "" }
     app.runSomething3 { myUnitFun() }
 }

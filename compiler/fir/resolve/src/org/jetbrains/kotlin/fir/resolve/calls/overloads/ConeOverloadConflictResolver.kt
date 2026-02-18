@@ -245,7 +245,7 @@ class ConeOverloadConflictResolver(
                 candidates,
                 { !it.usesCoercionToUnitInLambda },
                 { discriminationFlags.copy(unitCoercionInLambdas = false) },
-            )?.takeIf { it.size == 1 }?.let { return it }
+            )?.let { return it }
         }
 
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }

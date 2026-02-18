@@ -801,6 +801,25 @@ class FirSignatureEnhancement(
             purelyImplementedSupertype?.let {
                 add(buildResolvedTypeRef { coneType = it })
             }
+
+            if (owner.classId == ClassId.topLevel(FqName("com.intellij.openapi.util.Computable"))) {
+                add(buildResolvedTypeRef {
+                    val tp = ConeTypeParameterTypeImpl(owner.typeParameters.first().symbol.toLookupTag(), isMarkedNullable = false)
+                    val throwable = ConeClassLikeTypeImpl(
+                        ClassId.topLevel(FqName("kotlin.Throwable")).toLookupTag(),
+                        emptyArray(),
+                        isMarkedNullable = false,
+                    )
+                    coneType = ConeClassLikeTypeImpl(
+                        ClassId.topLevel(FqName("com.intellij.openapi.util.ThrowableComputable")).toLookupTag(),
+                        arrayOf(
+                            ConeFlexibleType(tp, tp.withNullability(true, session.typeContext), isTrivial = true),
+                            ConeFlexibleType(throwable, throwable.withNullability(true, session.typeContext), isTrivial = true),
+                        ),
+                        isMarkedNullable = false,
+                    )
+                })
+            }
         }
     }
 
