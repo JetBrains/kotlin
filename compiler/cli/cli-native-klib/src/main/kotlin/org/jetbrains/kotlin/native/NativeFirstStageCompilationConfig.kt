@@ -14,11 +14,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.konan.config.konanManifestAddend
 import org.jetbrains.kotlin.konan.config.konanTarget
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -27,15 +24,9 @@ class NativeFirstStageCompilationConfig(
     override val configuration: CompilerConfiguration,
     override val target: KonanTarget,
     val loadedKlibs: LoadedNativeKlibs,
-) : NativeCompilationConfig {
-
+) : NativeCompilationConfig() {
     override val moduleId: String
         get() = configuration.moduleName ?: File(outputPath).name
-
-    override val manifestProperties: Properties?
-        get() = configuration.konanManifestAddend?.let {
-            File(it).loadProperties()
-        }
 }
 
 class NativeFirstStagePhaseContext(
