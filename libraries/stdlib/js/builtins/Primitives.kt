@@ -1066,8 +1066,12 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
      *
+     * This is an arithmetic (sign-propagating) shift operation. For a logical (zero-fill) shift, see [ushr].
+     *
      * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..31`.
+     *
+     * @see ushr
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual infix fun shr(bitCount: Int): Int
@@ -1075,8 +1079,12 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
      *
+     * This is a logical (zero-fill) shift operation. For an arithmetic (sign-propagating) shift, see [shr].
+     *
      * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..31`.
+     *
+     * @see shr
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual infix fun ushr(bitCount: Int): Int
@@ -1528,8 +1536,12 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
      *
+     * This is an arithmetic (sign-propagating) shift operation. For a logical (zero-fill) shift, see [ushr].
+     *
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
+     *
+     * @see ushr
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual infix fun shr(bitCount: Int): Long
@@ -1537,8 +1549,12 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
      *
+     * This is a logical (zero-fill) shift operation. For an arithmetic (sign-propagating) shift, see [shr].
+     *
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
+     *
+     * @see shr
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual infix fun ushr(bitCount: Int): Long

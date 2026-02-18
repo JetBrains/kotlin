@@ -244,7 +244,10 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
         fun generateShiftOperator(name: String, implementation: String = name) {
             val doc = BasePrimitivesGenerator.shiftOperators[implementation]!!
-            val detail = BasePrimitivesGenerator.shiftOperatorsDocDetail(type.asSigned)
+            val detail = BasePrimitivesGenerator.shiftOperatorsDocDetail(
+                type.asSigned,
+                "<ignore>" // It corresponds to shr/ushr cross-references, and there are no shr for unsigned types
+            )
             out.printDoc(doc + END_LINE + END_LINE + detail, "    ")
             out.println("    @kotlin.internal.InlineOnly")
             out.println("    @kotlin.internal.IntrinsicConstEvaluation")

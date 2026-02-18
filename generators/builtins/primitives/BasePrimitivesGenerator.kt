@@ -36,16 +36,33 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
             "xor" to "Performs a bitwise XOR operation between the two values."
         )
 
-        internal fun shiftOperatorsDocDetail(kind: PrimitiveType): String {
+        internal fun shiftOperatorsDocDetail(kind: PrimitiveType, operation: String): String {
             val bitsUsed = when (kind) {
                 PrimitiveType.INT -> "five"
                 PrimitiveType.LONG -> "six"
                 else -> throw IllegalArgumentException("Bit shift operation is not implemented for $kind")
             }
-            return """ 
+
+            val prefix = when (operation) {
+                "shl" -> ""
+                "shr", "ushr" -> {
+                    val siblingShift = if (operation == "shr") "ushr" else "shr"
+                    val ownName = if (operation == "shr") "an arithmetic (sign-propagating)" else "a logical (zero-fill)"
+                    val siblingName = if (operation == "shr") "a logical (zero-fill)" else "an arithmetic (sign-propagating)"
+                    "This is $ownName shift operation. For $siblingName shift, see [$siblingShift].$END_LINE$END_LINE"
+                }
+                else -> ""
+            }
+            val suffix = when (operation) {
+                "shr" -> "$END_LINE$END_LINE@see ushr"
+                "ushr" -> "$END_LINE$END_LINE@see shr"
+                else -> ""
+            }
+
+            return prefix + """                             
                 Note that only the $bitsUsed lowest-order bits of the [bitCount] are used as the shift distance.
                 The shift distance actually used is therefore always in the range `0..${kind.bitSize - 1}`.
-                """.trimIndent()
+                """.trimIndent() + suffix
         }
 
         internal fun incDecOperatorsDoc(name: String): String {
@@ -497,10 +514,10 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
 
     private fun ClassBuilder.generateBitShiftOperators(thisKind: PrimitiveType) {
         val className = thisKind.capitalized
-        val detail = shiftOperatorsDocDetail(thisKind)
+        val detail = shiftOperators.keys.associateWith { shiftOperatorsDocDetail(thisKind, it) }
         for ((operatorName, doc) in shiftOperators) {
             method {
-                appendDoc(doc + END_LINE + END_LINE + detail)
+                appendDoc(doc + END_LINE + END_LINE + detail[operatorName]!!)
                 annotations += intrinsicConstEvaluationAnnotation
                 signature {
                     isInfix = true
