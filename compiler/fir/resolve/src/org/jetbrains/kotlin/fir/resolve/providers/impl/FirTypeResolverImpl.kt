@@ -398,9 +398,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         )
     }
 
-    private val FirResolvedQualifier.ownTypeArguments: List<FirTypeProjection>
-        get() = typeArguments.subList(0, typeArguments.size - (explicitParent?.typeArguments?.size ?: 0))
-
     private fun FirTypeProjection.toConeTypeProjectionInLHS(): ConeTypeProjection = when (this) {
         is FirTypeProjectionWithVariance -> typeRef.coneType.toTypeProjection(variance)
 

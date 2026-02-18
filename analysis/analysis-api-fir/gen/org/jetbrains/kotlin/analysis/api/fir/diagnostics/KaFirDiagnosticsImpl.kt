@@ -2464,6 +2464,13 @@ internal class WrongNumberOfTypeArgumentsInLocalClassInLhsWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongNumberOfTypeArgumentsInLocalClassInLhsWarning
 
+internal class WrongNumberOfTypeArgumentsInGetClassWarningImpl(
+    override val expectedCount: Int,
+    override val owner: KaSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WrongNumberOfTypeArgumentsInGetClassWarning
+
 internal class NoTypeArgumentsOnRhsImpl(
     override val expectedCount: Int,
     override val classifier: KaClassLikeSymbol,
@@ -2934,6 +2941,11 @@ internal class ClassLiteralLhsNotAClassImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ClassLiteralLhsNotAClass
+
+internal class ClassLiteralLhsNotAClassWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ClassLiteralLhsNotAClassWarning
 
 internal class NullableTypeInClassLiteralLhsImpl(
     firDiagnostic: KtPsiDiagnostic,

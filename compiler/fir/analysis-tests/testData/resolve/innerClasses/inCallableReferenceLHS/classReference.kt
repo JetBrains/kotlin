@@ -14,10 +14,10 @@ class ClassReference<T> {
 }
 
 fun <T, K> testClassReference() {
-    ClassReference<Int>.A<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>::class
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>ClassReference<Int>.A<Int>::class<!>
     ClassReference<Int>.A<Int>::DeepInner::class
     ClassReference<T>.A<K>::DeepInner::class
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>ClassReference<Int, Int>.A<!>::class
+    ClassReference<Int, Int>.<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A<!>::class
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING!>ClassReference<!>.A<K, T>::DeepInner::class
 }
 

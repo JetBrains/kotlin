@@ -23,7 +23,7 @@ fun test() {
     val p7 = TypeAlias<Int>::toString
 
     val p8 = TypeAlias::class
-    val p9 = TypeAlias<Int>::class
+    val p9 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>TypeAlias<Int>::class<!>
 
     val p10 = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>TypeAlias<!>::S
     val p11 = TypeAlias<Int>::<!UNRESOLVED_REFERENCE!>S<!>

@@ -21,8 +21,8 @@ fun test() {
     val p7 = TObj::class
     val p8 = TUnit::class
 
-    val p9 = TObj<Int>::class
-    val p10 = TUnit<Int>::class
+    val p9 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>TObj<Int>::class<!>
+    val p10 = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>TUnit<Int>::class<!>
 
     val p11 = TObj::toString
     val p12 = TUnit::toString
@@ -39,8 +39,8 @@ fun test() {
     val p19 = TObj<Int>.<!UNRESOLVED_REFERENCE!>toString<!>()
     val p20 = TUnit<Int>.<!UNRESOLVED_REFERENCE!>toString<!>()
 
-    val p21 = TObj<Int, Int, Int>::class
-    val p22 = TUnit<Int, Int, Int>::class
+    val p21 = TObj<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>::class
+    val p22 = TUnit<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>::class
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classReference, functionDeclaration, localProperty, nullableType,

@@ -2056,6 +2056,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val owner: KaSymbol
     }
 
+    interface WrongNumberOfTypeArgumentsInGetClassWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = WrongNumberOfTypeArgumentsInGetClassWarning::class
+        val expectedCount: Int
+        val owner: KaSymbol
+    }
+
     interface NoTypeArgumentsOnRhs : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NoTypeArgumentsOnRhs::class
         val expectedCount: Int
@@ -2446,6 +2452,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ClassLiteralLhsNotAClass : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = ClassLiteralLhsNotAClass::class
+    }
+
+    interface ClassLiteralLhsNotAClassWarning : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = ClassLiteralLhsNotAClassWarning::class
     }
 
     interface NullableTypeInClassLiteralLhs : KaFirDiagnostic<KtExpression> {

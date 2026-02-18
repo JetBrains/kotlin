@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: -ForbidUselessTypeArgumentsIn25
 class Inv<T>
 class Some
 class MyPair<A, B>
@@ -70,7 +71,7 @@ fun test() {
 
     Some::class
     SomeAlias::class
-    SomeAlias<String>::class
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>SomeAlias<String>::class<!>
 
     MyPair::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>MyPair<Int, Int>::class<!>

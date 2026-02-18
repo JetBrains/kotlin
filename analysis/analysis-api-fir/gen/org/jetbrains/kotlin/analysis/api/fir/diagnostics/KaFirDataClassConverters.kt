@@ -2900,6 +2900,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_GET_CLASS_WARNING) { firDiagnostic ->
+        WrongNumberOfTypeArgumentsInGetClassWarningImpl(
+            firDiagnostic.a,
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NO_TYPE_ARGUMENTS_ON_RHS) { firDiagnostic ->
         NoTypeArgumentsOnRhsImpl(
             firDiagnostic.a,
@@ -3462,6 +3470,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS) { firDiagnostic ->
         ClassLiteralLhsNotAClassImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING) { firDiagnostic ->
+        ClassLiteralLhsNotAClassWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

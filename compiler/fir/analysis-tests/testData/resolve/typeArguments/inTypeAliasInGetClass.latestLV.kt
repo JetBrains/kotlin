@@ -15,12 +15,12 @@ fun test() {
     TO::class
     TG::class
 
-    TC<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_GET_CLASS_WARNING!><Int><!>::class
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>TO<Int>::class<!>
+    TC<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>::class
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>TO<Int>::class<!>
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>TG<Int>::class<!>
 
-    TC<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_GET_CLASS_WARNING!><Int, Int><!>::class
-    TO<!WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_GET_CLASS_WARNING!><Int, Int><!>::class
+    TC<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>::class
+    TO<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>::class
     TG<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>::class
 }
 
