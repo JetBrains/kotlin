@@ -582,8 +582,8 @@ enum class LanguageFeature(
     JsExposedNotExportedSuperInterfaceApiByExportedOne(sinceVersion = null, issue = "KT-83009"),
     JsExportInterfacesInImplementableWay(sinceVersion = null, issue = "KT-65802"),
 
-    // K1 support only. We keep it, as we may want to support it also in K2
-    UnitConversionsOnArbitraryExpressions(sinceVersion = null, NO_ISSUE_SPECIFIED),
+    // K1 support only; we keep it because we might want to eventually support it in K2 as well
+    UnitConversionsOnArbitraryExpressions(sinceVersion = null, "KT-84393"),
 
     JsAllowImplementingFunctionInterface(sinceVersion = null, NO_ISSUE_SPECIFIED),
     CustomEqualsInValueClasses(sinceVersion = null, "KT-24874"),
