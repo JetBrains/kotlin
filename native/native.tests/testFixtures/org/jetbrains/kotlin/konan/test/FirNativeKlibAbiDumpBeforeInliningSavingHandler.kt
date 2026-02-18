@@ -33,6 +33,10 @@ import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigu
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
+import org.jetbrains.kotlin.native.pipeline.NativeFir2IrArtifact
+import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
+import org.jetbrains.kotlin.konan.config.konanExportKdoc
 import java.io.File
 
 class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
@@ -59,12 +63,16 @@ class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
         configuration: CompilerConfiguration,
         diagnosticReporter: IrDiagnosticReporter,
     ) {
-        require(inputArtifact is IrBackendInput.NativeAfterFrontendBackendInput) {
-            "${this::class.java.simpleName} expects IrBackendInput.NativeAfterFrontendBackendInput as input"
+        require(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
+            "${this::class.java.simpleName} expects Fir2IrCliBasedOutputArtifact as input, got ${inputArtifact::class.simpleName}"
+        }
+        val cliArtifact = inputArtifact.cliArtifact
+        require(cliArtifact is NativeFir2IrArtifact) {
+            "${this::class.java.simpleName} expects NativeFir2IrArtifact as input, got ${cliArtifact::class.simpleName}"
         }
 
-        val dependencies = inputArtifact.usedLibrariesForManifest
-        val serializerOutput = serialize(configuration, dependencies, inputArtifact, diagnosticReporter)
+        val dependencies = cliArtifact.fir2IrOutput.usedLibraries.toList()
+        val serializerOutput = serialize(configuration, dependencies, cliArtifact, diagnosticReporter)
 
         KlibWriter {
             manifest {
@@ -87,12 +95,13 @@ class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
     private fun serialize(
         configuration: CompilerConfiguration,
         usedLibrariesForManifest: List<KotlinLibrary>,
-        inputArtifact: IrBackendInput.NativeAfterFrontendBackendInput,
+        inputArtifact: NativeFir2IrArtifact,
         diagnosticReporter: IrDiagnosticReporter,
     ): SerializerOutput = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
+        val irModuleFragment = inputArtifact.result.irModuleFragment
         serializeModuleIntoKlib(
-            moduleName = inputArtifact.irModuleFragment.name.asString(),
-            inputArtifact.irModuleFragment,
+            moduleName = irModuleFragment.name.asString(),
+            irModuleFragment,
             configuration,
             diagnosticReporter,
             cleanFiles = emptyList(),
@@ -101,10 +110,16 @@ class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
                 KonanIrModuleSerializer(
                     settings = IrSerializationSettings(configuration),
                     diagnosticReporter = irDiagnosticReporter,
-                    irBuiltIns = inputArtifact.irBuiltIns,
+                    irBuiltIns = inputArtifact.result.irBuiltIns,
                 )
             },
-            inputArtifact.metadataSerializer ?: error("expected metadata serializer"),
+            metadataSerializer = Fir2KlibMetadataSerializer(
+                configuration,
+                inputArtifact.fir2IrOutput.frontendOutput.outputs,
+                inputArtifact.result,
+                exportKDoc = configuration.konanExportKdoc,
+                produceHeaderKlib = false,
+            ),
         )
     }
 }
