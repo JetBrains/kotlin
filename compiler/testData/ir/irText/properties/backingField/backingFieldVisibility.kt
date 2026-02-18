@@ -5,22 +5,12 @@
 
 class A {
     val a: Number
-        @Suppress("WRONG_MODIFIER_TARGET")
-        private field = 1
-
-    val b: Number
-        @Suppress("WRONG_MODIFIER_TARGET")
-        internal field = a + 2
+        field = 1
 
     val c = 1
     val d = c + 2
 
     fun rest() {
         val aI = A().a + 10
-        val bI = A().b + 20
     }
-}
-
-fun test() {
-    val bA = A().b + 20
 }

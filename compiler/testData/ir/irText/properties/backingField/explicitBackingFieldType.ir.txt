@@ -23,40 +23,6 @@ FILE fqName:<root> fileName:/explicitBackingFieldType.kt
           RETURN type=kotlin.Nothing from='public final fun <get-it> (): kotlin.Number declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:it type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-it>' type=<root>.A origin=null
-    PROPERTY name:invertedTypes visibility:public modality:FINAL [var]
-      annotations:
-        Suppress(names = ["INCONSISTENT_BACKING_FIELD_TYPE", "VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
-      FIELD PROPERTY_BACKING_FIELD name:invertedTypes type:kotlin.Number visibility:private
-        EXPRESSION_BODY
-          CONST Int type=kotlin.Int value=42
-      FUN name:<get-invertedTypes> visibility:public modality:FINAL returnType:kotlin.Int
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
-        annotations:
-          Suppress(names = ["PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
-        correspondingProperty: PROPERTY name:invertedTypes visibility:public modality:FINAL [var]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-invertedTypes> (): kotlin.Int declared in <root>.A'
-            WHEN type=kotlin.Int origin=IF
-              BRANCH
-                if: CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
-                  ARG arg0: CALL 'public abstract fun toInt (): kotlin.Int declared in kotlin.Number' type=kotlin.Int origin=null
-                    ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:invertedTypes type:kotlin.Number visibility:private' type=kotlin.Number origin=null
-                      receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-invertedTypes>' type=<root>.A origin=IMPLICIT_ARGUMENT
-                  ARG arg1: CONST Int type=kotlin.Int value=10
-                then: CALL 'public abstract fun toInt (): kotlin.Int declared in kotlin.Number' type=kotlin.Int origin=null
-                  ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:invertedTypes type:kotlin.Number visibility:private' type=kotlin.Number origin=null
-                    receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-invertedTypes>' type=<root>.A origin=IMPLICIT_ARGUMENT
-              BRANCH
-                if: CONST Boolean type=kotlin.Boolean value=true
-                then: CONST Int type=kotlin.Int value=10
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-invertedTypes> visibility:public modality:FINAL returnType:kotlin.Unit
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
-        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
-        correspondingProperty: PROPERTY name:invertedTypes visibility:public modality:FINAL [var]
-        BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:invertedTypes type:kotlin.Number visibility:private' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-invertedTypes>' type=<root>.A origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.A.<set-invertedTypes>' type=kotlin.Number origin=null
     PROPERTY name:p visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
