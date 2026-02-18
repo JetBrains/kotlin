@@ -28,7 +28,6 @@ internal class ModuleDescriptorLoader(private val output: KlibToolOutput) {
             library,
             languageVersionSettings,
             storageManager,
-            null
         )
 
         val defaultModules = mutableListOf<ModuleDescriptorImpl>()
@@ -39,7 +38,6 @@ internal class ModuleDescriptorLoader(private val output: KlibToolOutput) {
                     languageVersionSettings,
                     storageManager,
                     module.builtIns,
-                    null
             )
         }
 

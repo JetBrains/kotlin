@@ -27,13 +27,11 @@ interface KlibMetadataModuleDescriptorFactory {
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns,
-        packageAccessHandler: PackageAccessHandler?
     ) = createDescriptorOptionalBuiltIns(
         library,
         languageVersionSettings,
         storageManager,
         builtIns,
-        packageAccessHandler,
         LookupTracker.DO_NOTHING
     )
 
@@ -41,9 +39,8 @@ interface KlibMetadataModuleDescriptorFactory {
         library: KotlinLibrary,
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
-        packageAccessHandler: PackageAccessHandler?
     ) = createDescriptorOptionalBuiltIns(
-        library, languageVersionSettings, storageManager, null, packageAccessHandler, LookupTracker.DO_NOTHING
+        library, languageVersionSettings, storageManager, null, LookupTracker.DO_NOTHING
     )
 
     fun createDescriptorOptionalBuiltIns(
@@ -51,13 +48,11 @@ interface KlibMetadataModuleDescriptorFactory {
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
-        packageAccessHandler: PackageAccessHandler?,
         lookupTracker: LookupTracker
     ): ModuleDescriptorImpl
 
     fun createPackageFragmentProvider(
         library: KotlinLibrary,
-        packageAccessHandler: PackageAccessHandler?,
         customMetadataProtoLoader: CustomMetadataProtoLoader?,
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,

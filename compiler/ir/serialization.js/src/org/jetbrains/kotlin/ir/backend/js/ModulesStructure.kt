@@ -143,7 +143,6 @@ class ModulesStructure(
             languageVersionSettings,
             storageManager,
             runtimeModule?.builtIns,
-            packageAccessHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
             lookupTracker = lookupTracker
         )
         if (isBuiltIns) runtimeModule = md

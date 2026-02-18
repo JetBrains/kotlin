@@ -93,7 +93,6 @@ class FirWasmKlibSerializerFacade(
             configuration.languageVersionSettings,
             LockBasedStorageManager("ModulesStructure"),
             inputArtifact.irModuleFragment.descriptor.builtIns,
-            packageAccessHandler = null,
             lookupTracker = LookupTracker.DO_NOTHING
         )
 

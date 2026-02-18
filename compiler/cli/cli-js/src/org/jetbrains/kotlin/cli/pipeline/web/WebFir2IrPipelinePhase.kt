@@ -78,7 +78,6 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
                 moduleStructure.compilerConfiguration.languageVersionSettings,
                 storageManager,
                 builtInsModule,
-                packageAccessHandler = null,
                 lookupTracker = LookupTracker.DO_NOTHING
             )
             dependencies += moduleDescriptor

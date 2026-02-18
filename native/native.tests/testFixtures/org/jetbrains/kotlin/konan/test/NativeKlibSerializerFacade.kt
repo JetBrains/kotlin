@@ -158,7 +158,6 @@ class NativeKlibSerializerFacade(
             configuration.languageVersionSettings,
             LockBasedStorageManager("ModulesStructure"),
             inputArtifact.irModuleFragment.descriptor.builtIns,
-            packageAccessHandler = null,
             lookupTracker = LookupTracker.DO_NOTHING
         )
         moduleDescriptor.setDependencies(dependencyPaths.map { testServices.libraryProvider.getDescriptorByPath(it) as ModuleDescriptorImpl } + moduleDescriptor)

@@ -162,7 +162,6 @@ object KlibTestUtil {
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
             storageManager = LockBasedStorageManager.NO_LOCKS,
             builtIns = DefaultBuiltIns.Instance,
-            packageAccessHandler = null
         )
         module.setDependencies(listOf(DefaultBuiltIns.Instance.builtInsModule, module))
 
@@ -210,7 +209,6 @@ private fun createAndInitializeKlibBasedStdlibCommonDescriptor(
 
     val klibPackageFragmentProvider = metadataModuleDescriptorFactory.createPackageFragmentProvider(
         library = stdlibKlib,
-        packageAccessHandler = null,
         customMetadataProtoLoader = null,
         storageManager = projectContext.storageManager,
         moduleDescriptor = stdlibCommonDescriptor,
