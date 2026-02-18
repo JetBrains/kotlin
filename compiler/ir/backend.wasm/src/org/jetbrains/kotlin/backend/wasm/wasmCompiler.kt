@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
+import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.ExceptionTagType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
@@ -136,6 +137,8 @@ fun compileToLoweredIr(
         context,
         context.irFactory.stageController as WholeWorldStageController,
     )
+
+    overrideBuiltInsSignatures(context)
 
     return LoweredIrWithExtraArtifacts(allModules, context, typeScriptFragment)
 }

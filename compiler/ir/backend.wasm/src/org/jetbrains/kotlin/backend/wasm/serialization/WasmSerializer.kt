@@ -74,7 +74,6 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeList(equivalentFunctions) { serializePair(it, ::serializeString, ::serializeIdSignature) }
             serializeSet(jsModuleAndQualifierReferences, ::serializeJsModuleAndQualifierReference)
             serializeList(classAssociatedObjectsInstanceGetters, ::serializeClassAssociatedObjects)
-            serializeNullable(builtinIdSignatures, ::serializeBuiltinIdSignatures)
             serializeList(objectInstanceFieldInitializers, ::serializeIdSignature)
             serializeList(nonConstantFieldInitializers, ::serializeIdSignature)
         }
@@ -600,18 +599,6 @@ class WasmSerializer(outputStream: OutputStream) {
             },
             serializeValueFunc = ::serializeIntSymbol
         )
-    }
-
-    private fun serializeBuiltinIdSignatures(builtinIdSignatures: BuiltinIdSignatures) {
-        serializeNullable(builtinIdSignatures.throwable, ::serializeIdSignature)
-        serializeNullable(builtinIdSignatures.kotlinAny, ::serializeIdSignature)
-        serializeNullable(builtinIdSignatures.tryGetAssociatedObject, ::serializeIdSignature)
-        serializeNullable(builtinIdSignatures.jsToKotlinAnyAdapter, ::serializeIdSignature)
-        serializeNullable(builtinIdSignatures.jsToKotlinStringAdapter, ::serializeIdSignature)
-        serializeNullable(builtinIdSignatures.unitGetInstance, ::serializeIdSignature)
-        serializeNullable(builtinIdSignatures.runRootSuites, ::serializeIdSignature)
-        serializeNullable(builtinIdSignatures.createString, ::serializeIdSignature)
-        serializeNullable(builtinIdSignatures.registerModuleDescriptor, ::serializeIdSignature)
     }
 
     private fun serializeClassAssociatedObjects(classAssociatedObjects: ClassAssociatedObjects) {

@@ -198,42 +198,6 @@ open class WasmFileCodegenContext(
     open fun addJsModuleAndQualifierReferences(reference: JsModuleAndQualifierReference) {
         wasmFileFragment.jsModuleAndQualifierReferences.add(reference)
     }
-
-    fun defineBuiltinIdSignatures(
-        throwable: IrClassSymbol?,
-        kotlinAny: IrClassSymbol?,
-        tryGetAssociatedObject: IrFunctionSymbol?,
-        jsToKotlinAnyAdapter: IrFunctionSymbol?,
-        jsToKotlinStringAdapter: IrFunctionSymbol?,
-        unitGetInstance: IrFunctionSymbol?,
-        runRootSuites: IrFunctionSymbol?,
-        createString: IrFunctionSymbol?,
-        registerModuleDescriptor: IrFunctionSymbol?,
-    ) {
-        if (throwable != null || kotlinAny != null || tryGetAssociatedObject != null || jsToKotlinAnyAdapter != null || jsToKotlinStringAdapter != null || unitGetInstance != null || runRootSuites != null || createString != null || registerModuleDescriptor != null) {
-            val originalSignatures = wasmFileFragment.builtinIdSignatures
-            wasmFileFragment.builtinIdSignatures = BuiltinIdSignatures(
-                throwable = originalSignatures?.throwable
-                    ?: throwable?.getReferenceKey(),
-                kotlinAny = originalSignatures?.kotlinAny
-                    ?: kotlinAny?.getReferenceKey(),
-                tryGetAssociatedObject = originalSignatures?.tryGetAssociatedObject
-                    ?: tryGetAssociatedObject?.getReferenceKey(),
-                jsToKotlinAnyAdapter = originalSignatures?.jsToKotlinAnyAdapter
-                    ?: jsToKotlinAnyAdapter?.getReferenceKey(),
-                jsToKotlinStringAdapter = originalSignatures?.jsToKotlinStringAdapter
-                    ?: jsToKotlinStringAdapter?.getReferenceKey(),
-                unitGetInstance = originalSignatures?.unitGetInstance
-                    ?: unitGetInstance?.getReferenceKey(),
-                runRootSuites = originalSignatures?.runRootSuites
-                    ?: runRootSuites?.getReferenceKey(),
-                createString = originalSignatures?.createString
-                    ?: createString?.getReferenceKey(),
-                registerModuleDescriptor = originalSignatures?.registerModuleDescriptor
-                    ?: registerModuleDescriptor?.getReferenceKey(),
-            )
-        }
-    }
 }
 
 class WasmModuleMetadataCache(private val backendContext: WasmBackendContext) {

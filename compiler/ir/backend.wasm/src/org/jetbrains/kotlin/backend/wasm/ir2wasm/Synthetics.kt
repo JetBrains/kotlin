@@ -22,6 +22,14 @@ object Synthetics {
         val associatedObjectGetter = FuncSymbol("tryGetAssociatedObject".toSyntheticSignature())
         val startUnitTestsFunction = FuncSymbol("startUnitTestsFunction".toSyntheticSignature())
         val masterInitFunction = FuncSymbol("masterInitFunction".toSyntheticSignature())
+
+        val createStringBuiltIn = FuncSymbol("createStringBuiltInFunction".toSyntheticSignature())
+        val tryGetAssociatedObjectBuiltIn = FuncSymbol("tryGetAssociatedObjectFunction".toSyntheticSignature())
+        val jsToKotlinAnyAdapterBuiltIn = FuncSymbol("jsToKotlinAnyAdapterBuiltInFunction".toSyntheticSignature())
+        val jsToKotlinStringAdapterBuiltIn = FuncSymbol("jsToKotlinStringAdapterBuiltInFunction".toSyntheticSignature())
+        val unitGetInstanceBuiltIn = FuncSymbol("unitGetInstanceBuiltInFunction".toSyntheticSignature())
+        val runRootSuitesBuiltIn = FuncSymbol("runRootSuitesBuiltInFunction".toSyntheticSignature())
+        val registerModuleDescriptorBuiltIn = FuncSymbol("registerModuleDescriptorBuiltInInFunction".toSyntheticSignature())
     }
 
     // GLOBALS
@@ -45,6 +53,9 @@ object Synthetics {
     private val parameterlessNoReturnFunctionTypeSignature = "parameterlessNoReturnFunctionTypeSignature".toSyntheticSignature()
     private val jsExceptionTagFuncTypeSignature = "jsExceptionTagFuncType".toSyntheticSignature()
 
+    private val throwableBuiltInTypeSignature = "throwableBuiltInType".toSyntheticSignature()
+    private val anyBuiltInTypeSignature = "anyBuiltInType".toSyntheticSignature()
+
     object HeapTypes {
         val wasmAnyArrayType = GcHeapTypeSymbol(wasmAnyArrayTypeSignature)
         val specialSlotITableType = GcHeapTypeSymbol(specialSlotITableTypeSignature)
@@ -55,6 +66,8 @@ object Synthetics {
         val byteArray = GcHeapTypeSymbol(byteArraySignature)
         val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
         val associatedObjectGetterWrapper = GcHeapTypeSymbol(associatedObjectGetterWrapperSignature)
+        val throwableBuiltInType = GcHeapTypeSymbol(throwableBuiltInTypeSignature)
+        val anyBuiltInType = GcHeapTypeSymbol(anyBuiltInTypeSignature)
     }
 
     object GcTypes {
