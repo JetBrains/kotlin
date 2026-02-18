@@ -47,29 +47,25 @@ class FirInferenceLogsHandler(
         ensureNoStrayDumps()
         if (FirDiagnosticsDirectives.DUMP_INFERENCE_LOGS !in testServices.moduleStructure.allDirectives || inferenceLoggers.isEmpty()) return
 
-        testServices.assertions.assertAll(
-            testServices.moduleStructure.allDirectives.inferenceLogsFormats.map { format ->
-                val dumper = format.dumper
-                val renderedDump = dumper.renderDump(inferenceLoggers)
-                val originalFile = testServices.moduleStructure.originalTestDataFiles.first().originalTestDataFile
-                val originalDumpFile = originalFile.inferenceLogsFile(format)
+        for (format in testServices.moduleStructure.allDirectives.inferenceLogsFormats) {
+            val dumper = format.dumper
+            val renderedDump = dumper.renderDump(inferenceLoggers)
+            val originalFile = testServices.moduleStructure.originalTestDataFiles.first().originalTestDataFile
+            val originalDumpFile = originalFile.inferenceLogsFile(format)
 
-                if (testServices.moduleStructure.allDirectives.contains(USE_LATEST_LANGUAGE_VERSION)) {
-                    val latestLVFile = originalFile.latestLVTestDataFile
-                    val latestLVDumpFile = latestLVFile.inferenceLogsFile(format)
+            if (testServices.moduleStructure.allDirectives.contains(USE_LATEST_LANGUAGE_VERSION)) {
+                val latestLVFile = originalFile.latestLVTestDataFile
+                val latestLVDumpFile = latestLVFile.inferenceLogsFile(format)
 
-                    if (originalDumpFile.exists() && originalDumpFile.readText().sanitize() == renderedDump.sanitize()) {
-                        return@map {
-                            testServices.assertions.assertFileDoesntExist(latestLVDumpFile) { "No need for a separate inference dump for `latestLV`, deleting..." }
-                        }
-                    }
-
-                    return@map { testServices.assertions.assertEqualsToFile(latestLVDumpFile, renderedDump) }
+                if (originalDumpFile.exists() && originalDumpFile.readText().sanitize() == renderedDump.sanitize()) {
+                    testServices.assertions.assertFileDoesntExist(latestLVDumpFile) { "No need for a separate inference dump for `latestLV`, deleting..." }
+                } else {
+                    testServices.assertions.assertEqualsToFile(latestLVDumpFile, renderedDump)
                 }
-
-                { testServices.assertions.assertEqualsToFile(originalDumpFile, renderedDump) }
+            } else {
+                testServices.assertions.assertEqualsToFile(originalDumpFile, renderedDump)
             }
-        )
+        }
     }
 
     private fun String.sanitize() = trim().lines().joinToString("\n")
