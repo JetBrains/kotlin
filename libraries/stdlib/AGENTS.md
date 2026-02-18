@@ -24,6 +24,8 @@ Check [ReadMe](./ReadMe.md) for more details.
 
 #### Standard Library Change Checklist
 - Public API should be documented and provide samples.
+  - If possible, samples should be implemented in the [samples](samples) directory and referenced from KDoc using the `@sample` tag.
+  - If it is not possible (for example, if a sample illustrates a code that should not compile or could not be executed), include a sample as an inline code snippet in KDoc.
 - Every functional change should have corresponding tests.
 - The project should be successfully compiled and tests should pass.
 - Changes should not break binary compatibility, unless it is a deliberate breaking change.
@@ -58,7 +60,9 @@ Check [ReadMe](./ReadMe.md) for more details.
     - For JVM, dump files are located in [binary-compatibility-validator/reference-public-api](../tools/binary-compatibility-validator/reference-public-api)
     - For all other targets, dumps files are located in [binary-compatibility-validator/klib-public-api](../tools/binary-compatibility-validator/klib-public-api)
 
-- Dumps could be updated by running the following Gradle command:
+- **CRITICAL: Never edit dump files manually.**
+
+- Dump files could be only updated by running the following Gradle command:
 
   ```
   ./gradlew :tools:binary-compatibility-validator:cleanTest :tools:binary-compatibility-validator:test -Poverwrite.output=true
@@ -67,3 +71,8 @@ Check [ReadMe](./ReadMe.md) for more details.
 - If the updated dump includes new lines, the change is considered a binary compatible.
 - If some lines were completely removed, the change is considered a binary incompatible.
 - The change, until otherwise is required, should preserve binary compatibility.
+- To double-check that dump files reflect all changes, run the following Gradle command:
+
+  ```
+  ./gradlew :tools:binary-compatibility-validator:cleanTest :tools:binary-compatibility-validator:test
+  ```
