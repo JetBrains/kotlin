@@ -40,8 +40,6 @@ class BuiltinIdSignatures(
 )
 
 class WasmCompiledFileFragment(
-    val fragmentTag: String?,
-
     val definedFunctions: MutableMap<IdSignature, WasmFunction> = mutableMapOf(),
     val definedGlobalFields: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
     val definedGlobalVTables: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),

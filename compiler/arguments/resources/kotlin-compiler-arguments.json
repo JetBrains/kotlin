@@ -10519,52 +10519,6 @@
                                         }
                                     },
                                     {
-                                        "name": "Xwasm-preserve-ic-order",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Preserve wasm file structure between IC runs.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "argumentTypeDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.1.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        }
-                                    },
-                                    {
                                         "name": "Xwasm-source-map-include-mappings-from-unavailable-sources",
                                         "shortName": null,
                                         "deprecatedName": null,

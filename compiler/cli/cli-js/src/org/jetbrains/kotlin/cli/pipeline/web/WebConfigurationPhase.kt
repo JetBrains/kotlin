@@ -82,7 +82,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         configuration.perModuleOutputName = arguments.irPerModuleOutputName
         configuration.icCacheDirectory = arguments.cacheDirectory
         configuration.icCacheReadOnly = arguments.icCacheReadonly
-        configuration.preserveIcOrder = arguments.preserveIcOrder
 
         // setup phase config for the first compilation stage (KLIB compilation)
         if (arguments.includes == null) {

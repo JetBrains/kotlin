@@ -197,17 +197,6 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     }
 
     compilerArgument {
-        name = "Xwasm-preserve-ic-order"
-        compilerName = "preserveIcOrder"
-        description = "Preserve wasm file structure between IC runs.".asReleaseDependent()
-        argumentType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_1_20,
-        )
-    }
-
-    compilerArgument {
         name = "Xwasm-ic-cache-readonly"
         compilerName = "icCacheReadonly"
         description = "Do not commit IC cache updates.".asReleaseDependent()
