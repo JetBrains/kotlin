@@ -395,7 +395,7 @@ class CacheUpdater(
                 for ((dependencySrcFile, newSignatures) in dependencySrcFiles) {
                     val dependencySrcMetadata = dependencyCache.fetchSourceFileFullMetadata(dependencySrcFile)
                     val oldSignatures = dependencySrcMetadata.inverseDependencies[libFile, srcFile] ?: emptySet()
-                    if (oldSignatures == newSignatures) {
+                    if (oldSignatures == newSignatures.keys) {
                         continue
                     }
                     val newMetadata = addNewMetadata(dependencyLibFile, dependencySrcFile, dependencySrcMetadata)
