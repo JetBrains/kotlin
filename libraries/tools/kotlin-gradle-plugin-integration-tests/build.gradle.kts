@@ -244,7 +244,7 @@ enum class JunitTag {
     SwiftPMImportKGP
 }
 
-if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
+if (project.kotlinBuildProperties.isTeamcityBuild) {
     val junitTags = JunitTag.values().filter { it !in setOf(JunitTag.SwiftExportKGP, JunitTag.SwiftPMImportKGP) }.map { it.name }
     val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
 
