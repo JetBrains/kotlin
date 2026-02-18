@@ -103,6 +103,10 @@ internal class KotlinWrapperPre2_4_0(
                 workingDirectory.resolve("shrunk-classpath-snapshot.bin"),
             )
         }
+
+        override fun build(): JvmCompilationOperation {
+            return JvmCompilationOperationWrapper(base.build())
+        }
     }
 
     private class JvmCompilerArgumentsWrapper(
