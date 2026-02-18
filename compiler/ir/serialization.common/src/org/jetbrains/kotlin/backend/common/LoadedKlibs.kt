@@ -51,4 +51,5 @@ class LoadedNativeKlibs(
     val all: List<KotlinLibrary>,
     val friends: List<KotlinLibrary> = emptyList(),
     val included: List<KotlinLibrary> = emptyList(),
+    val cached: KotlinLibrary? = null,
 )

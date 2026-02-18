@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.OtherChe
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblematicLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.utils.KotlinNativePaths
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
@@ -61,9 +62,14 @@ fun loadNativeKlibsInProductionPipeline(
     return loadNativeKlibs(
         configuration = configuration,
         runtimeLibraryProviders = listOfNotNull(distributionLibrariesProvider),
-        libraryPaths = configuration.konanLibraries,
+        libraryPaths = buildList {
+            this += configuration.konanLibraries
+            this += configuration.konanIncludedLibraries
+            addIfNotNull(configuration.konanLibraryToAddToCache)
+        },
         friendPaths = configuration.konanFriendLibraries,
         includedPaths = configuration.konanIncludedLibraries,
+        cachedLibraryPath = configuration.konanLibraryToAddToCache,
         platformChecker = platformChecker,
         nativeTarget = nativeTarget,
         useStricterChecks = false,
@@ -97,6 +103,7 @@ fun loadNativeKlibsInTestPipeline(
     libraryPaths = libraryPaths,
     friendPaths = friendPaths,
     includedPaths = includedPaths,
+    cachedLibraryPath = null,
     runtimeLibraryProviders = runtimeLibraryProviders,
     platformChecker = KlibPlatformChecker.Native(nativeTarget.name),
     nativeTarget = nativeTarget,
@@ -108,6 +115,7 @@ private fun loadNativeKlibs(
     libraryPaths: List<String>,
     friendPaths: List<String>,
     includedPaths: List<String>,
+    cachedLibraryPath: String?,
     runtimeLibraryProviders: List<KlibLibraryProvider>,
     platformChecker: KlibPlatformChecker,
     nativeTarget: KonanTarget,
@@ -130,6 +138,7 @@ private fun loadNativeKlibs(
         all = result.librariesStdlibFirst,
         friends = result.loadFriendLibraries(friendPaths),
         included = result.loadFriendLibraries(includedPaths),
+        cached = result.loadFriendLibraries(listOfNotNull(cachedLibraryPath)).firstOrNull()
     )
 }
 
