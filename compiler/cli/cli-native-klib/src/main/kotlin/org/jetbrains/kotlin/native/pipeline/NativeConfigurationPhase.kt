@@ -89,6 +89,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
 
         configuration.konanNoStdlib = arguments.nostdlib
         configuration.konanNoDefaultLibs = arguments.nodefaultlibs
+        configuration.konanPurgeUserLibs = arguments.purgeUserLibs
 
         @Suppress("DEPRECATION")
         configuration.konanNoEndorsedLibs = arguments.noendorsedlibs
