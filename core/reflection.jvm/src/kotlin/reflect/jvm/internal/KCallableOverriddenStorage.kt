@@ -10,7 +10,7 @@ import kotlin.reflect.KTypeParameter
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 
 internal data class KCallableOverriddenStorage(
-    private val classTypeParametersSubstitutor: KTypeSubstitutor,
+    private val classTypeParametersSubstitutor: KTypeSubstitutor?,
     val modality: Modality?,
     val isStatic: Boolean?,
     val originalContainerIfFakeOverride: KDeclarationContainerImpl?,
@@ -24,7 +24,7 @@ internal data class KCallableOverriddenStorage(
     companion object {
         @JvmField
         val EMPTY = KCallableOverriddenStorage(
-            classTypeParametersSubstitutor = KTypeSubstitutor.EMPTY,
+            classTypeParametersSubstitutor = null,
             modality = null,
             isStatic = null,
             originalContainerIfFakeOverride = null,
@@ -39,10 +39,11 @@ internal data class KCallableOverriddenStorage(
     val isFakeOverride: Boolean get() = originalContainerIfFakeOverride != null
 
     fun withChainedClassTypeParametersSubstitutor(substitutor: KTypeSubstitutor): KCallableOverriddenStorage =
-        copy(classTypeParametersSubstitutor = classTypeParametersSubstitutor.chainedWith(substitutor))
+        copy(classTypeParametersSubstitutor = classTypeParametersSubstitutor?.chainedWith(substitutor) ?: substitutor)
 
     fun getTypeSubstitutor(callableTypeParameters: List<KTypeParameter>, memberNameForDebug: String): KTypeSubstitutor =
         originalCallableTypeParameters.substitutedWith(callableTypeParameters)
-            ?.disjointSumWith(classTypeParametersSubstitutor, memberNameForDebug)
+            ?.disjointSumWith(classTypeParametersSubstitutor ?: KTypeSubstitutor.EMPTY, memberNameForDebug)
             ?: classTypeParametersSubstitutor
+            ?: KTypeSubstitutor.EMPTY
 }
