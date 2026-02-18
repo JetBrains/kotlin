@@ -219,10 +219,15 @@ class IrBodyDeserializer(
             for (arg in proto.regularArgumentList) {
                 access.arguments += if (arg.hasExpression()) deserializeExpression(arg.expression) else null
             }
-        } else {
-            // Post 2.2.0 scheme: all arguments are in a single list.
-            access.arguments.assignFrom(proto.argumentList) {
+        } else if (proto.argumentPre240Count > 0) {
+            // Post 2.2.0 scheme: all arguments are in a single list, wrapped in a NullableIrExpression.
+            access.arguments.assignFrom(proto.argumentPre240List) {
                 if (it.hasExpression()) deserializeExpression(it.expression) else null
+            }
+        } else {
+            // Post 2.4.0 scheme: all arguments are in a single list, with `null` expressed as one of the possible operations.
+            access.arguments.assignFrom(proto.argumentList) {
+                deserializeNullableExpression(it)
             }
         }
 
@@ -880,7 +885,7 @@ class IrBodyDeserializer(
             -> error("Const deserialization error: ${proto.valueCase} ")
         }
 
-    private fun deserializeOperation(proto: ProtoExpression, start: Int, end: Int, type: IrType): IrExpression =
+    private fun deserializeOperation(proto: ProtoExpression, start: Int, end: Int, type: IrType): IrExpression? =
         when (proto.operationCase!!) {
             OP_BLOCK -> deserializeBlock(proto.opBlock, start, end, type)
             OP_RETURNABLE_BLOCK -> deserializeReturnableBlock(proto.opReturnableBlock, start, end, type)
@@ -922,6 +927,7 @@ class IrBodyDeserializer(
             OP_RICH_PROPERTY_REFERENCE -> deserializeRichPropertyReference(proto.opRichPropertyReference, start, end, type)
             OP_ERROR_EXPRESSION -> deserializeErrorExpression(proto.opErrorExpression, start, end, type)
             OP_ERROR_CALL_EXPRESSION -> deserializeErrorCallExpression(proto.opErrorCallExpression, start, end, type)
+            OP_MISSING_EXPRESSION -> null
             ProtoExpression.OperationCase.OPERATION_NOT_SET -> error("Expression deserialization not implemented: ${proto.operationCase}")
         }
 
@@ -970,7 +976,7 @@ class IrBodyDeserializer(
             ProtoOperationPre2_4_0.OperationCase.OPERATION_NOT_SET -> error("Expression deserialization not implemented: ${proto.operationCase}")
         }
 
-    fun deserializeExpression(proto: ProtoExpression): IrExpression {
+    fun deserializeNullableExpression(proto: ProtoExpression): IrExpression? {
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
         val start = coordinates.startOffset
         val end = coordinates.endOffset
@@ -984,6 +990,9 @@ class IrBodyDeserializer(
 
         return expression
     }
+
+    fun deserializeExpression(proto: ProtoExpression): IrExpression =
+        deserializeNullableExpression(proto) ?: error("Expected non-null expression, got: ${proto.operationCase}")
 
     private fun deserializeIrStatementOrigin(protoName: Int): IrStatementOrigin {
         val originName = libraryFile.string(protoName)

@@ -170,8 +170,11 @@ message IrInlinedFunctionBlock {
 }
 
 message MemberAccessCommon {
-  // Value argument serialization scheme after 2.2.0
-  repeated NullableIrExpression argument = 6;
+  // Value argument serialization scheme after 2.4.0
+  repeated IrExpression argument = 7;
+
+  // Value argument serialization scheme before 2.4.0
+  repeated NullableIrExpression argument_pre_2_4_0 = 6;
 
   // Value argument serialization scheme before 2.2.0
   optional IrExpression dispatch_receiver = 1;
@@ -552,6 +555,7 @@ message IrExpression {
     IrRichFunctionReference op_rich_function_reference = 41;
     IrRichPropertyReference op_rich_property_reference = 42;
     IrInlinedFunctionBlock op_inlined_function_block = 43;
+    IrMissingExpression op_missing_expression = 44;
   }
 
   optional IrOperationPre_2_4_0 operation_pre_2_4_0 = 1; // Was required before 2.4.0
@@ -562,6 +566,8 @@ message IrExpression {
 message NullableIrExpression {
   optional IrExpression expression = 1;
 }
+
+message IrMissingExpression {}
 
 /* ------ Declarations --------------------------------------------- */
 

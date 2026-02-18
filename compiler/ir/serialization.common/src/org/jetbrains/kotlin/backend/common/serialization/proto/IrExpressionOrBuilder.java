@@ -375,6 +375,15 @@ public interface IrExpressionOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock getOpInlinedFunctionBlock();
 
   /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrMissingExpression op_missing_expression = 44;</code>
+   */
+  boolean hasOpMissingExpression();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrMissingExpression op_missing_expression = 44;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrMissingExpression getOpMissingExpression();
+
+  /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0 operation_pre_2_4_0 = 1;</code>
    *
    * <pre>

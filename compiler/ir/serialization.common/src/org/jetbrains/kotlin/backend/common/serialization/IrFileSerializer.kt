@@ -77,6 +77,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunction
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall as ProtoInstanceInitializerCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty as ProtoLocalDelegatedProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference as ProtoLocalDelegatedPropertyReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrMissingExpression as ProtoMissingExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation as ProtoIrMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference as ProtoPropertyReference
@@ -590,7 +591,11 @@ open class IrFileSerializer(
         val proto = ProtoMemberAccessCommon.newBuilder()
 
         for (arg in call.arguments) {
-            proto.addArgument(buildProtoNullableIrExpression(arg))
+            if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+                proto.addArgument(serializeExpression(arg))
+            } else {
+                proto.addArgumentPre240(buildProtoNullableIrExpression(arg))
+            }
         }
 
         for (typeArg in call.typeArguments) {
@@ -1041,11 +1046,20 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeExpression(expression: IrExpression): ProtoExpression {
-        val coordinates = serializeCoordinates(expression.startOffset, expression.endOffset)
+    private fun serializeExpression(expression: IrExpression?): ProtoExpression {
         val proto = ProtoExpression.newBuilder()
-            .setType(serializeIrType(expression.type))
-            .setCoordinates(coordinates)
+        if (expression != null) {
+            val coordinates = serializeCoordinates(expression.startOffset, expression.endOffset)
+            proto.setCoordinates(coordinates)
+            proto.setType(serializeIrType(expression.type))
+        } else {
+            // Those field are `required` in the proto schema, so they need to be assigned some value to avoid serialization error.
+            // They will be ignored when deserialized.
+            // (They also cannot be migrated to `optional`, because then 0 values would be elided (as the default value), in which case the
+            // older compiler, which still sees them as `required`, would fail to deserialize then.)
+            proto.setCoordinates(0)
+            proto.setType(0)
+        }
 
         if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
             when (expression) {
@@ -1089,6 +1103,7 @@ open class IrFileSerializer(
                 is IrDynamicOperatorExpression -> proto.opDynamicOperator = serializeDynamicOperatorExpression(expression)
                 is IrErrorCallExpression -> proto.opErrorCallExpression = serializeErrorCallExpression(expression)
                 is IrErrorExpression -> proto.opErrorExpression = serializeErrorExpression(expression)
+                null -> proto.opMissingExpression = ProtoMissingExpression.newBuilder().build()
                 else -> error("Expression serialization is not supported yet: ${expression.render()}")
             }
         } else {
@@ -1134,7 +1149,7 @@ open class IrFileSerializer(
                 is IrDynamicOperatorExpression -> operationProto.dynamicOperator = serializeDynamicOperatorExpression(expression)
                 is IrErrorCallExpression -> operationProto.errorCallExpression = serializeErrorCallExpression(expression)
                 is IrErrorExpression -> operationProto.errorExpression = serializeErrorExpression(expression)
-                else -> error("Expression serialization is not supported yet: ${expression.render()}")
+                else -> error("Expression serialization is not supported yet: ${expression?.render()}")
             }
             proto.setOperationPre240(operationProto)
         }
