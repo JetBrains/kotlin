@@ -869,15 +869,15 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
                 // swift-tools-version: 5.9
                 import PackageDescription
                 let package = Package(
-                  name: "_internal_linkage_SwiftPMImport",
+                  name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
                   platforms: [
                     .iOS("15.0")
                   ],
                   products: [
                     .library(
-                      name: "_internal_linkage_SwiftPMImport",
+                      name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
                       type: .none,
-                      targets: ["_internal_linkage_SwiftPMImport"]
+                      targets: ["$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME"]
                     )
                   ],
                   dependencies: [
@@ -887,7 +887,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
                   ],
                   targets: [
                     .target(
-                      name: "_internal_linkage_SwiftPMImport",
+                      name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
                       dependencies: [
                         .product(
                           name: "LocalSwiftPackage",
@@ -1081,15 +1081,15 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
                             // swift-tools-version: 5.9
                             import PackageDescription
                             let package = Package(
-                              name: "_internal_linkage_SwiftPMImport",
+                              name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
                               platforms: [
                                 .iOS("15.0")
                               ],
                               products: [
                                 .library(
-                                  name: "_internal_linkage_SwiftPMImport",
+                                  name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
                                   type: .none,
-                                  targets: ["_internal_linkage_SwiftPMImport"]
+                                  targets: ["$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME"]
                                 )
                               ],
                               dependencies: [
@@ -1097,7 +1097,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
                               ],
                               targets: [
                                 .target(
-                                  name: "_internal_linkage_SwiftPMImport",
+                                  name: "$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME",
                                   dependencies: [
                                     .product(name: "_producer", package: "_producer")
                                   ]
@@ -1144,7 +1144,7 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
                               ]
                             )
                         """.trimIndent() + "\n",
-                    manifestRelativePath = "iosApp/_internal_linkage_SwiftPMImport/subpackages/_producer/Package.swift"
+                    manifestRelativePath = "iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/subpackages/_producer/Package.swift"
                 )
             }
         }
@@ -1272,7 +1272,7 @@ private fun TestProject.testVisibleSignatures(
 private fun TestProject.testPackageManifest(
     expectedContent: String,
     swiftImportBasePath: Path = projectPath,
-    manifestRelativePath: String = "iosApp/_internal_linkage_SwiftPMImport/Package.swift",
+    manifestRelativePath: String = "iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/Package.swift",
 ) {
     val packageSwift = swiftImportBasePath.resolve(manifestRelativePath)
 
