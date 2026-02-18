@@ -190,6 +190,13 @@ abstract class ProjectTestsExtension(val project: Project) {
 
     @KotlinCompilerDistUsage
     fun withDist() {
+        project.normalization {
+            runtimeClasspath {
+                ignore("**/build.txt")
+                ignore("*.spdx.json")
+            }
+        }
+
         add(distForTests) { project(":kotlin-compiler", "distElements") }
     }
 
