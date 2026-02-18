@@ -12,12 +12,59 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageCo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
 
 abstract class AbstractFirWasmInvalidationTest :
     WasmAbstractInvalidationTest(TargetBackend.WASM, "incrementalOut/invalidationFir")
 
+abstract class AbstractFirWasmInvalidationMultiModuleTest :
+    WasmAbstractInvalidationTest(TargetBackend.WASM, "incrementalOut/invalidationFirMultimodule") {
+    override fun createConfiguration(
+        moduleName: String,
+        moduleKind: ModuleKind,
+        languageFeatures: List<String>,
+        allLibraries: List<String>,
+        friendLibraries: List<String>,
+        includedLibrary: String?
+    ): CompilerConfiguration {
+        val config = super.createConfiguration(
+            moduleName = moduleName,
+            moduleKind = moduleKind,
+            languageFeatures = languageFeatures,
+            allLibraries = allLibraries,
+            friendLibraries = friendLibraries,
+            includedLibrary = includedLibrary
+        )
+        config.wasmGenerateClosedWorldMultimodule = true
+        return config
+    }
+}
+
 abstract class AbstractFirWasmInvalidationWithPLTest :
     AbstractWasmInvalidationWithPLTest("incrementalOut/invalidationFirWithPL")
+
+abstract class AbstractFirWasmInvalidationWithPLMultiModuleTest :
+    AbstractWasmInvalidationWithPLTest("incrementalOut/invalidationFirWithPLMultimodule") {
+    override fun createConfiguration(
+        moduleName: String,
+        moduleKind: ModuleKind,
+        languageFeatures: List<String>,
+        allLibraries: List<String>,
+        friendLibraries: List<String>,
+        includedLibrary: String?
+    ): CompilerConfiguration {
+        val config = super.createConfiguration(
+            moduleName = moduleName,
+            moduleKind = moduleKind,
+            languageFeatures = languageFeatures,
+            allLibraries = allLibraries,
+            friendLibraries = friendLibraries,
+            includedLibrary = includedLibrary
+        )
+        config.wasmGenerateClosedWorldMultimodule = true
+        return config
+    }
+}
 
 abstract class AbstractWasmInvalidationWithPLTest(workingDirPath: String) :
     WasmAbstractInvalidationTest(

@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationMultiModuleTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationTest
+import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLMultiModuleTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.jetbrains.kotlin.wasm.test.*
@@ -51,7 +53,21 @@ fun main(args: Array<String>) {
                     recursive = false,
                 )
             }
+            testClass<AbstractFirWasmInvalidationMultiModuleTest> {
+                model(
+                    "invalidation/",
+                    pattern = "^([^_](.+))$",
+                    recursive = false,
+                )
+            }
             testClass<AbstractFirWasmInvalidationWithPLTest> {
+                model(
+                    "invalidationWithPL/",
+                    pattern = "^([^_](.+))$",
+                    recursive = false,
+                )
+            }
+            testClass<AbstractFirWasmInvalidationWithPLMultiModuleTest> {
                 model(
                     "invalidationWithPL/",
                     pattern = "^([^_](.+))$",
