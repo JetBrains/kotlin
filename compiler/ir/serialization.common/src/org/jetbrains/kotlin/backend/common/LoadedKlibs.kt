@@ -46,9 +46,12 @@ class LoadedKlibs(
  *
  * @property included Only the included KLIB ([K2NativeCompilerArguments.includes] CLI option), if there were any.
  *  Note: [included] is also in [all].
+ *
+ * @property cached The KLIB for which the cache should be built.
  */
 class LoadedNativeKlibs(
     val all: List<KotlinLibrary>,
     val friends: List<KotlinLibrary> = emptyList(),
     val included: List<KotlinLibrary> = emptyList(),
+    val cached: KotlinLibrary? = null,
 )
