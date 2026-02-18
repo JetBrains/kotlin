@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
+import org.gradle.StartParameter
 import org.gradle.api.Project
 import org.gradle.api.logging.configuration.ConsoleOutput
 import org.gradle.api.logging.configuration.ShowStacktrace
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.internal.isInIdeaEnvironment
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -21,26 +24,42 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.Serializable
 
 internal class ToolingDiagnosticRenderingOptionsParameters(
-    val propertiesProvider: PropertiesProvider,
     val isInIdeaSync: Boolean,
     val isInIdeaEnvironment: Boolean,
     val showStacktrace: ShowStacktrace,
     val warningMode: WarningMode,
     val consoleOutput: ConsoleOutput,
     val isAttachedToTerminal: Boolean,
+    val internalDiagnosticsShowStacktrace: Boolean?,
+    val internalDiagnosticsUseParsableFormat: Boolean,
+    val suppressedGradlePluginWarnings: List<String>,
+    val suppressedGradlePluginErrors: List<String>,
+    val internalDiagnosticsIgnoreWarningMode: Boolean?,
+    val displayDiagnosticsInIdeBuildLog: Boolean,
 ) {
     companion object {
-        fun fromProject(project: Project): ToolingDiagnosticRenderingOptionsParameters {
-            return ToolingDiagnosticRenderingOptionsParameters(
-                propertiesProvider = project.kotlinPropertiesProvider,
-                isInIdeaSync = project.isInIdeaSync.get(),
-                isInIdeaEnvironment = project.isInIdeaEnvironment.get(),
-                showStacktrace = project.gradle.startParameter.showStacktrace,
-                warningMode = project.gradle.startParameter.warningMode,
-                consoleOutput = project.gradle.startParameter.consoleOutput,
-                isAttachedToTerminal = project.isAttachedToTerminal.get(),
+        fun create(
+            providerFactory: ProviderFactory,
+            startParameter: StartParameter,
+            propertiesProvider: PropertiesProvider,
+        ): ToolingDiagnosticRenderingOptionsParameters =
+            ToolingDiagnosticRenderingOptionsParameters(
+                isInIdeaSync = providerFactory.isInIdeaSync().get(),
+                isInIdeaEnvironment = providerFactory.isInIdeaEnvironment().get(),
+                showStacktrace = startParameter.showStacktrace,
+                warningMode = startParameter.warningMode,
+                consoleOutput = startParameter.consoleOutput,
+                isAttachedToTerminal = providerFactory.isAttachedToTerminal().get(),
+                internalDiagnosticsShowStacktrace = propertiesProvider.internalDiagnosticsShowStacktrace,
+                internalDiagnosticsUseParsableFormat = propertiesProvider.internalDiagnosticsUseParsableFormat,
+                suppressedGradlePluginWarnings = propertiesProvider.suppressedGradlePluginWarnings,
+                suppressedGradlePluginErrors = propertiesProvider.suppressedGradlePluginErrors,
+                internalDiagnosticsIgnoreWarningMode = propertiesProvider.internalDiagnosticsIgnoreWarningMode,
+                displayDiagnosticsInIdeBuildLog = propertiesProvider.displayDiagnosticsInIdeBuildLog,
             )
-        }
+
+        fun fromProject(project: Project): ToolingDiagnosticRenderingOptionsParameters =
+            create(project.providers, project.gradle.startParameter, project.kotlinPropertiesProvider)
     }
 }
 
@@ -57,30 +76,28 @@ internal class ToolingDiagnosticRenderingOptions(
 ) : Serializable {
     companion object {
         fun create(params: ToolingDiagnosticRenderingOptionsParameters): ToolingDiagnosticRenderingOptions {
-            return with(params.propertiesProvider) {
-                val showStacktrace = when {
-                    // if the internal property is specified, it takes the highest priority
-                    internalDiagnosticsShowStacktrace != null -> internalDiagnosticsShowStacktrace!!
+            val showStacktrace = when {
+                // if the internal property is specified, it takes the highest priority
+                params.internalDiagnosticsShowStacktrace != null -> params.internalDiagnosticsShowStacktrace
 
-                    // IDEA launches sync with `--stacktrace` option, but we don't want to
-                    // spam stacktraces in build toolwindow
-                    params.isInIdeaSync -> false
+                // IDEA launches sync with `--stacktrace` option, but we don't want to
+                // spam stacktraces in build toolwindow
+                params.isInIdeaSync -> false
 
-                    else -> params.showStacktrace > ShowStacktrace.INTERNAL_EXCEPTIONS
-                }
-
-                ToolingDiagnosticRenderingOptions(
-                    useParsableFormat = internalDiagnosticsUseParsableFormat,
-                    suppressedWarningIds = suppressedGradlePluginWarnings,
-                    suppressedErrorIds = suppressedGradlePluginErrors,
-                    showStacktrace = showStacktrace,
-                    showSeverityEmoji = !params.isInIdeaEnvironment && !HostManager.hostIsMingw,
-                    coloredOutput = showColoredDiagnostics(params.consoleOutput, params.isAttachedToTerminal),
-                    ignoreWarningMode = internalDiagnosticsIgnoreWarningMode == true,
-                    warningMode = params.warningMode,
-                    displayDiagnosticsInIdeBuildLog = displayDiagnosticsInIdeBuildLog && params.isInIdeaEnvironment,
-                )
+                else -> params.showStacktrace > ShowStacktrace.INTERNAL_EXCEPTIONS
             }
+
+            return ToolingDiagnosticRenderingOptions(
+                useParsableFormat = params.internalDiagnosticsUseParsableFormat,
+                suppressedWarningIds = params.suppressedGradlePluginWarnings,
+                suppressedErrorIds = params.suppressedGradlePluginErrors,
+                showStacktrace = showStacktrace,
+                showSeverityEmoji = !params.isInIdeaEnvironment && !HostManager.hostIsMingw,
+                coloredOutput = showColoredDiagnostics(params.consoleOutput, params.isAttachedToTerminal),
+                ignoreWarningMode = params.internalDiagnosticsIgnoreWarningMode == true,
+                warningMode = params.warningMode,
+                displayDiagnosticsInIdeBuildLog = params.displayDiagnosticsInIdeBuildLog && params.isInIdeaEnvironment,
+            )
         }
 
         fun forProject(project: Project): ToolingDiagnosticRenderingOptions {
@@ -122,7 +139,10 @@ private fun showColoredDiagnostics(consoleOutput: ConsoleOutput, isAttachedToTer
 }
 
 internal val Project.isAttachedToTerminal
-    get() = providers.of(IsAttachedToTerminalValueSource::class.java) {}.map { it.value }
+    get() = providers.isAttachedToTerminal()
+
+internal fun ProviderFactory.isAttachedToTerminal(): Provider<Boolean> =
+    of(IsAttachedToTerminalValueSource::class.java) {}.map { it.value }
 
 /**
  * Configuration cache value source that determines if the application is running in an
