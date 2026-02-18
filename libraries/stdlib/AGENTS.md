@@ -1,6 +1,7 @@
 ### Project structure
 
-Most standard library sources are located in current's directory subdirectories corresponding to a particular source set.
+Most standard library sources are located in `libraries/stdlib` subdirectories corresponding to a particular source set.
+
 The only exception is Kotlin/Native-specific sources and tests that are located in [kotlin-native/runtime/main](../../kotlin-native/runtime/src/main)
 and [kotlin-native/runtime/test](../../kotlin-native/runtime/test) directories.
 
@@ -11,9 +12,9 @@ To enable it, all Gradle commands should be executed with `-Pkotlin.native.enabl
 #### Standard Library Source Generation
 
 Some standard library sources are generated from [templates](../tools/kotlin-stdlib-gen/src/templates). 
-Such source files have a comment explicitly mentioning that, and their names are prefixed with an underscore.
+Such source files have a comment explicitly mentioning that, and their names are prefixed with an underscore (e.g., `_Collections.kt`).
 Do not edit generated sources manually.
-Instead, updated corresponding template files and regenerate sources by running the following Gradle task:
+Instead, update the corresponding template files and regenerate sources by running the following Gradle task:
 
 ```
 ./gradlew :tools:kotlin-stdlib-gen:run
@@ -47,11 +48,9 @@ Check [ReadMe](./ReadMe.md) for more details.
     - On macOS, when running tests for JVM, `NumbersTest` may fail (e.g., `floatToBits`, `doubleToBits`). These failures are acceptable and are not blockers for changes that do not affect numeric conversions.
 
 #### Standard Library Samples
-- Samples are usually implemented as unit tests showing how to use a specific API.
-
-- Samples are located in the [stdlib/samples](../stdlib/samples) directory.
-
-- Read [stdlib/samples/ReadMe](../stdlib/samples/ReadMe.md) for more information.
+- Samples are implemented as unit tests showing common use cases of an API.
+- Samples are located in the [stdlib/samples](../stdlib/samples) directory, specifically under the `test` source root.
+- Read [stdlib/samples/ReadMe](../stdlib/samples/ReadMe.md) for detailed guidelines on sample authoring (e.g., allowed assertions like `assertPrints`).
 
 #### Binary Compatibility Requirements
 - All symbols constituting the public ABI are stored in dump files generated and validated by the binary compatibility validator tool:
@@ -66,7 +65,5 @@ Check [ReadMe](./ReadMe.md) for more details.
   ```
   
 - If the updated dump includes new lines, the change is considered a binary compatible.
-
 - If some lines were completely removed, the change is considered a binary incompatible.
-
 - The change, until otherwise is required, should preserve binary compatibility.
