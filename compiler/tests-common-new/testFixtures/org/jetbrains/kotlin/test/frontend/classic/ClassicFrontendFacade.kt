@@ -298,7 +298,6 @@ class ClassicFrontendFacade(
                     languageVersionSettings = configuration.languageVersionSettings,
                     storageManager = storageManager,
                     builtIns = builtInsModule,
-                    packageAccessHandler = null,
                     lookupTracker = LookupTracker.DO_NOTHING
                 )
                 if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns

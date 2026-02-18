@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.library.metadata.resolver.impl
 
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolver
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
@@ -212,8 +211,8 @@ class KotlinLibraryResolverResultImpl(
 
     override fun getFullList(): List<KotlinLibrary> = all.map { it.library }
 
-    override fun forEach(action: (KotlinLibrary, PackageAccessHandler) -> Unit) {
-        all.forEach { action(it.library, it) }
+    override fun forEach(action: (KotlinLibrary) -> Unit) {
+        all.forEach { action(it.library) }
     }
 
     override fun toString() = "roots=$roots, all=$all"

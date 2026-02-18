@@ -19,7 +19,6 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
     override fun createDeserializedPackageFragments(
         library: KotlinLibrary,
         moduleDescriptor: ModuleDescriptor,
-        packageAccessedHandler: PackageAccessHandler?,
         customMetadataProtoLoader: CustomMetadataProtoLoader?,
         storageManager: StorageManager,
         configuration: DeserializationConfiguration
@@ -46,7 +45,6 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
                         fqName = packageFqName,
                         library = library,
                         metadata = metadata,
-                        packageAccessHandler = packageAccessedHandler,
                         customMetadataProtoLoader = customMetadataProtoLoader,
                         storageManager = storageManager,
                         module = moduleDescriptor,
@@ -58,7 +56,6 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
                         fqName = packageFqName,
                         library = library,
                         metadata = metadata,
-                        packageAccessHandler = packageAccessedHandler,
                         customMetadataProtoLoader = customMetadataProtoLoader,
                         storageManager = storageManager,
                         module = moduleDescriptor,

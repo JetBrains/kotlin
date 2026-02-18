@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.library.UnresolvedLibrary
-import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 
 interface KotlinLibraryResolver<L : KotlinLibrary> {
 
@@ -61,5 +60,5 @@ interface KotlinLibraryResolveResult {
 
     fun getFullList(): List<KotlinLibrary>
 
-    fun forEach(action: (KotlinLibrary, PackageAccessHandler) -> Unit)
+    fun forEach(action: (KotlinLibrary) -> Unit)
 }
