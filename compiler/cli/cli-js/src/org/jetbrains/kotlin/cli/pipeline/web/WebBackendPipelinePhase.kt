@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.backend.js.loadWebKlibsInProductionPipeline
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
 import java.io.File
 
 abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, IntermediateOutput>(

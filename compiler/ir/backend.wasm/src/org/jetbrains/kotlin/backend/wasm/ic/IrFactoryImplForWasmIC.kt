@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.wasm.ic
 
-import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithIC
-import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithICForTesting
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.*
@@ -15,6 +13,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithICWholeWorld
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.createStringBuiltIn
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.jsToKotlinAnyAdapterBuiltIn
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.jsToKotlinStringAdapterBuiltIn
@@ -28,11 +27,10 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.irAttribute
 import java.io.File
-import java.util.*
 
-open class WasmICContext(
+open class WasmICContextWholeWorld(
     protected val allowIncompleteImplementations: Boolean,
-    protected val skipLocalNames: Boolean = false,
+    protected val skipLocalNames: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
 ) : PlatformDependentICContext {
@@ -44,7 +42,7 @@ open class WasmICContext(
         irBuiltIns: IrBuiltIns,
         configuration: CompilerConfiguration
     ): IrCompilerICInterface =
-        WasmCompilerWithIC(
+        WasmCompilerWithICWholeWorld(
             mainModule = mainModule,
             irBuiltIns = irBuiltIns,
             configuration = configuration,
@@ -64,23 +62,6 @@ open class WasmICContext(
         externalModuleName: String?,
     ): ModuleArtifact =
         WasmModuleArtifact(fileArtifacts.map { it as WasmSrcFileArtifact })
-}
-
-class WasmICContextForTesting(
-    allowIncompleteImplementations: Boolean,
-    skipLocalNames: Boolean = false,
-) : WasmICContext(
-    allowIncompleteImplementations,
-    skipLocalNames,
-    skipCommentInstructions = false,
-    skipLocations = false
-) {
-    override fun createCompiler(
-        mainModule: IrModuleFragment,
-        irBuiltIns: IrBuiltIns,
-        configuration: CompilerConfiguration
-    ): IrCompilerICInterface =
-        WasmCompilerWithICForTesting(mainModule, irBuiltIns, configuration, allowIncompleteImplementations)
 }
 
 class IrFactoryImplForWasmIC(stageController: StageController) : IrFactory(stageController), IdSignatureRetriever {

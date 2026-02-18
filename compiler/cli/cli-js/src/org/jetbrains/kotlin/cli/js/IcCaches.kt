@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.cli.js
 
-import org.jetbrains.kotlin.backend.wasm.ic.WasmICContext
+import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -40,7 +40,7 @@ internal fun prepareIcCaches(
         arguments.wasm -> IcCachesConfigurationData.Wasm(
             wasmDebug = arguments.wasmDebug,
             generateWat = arguments.wasmGenerateWat,
-            generateDebugInformation = arguments.sourceMap || arguments.generateDwarf
+            generateDebugInformation = arguments.sourceMap || arguments.generateDwarf,
         )
         else -> IcCachesConfigurationData.Js(
             arguments.granularity
@@ -76,12 +76,14 @@ internal fun prepareIcCaches(
             mainCallArguments,
             icConfigurationData.granularity,
         )
-        is IcCachesConfigurationData.Wasm -> WasmICContext(
-            allowIncompleteImplementations = false,
-            skipLocalNames = !icConfigurationData.wasmDebug,
-            skipCommentInstructions = !icConfigurationData.generateWat,
-            skipLocations = !icConfigurationData.generateDebugInformation
-        )
+        is IcCachesConfigurationData.Wasm -> {
+            WasmICContextWholeWorld(
+                false,
+                !icConfigurationData.wasmDebug,
+                !icConfigurationData.generateWat,
+                !icConfigurationData.generateDebugInformation,
+            )
+        }
     }
     val cacheUpdater = CacheUpdater(
         cacheDir = cacheDirectory,
