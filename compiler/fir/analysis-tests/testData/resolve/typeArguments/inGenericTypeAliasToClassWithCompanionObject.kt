@@ -13,8 +13,8 @@ typealias TypeAlias<K> = WithCompanion
 
 fun test() {
     val p1 = TypeAlias
-    val p2 = <!NO_COMPANION_OBJECT!>TypeAlias<Int><!>
-    val p3 = <!NO_COMPANION_OBJECT!>TypeAlias<Int, Int><!>
+    val p2 = TypeAlias<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Int><!>
+    val p3 = TypeAlias<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Int, Int><!>
 
     val p4 = TypeAlias.toString()
     val p5 = TypeAlias<Int>.<!UNRESOLVED_REFERENCE!>toString<!>()

@@ -44,7 +44,7 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             return true
         }
 
-        if (isNotResolvedToObject) {
+        if (isNotResolvedToObject && !isTypeAliasToClassWithCompanion) {
             reporter.reportOn(source, FirErrors.NO_COMPANION_OBJECT, symbol)
             return true
         }
@@ -57,6 +57,10 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         // TODO: it'd be nice to use `resolvedToCompanionObject` here, but see KT-84299
         get() = resolvedType.isUnit && symbol?.fullyExpandedClass()?.classKind != ClassKind.OBJECT
 
+    context(context: CheckerContext)
+    private val FirResolvedQualifier.isTypeAliasToClassWithCompanion: Boolean
+        get() = symbol?.fullyExpandedClass()?.resolvedCompanionObjectSymbol != null
+
     /**
      * Implementation before [LanguageFeature.ForbidUselessTypeArgumentsIn25] which missed some cases
      * (see KT-84280, KT-84281) of [FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS].
@@ -66,7 +70,7 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
      */
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun preForbidUselessTypeArgumentsIn25Implementation(expression: FirResolvedQualifier): Boolean {
-        if (!expression.resolvedType.isUnit) {
+        if (!expression.resolvedType.isUnit || expression.isTypeAliasToClassWithCompanion) {
             reporter.reportOn(expression.source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Object")
             return true
         }
