@@ -5756,6 +5756,9 @@ val CXIndexOpt_SuppressWarnings: CXIndexOptFlags get() = 8
 val CXIndexOpt_SkipParsedBodiesInSession: CXIndexOptFlags get() = 16
 
 @ExperimentalForeignApi
+val CXIndexOpt_IndexGeneratedDeclarations: CXIndexOptFlags get() = -2147483648
+
+@ExperimentalForeignApi
 typealias CXIndexOptFlagsVar = IntVarOf<CXIndexOptFlags>
 
 @ExperimentalForeignApi
