@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragments
+import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsMultimodule
 import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -68,6 +69,82 @@ abstract class WasmCompilerWithIC(
         overrideBuiltInsSignatures(context)
 
         return dirtyFiles.map { { compileFile(it) } }
+    }
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+open class WasmCompilerWithICMultimodule(
+    mainModule: IrModuleFragment,
+    irBuiltIns: IrBuiltIns,
+    configuration: CompilerConfiguration,
+    private val allowIncompleteImplementations: Boolean,
+    private val skipCommentInstructions: Boolean,
+    private val skipLocations: Boolean,
+) : WasmCompilerWithIC(
+    mainModule = mainModule,
+    irBuiltIns = irBuiltIns,
+    configuration = configuration,
+) {
+    override fun compileFile(irFile: IrFile): WasmIrProgramFragmentsMultimodule {
+        val codeFileFragment = WasmCompiledCodeFileFragment()
+        val dependencyFileFragment = WasmCompiledDependencyFileFragment(
+            definedTypes = codeFileFragment.definedTypes,
+        )
+
+        val moduleReferencedTypes = ModuleReferencedTypes()
+        val typeContext = WasmTrackedTypeCodegenContext(
+            wasmFileFragment = codeFileFragment.definedTypes,
+            moduleReferencedTypes = moduleReferencedTypes,
+            idSignatureRetriever = idSignatureRetriever
+        )
+
+        val moduleReferencedDeclarations = ModuleReferencedDeclarations()
+        val declarationContext = WasmDeclarationCodegenContextWithTrackedReferences(
+            moduleReferencedDeclarations = moduleReferencedDeclarations,
+            moduleReferencedTypes = moduleReferencedTypes,
+            wasmFileFragment = codeFileFragment.definedDeclarations,
+            idSignatureRetriever = idSignatureRetriever,
+        )
+
+        val importContext = WasmDeclarationCodegenContext(
+            wasmFileFragment = dependencyFileFragment.definedDeclarations,
+            idSignatureRetriever = idSignatureRetriever,
+        )
+
+        val linkerDataContext = WasmLinkerDataCodegenContext(
+            wasmFileFragment = codeFileFragment.linkerData,
+            idSignatureRetriever = idSignatureRetriever
+        )
+
+        val wasmModuleTypeTransformer = WasmModuleTypeTransformer(
+            backendContext = context,
+            wasmTypeContext = typeContext
+        )
+
+        compileIrFile(
+            irFile = irFile,
+            backendContext = context,
+            wasmModuleMetadataCache = wasmModuleMetadataCache,
+            allowIncompleteImplementations = allowIncompleteImplementations,
+            typeContext = typeContext,
+            declarationContext = declarationContext,
+            importsContext = importContext,
+            linkerDataContext = linkerDataContext,
+            wasmModuleTypeTransformer = wasmModuleTypeTransformer,
+            skipCommentInstructions = skipCommentInstructions,
+            skipLocations = skipLocations,
+            enableMultimoduleExports = true,
+            moduleName = irFile.module.name.asString()
+        )
+
+        return WasmIrProgramFragmentsMultimodule(
+            definedTypes = dependencyFileFragment.definedTypes,
+            dependencyDeclarations = dependencyFileFragment.definedDeclarations,
+            referencedTypes = moduleReferencedTypes,
+            referencedDeclarations = moduleReferencedDeclarations,
+            codeDeclarations = codeFileFragment.definedDeclarations,
+            linkerData = codeFileFragment.linkerData,
+        )
     }
 }
 

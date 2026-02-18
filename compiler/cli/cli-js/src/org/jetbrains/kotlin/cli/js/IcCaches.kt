@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.js
 
+import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextMultimodule
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.reportLog
@@ -26,6 +27,7 @@ sealed class IcCachesConfigurationData {
         val wasmDebug: Boolean,
         val generateWat: Boolean,
         val generateDebugInformation: Boolean,
+        val multimodule: Boolean,
     ) : IcCachesConfigurationData()
 }
 
@@ -41,6 +43,7 @@ internal fun prepareIcCaches(
             wasmDebug = arguments.wasmDebug,
             generateWat = arguments.wasmGenerateWat,
             generateDebugInformation = arguments.sourceMap || arguments.generateDwarf,
+            multimodule = arguments.wasmGenerateClosedWorldMultimodule,
         )
         else -> IcCachesConfigurationData.Js(
             arguments.granularity
@@ -77,7 +80,8 @@ internal fun prepareIcCaches(
             icConfigurationData.granularity,
         )
         is IcCachesConfigurationData.Wasm -> {
-            WasmICContextWholeWorld(
+            val contextConstructor = if (icConfigurationData.multimodule) ::WasmICContextMultimodule else ::WasmICContextWholeWorld
+            contextConstructor(
                 false,
                 !icConfigurationData.wasmDebug,
                 !icConfigurationData.generateWat,

@@ -47,6 +47,21 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         private val OPCODE_TO_WASM_OP by lazy { enumValues<WasmOp>().associateBy { it.opcode } }
     }
 
+    fun deserializeModuleReferencedTypes(): ModuleReferencedTypes = ModuleReferencedTypes(
+        gcTypes = deserializeSignatureSet(),
+        functionTypes = deserializeSignatureSet(),
+    )
+
+    fun deserializeModuleReferencedDeclarations(): ModuleReferencedDeclarations = ModuleReferencedDeclarations(
+        functions = deserializeSignatureSet(),
+        globalVTable = deserializeSignatureSet(),
+        globalClassITable = deserializeSignatureSet(),
+        rttiGlobal = deserializeSignatureSet(),
+    )
+
+    private fun deserializeSignatureSet() =
+        deserializeSet(::deserializeIdSignature)
+
     private fun deserializeFunction() =
         deserializeNamedModuleField { name ->
             val type = FunctionHeapTypeSymbol(deserializeIdSignature())

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
+import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsMultimodule
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.JsCodeSnippet
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -68,6 +69,28 @@ class WasmCompiledCodeFileFragment(
     definedDeclarations: WasmCompiledDeclarationsFileFragment = WasmCompiledDeclarationsFileFragment(),
     val linkerData: WasmCompiledLinkerDataFileFragment = WasmCompiledLinkerDataFileFragment(),
 ) : WasmCompiledFileFragment(definedTypes, definedDeclarations)
+
+fun List<WasmIrProgramFragmentsMultimodule>.collectTypeReferences(): ModuleReferencedTypes {
+    val currentDeclarationTypes = ModuleReferencedTypes()
+    forEach { fragment ->
+        currentDeclarationTypes.gcTypes.addAll(fragment.referencedTypes.gcTypes)
+        currentDeclarationTypes.functionTypes.addAll(fragment.referencedTypes.functionTypes)
+    }
+
+    return currentDeclarationTypes
+}
+
+fun List<WasmIrProgramFragmentsMultimodule>.collectDeclarationReferences(): ModuleReferencedDeclarations {
+    val currentDeclarationReferences = ModuleReferencedDeclarations()
+    forEach { fragment ->
+        currentDeclarationReferences.functions.addAll(fragment.referencedDeclarations.functions)
+        currentDeclarationReferences.globalVTable.addAll(fragment.referencedDeclarations.globalVTable)
+        currentDeclarationReferences.globalClassITable.addAll(fragment.referencedDeclarations.globalClassITable)
+        currentDeclarationReferences.rttiGlobal.addAll(fragment.referencedDeclarations.rttiGlobal)
+    }
+    return currentDeclarationReferences
+}
+
 
 fun WasmCompiledTypesFileFragment.makeProjection(onTypes: ModuleReferencedTypes): WasmCompiledTypesFileFragment =
     WasmCompiledTypesFileFragment().also { newFragment ->

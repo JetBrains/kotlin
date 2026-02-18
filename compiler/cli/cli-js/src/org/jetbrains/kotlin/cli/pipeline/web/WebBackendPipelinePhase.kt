@@ -91,6 +91,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
                         generateWat = configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT),
                         generateDebugInformation =
                             configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_DWARF) || configuration.sourceMap,
+                        multimodule = configuration.wasmGenerateClosedWorldMultimodule,
                     )
                     else -> IcCachesConfigurationData.Js(
                         granularity = configuration.artifactConfiguration!!.granularity

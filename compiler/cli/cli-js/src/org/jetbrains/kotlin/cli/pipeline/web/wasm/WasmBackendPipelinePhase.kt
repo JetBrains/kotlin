@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifact
+import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifactMultimodule
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_ERROR
@@ -66,20 +67,30 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             return null
         }
 
-        val wasmArtifacts = icCaches.artifacts
-            .filterIsInstance<WasmModuleArtifact>()
-            .flatMap { it.fileArtifacts }
-            .mapNotNull { it.loadIrFragments()?.mainFragment }
+        val configurations = if (configuration.wasmGenerateClosedWorldMultimodule) {
+            val wasmArtifacts = icCaches.artifacts.filterIsInstance<WasmModuleArtifactMultimodule>()
+            compileIncrementallyMultimodule(
+                artifacts = wasmArtifacts,
+                configuration = configuration,
+            )
+        } else {
+            val wasmArtifacts = icCaches.artifacts
+                .filterIsInstance<WasmModuleArtifact>()
+                .flatMap { it.fileArtifacts }
+                .mapNotNull { it.loadIrFragments()?.mainFragment }
 
-        val configuration = WasmIrModuleConfiguration(
-            wasmCompiledFileFragments = wasmArtifacts,
-            moduleName = configuration.moduleName!!,
-            configuration = configuration,
-            typeScriptFragment = null,
-            baseFileName = configuration.outputName!!,
-            multimoduleOptions = null,
-        )
-        return listOf(configuration)
+            val configuration = WasmIrModuleConfiguration(
+                wasmCompiledFileFragments = wasmArtifacts,
+                moduleName = configuration.moduleName!!,
+                configuration = configuration,
+                typeScriptFragment = null,
+                baseFileName = configuration.outputName!!,
+                multimoduleOptions = null,
+            )
+            listOf(configuration)
+        }
+
+        return configurations
     }
 
     override fun compileNonIncrementally(
