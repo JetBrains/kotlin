@@ -40,7 +40,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     @Test
     fun nonIncrementalInProcessWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
+        val hasCancellationSupport = hasCancellationSupport(kotlinToolchains.getCompilerVersion())
         project(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
             val module1 = module("jvm-module-1")
             assumeTrue(hasCancellationSupport)
@@ -61,7 +61,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     @Test
     fun nonIncrementalDaemonWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
+        val hasCancellationSupport = hasCancellationSupport(kotlinToolchains.getCompilerVersion())
         val daemonRunPath: Path = createTempDirectory("test-daemon-files")
         assumeTrue(hasCancellationSupport)
         val daemonPolicy = kotlinToolchains.daemonExecutionPolicyBuilder().apply {
@@ -136,7 +136,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     @Test
     fun incrementalInProcessWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
+        val hasCancellationSupport = hasCancellationSupport(kotlinToolchains.getCompilerVersion())
         project(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
             val module1 = module("jvm-module-1")
             assumeTrue(hasCancellationSupport)
@@ -153,7 +153,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     @Test
     fun incrementalDaemonWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
+        val hasCancellationSupport = hasCancellationSupport(kotlinToolchains.getCompilerVersion())
         val daemonRunPath: Path = createTempDirectory("test-daemon-files-incremental")
         assumeTrue(hasCancellationSupport)
         val daemonPolicy = kotlinToolchains.daemonExecutionPolicyBuilder().apply {
@@ -209,7 +209,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     @Test
     fun nonIncrementalWithoutCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val hasCancellationSupport = KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, null)
+        val hasCancellationSupport = hasCancellationSupport(kotlinToolchains.getCompilerVersion())
         project(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
             val module1 = module("jvm-module-1")
             assumeFalse(hasCancellationSupport)
@@ -221,4 +221,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
             assertEquals("Cancellation is supported from compiler version 2.3.20.", exception.message)
         }
     }
+
+    private fun hasCancellationSupport(compilerVersion: String) =
+        KotlinToolingVersion(compilerVersion) >= KotlinToolingVersion(2, 3, 20, null)
 }
