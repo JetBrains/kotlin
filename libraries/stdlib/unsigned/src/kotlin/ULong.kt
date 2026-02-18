@@ -292,6 +292,8 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
      *
+     * This is a logical (zero-fill) shift operation.
+     *
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
      */

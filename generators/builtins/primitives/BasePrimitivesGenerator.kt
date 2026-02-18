@@ -36,26 +36,29 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
             "xor" to "Performs a bitwise XOR operation between the two values."
         )
 
-        internal fun shiftOperatorsDocDetail(kind: PrimitiveType, operation: String): String {
+        internal fun shiftOperatorsDocDetail(kind: PrimitiveType, operation: String, isSigned: Boolean): String {
             val bitsUsed = when (kind) {
                 PrimitiveType.INT -> "five"
                 PrimitiveType.LONG -> "six"
                 else -> throw IllegalArgumentException("Bit shift operation is not implemented for $kind")
             }
 
-            val prefix = when (operation) {
-                "shl" -> ""
-                "shr", "ushr" -> {
-                    val siblingShift = if (operation == "shr") "ushr" else "shr"
-                    val ownName = if (operation == "shr") "an arithmetic (sign-propagating)" else "a logical (zero-fill)"
+            val prefix = if (operation == "shl") {
+                ""
+            } else {
+                check(operation == "shr" || operation == "ushr") { "Unexpected operation: $operation" }
+                val siblingShift = if (operation == "shr") "ushr" else "shr"
+                val ownName = if (operation == "shr") "an arithmetic (sign-propagating)" else "a logical (zero-fill)"
+                if (!isSigned) {
+                    "This is $ownName shift operation.$END_LINE$END_LINE"
+                } else {
                     val siblingName = if (operation == "shr") "a logical (zero-fill)" else "an arithmetic (sign-propagating)"
                     "This is $ownName shift operation. For $siblingName shift, see [$siblingShift].$END_LINE$END_LINE"
                 }
-                else -> ""
             }
             val suffix = when (operation) {
-                "shr" -> "$END_LINE$END_LINE@see ushr"
-                "ushr" -> "$END_LINE$END_LINE@see shr"
+                "shr" if isSigned -> "$END_LINE$END_LINE@see ushr"
+                "ushr" if isSigned -> "$END_LINE$END_LINE@see shr"
                 else -> ""
             }
 
@@ -514,7 +517,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
 
     private fun ClassBuilder.generateBitShiftOperators(thisKind: PrimitiveType) {
         val className = thisKind.capitalized
-        val detail = shiftOperators.keys.associateWith { shiftOperatorsDocDetail(thisKind, it) }
+        val detail = shiftOperators.keys.associateWith { shiftOperatorsDocDetail(thisKind, it, isSigned = true) }
         for ((operatorName, doc) in shiftOperators) {
             method {
                 appendDoc(doc + END_LINE + END_LINE + detail[operatorName]!!)
