@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
 // FULL_JDK
 // WITH_STDLIB
@@ -12,7 +12,7 @@ public interface Computable<V> extends Supplier<V> {
     V compute();
     
     @Override
-    default T get() {
+    default V get() {
         return compute();
     }
 }
@@ -23,8 +23,8 @@ public interface ThrowableComputable<T, E extends Throwable> {
     T compute() throws E;
 }
 
-// FILE: Application.java
-package
+// FILE: app/Application.java
+package app;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.Computable;
 
@@ -43,14 +43,15 @@ public interface Application {
 }
 
 // FILE: main.kt
+import app.Application
 
 fun myUnitFun() {}
 
 fun main(app: Application) {
-    app.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething<!> { "" }
+    app.runSomething { "" }
     app.runSomething { myUnitFun() }
-    app.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething2<!> { "" }
-    app.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething2<!> { myUnitFun() }
+    app.runSomething2 { "" }
+    app.runSomething2 { myUnitFun() }
     app.runSomething3 { "" }
     app.runSomething3 { myUnitFun() }
 }
