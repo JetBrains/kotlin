@@ -412,8 +412,6 @@ class NativeSecondStageCompilationConfig(
             configuration, target, distribution, resolveManifestDependenciesLenient = true
     )
 
-    val resolvedLibraries get() = resolve.resolvedLibraries
-
     val includedLibraries: List<KotlinLibrary>
         get() = getIncludedLibraries(
                 configuration.konanIncludedLibraries.map { File(it) },
@@ -425,7 +423,9 @@ class NativeSecondStageCompilationConfig(
         get() = getExportedLibraries(configuration, resolve.resolvedLibraries, resolve.resolver.searchPathResolver, report = true)
 
     fun librariesWithDependencies(): List<KotlinLibrary> {
-        return resolvedLibraries.filterRoots { (!it.library.isFromKotlinNativeDistribution && !purgeUserLibs) || it.library.hasDeclarationsAccessedDuringFrontendResolve }.getFullList().legacyKlibReverseTopoSort()
+        return loadedKlibs.all
+                .filter { (!it.isFromKotlinNativeDistribution && !purgeUserLibs) || it.hasDeclarationsAccessedDuringFrontendResolve }
+                .legacyKlibReverseTopoSort()
     }
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::File)
@@ -597,7 +597,7 @@ class NativeSecondStageCompilationConfig(
 
     internal val cacheSupport = CacheSupport(
             configuration = configuration,
-            resolvedLibraries = resolvedLibraries,
+            allLibraries = loadedKlibs.all,
             ignoreCacheReason = ignoreCacheReason,
             systemCacheDirectory = systemCacheDirectory,
             autoCacheDirectory = autoCacheDirectory,

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -36,7 +35,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 ) : KlibResolvedModuleDescriptorsFactory {
 
     override fun createResolved(
-        resolvedLibraries: KotlinLibraryResolveResult,
+        libraries: List<KotlinLibrary>,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
@@ -57,7 +56,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         val includedLibraryDescriptors = mutableSetOf<ModuleDescriptorImpl>()
 
         // Build module descriptors.
-        resolvedLibraries.forEach { library ->
+        libraries.forEach { library ->
             profile("Loading ${library.location}") {
 
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.

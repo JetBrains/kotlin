@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.irOrFail
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
@@ -66,7 +65,7 @@ fun KotlinLibrary.getFileFqNames(filePaths: List<String>): List<String> {
 
 class CacheSupport(
         private val configuration: CompilerConfiguration,
-        private val resolvedLibraries: KotlinLibraryResolveResult,
+        private val allLibraries: List<KotlinLibrary>,
         ignoreCacheReason: String?,
         systemCacheDirectory: File,
         autoCacheDirectory: File,
@@ -74,8 +73,6 @@ class CacheSupport(
         target: KonanTarget,
         val produce: CompilerOutputKind
 ) {
-    private val allLibraries = resolvedLibraries.getFullList()
-
     // TODO: consider using [FeaturedLibraries.kt].
     private val fileToLibrary = allLibraries.associateBy { it.libraryFile }
 
@@ -145,7 +142,7 @@ class CacheSupport(
             fileToLibrary[file] ?: error("library to cache\n" +
                     "  ${file.absolutePath}\n" +
                     "not found among resolved libraries:\n  " +
-                    allLibraries.joinToString("\n  ") { it.libraryFile.absolutePath })
+                    allLibraries.joinToString("\n  ") { it.location.absolutePath })
 
     internal val libraryToCache = configuration.konanLibraryToAddToCache?.let {
         val libraryToAddToCacheFile = File(it)
@@ -174,10 +171,9 @@ class CacheSupport(
 
     fun checkConsistency() {
         // Ensure dependencies of every cached library are cached too:
-        val libraries = resolvedLibraries.getFullList()
-        val dependenciesMap = LegacyKlibDependencies(libraries)
+        val dependenciesMap = LegacyKlibDependencies(allLibraries)
 
-        for (library in libraries) {
+        for (library in allLibraries) {
             val cache = cachedLibraries.getLibraryCache(library)
             if (cache != null || library == libraryToCache?.klib) {
                 val dependencies = dependenciesMap.getDependenciesFor(library)

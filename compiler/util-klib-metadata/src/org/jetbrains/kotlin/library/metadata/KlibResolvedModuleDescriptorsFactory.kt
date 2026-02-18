@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.storage.StorageManager
 
 interface KlibResolvedModuleDescriptorsFactory {
@@ -12,7 +12,7 @@ interface KlibResolvedModuleDescriptorsFactory {
     val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
 
     /**
-     * Given the [resolvedLibraries] creates the list of [ModuleDescriptorImpl]s with properly installed
+     * Given the [libraries] creates the list of [ModuleDescriptorImpl]s with properly installed
      * inter-dependencies. The result of this method is returned in a form of [KlibResolvedModuleDescriptors] instance.
      *
      * Please use this method with care: Unless this method accepts `null` for [builtIns], it is not recommended to
@@ -24,7 +24,7 @@ interface KlibResolvedModuleDescriptorsFactory {
      * with probably existing built-ins instance of your source module(s).
      */
     fun createResolved(
-        resolvedLibraries: KotlinLibraryResolveResult,
+        libraries: List<KotlinLibrary>,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
