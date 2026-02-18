@@ -7,8 +7,10 @@
 
 #include <algorithm>
 #include <limits>
+#include <sstream>
 
 #include "Memory.h"
+#include "Porting.h"
 #include "Types.h"
 
 using namespace kotlin;
@@ -76,4 +78,29 @@ extern "C" RUNTIME_NOTHROW KLong Kotlin_MemoryUsageInfo_getPeakResidentSetSizeBy
     } else {
         return std::min<KLong>(result, std::numeric_limits<KLong>::max());
     }
+}
+
+extern "C" RUNTIME_NOTHROW void Kotlin_MemoryUsageInfo_dumpWithHeapTool() {
+#if KONAN_MACOSX
+    ThreadStateGuard guard(ThreadState::kNative); // No need to take chances here.
+
+    {
+        konan::consolePrintf(">>> FOOTPRINT <<<\n");
+        std::stringstream ss;
+        ss << "/usr/bin/footprint " << getpid();
+        system(ss.str().c_str());
+    }
+    {
+        konan::consolePrintf(">>> HEAP <<<\n");
+        std::stringstream ss;
+        ss << "/usr/bin/heap " << getpid();
+        system(ss.str().c_str());
+    }
+    {
+        konan::consolePrintf(">>> VMMAP <<<\n");
+        std::stringstream ss;
+        ss << "/usr/bin/vmmap -s -stacks " << getpid();
+        system(ss.str().c_str());
+    }
+#endif
 }

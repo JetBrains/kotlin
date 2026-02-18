@@ -56,6 +56,8 @@ internal open class RunnerWithExecutor(
                 // konan_lldb.py writes logs to the file specified by GLOG_log_dir environment variable.
                 this.environment["GLOG_log_dir"] = workingDirectory.absolutePath
             }
+            this.environment["MallocStackLogging"] = "1"
+            this.environment["MallocStackLoggingNoCompact"] = "1"
             this.timeout = testRun.checks.executionTimeoutCheck.timeout
         }
         val response = executor.execute(request)

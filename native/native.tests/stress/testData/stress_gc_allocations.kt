@@ -68,6 +68,8 @@ fun allocateGarbage() {
     }
 }
 
+val willReportAndFail = AtomicInt(0)
+
 class PeakRSSChecker(private val rssDiffLimitBytes: Long) {
     // On Linux, the child process might immediately commit the same amount of memory as the parent.
     // So, measure difference between peak RSS measurements.
@@ -77,7 +79,11 @@ class PeakRSSChecker(private val rssDiffLimitBytes: Long) {
 
     fun check(): Long {
         val diffBytes = MemoryUsageInfo.peakResidentSetSizeBytes - initialBytes
-        check(diffBytes <= rssDiffLimitBytes) { "Increased peak RSS by $diffBytes bytes which is more than $rssDiffLimitBytes" }
+        if (diffBytes > rssDiffLimitBytes) {
+            while (!willReportAndFail.compareAndSet(0, 1)) {}
+            MemoryUsageInfo.dumpWithHeapTool()
+            error("Increased peak RSS by $diffBytes bytes which is more than $rssDiffLimitBytes")
+        }
         return diffBytes
     }
 }

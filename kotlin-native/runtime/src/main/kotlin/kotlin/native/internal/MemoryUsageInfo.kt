@@ -13,7 +13,12 @@ public object MemoryUsageInfo {
     // May return 0 if unimplemented on some platform, or in case of an error.
     public val peakResidentSetSizeBytes: Long
         get() = MemoryUsageInfo_getPeakResidentSetSizeBytes()
+
+    public fun dumpWithHeapTool(): Unit = MemoryUsageInfo_dumpWithHeapTool()
 }
 
 @GCUnsafeCall("Kotlin_MemoryUsageInfo_getPeakResidentSetSizeBytes")
 private external fun MemoryUsageInfo_getPeakResidentSetSizeBytes(): Long
+
+@GCUnsafeCall("Kotlin_MemoryUsageInfo_dumpWithHeapTool")
+private external fun MemoryUsageInfo_dumpWithHeapTool(): Unit
