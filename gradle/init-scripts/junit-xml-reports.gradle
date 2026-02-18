@@ -3,6 +3,7 @@ gradle.projectsEvaluated {
         tasks.withType(Test) {
             reports.junitXml.required = true
             reports.html.required = false
+            classpath += files('/Users/Simon.Ogorodnik/Workspace/kotlin-compiler-devkit/testLog/build/libs/testLog.jar')
         }
     }
 }
