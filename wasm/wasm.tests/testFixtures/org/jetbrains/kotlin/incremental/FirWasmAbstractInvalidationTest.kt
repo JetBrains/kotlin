@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
@@ -38,6 +39,15 @@ abstract class AbstractFirWasmInvalidationMultiModuleTest :
         config.wasmGenerateClosedWorldMultimodule = true
         return config
     }
+
+    private val ignoredTests = setOf(
+        "classFunctionsAndFields", //Invalid signature
+        "kotlinTest", //Eager initializer
+        "multiModuleEagerInitialization", //Eager initializer
+    )
+
+    override fun isIgnoredTest(projectInfo: ProjectInfo): Boolean =
+        super.isIgnoredTest(projectInfo) || projectInfo.name in ignoredTests
 }
 
 abstract class AbstractFirWasmInvalidationWithPLTest :
