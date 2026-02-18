@@ -48,14 +48,6 @@ internal fun safePropertySet(self: dynamic, setterName: String, propName: String
 internal annotation class JsOutlinedFunction(val jsFunctionExpression: String, val sourceMap: String)
 
 /**
- * The annotation is needed for annotating function declarations that should be compiled as ES6 generators
- */
-@Target(AnnotationTarget.FUNCTION)
-@UsedFromCompilerGeneratedCode
-// TODO: remove after bootstrap update
-internal annotation class JsGenerator
-
-/**
  * The annotation is needed for annotating function declarations that should not accept any dispatch receiver
  * It's used only internally (for now, only in js-plain-object plugin)
  */
