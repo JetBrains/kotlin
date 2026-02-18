@@ -48,8 +48,6 @@ class WasmSerializer(outputStream: OutputStream) {
 
     fun serialize(compiledFileFragment: WasmCompiledFileFragment) {
         with(compiledFileFragment) {
-            serializeNullable(fragmentTag, ::serializeString)
-
             serializeDefinedFunctions(definedFunctions)
             serializeDefinedGlobals(definedGlobalFields)
             serializeDefinedGlobals(definedGlobalVTables)

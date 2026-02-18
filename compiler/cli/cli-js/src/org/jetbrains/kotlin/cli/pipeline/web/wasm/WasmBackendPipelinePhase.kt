@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.outputName
-import org.jetbrains.kotlin.js.config.preserveIcOrder
 import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PhaseType
@@ -71,7 +70,6 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             .filterIsInstance<WasmModuleArtifact>()
             .flatMap { it.fileArtifacts }
             .mapNotNull { it.loadIrFragments()?.mainFragment }
-            .let { fragments -> if (configuration.preserveIcOrder) fragments.sortedBy { it.fragmentTag } else fragments }
 
         val configuration = WasmIrModuleConfiguration(
             wasmCompiledFileFragments = wasmArtifacts,

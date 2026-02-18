@@ -33,7 +33,7 @@ class WasmModuleFragmentGenerator(
     fun generateModuleAsSingleFileFragment(
         irModuleFragment: IrModuleFragment,
     ): WasmCompiledFileFragment {
-        val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
+        val wasmFileFragment = WasmCompiledFileFragment()
         val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
         generate(irModuleFragment, wasmFileCodegenContext)
         return wasmFileFragment
@@ -45,7 +45,7 @@ class WasmModuleFragmentGenerator(
         referencedDeclarations: ModuleReferencedDeclarations,
         referencedTypes: ModuleReferencedTypes?,
     ): Pair<WasmCompiledFileFragment, Boolean> {
-        val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
+        val wasmFileFragment = WasmCompiledFileFragment()
         val wasmFileCodegenContext =
             if (referencedTypes != null) WasmFileCodegenContextWithImportTrackedTypes(wasmFileFragment, idSignatureRetriever, moduleName, referencedDeclarations, referencedTypes)
             else WasmFileCodegenContextWithImport(wasmFileFragment, idSignatureRetriever, moduleName, referencedDeclarations)
@@ -58,7 +58,7 @@ class WasmModuleFragmentGenerator(
         referencedDeclarations: ModuleReferencedDeclarations,
         referencedTypes: ModuleReferencedTypes?,
     ): WasmCompiledFileFragment {
-        val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
+        val wasmFileFragment = WasmCompiledFileFragment()
         val wasmFileCodegenContext =
             if (referencedTypes != null) WasmFileCodegenContextWithExportTrackedTypes(wasmFileFragment, idSignatureRetriever, referencedDeclarations, referencedTypes)
             else WasmFileCodegenContextWithExport(wasmFileFragment, idSignatureRetriever, referencedDeclarations)
@@ -89,11 +89,10 @@ internal fun compileIrFile(
     idSignatureRetriever: IdSignatureRetriever,
     wasmModuleMetadataCache: WasmModuleMetadataCache,
     allowIncompleteImplementations: Boolean,
-    fragmentTag: String?,
     skipCommentInstructions: Boolean,
     skipLocations: Boolean,
 ): WasmCompiledFileFragment {
-    val wasmFileFragment = WasmCompiledFileFragment(fragmentTag)
+    val wasmFileFragment = WasmCompiledFileFragment()
     val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
     val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
     compileIrFile(

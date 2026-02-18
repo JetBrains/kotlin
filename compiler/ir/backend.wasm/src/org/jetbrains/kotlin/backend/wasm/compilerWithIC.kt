@@ -26,7 +26,6 @@ open class WasmCompilerWithIC(
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
     private val allowIncompleteImplementations: Boolean,
-    private val safeFragmentTags: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
 ) : IrCompilerICInterface {
@@ -65,7 +64,6 @@ open class WasmCompilerWithIC(
                 idSignatureRetriever,
                 wasmModuleMetadataCache,
                 allowIncompleteImplementations,
-                if (safeFragmentTags) "${irFile.module.name.asString()}${irFile.path}" else null,
                 skipCommentInstructions = skipCommentInstructions,
                 skipLocations = skipLocations,
             )
@@ -91,13 +89,11 @@ class WasmCompilerWithICForTesting(
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
     allowIncompleteImplementations: Boolean,
-    safeFragmentTags: Boolean = false,
 ) : WasmCompilerWithIC(
     mainModule,
     irBuiltIns,
     configuration,
     allowIncompleteImplementations,
-    safeFragmentTags,
     skipCommentInstructions = false,
     skipLocations = false,
 ) {
