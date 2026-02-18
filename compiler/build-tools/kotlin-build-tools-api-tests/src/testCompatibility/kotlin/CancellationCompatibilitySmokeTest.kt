@@ -223,5 +223,5 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     }
 
     private fun hasCancellationSupport(compilerVersion: String) =
-        KotlinToolingVersion(compilerVersion) >= KotlinToolingVersion(2, 3, 20, null)
+        KotlinToolingVersion(compilerVersion) >= KotlinToolingVersion(2, 3, 20, "RC")
 }

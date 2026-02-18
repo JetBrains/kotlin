@@ -82,7 +82,7 @@ internal class KotlinWrapperPre2_4_0(
 
     private class JvmCompilationOperationWrapper(
         private val base: JvmCompilationOperation,
-    ) : JvmCompilationOperation by base, BuildOperationWrapper<CompilationResult>(base) {
+    ) : JvmCompilationOperation by base, BuildOperationWrapper<CompilationResult>(base), CancellableBuildOperation<CompilationResult> {
         override val compilerArguments: JvmCompilerArguments = JvmCompilerArgumentsWrapper(base.compilerArguments)
     }
 

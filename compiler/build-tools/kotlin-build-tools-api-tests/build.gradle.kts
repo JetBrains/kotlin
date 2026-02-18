@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
@@ -64,6 +62,7 @@ val compatibilityTestsVersions = listOf(
     BuildToolsVersion(KotlinToolingVersion(2, 0, 21, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 0, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 10, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 3, 20, "RC")),
 )
 
 class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolean = false) {
