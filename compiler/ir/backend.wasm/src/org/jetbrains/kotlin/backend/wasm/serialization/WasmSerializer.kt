@@ -46,6 +46,20 @@ class WasmSerializer(outputStream: OutputStream) {
     private val body = ByteWriter(outputStream)
     private val serializedReferenceIndexes = IdentityHashMap<Any, Int>()
 
+    fun serialize(referencedTypes: ModuleReferencedTypes) {
+        with(referencedTypes) {
+            serializeSet(gcTypes, ::serializeIdSignature)
+            serializeSet(functionTypes, ::serializeIdSignature)
+        }
+    }
+
+    fun serialize(declarations: ModuleReferencedDeclarations) {
+        serializeSet(declarations.functions, ::serializeIdSignature)
+        serializeSet(declarations.globalVTable, ::serializeIdSignature)
+        serializeSet(declarations.globalClassITable, ::serializeIdSignature)
+        serializeSet(declarations.rttiGlobal, ::serializeIdSignature)
+    }
+
     fun serializeCompiledTypes(definedTypes: WasmCompiledTypesFileFragment) = with(definedTypes) {
         serializeDefinedTypeDeclarations(definedGcTypes)
         serializeDefinedStructDeclarations(definedVTableGcTypes)

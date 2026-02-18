@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithICMultimodule
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithICWholeWorld
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.createStringBuiltIn
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.jsToKotlinAnyAdapterBuiltIn
@@ -27,6 +28,42 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.irAttribute
 import java.io.File
+
+open class WasmICContextMultimodule(
+    protected val allowIncompleteImplementations: Boolean,
+    protected val skipLocalNames: Boolean,
+    private val skipCommentInstructions: Boolean,
+    private val skipLocations: Boolean,
+) : PlatformDependentICContext {
+    override fun createIrFactory(): IrFactory =
+        IrFactoryImplForWasmIC(WholeWorldStageController())
+
+    override fun createCompiler(
+        mainModule: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        configuration: CompilerConfiguration
+    ): IrCompilerICInterface =
+        WasmCompilerWithICMultimodule(
+            mainModule = mainModule,
+            irBuiltIns = irBuiltIns,
+            configuration = configuration,
+            allowIncompleteImplementations = allowIncompleteImplementations,
+            skipCommentInstructions = skipCommentInstructions,
+            skipLocations = skipLocations,
+        )
+
+    override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =
+        WasmSrcFileArtifactMultimodule(fragments as? WasmIrProgramFragmentsMultimodule, astArtifact, skipLocalNames)
+
+    override fun createModuleArtifact(
+        moduleName: String,
+        fileArtifacts: List<SrcFileArtifact>,
+        artifactsDir: File?,
+        forceRebuildJs: Boolean,
+        externalModuleName: String?,
+    ): ModuleArtifact =
+        WasmModuleArtifactMultimodule(fileArtifacts.map { it as WasmSrcFileArtifactMultimodule }, moduleName, externalModuleName)
+}
 
 open class WasmICContextWholeWorld(
     protected val allowIncompleteImplementations: Boolean,
