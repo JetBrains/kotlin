@@ -14,6 +14,10 @@ internal fun throwValue(t: Throwable): Nothing {
     throw0(v)
 }
 
+@Suppress("unused")
+internal fun getJsError(t: Throwable): JsAny? =
+    if (t is JsException) t.thrownValue else t.jsError
+
 // If WebAssembly.JSTag is going to be used for wasm exceptions, use a helper function throwing an exception from JS.
 // It's required to work around [an issue in JavaScriptCore](https://bugs.webkit.org/show_bug.cgi?id=297134)
 // Otherwise, an empty function is provided, and exceptions will be thrown from wasm code.

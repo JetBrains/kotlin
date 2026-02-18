@@ -375,6 +375,8 @@ class WasmSymbols(
 
         val throwValue = getInternalWasmFunction("throwValue")
 
+        val getJsError = getInternalWasmFunction("getJsError")
+
         val throw0 = getInternalWasmFunction("throw0")
     }
 
