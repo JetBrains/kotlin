@@ -208,7 +208,7 @@ KtDestructuringDeclaration(319,334): 'val [first] = y'
 KtDestructuringDeclarationEntry(324,329): 'first'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'. With receiver of type 'NonDataTuple'.>
 
 KtNameReferenceExpression(333,334): 'y'
   null
@@ -234,7 +234,7 @@ KtDestructuringDeclaration(353,364): 'val [first]'
 KtDestructuringDeclarationEntry(358,363): 'first'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'. With receiver of type '??? (Initializer required for destructuring declaration)'.>
 
 KtNamedFunction(370,523): 'fun loop(x: List<Tuple>, y: NonDataTuple) {'
   null
@@ -375,7 +375,7 @@ KtBlockExpression(485,487): '{}'
 KtForExpression(492,521): 'for ([first: String] in y) {}'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'. With receiver of type 'NonDataTuple'.>
 
 KtParameter(497,512): '[first: String]'
   null
@@ -386,7 +386,7 @@ KtDestructuringDeclaration(497,512): '[first: String]'
 KtDestructuringDeclarationEntry(498,511): 'first: String'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'. With receiver of type '??? (Unresolved name: next)'.>
 
 KtTypeReference(505,511): 'String'
   null
@@ -628,7 +628,7 @@ KtDestructuringDeclaration(696,703): '[first]'
 KtDestructuringDeclarationEntry(697,702): 'first'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'. With receiver of type 'NonDataTuple'.>
 
 KtBlockExpression(707,707): ''
   null

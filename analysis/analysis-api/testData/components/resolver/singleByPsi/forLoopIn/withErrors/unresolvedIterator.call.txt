@@ -1,4 +1,4 @@
 KtForExpression(15,32): 'for (x in Y()) {}'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'. With receiver of type 'Y'.>

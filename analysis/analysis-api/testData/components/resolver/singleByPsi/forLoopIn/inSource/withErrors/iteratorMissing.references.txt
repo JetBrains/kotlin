@@ -3,6 +3,6 @@ KtForExpression(23,37): 'for(i in f) {}'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'. With receiver of type 'Foo'.>
     symbols:
       Nothing (Unresolved reference)
