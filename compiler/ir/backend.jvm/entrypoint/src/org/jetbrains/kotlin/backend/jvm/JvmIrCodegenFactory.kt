@@ -336,7 +336,7 @@ class JvmIrCodegenFactory(
         val evaluatorData = ideCodegenSettings.evaluatorData ?: computePsiBasedEvaluatorData(irModuleFragment)
         val context = JvmBackendContext(
             state, irBuiltIns, symbolTable, extensions,
-            backendExtension, irProviders, irPluginContext, evaluatorData
+            backendExtension, irPluginContext, evaluatorData
         )
         val generationExtensions = state.configuration.filteredExtensions
             .mapNotNull { it.getPlatformIntrinsicExtension(context) as? JvmIrIntrinsicExtension }
