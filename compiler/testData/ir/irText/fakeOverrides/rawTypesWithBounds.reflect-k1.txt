@@ -1,0 +1,372 @@
+KClass: abstract interface Box1 : Any
+  members:
+    public open operator fun Box1<T>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Box1<T>.hashCode(): kotlin.Int
+    public open fun Box1<T>.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface Box2 : Any
+  members:
+    public open operator fun Box2<T>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Box2<T>.hashCode(): kotlin.Int
+    public open fun Box2<T>.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface Box3 : Any
+  members:
+    public open operator fun Box3<T>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Box3<T>.hashCode(): kotlin.Int
+    public open fun Box3<T>.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface InBox3 : Any
+  members:
+    public open operator fun InBox3<T>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun InBox3<T>.hashCode(): kotlin.Int
+    public open fun InBox3<T>.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface Inv : Any
+  members:
+    public open operator fun Inv<T>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Inv<T>.hashCode(): kotlin.Int
+    public open fun Inv<T>.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract class Java : KotlinInterface, KotlinInterface2
+  members:
+    public abstract fun Java.a00(kotlin.Any?): kotlin.Any?
+    public abstract fun Java.a01(kotlin.Any): kotlin.Any
+    public abstract fun Java.a02(kotlin.Number?): kotlin.Number?
+    public abstract fun Java.a03(kotlin.Number?): kotlin.Number?
+    public abstract fun Java.a04(kotlin.CharSequence): kotlin.CharSequence
+    public abstract fun Java.a05(kotlin.CharSequence?): kotlin.CharSequence?
+    public abstract fun Java.a06(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?>
+    public abstract fun Java.a07(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?>
+    public abstract fun Java.a08(Inv<(raw) kotlin.Any?>?): Inv<(raw) kotlin.Any?>?
+    public abstract fun Java.a09(Inv<(raw) kotlin.Any?>?): Inv<(raw) kotlin.Any?>?
+    public abstract fun Java.a10(Inv<(raw) kotlin.Any?>?): Inv<(raw) kotlin.Any?>?
+    public abstract fun Java.a11(Inv<(raw) kotlin.Any?>?): Inv<(raw) kotlin.Any?>?
+    public abstract fun Java.a12(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?>
+    public abstract fun Java.a13(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?>
+    public abstract fun Java.a14(Box2<(raw) kotlin.Number?>): Box2<(raw) kotlin.Number?>
+    public abstract fun Java.a15(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence>
+    public abstract fun Java.a16(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence>
+    public abstract fun Java.a17(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence>
+    public abstract fun Java.a18(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence>
+    public abstract fun Java.a19(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence>
+    public abstract fun Java.a20(OutBox3<(raw) kotlin.CharSequence>): OutBox3<(raw) kotlin.CharSequence>
+    public abstract fun Java.a21(InBox3<(raw) kotlin.CharSequence>): InBox3<(raw) kotlin.CharSequence>
+    public abstract fun Java.a22(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence>
+    public abstract fun Java.a23(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence>
+    public abstract <B00> fun Java.b00(kotlin.Any?): kotlin.Any?
+    public abstract <B01> fun Java.b01(kotlin.Any): kotlin.Any where B01 : kotlin.Any
+    public abstract <B02> fun Java.b02(kotlin.Number?): kotlin.Number? where B02 : kotlin.Number?
+    public abstract <B03> fun Java.b03(kotlin.Number?): kotlin.Number? where B03 : kotlin.Number?
+    public abstract <B04> fun Java.b04(kotlin.CharSequence): kotlin.CharSequence where B04 : kotlin.CharSequence
+    public abstract <B05> fun Java.b05(kotlin.CharSequence?): kotlin.CharSequence? where B05 : kotlin.CharSequence?
+    public abstract <B06> fun Java.b06(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where B06 : Inv<(raw) kotlin.Any?>
+    public abstract <B07> fun Java.b07(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where B07 : Inv<(raw) kotlin.Any?>
+    public abstract <B08> fun Java.b08(Inv<(raw) kotlin.Any?>?): Inv<(raw) kotlin.Any?>? where B08 : Inv<(raw) kotlin.Any?>?
+    public abstract <B09> fun Java.b09(Inv<(raw) kotlin.Any?>?): Inv<(raw) kotlin.Any?>? where B09 : Inv<(raw) kotlin.Any?>?
+    public abstract <B10> fun Java.b10(Inv<(raw) kotlin.Any?>?): Inv<(raw) kotlin.Any?>? where B10 : Inv<(raw) kotlin.Any?>?
+    public abstract <B11> fun Java.b11(Inv<(raw) kotlin.Any?>?): Inv<(raw) kotlin.Any?>? where B11 : Inv<(raw) kotlin.Any?>?
+    public abstract <B12> fun Java.b12(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where B12 : Inv<(raw) kotlin.Any?>
+    public abstract <B13> fun Java.b13(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where B13 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <B14> fun Java.b14(Box2<(raw) kotlin.Number?>): Box2<(raw) kotlin.Number?> where B14 : Box2<(raw) kotlin.Number?>
+    public abstract <B15> fun Java.b15(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence> where B15 : Box3<(raw) kotlin.CharSequence>
+    public abstract <B16> fun Java.b16(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence> where B16 : Box3<(raw) kotlin.CharSequence>
+    public abstract <B17> fun Java.b17(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence> where B17 : Box3<(raw) kotlin.CharSequence>
+    public abstract <B18> fun Java.b18(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence> where B18 : Box3<(raw) kotlin.CharSequence>
+    public abstract <B19> fun Java.b19(???): ??? where B19 : Box3<(raw) kotlin.CharSequence>
+    public abstract <B20> fun Java.b20(OutBox3<(raw) kotlin.CharSequence>): OutBox3<(raw) kotlin.CharSequence> where B20 : OutBox3<(raw) kotlin.CharSequence>
+    public abstract <B21> fun Java.b21(InBox3<(raw) kotlin.CharSequence>): InBox3<(raw) kotlin.CharSequence> where B21 : InBox3<(raw) kotlin.CharSequence>
+    public abstract <B22> fun Java.b22(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence> where B22 : Box3<(raw) kotlin.CharSequence>
+    public abstract <B23> fun Java.b23(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence> where B23 : Box3<(raw) kotlin.CharSequence>
+    public abstract <C00> fun Java.c00(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C00 : Inv<(raw) kotlin.Any?>
+    public abstract <C01> fun Java.c01(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C01 : Inv<(raw) kotlin.Any?>
+    public abstract <C02> fun Java.c02(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C02 : Inv<(raw) kotlin.Any?>
+    public abstract <C03> fun Java.c03(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C03 : Inv<(raw) kotlin.Any?>
+    public abstract <C04> fun Java.c04(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C04 : Inv<(raw) kotlin.Any?>
+    public abstract <C05> fun Java.c05(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C05 : Inv<(raw) kotlin.Any?>
+    public abstract <C06> fun Java.c06(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C06 : Inv<(raw) kotlin.Any?>
+    public abstract <C07> fun Java.c07(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C07 : Inv<(raw) kotlin.Any?>
+    public abstract <C08> fun Java.c08(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C08 : Inv<(raw) kotlin.Any?>
+    public abstract <C09> fun Java.c09(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C09 : Inv<(raw) kotlin.Any?>
+    public abstract <C10> fun Java.c10(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C10 : Inv<(raw) kotlin.Any?>
+    public abstract <C11> fun Java.c11(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C11 : Inv<(raw) kotlin.Any?>
+    public abstract <C12> fun Java.c12(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C12 : Inv<(raw) kotlin.Any?>
+    public abstract <C13> fun Java.c13(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C13 : Inv<(raw) kotlin.Any?>
+    public abstract <C14> fun Java.c14(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C14 : Inv<(raw) kotlin.Any?>
+    public abstract <C15> fun Java.c15(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C15 : Inv<(raw) kotlin.Any?>
+    public abstract <C16> fun Java.c16(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C16 : Inv<(raw) kotlin.Any?>
+    public abstract <C17> fun Java.c17(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C17 : Inv<(raw) kotlin.Any?>
+    public abstract <C18> fun Java.c18(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C18 : Inv<(raw) kotlin.Any?>
+    public abstract <C19> fun Java.c19(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C19 : Inv<(raw) kotlin.Any?>
+    public abstract <C20> fun Java.c20(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C20 : Inv<(raw) kotlin.Any?>
+    public abstract <C21> fun Java.c21(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C21 : Inv<(raw) kotlin.Any?>
+    public abstract <C22> fun Java.c22(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C22 : Inv<(raw) kotlin.Any?>
+    public abstract <C23> fun Java.c23(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C23 : Inv<(raw) kotlin.Any?>
+    public abstract <D00> fun Java.d00(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D00 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D01> fun Java.d01(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D01 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D02> fun Java.d02(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D02 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D03> fun Java.d03(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D03 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D04> fun Java.d04(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D04 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D05> fun Java.d05(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D05 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D06> fun Java.d06(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D06 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D07> fun Java.d07(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D07 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D08> fun Java.d08(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D08 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D09> fun Java.d09(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D09 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D10> fun Java.d10(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D10 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D11> fun Java.d11(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D11 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D12> fun Java.d12(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D12 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D13> fun Java.d13(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D13 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D14> fun Java.d14(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D14 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D15> fun Java.d15(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D15 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D16> fun Java.d16(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D16 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D17> fun Java.d17(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D17 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D18> fun Java.d18(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D18 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D19> fun Java.d19(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D19 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D20> fun Java.d20(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D20 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D21> fun Java.d21(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D21 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D22> fun Java.d22(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D22 : Box1<(raw) kotlin.CharSequence?>
+    public abstract <D23> fun Java.d23(Box1<(raw) kotlin.CharSequence?>): Box1<(raw) kotlin.CharSequence?> where D23 : Box1<(raw) kotlin.CharSequence?>
+    public open operator fun Java.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java.hashCode(): kotlin.Int
+    public abstract fun Java.kotlinInterface2Fun1(kotlin.Int!): kotlin.Int!
+    public abstract <B> fun Java.kotlinInterface2Fun2(B): B
+    public abstract <A> fun Java.normalFun1(kotlin.Any?): kotlin.Any?
+    public abstract <A> fun Java.normalFun2(kotlin.Any): kotlin.Any where A : kotlin.Any
+    public abstract <A> fun Java.normalFun3(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where A : Inv<(raw) kotlin.Any?>
+    public abstract <A> fun Java.normalFun4(Inv<(raw) kotlin.Any?>, Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where A : Inv<(raw) kotlin.Any?>
+    public abstract <A, B> fun Java.normalFun5(kotlin.Any?, Inv<(raw) kotlin.Any?>): kotlin.Unit where B : Inv<(raw) kotlin.Any?>
+    public abstract <A, B> fun Java.normalFun6(kotlin.Any, Inv<(raw) kotlin.Any?>): kotlin.Unit where A : kotlin.Any, B : Inv<(raw) kotlin.Any?>
+    public final inline <reified A, B> fun Java.normalFun7(kotlin.Any, Inv<(raw) kotlin.Any?>): kotlin.Unit where A : kotlin.Any, B : Inv<(raw) kotlin.Any?>
+    public final inline <A, reified B> fun Java.normalFun8(kotlin.Any, Inv<(raw) kotlin.Any?>): kotlin.Unit where A : kotlin.Any, B : Inv<(raw) kotlin.Any?>
+    public open fun Java.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract class KotlinInterface : Any
+  members:
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a00(A00): A00
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a01(A01): A01
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a02(A02): A02
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a03(A03): A03
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a04(A04): A04
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a05(A05): A05
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a06(A06): A06
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a07(A07): A07
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a08(A08): A08
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a09(A09): A09
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a10(A10): A10
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a11(A11): A11
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a12(A12): A12
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a13(A13): A13
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a14(A14): A14
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a15(A15): A15
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a16(A16): A16
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a17(A17): A17
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a18(A18): A18
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a19(A19): A19
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a20(A20): A20
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a21(A21): A21
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a22(A22): A22
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a23(A23): A23
+    public abstract <B00> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b00(B00): B00 where B00 : A00
+    public abstract <B01> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b01(B01): B01 where B01 : A01
+    public abstract <B02> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b02(B02): B02 where B02 : A02
+    public abstract <B03> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b03(B03): B03 where B03 : A03
+    public abstract <B04> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b04(B04): B04 where B04 : A04
+    public abstract <B05> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b05(B05): B05 where B05 : A05
+    public abstract <B06> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b06(B06): B06 where B06 : A06
+    public abstract <B07> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b07(B07): B07 where B07 : A07
+    public abstract <B08> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b08(B08): B08 where B08 : A08
+    public abstract <B09> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b09(B09): B09 where B09 : A09
+    public abstract <B10> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b10(B10): B10 where B10 : A10
+    public abstract <B11> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b11(B11): B11 where B11 : A11
+    public abstract <B12> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b12(B12): B12 where B12 : A12
+    public abstract <B13> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b13(B13): B13 where B13 : A13
+    public abstract <B14> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b14(B14): B14 where B14 : A14
+    public abstract <B15> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b15(B15): B15 where B15 : A15
+    public abstract <B16> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b16(B16): B16 where B16 : A16
+    public abstract <B17> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b17(B17): B17 where B17 : A17
+    public abstract <B18> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b18(B18): B18 where B18 : A18
+    public abstract <B19> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b19(B19): B19 where B19 : A19
+    public abstract <B20> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b20(B20): B20 where B20 : A20
+    public abstract <B21> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b21(B21): B21 where B21 : A21
+    public abstract <B22> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b22(B22): B22 where B22 : A22
+    public abstract <B23> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b23(B23): B23 where B23 : A23
+    public abstract <C00> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c00(C00): C00 where C00 : Inv<A00>
+    public abstract <C01> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c01(C01): C01 where C01 : Inv<A01>
+    public abstract <C02> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c02(C02): C02 where C02 : Inv<A02>
+    public abstract <C03> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c03(C03): C03 where C03 : Inv<A03>
+    public abstract <C04> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c04(C04): C04 where C04 : Inv<A04>
+    public abstract <C05> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c05(C05): C05 where C05 : Inv<A05>
+    public abstract <C06> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c06(C06): C06 where C06 : Inv<A06>
+    public abstract <C07> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c07(C07): C07 where C07 : Inv<A07>
+    public abstract <C08> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c08(C08): C08 where C08 : Inv<A08>
+    public abstract <C09> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c09(C09): C09 where C09 : Inv<A09>
+    public abstract <C10> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c10(C10): C10 where C10 : Inv<A10>
+    public abstract <C11> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c11(C11): C11 where C11 : Inv<A11>
+    public abstract <C12> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c12(C12): C12 where C12 : Inv<A12>
+    public abstract <C13> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c13(C13): C13 where C13 : Inv<A13>
+    public abstract <C14> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c14(C14): C14 where C14 : Inv<A14>
+    public abstract <C15> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c15(C15): C15 where C15 : Inv<A15>
+    public abstract <C16> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c16(C16): C16 where C16 : Inv<A16>
+    public abstract <C17> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c17(C17): C17 where C17 : Inv<A17>
+    public abstract <C18> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c18(C18): C18 where C18 : Inv<A18>
+    public abstract <C19> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c19(C19): C19 where C19 : Inv<A19>
+    public abstract <C20> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c20(C20): C20 where C20 : Inv<A20>
+    public abstract <C21> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c21(C21): C21 where C21 : Inv<A21>
+    public abstract <C22> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c22(C22): C22 where C22 : Inv<A22>
+    public abstract <C23> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c23(C23): C23 where C23 : Inv<A23>
+    public abstract <D00> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d00(D00): D00 where D00 : Box1<A05>
+    public abstract <D01> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d01(D01): D01 where D01 : Box1<A05>
+    public abstract <D02> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d02(D02): D02 where D02 : Box1<A05>
+    public abstract <D03> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d03(D03): D03 where D03 : Box1<A05>
+    public abstract <D04> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d04(D04): D04 where D04 : Box1<A05>
+    public abstract <D05> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d05(D05): D05 where D05 : Box1<A05>
+    public abstract <D06> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d06(D06): D06 where D06 : Box1<A05>
+    public abstract <D07> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d07(D07): D07 where D07 : Box1<A05>
+    public abstract <D08> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d08(D08): D08 where D08 : Box1<A05>
+    public abstract <D09> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d09(D09): D09 where D09 : Box1<A05>
+    public abstract <D10> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d10(D10): D10 where D10 : Box1<A05>
+    public abstract <D11> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d11(D11): D11 where D11 : Box1<A05>
+    public abstract <D12> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d12(D12): D12 where D12 : Box1<A05>
+    public abstract <D13> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d13(D13): D13 where D13 : Box1<A05>
+    public abstract <D14> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d14(D14): D14 where D14 : Box1<A05>
+    public abstract <D15> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d15(D15): D15 where D15 : Box1<A05>
+    public abstract <D16> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d16(D16): D16 where D16 : Box1<A05>
+    public abstract <D17> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d17(D17): D17 where D17 : Box1<A05>
+    public abstract <D18> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d18(D18): D18 where D18 : Box1<A05>
+    public abstract <D19> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d19(D19): D19 where D19 : Box1<A05>
+    public abstract <D20> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d20(D20): D20 where D20 : Box1<A05>
+    public abstract <D21> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d21(D21): D21 where D21 : Box1<A05>
+    public abstract <D22> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d22(D22): D22 where D22 : Box1<A05>
+    public abstract <D23> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d23(D23): D23 where D23 : Box1<A05>
+    public open operator fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.hashCode(): kotlin.Int
+    public abstract <A> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun1(A): A
+    public abstract <A> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun2(A): A where A : kotlin.Any
+    public abstract <A> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun3(A): A where A : Inv<A>
+    public abstract <A> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun4(A, Inv<kotlin.Int>): Inv<kotlin.Int> where A : Inv<A>
+    public abstract <A, B> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun5(A, B): kotlin.Unit where B : Inv<A>
+    public abstract <A, B> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun6(A, B): kotlin.Unit where A : kotlin.Any, B : Inv<A>
+    public final inline <reified A, B> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun7(A, B): kotlin.Unit where A : kotlin.Any, B : Inv<A>
+    public final inline <A, reified B> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun8(A, B): kotlin.Unit where A : kotlin.Any, B : Inv<A>
+    public open fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a00(A00): A00
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a01(A01): A01
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a02(A02): A02
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a03(A03): A03
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a04(A04): A04
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a05(A05): A05
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a06(A06): A06
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a07(A07): A07
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a08(A08): A08
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a09(A09): A09
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a10(A10): A10
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a11(A11): A11
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a12(A12): A12
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a13(A13): A13
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a14(A14): A14
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a15(A15): A15
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a16(A16): A16
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a17(A17): A17
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a18(A18): A18
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a19(A19): A19
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a20(A20): A20
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a21(A21): A21
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a22(A22): A22
+    public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a23(A23): A23
+    public abstract <B00> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b00(B00): B00 where B00 : A00
+    public abstract <B01> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b01(B01): B01 where B01 : A01
+    public abstract <B02> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b02(B02): B02 where B02 : A02
+    public abstract <B03> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b03(B03): B03 where B03 : A03
+    public abstract <B04> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b04(B04): B04 where B04 : A04
+    public abstract <B05> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b05(B05): B05 where B05 : A05
+    public abstract <B06> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b06(B06): B06 where B06 : A06
+    public abstract <B07> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b07(B07): B07 where B07 : A07
+    public abstract <B08> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b08(B08): B08 where B08 : A08
+    public abstract <B09> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b09(B09): B09 where B09 : A09
+    public abstract <B10> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b10(B10): B10 where B10 : A10
+    public abstract <B11> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b11(B11): B11 where B11 : A11
+    public abstract <B12> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b12(B12): B12 where B12 : A12
+    public abstract <B13> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b13(B13): B13 where B13 : A13
+    public abstract <B14> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b14(B14): B14 where B14 : A14
+    public abstract <B15> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b15(B15): B15 where B15 : A15
+    public abstract <B16> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b16(B16): B16 where B16 : A16
+    public abstract <B17> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b17(B17): B17 where B17 : A17
+    public abstract <B18> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b18(B18): B18 where B18 : A18
+    public abstract <B19> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b19(B19): B19 where B19 : A19
+    public abstract <B20> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b20(B20): B20 where B20 : A20
+    public abstract <B21> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b21(B21): B21 where B21 : A21
+    public abstract <B22> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b22(B22): B22 where B22 : A22
+    public abstract <B23> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.b23(B23): B23 where B23 : A23
+    public abstract <C00> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c00(C00): C00 where C00 : Inv<A00>
+    public abstract <C01> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c01(C01): C01 where C01 : Inv<A01>
+    public abstract <C02> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c02(C02): C02 where C02 : Inv<A02>
+    public abstract <C03> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c03(C03): C03 where C03 : Inv<A03>
+    public abstract <C04> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c04(C04): C04 where C04 : Inv<A04>
+    public abstract <C05> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c05(C05): C05 where C05 : Inv<A05>
+    public abstract <C06> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c06(C06): C06 where C06 : Inv<A06>
+    public abstract <C07> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c07(C07): C07 where C07 : Inv<A07>
+    public abstract <C08> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c08(C08): C08 where C08 : Inv<A08>
+    public abstract <C09> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c09(C09): C09 where C09 : Inv<A09>
+    public abstract <C10> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c10(C10): C10 where C10 : Inv<A10>
+    public abstract <C11> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c11(C11): C11 where C11 : Inv<A11>
+    public abstract <C12> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c12(C12): C12 where C12 : Inv<A12>
+    public abstract <C13> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c13(C13): C13 where C13 : Inv<A13>
+    public abstract <C14> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c14(C14): C14 where C14 : Inv<A14>
+    public abstract <C15> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c15(C15): C15 where C15 : Inv<A15>
+    public abstract <C16> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c16(C16): C16 where C16 : Inv<A16>
+    public abstract <C17> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c17(C17): C17 where C17 : Inv<A17>
+    public abstract <C18> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c18(C18): C18 where C18 : Inv<A18>
+    public abstract <C19> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c19(C19): C19 where C19 : Inv<A19>
+    public abstract <C20> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c20(C20): C20 where C20 : Inv<A20>
+    public abstract <C21> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c21(C21): C21 where C21 : Inv<A21>
+    public abstract <C22> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c22(C22): C22 where C22 : Inv<A22>
+    public abstract <C23> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.c23(C23): C23 where C23 : Inv<A23>
+    public abstract <D00> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d00(D00): D00 where D00 : Box1<A05>
+    public abstract <D01> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d01(D01): D01 where D01 : Box1<A05>
+    public abstract <D02> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d02(D02): D02 where D02 : Box1<A05>
+    public abstract <D03> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d03(D03): D03 where D03 : Box1<A05>
+    public abstract <D04> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d04(D04): D04 where D04 : Box1<A05>
+    public abstract <D05> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d05(D05): D05 where D05 : Box1<A05>
+    public abstract <D06> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d06(D06): D06 where D06 : Box1<A05>
+    public abstract <D07> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d07(D07): D07 where D07 : Box1<A05>
+    public abstract <D08> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d08(D08): D08 where D08 : Box1<A05>
+    public abstract <D09> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d09(D09): D09 where D09 : Box1<A05>
+    public abstract <D10> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d10(D10): D10 where D10 : Box1<A05>
+    public abstract <D11> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d11(D11): D11 where D11 : Box1<A05>
+    public abstract <D12> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d12(D12): D12 where D12 : Box1<A05>
+    public abstract <D13> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d13(D13): D13 where D13 : Box1<A05>
+    public abstract <D14> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d14(D14): D14 where D14 : Box1<A05>
+    public abstract <D15> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d15(D15): D15 where D15 : Box1<A05>
+    public abstract <D16> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d16(D16): D16 where D16 : Box1<A05>
+    public abstract <D17> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d17(D17): D17 where D17 : Box1<A05>
+    public abstract <D18> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d18(D18): D18 where D18 : Box1<A05>
+    public abstract <D19> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d19(D19): D19 where D19 : Box1<A05>
+    public abstract <D20> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d20(D20): D20 where D20 : Box1<A05>
+    public abstract <D21> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d21(D21): D21 where D21 : Box1<A05>
+    public abstract <D22> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d22(D22): D22 where D22 : Box1<A05>
+    public abstract <D23> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.d23(D23): D23 where D23 : Box1<A05>
+    public abstract <A> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun1(A): A
+    public abstract <A> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun2(A): A where A : kotlin.Any
+    public abstract <A> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun3(A): A where A : Inv<A>
+    public abstract <A> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun4(A, Inv<kotlin.Int>): Inv<kotlin.Int> where A : Inv<A>
+    public abstract <A, B> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun5(A, B): kotlin.Unit where B : Inv<A>
+    public abstract <A, B> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun6(A, B): kotlin.Unit where A : kotlin.Any, B : Inv<A>
+    public final inline <reified A, B> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun7(A, B): kotlin.Unit where A : kotlin.Any, B : Inv<A>
+    public final inline <A, reified B> fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.normalFun8(A, B): kotlin.Unit where A : kotlin.Any, B : Inv<A>
+KClass: abstract interface KotlinInterface2 : Any
+  members:
+    public open operator fun KotlinInterface2<A>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun KotlinInterface2<A>.hashCode(): kotlin.Int
+    public abstract fun KotlinInterface2<A>.kotlinInterface2Fun1(A): A
+    public abstract <B> fun KotlinInterface2<A>.kotlinInterface2Fun2(B): B
+    public open fun KotlinInterface2<A>.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun KotlinInterface2<A>.kotlinInterface2Fun1(A): A
+    public abstract <B> fun KotlinInterface2<A>.kotlinInterface2Fun2(B): B
+KClass: abstract interface OutBox3 : Any
+  members:
+    public open operator fun OutBox3<T>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun OutBox3<T>.hashCode(): kotlin.Int
+    public open fun OutBox3<T>.toString(): kotlin.String
+  declaredMembers:
