@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.removeTypeVariableTypes
 import org.jetbrains.kotlin.fir.resolve.calls.stages.shouldHaveLowPriorityDueToSAM
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
@@ -244,7 +243,7 @@ class ConeOverloadConflictResolver(
                 candidates,
                 { !it.usesCoercionToUnitInLambda },
                 { discriminationFlags.copy(unitCoercionInLambdas = false) },
-            )?.takeIf { it.size == 1 }?.let { return it }
+            )?.let { return it }
         }
 
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
