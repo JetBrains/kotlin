@@ -17,7 +17,4 @@ interface KotlinResolvedLibrary : PackageAccessHandler {
     // Any package fragment within this library has beed visited during frontend resolve phase.
     // You need to utilize PackageAccessHandler to make it work for you.
     val isNeededForLink: Boolean
-
-    // Is provided by the distribution?
-    val isDefault: Boolean
 }
