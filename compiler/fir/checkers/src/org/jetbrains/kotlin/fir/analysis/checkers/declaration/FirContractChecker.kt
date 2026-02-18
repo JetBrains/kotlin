@@ -252,9 +252,21 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         val body = declaration.body ?: return
         val returnedParameters = mutableSetOf<Int>()
 
+        // Visitor to check if a parameter appears as a direct return value
+        // (not as an invoked lambda or as an argument to a function)
         val parameterCollector = object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 element.acceptChildren(this)
+            }
+
+            override fun visitFunctionCall(functionCall: FirFunctionCall) {
+                // Don't traverse into function calls at all
+                // If the lambda is passed as an argument or invoked within an escaping lambda, a warning is already reported
+                // return useCaseCallsInPlace1() { index -> action(index) }
+            }
+
+            override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall) {
+                // Same as for explicit function calls: ignore implicit invoke receivers/arguments.
             }
 
             override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
