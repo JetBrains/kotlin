@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.declarations.DeclarationSymbolOwner
+import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-sealed class FirMetadataSource : MetadataSource {
+sealed class FirMetadataSource : MetadataSource, DeclarationSymbolOwner {
     abstract val fir: FirDeclaration
     override val source: KtSourceElement?
         get() = fir.source
@@ -32,6 +34,9 @@ sealed class FirMetadataSource : MetadataSource {
             is FirProperty -> fir.name
             else -> null
         }
+
+    override val symbol: DeclarationSymbolMarker
+        get() = fir.symbol
 
     class File(override val fir: FirFile) : FirMetadataSource(), MetadataSource.File {
         override var serializedIr: ByteArray? = null

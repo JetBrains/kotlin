@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.UnsafeExpressionUtility
 import org.jetbrains.kotlin.fir.expressions.toReferenceUnsafe
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -28,9 +29,12 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
+import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import java.text.MessageFormat
 
@@ -62,6 +66,35 @@ object FirDiagnosticRenderers {
             ).renderElementAsString(symbol.fir, trim = true)
             is FirTypeParameterSymbol -> symbol.name.asString()
             else -> "???"
+        }
+    }
+
+    @OptIn(SymbolInternals::class)
+    val SYMBOL_WITH_LOCATION = Renderer { symbol: DeclarationSymbolMarker ->
+        when (symbol) {
+            is FirClassLikeSymbol<*>, is FirCallableSymbol<*> -> {
+                val elementRender = FirRenderer(
+                    typeRenderer = ConeTypeRendererForReadability { ConeIdShortRenderer() },
+                    idRenderer = ConeIdShortRenderer(),
+                    classMemberRenderer = FirNoClassMemberRenderer(),
+                    bodyRenderer = null,
+                    propertyAccessorRenderer = null,
+                    callArgumentsRenderer = FirCallNoArgumentsRenderer(),
+                    modifierRenderer = FirPartialModifierRenderer(),
+                    callableSignatureRenderer = FirCallableSignatureRendererForReadability(),
+                    declarationRenderer = FirDeclarationRenderer("local ", renderVerboseAccessors = true),
+                    contractRenderer = null,
+                    annotationRenderer = null,
+                    lineBreakAfterContextParameters = false,
+                    renderFieldAnnotationSeparately = false,
+                ).renderElementAsString(symbol.fir, trim = true)
+                val packageName = if (symbol.packageFqName().isRoot) "root package" else symbol.packageFqName().render()
+                val moduleName = symbol.moduleData.name
+
+                "$elementRender defined in $packageName in module $moduleName"
+            }
+            is FirTypeParameterSymbol -> symbol.name.asString()
+            else -> ""
         }
     }
 

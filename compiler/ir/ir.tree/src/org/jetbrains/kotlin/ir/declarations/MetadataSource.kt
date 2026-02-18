@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -76,4 +77,8 @@ sealed class DescriptorMetadataSource : MetadataSource {
         override val isConst: Boolean get() = descriptor.isConst
         override val psi: PsiElement? get() = null
     }
+}
+
+interface DeclarationSymbolOwner {
+    val symbol: DeclarationSymbolMarker
 }
