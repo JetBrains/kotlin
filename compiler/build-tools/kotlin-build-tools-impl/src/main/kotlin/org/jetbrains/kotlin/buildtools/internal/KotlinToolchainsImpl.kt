@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
+import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.incremental.clearJarCaches
@@ -29,8 +31,9 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             when (type) {
                 JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(buildIdToSessionFlagFile)
                 JsPlatformToolchain::class.java -> JsPlatformToolchainImpl()
+                WasmPlatformToolchain::class.java -> WasmPlatformToolchainImpl()
                 CriToolchain::class.java -> CriToolchainImpl()
-                else -> error("Unsupported platform toolchain type: $type. Only JVM and JS compilations are supported for now.")
+                else -> error("Unsupported platform toolchain type: $type. Only JVM, JS and Wasm compilations are supported for now.")
             }
         } as T
     }

@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.arguments.description.actualCommonCompilerArguments
 import org.jetbrains.kotlin.arguments.description.actualCommonToolsArguments
 import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
 import org.jetbrains.kotlin.arguments.description.actualMetadataArguments
+import org.jetbrains.kotlin.arguments.description.actualWasmArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedCommonCompilerArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedJvmCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
@@ -73,6 +74,11 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xuse-javac")
             drop("Xcompile-java")
             drop("Xjavac-arguments")
+        }
+    })
+    put(actualWasmArguments.name, buildMap {
+        with(actualWasmArguments) {
+            drop("Xwasm")
         }
     })
 }

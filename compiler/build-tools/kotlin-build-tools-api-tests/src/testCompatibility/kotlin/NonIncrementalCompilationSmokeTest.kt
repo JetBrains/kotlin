@@ -5,14 +5,19 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.jsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.jsLinkingOperation
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain.Companion.wasm
+import org.jetbrains.kotlin.buildtools.api.wasm.wasmKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.wasm.wasmLinkingOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
@@ -22,6 +27,8 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import kotlin.io.path.*
@@ -122,6 +129,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     fun basicJsCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val toolchain = strategyConfig.first
+        assumeTrue(strategyConfig.second is ExecutionPolicy.InProcess)
         val sources = listOf(
             workingDirectory.resolve("a.kt")
                 .also { it.writeText("@OptIn(kotlin.js.ExperimentalJsExport::class) @JsExport fun main() {println(\"aaa\")}") })
@@ -134,12 +142,14 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
             compilerArguments[CommonJsAndWasmArguments.LIBRARIES] = stdlibKlib
             compilerArguments[CommonJsAndWasmArguments.IR_OUTPUT_NAME] = "some_module"
             compilerArguments[CommonJsAndWasmArguments.X_IR_PRODUCE_KLIB_FILE] = true
-            compilerArguments[CommonToolArguments.VERBOSE] = true
+//            compilerArguments[CommonToolArguments.VERBOSE] = true
         }
         toolchain.createBuildSession().use {
             println(it.executeOperation(compilationOperation))
             destination.walk().forEach { println(it.pathString) }
         }
+
+        println("-----PHASE-----")
 
         val linkingDestination = workingDirectory.resolve("out").also { it.createDirectories() }
         val linkingOperation =
@@ -147,12 +157,51 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
                 compilerArguments[CommonJsAndWasmArguments.LIBRARIES] = stdlibKlib
                 compilerArguments[CommonJsAndWasmArguments.IR_OUTPUT_NAME] = "some_module"
                 compilerArguments[CommonJsAndWasmArguments.X_IR_PRODUCE_JS] = true
-                compilerArguments[CommonToolArguments.VERBOSE] = true
+//                compilerArguments[CommonToolArguments.VERBOSE] = true
             }
         toolchain.createBuildSession().use {
             println(it.executeOperation(linkingOperation))
             linkingDestination.walk().forEach { println(it.pathString) }
-            println(linkingDestination.resolve("some_module.js").readText())
+        }
+    }
+
+    @OptIn(ExperimentalCompilerArgument::class)
+    @BtaV2StrategyAgnosticCompilationTest
+    fun basicWasmCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        val toolchain = strategyConfig.first
+        assumeTrue(strategyConfig.second is ExecutionPolicy.InProcess)
+        val sources = listOf(
+            workingDirectory.resolve("a.kt")
+                .also { it.writeText("fun main() {println(\"aaa\")}") })
+        val stdlibKlib = System.getProperty("kotlin.build-tools-api.test.wasmStdlibClasspath")
+        println(stdlibKlib)
+        assertTrue(stdlibKlib.isNotEmpty()) { "stdlib classpath is not set" }
+        val destination = workingDirectory.resolve("klib").also { it.createDirectories() }
+        val compilationOperation = toolchain.wasm.wasmKlibCompilationOperation(
+            sources,
+            destination
+        ) {
+            compilerArguments[CommonJsAndWasmArguments.LIBRARIES] = stdlibKlib
+            compilerArguments[CommonJsAndWasmArguments.IR_OUTPUT_NAME] = "some_module"
+            compilerArguments[CommonJsAndWasmArguments.X_IR_PRODUCE_KLIB_FILE] = true
+        }
+        toolchain.createBuildSession().use {
+            println(it.executeOperation(compilationOperation))
+            destination.walk().forEach { println(it.pathString) }
+        }
+
+        println("-----PHASE-----")
+
+        val linkingDestination = workingDirectory.resolve("out").also { it.createDirectories() }
+        val linkingOperation =
+            toolchain.wasm.wasmLinkingOperation(destination.listDirectoryEntries("*.klib").single(), linkingDestination) {
+                compilerArguments[CommonJsAndWasmArguments.LIBRARIES] = stdlibKlib
+                compilerArguments[CommonJsAndWasmArguments.IR_OUTPUT_NAME] = "some_module"
+                compilerArguments[CommonJsAndWasmArguments.X_IR_PRODUCE_JS] = true
+            }
+        toolchain.createBuildSession().use {
+            println(it.executeOperation(linkingOperation))
+            linkingDestination.walk().forEach { println(it.pathString) }
         }
     }
 }

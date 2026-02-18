@@ -104,16 +104,6 @@ public interface WasmArguments : CommonJsAndWasmArguments {
         WasmArgument("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE", KotlinReleaseVersion(2, 1, 20))
 
     /**
-     * Use the WebAssembly compiler backend.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_WASM: WasmArgument<Boolean> =
-        WasmArgument("X_WASM", KotlinReleaseVersion(2, 1, 20))
-
-    /**
      * Avoid optimizations that can break debugging.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
