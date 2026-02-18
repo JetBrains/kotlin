@@ -10,6 +10,15 @@ private class PC {
     val p = 1
 }
 
+class A private constructor() {
+    internal inline fun internalInlineFunction() = ::A
+}
+
+private fun Int.privateExtensionFun() {}
+
+private val String.privateVal: String
+    get() = this
+
 internal inline fun test() {
     ::f
     ::p
@@ -26,6 +35,9 @@ internal inline fun test() {
             ::p
         }
     }
+
+    Int::privateExtensionFun
+    String::privateVal
 }
 
 class C {

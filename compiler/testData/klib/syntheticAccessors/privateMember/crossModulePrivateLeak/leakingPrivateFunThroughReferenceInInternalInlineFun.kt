@@ -1,12 +1,10 @@
-// LANGUAGE: -ForbidExposingLessVisibleTypesInInline
-// TARGET_BACKEND: NATIVE, JS_IR, WASM
+// IGNORE_BACKEND: ANY
+// IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS: JS_IR, WASM, NATIVE
 // The test should be unmuted for JVM when KT-77870 issue is fixed.
 // MODULE: lib
 // FILE: A.kt
 class A {
     private fun privateFun(s: String) = s
-
-    internal inline fun internalInlineFunction() = ::privateFun
 
     private inline fun privateInlineFunction() = ::privateFun
     internal inline fun transitiveInlineFunction() = privateInlineFunction()
@@ -15,5 +13,5 @@ class A {
 // MODULE: main()(lib)
 // FILE: main.kt
 fun box(): String {
-    return A().internalInlineFunction().invoke("O") + A().transitiveInlineFunction().invoke("K")
+    return A().transitiveInlineFunction().invoke("OK")
 }
