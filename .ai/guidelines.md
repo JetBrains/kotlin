@@ -44,7 +44,7 @@ Note: The IntelliJ Kotlin plugin is in a separate repository (JetBrains/intellij
 | Kotlin Gradle Plugin API |                        | libraries/tools/kotlin-gradle-plugin-api/                 | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin-api/AGENTS.md)               |
 | KGP Integration Tests    |                        | libraries/tools/kotlin-gradle-plugin-integration-tests/   | [AGENTS.md](../libraries/tools/kotlin-gradle-plugin-integration-tests/AGENTS.md) |
 | PSI                      | `Kt*`                  | compiler/psi/                                             | [AGENTS.md](../compiler/psi/AGENTS.md)                                           |
-| Standard library         |                        | libraries/stdlib/                                         | —                                                                                |
+| Standard library         |                        | libraries/stdlib/                                         | [AGENTS.md](../libraries/stdlib/AGENTS.md)                                       |
 | Test infrastructure      |                        | compiler/test-infrastructure/, compiler/tests-common-new/ | [testing.md](testing.md)                                                         |
 
 > **Adding new area docs:** Create `AGENTS.md` with content and `CLAUDE.md` containing only `@AGENTS.md`
