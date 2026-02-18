@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.konan.config.incrementalCacheDir
 import org.jetbrains.kotlin.konan.config.konanDataDir
 import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
-import org.jetbrains.kotlin.konan.config.konanManifestAddend
 import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
 import org.jetbrains.kotlin.konan.config.konanTarget
 import org.jetbrains.kotlin.konan.config.llvmLtoPasses
@@ -54,7 +53,6 @@ import org.jetbrains.kotlin.konan.config.staticFramework
 import org.jetbrains.kotlin.konan.config.testDumpOutputPath
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
-import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.hasDeclarationsAccessedDuringFrontendResolve
@@ -66,7 +64,7 @@ import java.nio.file.Paths
 class NativeSecondStageCompilationConfig(
         val project: Project,
         override val configuration: CompilerConfiguration
-) : NativeCompilationConfig {
+) : NativeCompilationConfig() {
     /**
      * Determine if we compile for iOS target with Mac ABI (Catalyst).
      * Avoid using this property if possible. Instead, use [TargetTriple.isMacabi] as it is more direct.
@@ -480,10 +478,6 @@ class NativeSecondStageCompilationConfig(
         // Intentionally optimize in debug mode only. See `RuntimeLinkageStrategy`.
         val defaultStrategy = if (debug) RuntimeLinkageStrategy.Optimize else RuntimeLinkageStrategy.Raw
         configuration.get(BinaryOptions.linkRuntime) ?: defaultStrategy
-    }
-
-    override val manifestProperties = configuration.konanManifestAddend?.let {
-        File(it).loadProperties()
     }
 
     private val defaultPropertyLazyInitialization = true

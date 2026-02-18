@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.metadataKlib
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.konanFriendLibraries
 import org.jetbrains.kotlin.konan.config.konanIncludedBinaries
+import org.jetbrains.kotlin.konan.config.konanManifestAddend
 import org.jetbrains.kotlin.konan.config.konanNativeLibraries
 import org.jetbrains.kotlin.konan.config.konanOutputPath
 import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
@@ -18,51 +19,34 @@ import org.jetbrains.kotlin.konan.config.konanShortModuleName
 import org.jetbrains.kotlin.konan.config.konanWriteDependenciesOfProducedKlibTo
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
+import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 
 /**
- * This interface exists not because it is a good abstraction. Rather, it emerged
+ * This abstract class exists not because it is a good abstraction. Rather, it emerged
  * from the need to extract src -> klib compilation from the /kotlin-native directory.
  */
-interface NativeCompilationConfig {
-    val configuration: CompilerConfiguration
+abstract class NativeCompilationConfig {
+    abstract val configuration: CompilerConfiguration
+    abstract val target: KonanTarget
+    abstract val moduleId: String
 
-    val target: KonanTarget
+    val produce: CompilerOutputKind get() = configuration.konanProducedArtifactKind!!
+    val metadataKlib: Boolean get() = configuration.metadataKlib
 
-    val moduleId: String
+    val friendModuleFiles: Set<File> by lazy { configuration.konanFriendLibraries.map { File(it) }.toSet() }
+    val refinesModuleFiles: Set<File> by lazy { configuration.konanRefinesModules.map { File(it) }.toSet() }
+    val nativeLibraries: List<String> get() = configuration.konanNativeLibraries
+    val includeBinaries: List<String> get() = configuration.konanIncludedBinaries
 
-    val produce: CompilerOutputKind
-        get() = configuration.konanProducedArtifactKind!!
+    val writeDependenciesOfProducedKlibTo: String? get() = configuration.konanWriteDependenciesOfProducedKlibTo
+    val nativeTargetsForManifest: Collection<KonanTarget>? get() = configuration[NativeConfigurationKeys.KONAN_MANIFEST_NATIVE_TARGETS]
 
-    val metadataKlib: Boolean
-        get() = configuration.metadataKlib
+    val manifestProperties: Properties? by lazy { configuration.konanManifestAddend?.let { File(it).loadProperties() } }
 
-    val friendModuleFiles: Set<File>
-        get() = configuration.konanFriendLibraries.map { File(it) }.toSet()
-
-    val refinesModuleFiles: Set<File>
-        get() = configuration.konanRefinesModules.map { File(it) }.toSet()
-
-    val nativeLibraries: List<String>
-        get() = configuration.konanNativeLibraries
-
-    val includeBinaries: List<String>
-        get() = configuration.konanIncludedBinaries
-
-    val writeDependenciesOfProducedKlibTo: String?
-        get() = configuration.konanWriteDependenciesOfProducedKlibTo
-
-    val nativeTargetsForManifest: Collection<KonanTarget>?
-        get() = configuration[NativeConfigurationKeys.KONAN_MANIFEST_NATIVE_TARGETS]
-
-    val manifestProperties: Properties?
-
-    val shortModuleName: String?
-        get() = configuration.konanShortModuleName
-
-    val outputPath: String
-        get() = configuration.konanOutputPath?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
+    val shortModuleName: String? get() = configuration.konanShortModuleName
+    val outputPath: String by lazy { configuration.konanOutputPath?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName }
 }
