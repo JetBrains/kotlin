@@ -83,7 +83,7 @@ val KotlinBuildProperties.limitPlatformLibsCacheBuildingConcurrency: Boolean
  * Default: `false`.
  */
 val KotlinBuildProperties.buildPlatformLibsByBootstrapCompiler: Boolean
-    get() = booleanProperty("kotlin.native.platformLibs.bootstrap", false).get()
+    get() = getBoolean("kotlin.native.platformLibs.bootstrap", false)
 
 /**
  * "versions.kotlin-native" is the version of K/N dist that will be baked into KGP and that KGP will try to resolve to run K/N
@@ -94,4 +94,4 @@ val KotlinBuildProperties.buildPlatformLibsByBootstrapCompiler: Boolean
  * local DevX is not broken by stale K/N, so we disable the alignment in these builds.
  */
 val KotlinBuildProperties.alignKotlinNativeVersionInTCBuilds: Boolean
-    get() = isTeamcityBuild.get() && booleanProperty("kotlin.align.versions.kotlin-native.in.tc.builds", true).get()
+    get() = isTeamcityBuild && getBoolean("kotlin.align.versions.kotlin-native.in.tc.builds", true)
