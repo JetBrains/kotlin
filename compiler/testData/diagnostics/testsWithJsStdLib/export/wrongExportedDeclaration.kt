@@ -2,6 +2,7 @@
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // RENDER_DIAGNOSTIC_ARGUMENTS
 // DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
+// LANGUAGE: +AllowNamedCompanionForJsExport
 
 package foo
 
@@ -33,7 +34,7 @@ interface InterfaceWithCompanion {
 
 @JsExport
 interface InterfaceWithNamedCompanion {
-    companion <!NAMED_COMPANION_IN_EXPORTED_INTERFACE!>object Named<!> {
+    companion object Named {
         fun foo() = 42
     }
 }

@@ -81,7 +81,7 @@ interface InterfaceWithCompanion {
 // KT-82128
 @JsExport
 interface InterfaceWithNamedCompanion {
-    companion <!NAMED_COMPANION_IN_EXPORTED_INTERFACE!>object Named<!> {
+    companion object Named {
         fun companionFunction(): String = "FUNCTION"
 
         @JsStatic

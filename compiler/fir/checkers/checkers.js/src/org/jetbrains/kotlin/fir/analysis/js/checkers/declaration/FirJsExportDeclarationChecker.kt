@@ -181,7 +181,12 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     else -> null
                 }
 
-                if (context.isInsideInterface && declaration.status.isCompanion && declaration.nameOrSpecialName != DEFAULT_NAME_FOR_COMPANION_OBJECT) {
+                if (
+                    !context.languageVersionSettings.supportsFeature(LanguageFeature.AllowNamedCompanionForJsExport) &&
+                    context.isInsideInterface &&
+                    declaration.status.isCompanion &&
+                    declaration.nameOrSpecialName != DEFAULT_NAME_FOR_COMPANION_OBJECT
+                ) {
                     reporter.reportOn(declaration.source, FirJsErrors.NAMED_COMPANION_IN_EXPORTED_INTERFACE)
                 }
 
