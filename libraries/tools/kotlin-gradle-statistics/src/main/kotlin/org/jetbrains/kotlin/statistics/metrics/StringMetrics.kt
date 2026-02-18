@@ -78,6 +78,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     KOTLIN_API_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
     JS_GENERATE_EXECUTABLE_DEFAULT(CONCAT, AllowedListAnonymizer(listOf("true", "false"))),
     JS_TARGET_MODE(CONCAT, AllowedListAnonymizer(listOf("both", "browser", "nodejs", "none"))),
+    JS_BINARY_TYPE(CONCAT, AllowedListAnonymizer(listOf("both", "library", "executable", "none"))),
     JS_OUTPUT_GRANULARITY(OVERRIDE, RegexControlled("(whole_program|per_module|per_file)", false)),
 
     // Compiler parameters
@@ -90,6 +91,6 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
 
     companion object {
-        const val VERSION = 7
+        const val VERSION = 8
     }
 }
