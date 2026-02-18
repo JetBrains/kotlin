@@ -7,23 +7,23 @@ package org.jetbrains.kotlin.incremental
 
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithICWholeWorld
-import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
-import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
+import org.jetbrains.kotlin.backend.wasm.*
+import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextMultimodule
+import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextSingleModule
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
-import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifact
-import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
-import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.compileIncrementallyMultimodule
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.compileIncrementallySingleModule
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.compileIncrementallyWholeWorld
 import org.jetbrains.kotlin.codegen.ModelTarget
 import org.jetbrains.kotlin.codegen.ModuleInfo
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
@@ -32,11 +32,7 @@ import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.js.config.ModuleKind
-import org.jetbrains.kotlin.js.config.outputName
-import org.jetbrains.kotlin.js.config.sourceMap
-import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
-import org.jetbrains.kotlin.js.config.wasmCompilation
+import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
@@ -61,6 +57,57 @@ private fun markExportedDeclarations(dirtyFiles: Collection<IrFile>, context: Wa
 
     val packageFqName = testFile.packageFqName.asString().takeIf { it.isNotEmpty() }
     markExportedDeclarations(context, testFile, setOf(FqName.fromSegments(listOfNotNull(packageFqName, "box"))))
+}
+
+
+private class WasmICContextMultimoduleForTesting : WasmICContextMultimodule(
+    allowIncompleteImplementations = false,
+    skipLocalNames = false,
+    skipCommentInstructions = false,
+    skipLocations = false,
+) {
+    override fun createCompiler(
+        mainModule: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        configuration: CompilerConfiguration
+    ): IrCompilerICInterface = object : WasmCompilerWithICMultimodule(
+        mainModule = mainModule,
+        irBuiltIns = irBuiltIns,
+        configuration = configuration,
+        allowIncompleteImplementations = false,
+        skipCommentInstructions = false,
+        skipLocations = false,
+    ) {
+        override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
+            markExportedDeclarations(dirtyFiles, context)
+            return super.compile(allModules, dirtyFiles)
+        }
+    }
+}
+
+private class WasmICContextSingleModuleForTesting : WasmICContextSingleModule(
+    allowIncompleteImplementations = false,
+    skipLocalNames = false,
+    skipCommentInstructions = false,
+    skipLocations = false,
+) {
+    override fun createCompiler(
+        mainModule: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        configuration: CompilerConfiguration
+    ): IrCompilerICInterface = object : WasmCompilerWithICSingleModule(
+        mainModule = mainModule,
+        irBuiltIns = irBuiltIns,
+        configuration = configuration,
+        allowIncompleteImplementations = false,
+        skipCommentInstructions = false,
+        skipLocations = false,
+    ) {
+        override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
+            markExportedDeclarations(dirtyFiles, context)
+            return super.compile(allModules, dirtyFiles)
+        }
+    }
 }
 
 private class WasmICContextWholeWorldForTesting : WasmICContextWholeWorld(
@@ -138,8 +185,11 @@ abstract class WasmAbstractInvalidationTest(
         config.wasmGenerateDwarf = false
         config.wasmGenerateWat = false
         config.outputName = moduleName
+        modifyConfig(config)
         return config
     }
+
+    protected open fun modifyConfig(configuration: CompilerConfiguration) {}
 
     override fun createProjectStepsExecutor(
         projectInfo: ProjectInfo,
@@ -158,57 +208,52 @@ abstract class WasmAbstractInvalidationTest(
         buildDir: File,
         jsDir: File,
     ) : AbstractProjectStepsExecutor(projectInfo, moduleInfos, testDir, sourceDir, buildDir, jsDir) {
-        private fun compileVerifyAndRun(
+        private fun compileAndVerify(
             stepId: Int,
             cacheDir: File,
             configuration: CompilerConfiguration,
             testInfo: List<TestStepInfo>,
             removedModulesInfo: List<TestStepInfo>,
         ) {
-            val icContext = WasmICContextWholeWorldForTesting()
+            val wasmCompilationMode = configuration.wasmCompilationMode()
+            val icContext = when (wasmCompilationMode) {
+                WasmCompilationMode.MULTI_MODULE -> WasmICContextMultimoduleForTesting()
+                WasmCompilationMode.SINGLE_MODULE -> WasmICContextSingleModuleForTesting()
+                WasmCompilationMode.REGULAR -> WasmICContextWholeWorldForTesting()
+            }
 
             val cacheUpdater = CacheUpdater(
                 cacheDir = cacheDir.absolutePath,
                 compilerConfiguration = configuration,
                 icContext = icContext,
                 checkForClassStructuralChanges = true,
+                loadBodiesOnlyForMainModule = wasmCompilationMode == WasmCompilationMode.SINGLE_MODULE,
             )
 
             val icCaches = cacheUpdater.actualizeCaches()
-            verifyCacheUpdateStats(stepId, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
+            if (wasmCompilationMode != WasmCompilationMode.SINGLE_MODULE) {
+                verifyCacheUpdateStats(stepId, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
+            }
 
-            val singleModuleArtifacts = icCaches.filterIsInstance<WasmModuleArtifact>()
-                .flatMap { it.fileArtifacts }
-                .mapNotNull { it.loadIrFragments() }
-                .map { it.mainFragment }
+            val fragmentCompiler = when (wasmCompilationMode) {
+                WasmCompilationMode.MULTI_MODULE -> ::compileIncrementallyMultimodule
+                WasmCompilationMode.SINGLE_MODULE -> ::compileIncrementallySingleModule
+                WasmCompilationMode.REGULAR -> ::compileIncrementallyWholeWorld
+            }
+            val parametersList = fragmentCompiler(icCaches, configuration)
 
-            val parameters = WasmIrModuleConfiguration(
-                wasmCompiledFileFragments = singleModuleArtifacts,
-                moduleName = configuration.moduleName!!,
-                configuration = configuration,
-                typeScriptFragment = null,
-                baseFileName = configuration.outputName!!,
-                multimoduleOptions = null,
-            )
-
-            val linkedModule = linkWasmIr(parameters)
-            val compilationResult = compileWasmIrToBinary(parameters, linkedModule)
-            writeCompilationResult(compilationResult, buildDir, parameters.baseFileName)
-
-            WasmVM.NodeJs.run(
-                "./test.mjs",
-                emptyList(),
-                workingDirectory = buildDir,
-                useNewExceptionHandling = false,
-            )
+            parametersList.forEach { parameters ->
+                val linkedModule = linkWasmIr(parameters)
+                val compilationResult = compileWasmIrToBinary(parameters, linkedModule)
+                writeCompilationResult(compilationResult, buildDir, parameters.baseFileName)
+            }
         }
 
         override fun execute() {
             prepareExternalJsFiles()
 
-            val mainModuleName = projectInfo.modules.last()
-
             for (projStep in projectInfo.steps) {
+                val mainModuleName = projStep.order.last()
                 val testInfo = projStep.order.map { setupTestStep(projStep, it) }
                 val mainModuleInfo = testInfo.last()
                 testInfo.find { it != mainModuleInfo && it.friends.isNotEmpty() }?.let {
@@ -260,6 +305,44 @@ abstract class WasmAbstractInvalidationTest(
                 )
             }
         }
-    }
 
+        private fun compileVerifyAndRun(
+            stepId: Int,
+            cacheDir: File,
+            configuration: CompilerConfiguration,
+            testInfo: List<TestStepInfo>,
+            removedModulesInfo: List<TestStepInfo>,
+        ) {
+            if (configuration.wasmCompilationMode() == WasmCompilationMode.SINGLE_MODULE) {
+                val allLibraries = configuration.libraries
+                allLibraries.forEach { currentLib ->
+                    configuration.includes = currentLib
+                    configuration.libraries = allLibraries.filter { it != currentLib } + currentLib
+                    val currentCacheDir = cacheDir.resolve(currentLib.hashCode().toString())
+                    compileAndVerify(
+                        stepId = stepId,
+                        cacheDir = currentCacheDir,
+                        configuration = configuration,
+                        testInfo = testInfo,
+                        removedModulesInfo = removedModulesInfo,
+                    )
+                }
+            } else {
+                compileAndVerify(
+                    stepId = stepId,
+                    cacheDir = cacheDir,
+                    configuration = configuration,
+                    testInfo = testInfo,
+                    removedModulesInfo = removedModulesInfo,
+                )
+            }
+
+            WasmVM.NodeJs.run(
+                "./test.mjs",
+                emptyList(),
+                workingDirectory = buildDir,
+                useNewExceptionHandling = false,
+            )
+        }
+    }
 }
