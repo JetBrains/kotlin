@@ -1184,7 +1184,6 @@ class BodyGenerator(
             wasmSymbols.resumeThrowIntrinsic -> {
                 val wasmContinuation = functionContext.referenceLocal(1)
 
-                val getJsError = wasmSymbols.jsRelatedSymbols.getJsError
                 val kotlinAny = wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass)
                 val kotlinAnyRefType = WasmRefNullType(WasmHeapType.Type(kotlinAny))
                 val zeroArgContType = WasmHeapType.Type(wasmFileCodegenContext.referenceContType(1))
@@ -1194,7 +1193,11 @@ class BodyGenerator(
                 body.buildFunctionTypedBlock("on_suspend", blockTypeSymbol) { idx ->
                     // Throwable
                     body.buildGetLocal(functionContext.referenceLocal(0), location)
-                    body.buildCall(wasmFileCodegenContext.referenceFunction(getJsError), location)
+
+                    if (backendContext.isWasmJsTarget) {
+                        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getJsError), location)
+                    }
+
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
                     body.buildResumeThrow(zeroArgContType, exceptionTagId, contHandle, location)
