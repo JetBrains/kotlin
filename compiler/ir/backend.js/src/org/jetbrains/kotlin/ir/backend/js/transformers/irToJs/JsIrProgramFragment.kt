@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.js.config.ModuleKind
 import java.io.File
 import java.io.OutputStream
 
-class JsIrProgramFragments(override val mainFragment: JsIrProgramFragment, override val exportFragment: JsIrProgramFragment? = null) :
+class JsIrProgramFragments(val mainFragment: JsIrProgramFragment, val exportFragment: JsIrProgramFragment? = null) :
     IrICProgramFragments() {
     override fun serialize(stream: OutputStream) {
         serializeTo(stream)

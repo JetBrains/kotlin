@@ -6,12 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.DEFINED
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.DESTRUCTURED_OBJECT_PARAMETER
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.FOR_LOOP_ITERATOR
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_TEMPORARY_VARIABLE
@@ -35,7 +30,7 @@ class WasmFunctionCodegenContext(
     val irFunction: IrFunction?,
     private val wasmFunction: WasmFunction.Defined,
     private val backendContext: WasmBackendContext,
-    private val wasmFileCodegenContext: WasmFileCodegenContext,
+    private val typeContext: WasmTypeCodegenContext,
     private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
     private val functionFileEntry: IrFileEntry,
 ) {
@@ -92,7 +87,7 @@ class WasmFunctionCodegenContext(
     private val SyntheticLocalType.wasmType
         get() = when (this) {
             SyntheticLocalType.IS_INTERFACE_PARAMETER ->
-                WasmRefNullType(wasmFileCodegenContext.referenceHeapType(backendContext.irBuiltIns.anyClass))
+                WasmRefNullType(typeContext.referenceHeapType(backendContext.irBuiltIns.anyClass))
             SyntheticLocalType.IS_INTERFACE_ANY_ARRAY ->
                 WasmRefNullType(Synthetics.HeapTypes.wasmAnyArrayType)
             SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32

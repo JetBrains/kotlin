@@ -34,8 +34,6 @@ abstract class IrICModule {
 abstract class IrICProgramFragment
 
 abstract class IrICProgramFragments {
-    abstract val mainFragment: IrICProgramFragment
-    abstract val exportFragment: IrICProgramFragment?
     abstract fun serialize(stream: OutputStream)
 }
 

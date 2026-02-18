@@ -47,8 +47,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         private val OPCODE_TO_WASM_OP by lazy { enumValues<WasmOp>().associateBy { it.opcode } }
     }
 
-    fun deserialize(): WasmCompiledFileFragment = deserializeCompiledFileFragment()
-
     private fun deserializeFunction() =
         deserializeNamedModuleField { name ->
             val type = FunctionHeapTypeSymbol(deserializeIdSignature())
@@ -595,23 +593,25 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             }
         }
 
-    private fun deserializeCompiledFileFragment() = WasmCompiledFileFragment(
-        definedFunctions = deserializeDefinedFunctions(),
+    fun deserializeCompiledTypesFragment() = WasmCompiledTypesFileFragment(
+        definedGcTypes = deserializeGcTypes(),
+        definedVTableGcTypes = deserializeVTableGcTypes(),
+        definedFunctionTypes = deserializeFunctionTypes(),
+    )
 
+    fun deserializeCompiledDeclarationsFragment() = WasmCompiledDeclarationsFileFragment(
+        definedFunctions = deserializeDefinedFunctions(),
         definedGlobalFields = deserializeGlobalFields(),
         definedGlobalVTables = deserializeGlobalVTables(),
         definedGlobalClassITables = deserializeGlobalClassITables(),
         definedRttiGlobal = deserializeGlobalRtti(),
         definedRttiSuperType = deserializeRttiSupertype(),
+    )
 
-        definedGcTypes = deserializeGcTypes(),
-        definedVTableGcTypes = deserializeVTableGcTypes(),
-        definedFunctionTypes = deserializeFunctionTypes(),
-
+    fun deserializeCompiledLinkerDataFragment() = WasmCompiledLinkerDataFileFragment(
         globalLiterals = deserializeGlobalLiterals(),
         globalLiteralsId = deserializeStringLiteralId(),
         stringLiteralId = deserializeStringLiteralId(),
-
         constantArrayDataSegmentId = deserializeConstantArrayDataSegmentId(),
         jsFuns = deserializeJsFuns(),
         jsModuleImports = deserializeJsModuleImports(),
@@ -625,7 +625,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         objectInstanceFieldInitializers = deserializeList(::deserializeIdSignature),
         nonConstantFieldInitializers = deserializeList(::deserializeIdSignature),
     )
-
 
     private fun deserializeDefinedFunctions() = deserializeMap(::deserializeIdSignature, ::deserializeFunction)
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.ic
 
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledCodeFileFragment
 import org.jetbrains.kotlin.backend.wasm.serialization.WasmDeserializer
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.SrcFileArtifact
@@ -23,10 +24,13 @@ class WasmSrcFileArtifact(
         }
         return astArtifact?.ifExists {
             val fragment = inputStream().use {
-                WasmDeserializer(
-                    inputStream = it,
-                    skipLocalNames = skipLocalNames,
-                ).deserialize()
+                with(WasmDeserializer(inputStream = it, skipLocalNames = skipLocalNames)) {
+                    WasmCompiledCodeFileFragment(
+                        definedTypes = deserializeCompiledTypesFragment(),
+                        definedDeclarations = deserializeCompiledDeclarationsFragment(),
+                        linkerData = deserializeCompiledLinkerDataFragment(),
+                    )
+                }
             }
             WasmIrProgramFragments(mainFragment = fragment)
         }

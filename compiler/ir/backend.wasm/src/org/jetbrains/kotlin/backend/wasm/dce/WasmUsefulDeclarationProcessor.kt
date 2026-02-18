@@ -211,7 +211,7 @@ internal class WasmUsefulDeclarationProcessor(
         val isIntrinsic = irFunction.hasWasmNoOpCastAnnotation() || irFunction.getWasmOpAnnotation() != null
         if (isIntrinsic) return
 
-        irFunction.getEffectiveValueParameters().forEach { it.enqueueValueParameterType(irFunction) }
+        irFunction.forEachEffectiveValueParameters { it.enqueueValueParameterType(irFunction) }
         irFunction.returnType.enqueueType(irFunction, "function return type")
 
         kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun[irFunction.fileOrNull]?.get(irFunction)?.enqueue(

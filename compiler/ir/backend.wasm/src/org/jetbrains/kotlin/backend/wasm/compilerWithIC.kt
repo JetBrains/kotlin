@@ -7,32 +7,28 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragments
 import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.compileIrFile
-import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.IrCompilerICInterface
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.config.wasmDisableCrossFileOptimisations
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-open class WasmCompilerWithIC(
+abstract class WasmCompilerWithIC(
     private val mainModule: IrModuleFragment,
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
-    private val allowIncompleteImplementations: Boolean,
-    private val skipCommentInstructions: Boolean,
-    private val skipLocations: Boolean,
 ) : IrCompilerICInterface {
     val context: WasmBackendContext
-    private val idSignatureRetriever: IdSignatureRetriever
-    private val wasmModuleMetadataCache: WasmModuleMetadataCache
+    protected val idSignatureRetriever: IdSignatureRetriever
+    protected val wasmModuleMetadataCache: WasmModuleMetadataCache
 
     init {
         val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
@@ -57,24 +53,12 @@ open class WasmCompilerWithIC(
         wasmModuleMetadataCache = WasmModuleMetadataCache(context)
     }
 
-    private fun compileIrFile(irFile: IrFile): WasmIrProgramFragments {
-        return WasmIrProgramFragments(
-            compileIrFile(
-                irFile,
-                context,
-                idSignatureRetriever,
-                wasmModuleMetadataCache,
-                allowIncompleteImplementations,
-                skipCommentInstructions = skipCommentInstructions,
-                skipLocations = skipLocations,
-            )
-        )
-    }
+    abstract fun compileFile(irFile: IrFile): IrICProgramFragments
 
     override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
         //TODO: Lower only needed files but not all loaded by IrLoader KT-71041
 
-        context.configuration.put(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS, true)
+        context.configuration.wasmDisableCrossFileOptimisations = true
         lowerPreservingTags(
             allModules,
             context,
@@ -83,31 +67,62 @@ open class WasmCompilerWithIC(
 
         overrideBuiltInsSignatures(context)
 
-        return dirtyFiles.map { { compileIrFile(it) } }
+        return dirtyFiles.map { { compileFile(it) } }
     }
 }
 
-class WasmCompilerWithICForTesting(
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+open class WasmCompilerWithICWholeWorld(
     mainModule: IrModuleFragment,
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
-    allowIncompleteImplementations: Boolean,
+    private val allowIncompleteImplementations: Boolean,
+    private val skipCommentInstructions: Boolean,
+    private val skipLocations: Boolean,
 ) : WasmCompilerWithIC(
-    mainModule,
-    irBuiltIns,
-    configuration,
-    allowIncompleteImplementations,
-    skipCommentInstructions = false,
-    skipLocations = false,
+    mainModule = mainModule,
+    irBuiltIns = irBuiltIns,
+    configuration = configuration,
 ) {
-    override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
-        val testFile = dirtyFiles.firstOrNull { file ->
-            file.declarations.any { declaration -> declaration is IrFunction && declaration.name.asString() == "box" }
-        } ?: return super.compile(allModules, dirtyFiles)
+    override fun compileFile(irFile: IrFile): WasmIrProgramFragments {
+        val codeFileFragment = WasmCompiledCodeFileFragment()
 
-        val packageFqName = testFile.packageFqName.asString().takeIf { it.isNotEmpty() }
-        markExportedDeclarations(context, testFile, setOf(FqName.fromSegments(listOfNotNull(packageFqName, "box"))))
+        val typeContext = WasmTypeCodegenContext(
+            wasmFileFragment = codeFileFragment.definedTypes,
+            idSignatureRetriever = idSignatureRetriever
+        )
 
-        return super.compile(allModules, dirtyFiles)
+        val declarationContext = WasmDeclarationCodegenContext(
+            wasmFileFragment = codeFileFragment.definedDeclarations,
+            idSignatureRetriever = idSignatureRetriever,
+        )
+
+        val linkerDataContext = WasmLinkerDataCodegenContext(
+            wasmFileFragment = codeFileFragment.linkerData,
+            idSignatureRetriever = idSignatureRetriever
+        )
+
+        val wasmModuleTypeTransformer = WasmModuleTypeTransformer(
+            backendContext = context,
+            wasmTypeContext = typeContext
+        )
+
+        compileIrFile(
+            irFile = irFile,
+            backendContext = context,
+            wasmModuleMetadataCache = wasmModuleMetadataCache,
+            allowIncompleteImplementations = allowIncompleteImplementations,
+            typeContext = typeContext,
+            declarationContext = declarationContext,
+            importsContext = null,
+            linkerDataContext = linkerDataContext,
+            wasmModuleTypeTransformer = wasmModuleTypeTransformer,
+            skipCommentInstructions = skipCommentInstructions,
+            skipLocations = skipLocations,
+            enableMultimoduleExports = false,
+            moduleName = irFile.module.name.asString()
+        )
+
+        return WasmIrProgramFragments(codeFileFragment)
     }
 }
