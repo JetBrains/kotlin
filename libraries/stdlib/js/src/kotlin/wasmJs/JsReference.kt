@@ -8,7 +8,6 @@ package kotlin.js
 // TODO: Replace `Any` with `T` as soon as it will be possible
 @SinceKotlin("2.2")
 @ExperimentalWasmJsInterop
-@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT") // TODO(KT-84003): remove after bootstrap
 public actual sealed external interface JsReference<out T : Any> : JsAny
 
 @SinceKotlin("2.2")

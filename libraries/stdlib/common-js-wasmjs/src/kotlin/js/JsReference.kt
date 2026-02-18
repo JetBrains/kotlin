@@ -13,7 +13,6 @@ package kotlin.js
  */
 @ExperimentalWasmJsInterop
 @SinceKotlin("2.2")
-@Suppress("EXPECT_ACTUAL_IR_INCOMPATIBILITY")
 @JsNoRuntime
 public expect sealed interface JsReference<out T : Any> : JsAny
 
