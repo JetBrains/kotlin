@@ -19,9 +19,12 @@
 package kotlinx.cinterop
 
 import org.jetbrains.kotlin.utils.KotlinNativePaths
+import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
+import java.lang.System
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.Path
 import java.nio.file.InvalidPathException
 import java.security.MessageDigest
 
@@ -112,11 +115,14 @@ private fun initializePath() =
                 .split(File.pathSeparatorChar)
                 .map { if (it == "") "." else it }
 
-private val sha256 = MessageDigest.getInstance("SHA-256")
-private val systemTmpDir = System.getProperty("java.io.tmpdir")
+// Track the libraries that we have already loaded.
+private var loadedLibraries = mutableSetOf<String>()
 
-// TODO: File(..).deleteOnExit() does not work on Windows. May be use FILE_FLAG_DELETE_ON_CLOSE?
 private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDaemon: Boolean): Boolean {
+    if (loadedLibraries.contains(fullLibraryName)) {
+        // Already loaded a library with this name.
+        return true
+    }
     var fullLibraryPath = try {
         Paths.get(dir, fullLibraryName)
     } catch (ignored: InvalidPathException) {
@@ -124,41 +130,35 @@ private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDae
     }
     if (!Files.exists(fullLibraryPath)) return false
 
-    fun createTempDirWithLibrary() = if (runFromDaemon) {
-        Files.createTempDirectory(null).toAbsolutePath().toString().also {
-            Files.copy(fullLibraryPath, Paths.get(it, fullLibraryName))
+    fun createTemporaryCopyOfLibrary(): Path {
+        // Create a temporary directory and copy the library into it.
+        val tmpDirRoot = if (runFromDaemon) System.getProperty("java.io.tmpdir") else dir
+        val tmpDirPath = Files.createTempDirectory(Paths.get(tmpDirRoot), "konanc")
+        val dest = tmpDirPath.resolve(fullLibraryName)
+        if (runFromDaemon) {
+            Files.copy(fullLibraryPath, dest)
+        } else {
+            Files.createLink(dest, fullLibraryPath)
         }
-    } else {
-        Files.createTempDirectory(Paths.get(dir), null).toAbsolutePath().toString().also {
-            Files.createLink(Paths.get(it, fullLibraryName), fullLibraryPath)
-        }
+        // TODO: File(..).deleteOnExit() does not always work on Windows with DLLs. Maybe use FILE_FLAG_DELETE_ON_CLOSE?
+        tmpDirPath.toFile().deleteOnExit()
+        dest.toFile().deleteOnExit()
+        return dest
     }
 
-    if (runFromDaemon) {
+    val safeLoadKonanLibrary = runFromDaemon && System.getProperty("kotlin.native.tool.safeLoadKonanLibrary") == "true"
+    if (safeLoadKonanLibrary) {
+        // The block below came in https://github.com/JetBrains/kotlin/commit/f724b5c29da0122a1391af6e28ef3823aa2cb831
+        // Not sure what Platform/OS this issue was seen on, but we have been seeing issues where `renameTo` will fail
+        // on macOS. See the commit above to see the original change.
+        // Added the `safeLoadKonanLibrary` property to allow this block to be executed, but in general avoiding the copy is far better.
+        // The copy will trigger virus scans on macOS, and can leave files scattered in temp directories on Windows.
+        // Original comment:
         // Sometimes loading library from its original place doesn't work (it gets 'half-loaded'
         // with relocation table haven't been substituted by the system loader without reporting any error).
-        // We workaround this by copying the library to some temporary place.
+        // We work around this by copying the library to some temporary place.
         // For now this behaviour have only been observed for compilations run from the Gradle daemon on Team City.
-        val hash = sha256.digest(Files.readAllBytes(fullLibraryPath))
-        val defaultTempDirName = buildString {
-            append(fullLibraryName)
-            append('_')
-            hash.forEach {
-                val hex = it.toUByte().toString(16)
-                if (hex.length == 1)
-                    append('0')
-                append(hex)
-            }
-        }
-        val defaultTempDir = Paths.get(systemTmpDir, defaultTempDirName).toAbsolutePath().toString()
-        val tempDir = File(createTempDirWithLibrary())
-        if (tempDir.renameTo(File(defaultTempDir))) {
-            File(defaultTempDir).deleteOnExit()
-            File("$defaultTempDir/$fullLibraryName").deleteOnExit()
-        } else {
-            val _ = tempDir.deleteRecursively()
-        }
-        fullLibraryPath = Paths.get(defaultTempDir, fullLibraryName)
+        fullLibraryPath = createTemporaryCopyOfLibrary()
     }
 
     // System load will throw `UnsatisfiedLinkError` if fullLibraryPath isn't resolved.
@@ -177,18 +177,17 @@ private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDae
                     |${'\t'}${e.message}
                     """.trimMargin())
         }
-        
-        // Not sure what this work around is attempting to deal with.
-        // Note that copying a dylib to a temp directory and then loading it will
-        // cause the macOS virus scanner (XProtect) to scan it, so try and avoid doing
-        // this.
-        val tempDir = createTempDirWithLibrary()
-
-        File(tempDir).deleteOnExit()
-        File("$tempDir/$fullLibraryName").deleteOnExit()
-        System.load("$tempDir/$fullLibraryName")
+        // Try copying the library to a temp directory and then loading it as a fallback.
+        // Note that this will cause the macOS virus scanner (XProtect) to scan it, and may leave files in temp directories on Windows.
+        // Not done in `safeLoadKonanLibrary` case because we would've already attempted to load a copy above.
+        if (!safeLoadKonanLibrary) {
+            fullLibraryPath = createTemporaryCopyOfLibrary()
+            System.load(fullLibraryPath.toRealPath().toString())
+        } else {
+            rethrow(e)
+        }
     }
-
+    loadedLibraries.add(fullLibraryName)
     return true
 }
 
@@ -202,5 +201,5 @@ fun loadKonanLibrary(name: String) {
     val defaultNativeLibsDir = "${KotlinNativePaths.homePath.absolutePath}/konan/nativelib"
     if (tryLoadKonanLibrary(defaultNativeLibsDir, fullLibraryName, runFromDaemon))
         return
-    error("Lib $fullLibraryName is not found in $defaultNativeLibsDir and ${paths.joinToString { it }}")
+    error("Lib $fullLibraryName was not found in $defaultNativeLibsDir and ${paths.joinToString { it }}")
 }

@@ -48,7 +48,8 @@ sealed interface DefFileProperty<T> {
         ExcludeSystemLibs("excludeSystemLibs"),
         ExcludeDependentModules("excludeDependentModules"),
         DisableDesignatedInitializerChecks("disableDesignatedInitializerChecks"),
-        AllowIncludingObjCCategoriesFromDefFile("allowIncludingObjCCategoriesFromDefFile");
+        AllowIncludingObjCCategoriesFromDefFile("allowIncludingObjCCategoriesFromDefFile"),
+        SkipNonImportableModules("skipNonImportableModules");
 
         override fun parse(rawValue: String?): Boolean = rawValue.toBoolean()
     }
