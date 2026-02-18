@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.library.metadata.resolver.impl
 
-import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
@@ -18,9 +17,6 @@ class KotlinResolvedLibraryImpl(override val library: KotlinLibrary) : KotlinRes
 
     override var isNeededForLink: Boolean = false
         private set
-
-    override val isDefault: Boolean
-        get() = library.isFromKotlinNativeDistribution
 
     override fun markNeededForLink(packageFqName: String) {
         if (!isNeededForLink // fast path

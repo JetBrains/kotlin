@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.konan.config.serializedDependencies
 import org.jetbrains.kotlin.konan.config.staticFramework
 import org.jetbrains.kotlin.konan.config.testDumpOutputPath
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -421,7 +422,7 @@ class NativeSecondStageCompilationConfig(
         get() = getExportedLibraries(configuration, resolve.resolvedLibraries, resolve.resolver.searchPathResolver, report = true)
 
     fun librariesWithDependencies(): List<KotlinLibrary> {
-        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList().legacyKlibReverseTopoSort()
+        return resolvedLibraries.filterRoots { (!it.library.isFromKotlinNativeDistribution && !purgeUserLibs) || it.isNeededForLink }.getFullList().legacyKlibReverseTopoSort()
     }
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::File)
