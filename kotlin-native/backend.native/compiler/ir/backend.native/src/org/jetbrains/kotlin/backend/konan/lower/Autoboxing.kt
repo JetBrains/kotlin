@@ -139,7 +139,10 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             is IrGetField -> this.symbol.owner.type
             is IrCall -> when (this.symbol) {
                 symbols.reinterpret -> this.typeArguments[1]!!
-                symbols.createUninitializedInstance -> this.typeArguments[0]!!
+                symbols.createUninitializedInstance -> {
+                    val typeArg = this.typeArguments[0]!!
+                    if (typeArg.getInlinedClassNative() != null) context.irBuiltIns.anyType else typeArg
+                }
                 else -> this.type
             }
             is IrTypeOperatorCall -> when (this.operator) {
