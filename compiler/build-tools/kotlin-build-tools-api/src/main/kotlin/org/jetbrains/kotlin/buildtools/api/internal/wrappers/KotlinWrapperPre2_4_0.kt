@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgumen
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.types.ProfileCompilerCommand
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.io.File
 import java.nio.file.Path
@@ -19,7 +20,7 @@ import kotlin.io.path.Path
 
 /**
  * A wrapper class for `KotlinToolchains` to accommodate functionality
- * changes and compatibility adjustments for versions pre-Kotlin 2.4.0.
+ * changes and compatibility adjustments for versions pre Kotlin 2.4.0.
  *
  * Delegates the majority of functionality to the `base` implementation,
  * while selectively overriding methods to either introduce new behavior
@@ -27,7 +28,8 @@ import kotlin.io.path.Path
  *
  * @param base The base implementation of `KotlinToolchains` to wrap.
  */
-internal class KotlinBelow240Wrapper(
+@Suppress("ClassName")
+internal class KotlinWrapperPre2_4_0(
     private val base: KotlinToolchains,
 ) : KotlinToolchains by base {
 
@@ -41,7 +43,7 @@ internal class KotlinBelow240Wrapper(
         return BuildSessionWrapper(this, base.createBuildSession())
     }
 
-    class BuildSessionWrapper(override val kotlinToolchains: KotlinBelow240Wrapper, private val base: KotlinToolchains.BuildSession) :
+    class BuildSessionWrapper(override val kotlinToolchains: KotlinWrapperPre2_4_0, private val base: KotlinToolchains.BuildSession) :
         KotlinToolchains.BuildSession by base {
         override fun <R> executeOperation(operation: BuildOperation<R>): R {
             return this.executeOperation(operation, logger = null)
@@ -88,9 +90,22 @@ internal class KotlinBelow240Wrapper(
         private val base: JvmCompilationOperation.Builder,
     ) : JvmCompilationOperation.Builder by base {
         override val compilerArguments: JvmCompilerArguments.Builder = JvmCompilerArgumentsBuilderWrapper(base.compilerArguments)
+
+        override fun snapshotBasedIcConfigurationBuilder(
+            workingDirectory: Path,
+            sourcesChanges: SourcesChanges,
+            dependenciesSnapshotFiles: List<Path>,
+        ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
+            return base.snapshotBasedIcConfigurationBuilder(
+                workingDirectory,
+                sourcesChanges,
+                dependenciesSnapshotFiles,
+                workingDirectory.resolve("shrunk-classpath-snapshot.bin"),
+            )
+        }
     }
 
-    internal class JvmCompilerArgumentsWrapper(
+    private class JvmCompilerArgumentsWrapper(
         private val base: JvmCompilerArguments,
     ) : JvmCompilerArguments by base {
 

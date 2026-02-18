@@ -20,7 +20,7 @@ import kotlin.io.path.Path
 
 /**
  * A wrapper class for `KotlinToolchains` to accommodate functionality
- * changes and compatibility adjustments for versions pre Kotlin 2.3.0.
+ * changes and compatibility adjustments for versions pre Kotlin 2.3.20.
  *
  * Delegates the majority of functionality to the `base` implementation,
  * while selectively overriding methods to either introduce new behavior
@@ -28,8 +28,8 @@ import kotlin.io.path.Path
  *
  * @param base The base implementation of `KotlinToolchains` to wrap.
  */
-@Suppress("DEPRECATION")
-internal class Kotlin230AndBelowWrapper(
+@Suppress("DEPRECATION", "ClassName")
+internal class KotlinWrapperPre2_3_20(
     private val base: KotlinToolchains,
 ) : KotlinToolchains by base {
 
@@ -68,7 +68,7 @@ internal class Kotlin230AndBelowWrapper(
         }
     }
 
-    class BuildSessionWrapper(override val kotlinToolchains: Kotlin230AndBelowWrapper, private val base: KotlinToolchains.BuildSession) :
+    class BuildSessionWrapper(override val kotlinToolchains: KotlinWrapperPre2_3_20, private val base: KotlinToolchains.BuildSession) :
         KotlinToolchains.BuildSession by base {
         override fun <R> executeOperation(operation: BuildOperation<R>): R {
             return this.executeOperation(operation, logger = null)
@@ -154,7 +154,7 @@ internal class Kotlin230AndBelowWrapper(
             override val sources: List<Path>,
             override val destinationDirectory: Path,
             override val compilerArguments: JvmCompilerArgumentsWrapper = JvmCompilerArgumentsWrapper(
-                KotlinBelow240Wrapper.JvmCompilerArgumentsWrapper(base.compilerArguments),
+                base.compilerArguments,
                 argumentsFactory = {
                     toolchain.jvmCompilationOperationBuilder(
                         emptyList(),

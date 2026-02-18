@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Companion.loadImplem
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Toolchain
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
-import org.jetbrains.kotlin.buildtools.api.internal.wrappers.Kotlin230AndBelowWrapper
-import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinBelow240Wrapper
+import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_3_20
+import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_4_0
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -160,17 +160,17 @@ public interface KotlinToolchains {
          */
         @JvmStatic
         public fun loadImplementation(classLoader: ClassLoader): KotlinToolchains = try {
-            val baseImplementation = loadImplementation(KotlinToolchains::class, classLoader)
+            var baseImplementation = loadImplementation(KotlinToolchains::class, classLoader)
             val kotlinCompilerVersion = KotlinCompilerVersion(baseImplementation.getCompilerVersion())
-            when {
-                kotlinCompilerVersion <= KotlinCompilerVersion(2, 3, 0, null) -> {
-                    Kotlin230AndBelowWrapper(baseImplementation)
-                }
-                kotlinCompilerVersion < KotlinCompilerVersion(2, 4, 0, null) -> {
-                    KotlinBelow240Wrapper(baseImplementation)
-                }
-                else -> baseImplementation
+
+            if (kotlinCompilerVersion < KotlinCompilerVersion(2, 3, 20, "snapshot")) {
+                baseImplementation = KotlinWrapperPre2_3_20(baseImplementation)
             }
+            if (kotlinCompilerVersion < KotlinCompilerVersion(2, 4, 0, "snapshot")) {
+                baseImplementation = KotlinWrapperPre2_4_0(baseImplementation)
+            }
+
+            baseImplementation
         } catch (_: NoImplementationFoundException) {
             try {
                 classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainsV1Adapter")
