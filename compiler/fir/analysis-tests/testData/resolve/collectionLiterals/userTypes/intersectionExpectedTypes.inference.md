@@ -33,50 +33,11 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>(IntegerLiteral(42)))
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 2
-
-```
-<collectionLiteralCall>(IntegerLiteral(42))
-```
-
-#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/DANGLING_COLLECTION_LITERAL_CALL` --- `fun <K> DANGLING_COLLECTION_LITERAL_CALL(vararg branches: K): K↩`
-##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
-
-1. New `TypeVariable(K)` for `FirSyntheticFunctionSymbol _synthetic/DANGLING_COLLECTION_LITERAL_CALL`s parameter 0
-
-##### Resolution Stages > CheckArguments:
-
-1. `ILT: 42 <: TypeVariable(K)` _from Argument IntegerLiteral(42)_
-
-##### Call Completion:
-
-1. Choose `TypeVariable(K)` with `Readiness(
-   	 true ALLOWED
-   	 true HAS_PROPER_CONSTRAINTS
-   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	false HAS_PROPER_NON_ILT_CONSTRAINT
-   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-   	false HAS_PROPER_EQUALITY_CONSTRAINT
-   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-   )`
-2. `TypeVariable(K) == kotlin/Int` _from Fix variable K_
-
-### Call 1
-
-```
-expectThroughTV#(R|<local>/x|, <collectionLiteralCall>(IntegerLiteral(42)))
-```
-
-#### Candidate 1: `FirNamedFunctionSymbol /expectThroughTV` --- `fun <T> expectThroughTV(x: T, y: T): Unit`
 ##### Continue Call Completion:
 
-1. Choose `TypeVariable(T)` with `Readiness(
+1. `ERROR CLASS: Unresolved name: <error collection literal> <: TypeVariable(T)` _from Argument R?C|special/error|(IntegerLiteral(42))_
+2. __ConstrainingTypeIsError__
+3. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -91,9 +52,9 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>(IntegerLiteral(42)))
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-2. `TypeVariable(T) == it(A & B)` _from Fix variable T_
+4. `TypeVariable(T) == it(A & B)` _from Fix variable T_
 
-### Call 3
+### Call 2
 
 ```
 expectThroughTV#(R|<local>/x|, <collectionLiteralCall>())
@@ -126,62 +87,11 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>())
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 4
-
-```
-<collectionLiteralCall>()
-```
-
-#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/DANGLING_COLLECTION_LITERAL_CALL` --- `fun <K> DANGLING_COLLECTION_LITERAL_CALL(vararg branches: K): K↩`
-##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
-
-1. New `TypeVariable(K)` for `FirSyntheticFunctionSymbol _synthetic/DANGLING_COLLECTION_LITERAL_CALL`s parameter 0
-
-##### Call Completion:
-
-1. Choose `TypeVariable(K)` with `Readiness(
-   	 true ALLOWED
-   	false HAS_PROPER_CONSTRAINTS
-   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-   	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	false HAS_PROPER_NON_ILT_CONSTRAINT
-   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-   	false HAS_PROPER_EQUALITY_CONSTRAINT
-   	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-   )`
-2. Choose `TypeVariable(K)` with `Readiness(
-   	 true ALLOWED
-   	false HAS_PROPER_CONSTRAINTS
-   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-   	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	false HAS_PROPER_NON_ILT_CONSTRAINT
-   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-   	false HAS_PROPER_EQUALITY_CONSTRAINT
-   	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-   )`
-3. __NotEnoughInformationForTypeParameter__
-4. `TypeVariable(K) == ERROR CLASS: Cannot infer argument for type parameter K` _from Fix variable K_
-
-### Call 3
-
-```
-expectThroughTV#(R|<local>/x|, <collectionLiteralCall>())
-```
-
-#### Candidate 1: `FirNamedFunctionSymbol /expectThroughTV` --- `fun <T> expectThroughTV(x: T, y: T): Unit`
 ##### Continue Call Completion:
 
-1. Choose `TypeVariable(T)` with `Readiness(
+1. `ERROR CLASS: Unresolved name: <error collection literal> <: TypeVariable(T)` _from Argument R?C|special/error|()_
+2. __ConstrainingTypeIsError__
+3. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -196,9 +106,9 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>())
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-2. `TypeVariable(T) == it(A & B)` _from Fix variable T_
+4. `TypeVariable(T) == it(A & B)` _from Fix variable T_
 
-### Call 5
+### Call 3
 
 ```
 when () {
@@ -252,7 +162,7 @@ when () {
    )`
 2. `TypeVariable(K) == it(A & B)` _from Fix variable K_
 
-### Call 6
+### Call 4
 
 ```
 expectThroughTV#(when () {
@@ -305,70 +215,11 @@ expectThroughTV#(when () {
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 7
-
-```
-<collectionLiteralCall>(String(42))
-```
-
-#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/DANGLING_COLLECTION_LITERAL_CALL` --- `fun <K> DANGLING_COLLECTION_LITERAL_CALL(vararg branches: K): K↩`
-##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
-
-1. New `TypeVariable(K)` for `FirSyntheticFunctionSymbol _synthetic/DANGLING_COLLECTION_LITERAL_CALL`s parameter 0
-
-##### Resolution Stages > CheckArguments:
-
-1. `kotlin/String <: TypeVariable(K)` _from Argument String(42)_
-
-##### Call Completion:
-
-1. Choose `TypeVariable(K)` with `Readiness(
-   	 true ALLOWED
-   	 true HAS_PROPER_CONSTRAINTS
-   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_CONSTRAINT
-   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-   	false HAS_PROPER_EQUALITY_CONSTRAINT
-   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-   )`
-2. `TypeVariable(K) == kotlin/String` _from Fix variable K_
-
-### Call 6
-
-```
-expectThroughTV#(when () {
-    Boolean(true) ->  {
-        object : R|A|, R|B| {
-            private constructor(): R|<anonymous>| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
-    }
-    else ->  {
-        object : R|B|, R|A| {
-            private constructor(): R|<anonymous>| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
-    }
-}
-, <collectionLiteralCall>(String(42)))
-```
-
-#### Candidate 1: `FirNamedFunctionSymbol /expectThroughTV` --- `fun <T> expectThroughTV(x: T, y: T): Unit`
 ##### Continue Call Completion:
 
-1. Choose `TypeVariable(T)` with `Readiness(
+1. `ERROR CLASS: Unresolved name: <error collection literal> <: TypeVariable(T)` _from Argument R?C|special/error|(String(42))_
+2. __ConstrainingTypeIsError__
+3. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -383,9 +234,9 @@ expectThroughTV#(when () {
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-2. `TypeVariable(T) == it(A & B)` _from Fix variable T_
+4. `TypeVariable(T) == it(A & B)` _from Fix variable T_
 
-### Call 8
+### Call 5
 
 ```
 Null(null)!!
@@ -425,7 +276,7 @@ Null(null)!!
    )`
 2. `TypeVariable(K) == kotlin/Nothing` _from Fix variable K_
 
-### Call 9
+### Call 6
 
 ```
 buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
@@ -479,7 +330,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 10
+### Call 7
 
 ```
 expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
@@ -513,7 +364,7 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 11
+### Call 8
 
 ```
 put#(Q|A|.R|/A.Companion.of|())
@@ -526,7 +377,7 @@ put#(Q|A|.R|/A.Companion.of|())
 2. Combine `A <: TypeVariable(X)` with `TypeVariable(X) <: TypeVariable(T)?`
     1. `A <: TypeVariable(T)`
 
-### Call 9
+### Call 6
 
 ```
 buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
@@ -573,7 +424,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 
-### Call 12
+### Call 9
 
 ```
 Q|A.Companion|.of#(IntegerLiteral(42))
@@ -584,7 +435,7 @@ Q|A.Companion|.of#(IntegerLiteral(42))
 
 1. `ILT: 42 <: kotlin/Int` _from Argument IntegerLiteral(42)_
 
-### Call 9
+### Call 6
 
 ```
 buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
@@ -650,7 +501,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    )`
 6. `TypeVariable(T) == A` _from Fix variable T_
 
-### Call 13
+### Call 10
 
 ```
 buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
@@ -704,7 +555,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 14
+### Call 11
 
 ```
 expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
@@ -738,7 +589,7 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
 
-### Call 13
+### Call 10
 
 ```
 buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
@@ -785,56 +636,11 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
 
-### Call 15
-
-```
-<collectionLiteralCall>(IntegerLiteral(42))
-```
-
-#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/DANGLING_COLLECTION_LITERAL_CALL` --- `fun <K> DANGLING_COLLECTION_LITERAL_CALL(vararg branches: K): K↩`
-##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
-
-1. New `TypeVariable(K)` for `FirSyntheticFunctionSymbol _synthetic/DANGLING_COLLECTION_LITERAL_CALL`s parameter 0
-
-##### Resolution Stages > CheckArguments:
-
-1. `ILT: 42 <: TypeVariable(K)` _from Argument IntegerLiteral(42)_
-
-##### Call Completion:
-
-1. Choose `TypeVariable(K)` with `Readiness(
-   	 true ALLOWED
-   	 true HAS_PROPER_CONSTRAINTS
-   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-   	false HAS_PROPER_NON_ILT_CONSTRAINT
-   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-   	false HAS_PROPER_EQUALITY_CONSTRAINT
-   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-   )`
-2. `TypeVariable(K) == kotlin/Int` _from Fix variable K_
-
-### Call 13
-
-```
-buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-    lval x: <implicit> = get#()
-    (x# as B)
-    expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), x#)
-    Unit#
-}
-)
-```
-
-#### Candidate 1: `FirNamedFunctionSymbol <local>/buildBox` --- `fun <X> buildBox(block: Box<X>.() -> Unit): Unit`
 ##### Continue Continue Call Completion:
 
-1. Choose `TypeVariable(X)` with `Readiness(
+1. `ERROR CLASS: Unresolved name: <error collection literal> <: TypeVariable(T)` _from Argument R?C|special/error|(IntegerLiteral(42))_
+2. __ConstrainingTypeIsError__
+3. Choose `TypeVariable(X)` with `Readiness(
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -864,7 +670,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-2. Choose `TypeVariable(X)` with `Readiness(
+4. Choose `TypeVariable(X)` with `Readiness(
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -894,9 +700,9 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-3. __NotEnoughInformationForTypeParameter__
-4. `TypeVariable(X) == ERROR CLASS: Cannot infer argument for type parameter X` _from Fix variable X_
-5. Choose `TypeVariable(T)` with `Readiness(
+5. __NotEnoughInformationForTypeParameter__
+6. `TypeVariable(X) == ERROR CLASS: Cannot infer argument for type parameter X` _from Fix variable X_
+7. Choose `TypeVariable(T)` with `Readiness(
    	 true ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -911,5 +717,5 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
-6. __NotEnoughInformationForTypeParameter__
-7. `TypeVariable(T) == ERROR CLASS: Cannot infer argument for type parameter T` _from Fix variable T_
+8. __NotEnoughInformationForTypeParameter__
+9. `TypeVariable(T) == ERROR CLASS: Cannot infer argument for type parameter T` _from Fix variable T_

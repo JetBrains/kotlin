@@ -42,11 +42,11 @@ FILE: intersectionExpectedTypes.kt
     public final fun viaSmartcast(x: R|kotlin/Any|): R|kotlin/Unit| {
         (R|<local>/x| as R|A|)
         (R|<local>/x| as R|B|)
-        R|/expectThroughTV|<R|it(A & B)|>(R|<local>/x|, <collectionLiteralCall>(Int(42)))
-        R|/expectThroughTV|<R|it(A & B)|>(R|<local>/x|, <collectionLiteralCall>())
+        R|/expectThroughTV<Inapplicable(INAPPLICABLE): /expectThroughTV>#|<R|it(A & B)|>(R|<local>/x|, <Unsupported collection literal type>#(Int(42)))
+        R|/expectThroughTV<Inapplicable(INAPPLICABLE): /expectThroughTV>#|<R|it(A & B)|>(R|<local>/x|, <Unsupported collection literal type>#())
     }
     public final fun viaWhen(): R|kotlin/Unit| {
-        R|/expectThroughTV|<R|it(A & B)|>(when () {
+        R|/expectThroughTV<Inapplicable(INAPPLICABLE): /expectThroughTV>#|<R|it(A & B)|>(when () {
             Boolean(true) ->  {
                 object : R|A|, R|B| {
                     private constructor(): R|<anonymous>| {
@@ -66,7 +66,7 @@ FILE: intersectionExpectedTypes.kt
 
             }
         }
-        , <collectionLiteralCall>(String(42)))
+        , <Unsupported collection literal type>#(String(42)))
     }
     public final fun intersectionWithOuterTvInPCLA(): R|kotlin/Unit| {
         local final class Box<U> : R|kotlin/Any| {
@@ -93,10 +93,10 @@ FILE: intersectionExpectedTypes.kt
             this@R|special/anonymous|.R|SubstitutionOverride<<local>/Box.put: R|kotlin/Unit|>|(Q|A|.R|/A.Companion.of|())
         }
         )
-        R|<local>/buildBox<CS errors: <local>/buildBox>#|<<ERROR TYPE REF: Cannot infer argument for type parameter X>>(<L> = buildBox@fun R|<local>/Box<ERROR CLASS: Cannot infer argument for type parameter X>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/buildBox<Inapplicable(INAPPLICABLE): <local>/buildBox>#|<<ERROR TYPE REF: Cannot infer argument for type parameter X>>(<L> = buildBox@fun R|<local>/Box<ERROR CLASS: Cannot infer argument for type parameter X>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             lval x: <ERROR TYPE REF: Cannot infer argument for type parameter X> = this@R|special/anonymous|.R|SubstitutionOverride<<local>/Box.get: <ERROR TYPE REF: Cannot infer argument for type parameter X>>|()
             (R|<local>/x| as R|B|)
-            R|/expectThroughTV|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<collectionLiteralCall>(Int(42)), R|<local>/x|)
+            R|/expectThroughTV|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(<Unsupported collection literal type>#(Int(42)), R|<local>/x|)
             Q|kotlin/Unit|
         }
         )

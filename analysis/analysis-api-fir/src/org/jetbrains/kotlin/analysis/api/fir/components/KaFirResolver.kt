@@ -69,8 +69,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -224,7 +222,7 @@ internal class KaFirResolver(
         return when (val unwrappedFir = psi.getOrBuildFirWithAdjustments()?.unwrapSafeCall()) {
             is FirDiagnosticHolder -> unwrappedFir.toKaSymbolResolutionError(psi)
             is FirResolvable -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
-            is FirCollectionLiteral -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
+            is FirCollectionLiteral -> unwrappedFir.toKaSymbolResolutionAttempt()
             is FirVariableAssignment -> unwrappedFir.calleeReference?.toKaSymbolResolutionAttempt(psi)
             is FirResolvedQualifier -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
             is FirReference -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
@@ -333,19 +331,7 @@ internal class KaFirResolver(
             backingCandidateSymbols = diagnostic.getCandidateSymbols().map(firSymbolBuilder::buildSymbol),
         )
 
-    private fun FirCollectionLiteral.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt = with(analysisSession) {
-        val resolvedType = resolvedType as? ConeClassLikeType
-        if (resolvedType is ConeErrorType) {
-            return KaBaseSymbolResolutionError(
-                backingDiagnostic = createKaDiagnostic(
-                    source = source,
-                    coneDiagnostic = resolvedType.diagnostic,
-                    psi = psi,
-                ),
-                backingCandidateSymbols = emptyList(),
-            )
-        }
-
+    private fun FirCollectionLiteral.toKaSymbolResolutionAttempt(): KaSymbolResolutionAttempt = with(analysisSession) {
         val resolvedSymbol = arrayOfSymbol(this@toKaSymbolResolutionAttempt)
         if (resolvedSymbol != null) {
             return KaBaseSymbolResolutionSuccess(resolvedSymbol)
@@ -421,36 +407,12 @@ internal class KaFirResolver(
         return when (val fir = psiToResolve.getOrBuildFirWithAdjustments()) {
             null -> emptyList()
             is FirDiagnosticHolder -> fir.onError(psiToResolve)
-            else -> {
-                val specialErrorCase = specialErrorCase(fir)
-                specialErrorCase?.onError(psiToResolve) ?: fir.onSuccess(
-                    psiToResolve,
-                    psiToResolve == containingCallExpressionForCalleeExpression,
-                    psiToResolve == containingBinaryExpressionForLhs || psiToResolve == containingUnaryExpressionForIncOrDec,
-                )
-            }
+            else -> fir.onSuccess(
+                psiToResolve,
+                psiToResolve == containingCallExpressionForCalleeExpression,
+                psiToResolve == containingBinaryExpressionForLhs || psiToResolve == containingUnaryExpressionForIncOrDec,
+            )
         }
-    }
-
-    /**
-     * Some [FirElement] might not implement [FirDiagnosticHolder] directly, but still effectively hold diagnostics
-     */
-    private fun specialErrorCase(fir: FirElement): FirDiagnosticHolder? = when (fir) {
-        is FirCollectionLiteral -> {
-            val resolvedType = fir.resolvedType
-            if (resolvedType is ConeErrorType) {
-                object : FirDiagnosticHolder {
-                    override val source: KtSourceElement? get() = fir.source
-                    override val diagnostic: ConeDiagnostic get() = resolvedType.diagnostic
-                    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
-                    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement = this
-                }
-            } else {
-                null
-            }
-        }
-
-        else -> null
     }
 
     private val stringPlusSymbol by lazy(LazyThreadSafetyMode.PUBLICATION) {

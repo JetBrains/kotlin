@@ -14,26 +14,20 @@ FILE: withEnabledCL.kt
         }
         )
         lval withReturnAndParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Int>| = ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
-        <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        <Unsupported collection literal type>#(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
         )
-        <collectionLiteralCall>(fun <anonymous>(it: <ERROR TYPE REF: Cannot infer lambda parameter type>): <ERROR TYPE REF: Cannot infer type variable TypeVariable(_R)> <inline=Unknown>  {
+        ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
+        <Unsupported collection literal type>#(fun <anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
         )
-        <collectionLiteralCall>(fun <anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <inline=Unknown>  {
-            ^ Unit
-        }
-        )
-        <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        <Unsupported collection literal type>#(fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
             ^ Int(42)
         }
         )
-        <collectionLiteralCall>(fun <anonymous>(x: <ERROR TYPE REF: Cannot infer lambda parameter type>): <ERROR TYPE REF: Cannot infer lambda parameter type> <inline=Unknown>  {
-            ^ R|<local>/x|
-        }
-        )
+        ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
     }
     public final fun testWithAnons(): R|kotlin/Unit| {
         lval anon: R|kotlin/collections/List<() -> kotlin/Unit>| = Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
@@ -50,17 +44,17 @@ FILE: withEnabledCL.kt
             ^ R|<local>/x|
         }
         )
-        <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        <Unsupported collection literal type>#(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
         }
         )
-        <collectionLiteralCall>(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+        <Unsupported collection literal type>#(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
         }
         )
-        <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        <Unsupported collection literal type>#(fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
             ^ Int(42)
         }
         )
-        <collectionLiteralCall>(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Int| <inline=Unknown>  {
+        <Unsupported collection literal type>#(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Int| <inline=Unknown>  {
             ^ R|<local>/x|
         }
         )

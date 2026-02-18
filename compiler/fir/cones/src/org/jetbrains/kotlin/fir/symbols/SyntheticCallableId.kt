@@ -21,5 +21,4 @@ object SyntheticCallableId {
     val EQUALITY = syntheticCallableId("EQUALITY_CALL")
     val ID = syntheticCallableId("ID_CALL")
     val ACCEPT_SPECIFIC_TYPE = syntheticCallableId("ACCEPT_SPECIFIC_TYPE_CALL")
-    val DANGLING_COLLECTION_LITERAL = syntheticCallableId("DANGLING_COLLECTION_LITERAL_CALL")
 }

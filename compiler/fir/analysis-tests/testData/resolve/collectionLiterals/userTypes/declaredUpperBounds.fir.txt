@@ -64,7 +64,7 @@ FILE: declaredUpperBounds.kt
     }
     public final fun testIdA(): R|kotlin/Unit| {
         lval x: R|MyListA<kotlin/Int>| = R|/idA|<R|MyListA<kotlin/Int>|>(Q|MyListA.Companion|.R|/MyListA.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
-        lval y: R|MyListB<*>| = R|/idA|<R|it(MyListA<*> & MyListB<*>)|>(<collectionLiteralCall>(Int(42)))
+        lval y: R|MyListB<*>| = R|/idA<Inapplicable(INAPPLICABLE): /idA>#|<R|it(MyListA<*> & MyListB<*>)|>(<Unsupported collection literal type>#(Int(42)))
         lval z: R|MyListA<*>| = R|/idA|<R|MyListA<kotlin/Int>|>(Q|MyListA.Companion|.R|/MyListA.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
         lval t: R|MyListC<*>| = R|/idA|<R|MyListC<kotlin/Int>|>(Q|MyListC.Companion|.R|/MyListC.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
     }
