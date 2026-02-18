@@ -1,4 +1,4 @@
-// ISSUE: KT-84281, KT-84336
+// ISSUE: KT-84281, KT-84336, KT-84380
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ForbidUselessTypeArgumentsIn25, +ProperSupportOfInnerClassesInCallableReferenceLHS
 //                                            ^ otherwise, different positioning for one of the diagnostics
