@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.konan.config.staticFramework
 import org.jetbrains.kotlin.konan.config.testDumpOutputPath
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
-import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.hasDeclarationsAccessedDuringFrontendResolve
@@ -422,7 +421,13 @@ class NativeSecondStageCompilationConfig(
         get() = getExportedLibraries(configuration, resolve.resolvedLibraries, resolve.resolver.searchPathResolver, report = true)
 
     fun librariesWithDependencies(): List<KotlinLibrary> {
-        return resolvedLibraries.filterRoots { (!it.library.isFromKotlinNativeDistribution && !purgeUserLibs) || it.library.hasDeclarationsAccessedDuringFrontendResolve }.getFullList().legacyKlibReverseTopoSort()
+        return loadedKlibs.all.filter { library ->
+            // TODO (KT-60874): Need to clarify why used-specified libraries are forced to stay in the list of "used libraries"
+            //  even when they are not used. Note that the default value for `konanPurgeUserLibs` is always `false`.
+            val forceLibraryToStayInUsedLibrariesList = !purgeUserLibs && !library.isFromKotlinNativeDistribution
+
+            forceLibraryToStayInUsedLibrariesList || library.hasDeclarationsAccessedDuringFrontendResolve
+        }.legacyKlibReverseTopoSort()
     }
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::File)

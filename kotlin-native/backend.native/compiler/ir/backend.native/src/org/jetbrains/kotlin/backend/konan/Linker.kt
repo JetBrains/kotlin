@@ -175,7 +175,7 @@ internal fun runLinkerCommands(context: NativeBackendPhaseContext, commands: Lis
     else null
 
     val extraUserSetupInfo = run {
-        context.config.resolvedLibraries.getFullList()
+        context.config.loadedKlibs.all
                 .filter { it.isCInteropLibrary() }
                 .mapNotNull { library ->
                     library.manifestProperties["userSetupHint"]?.let {

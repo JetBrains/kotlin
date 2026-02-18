@@ -75,7 +75,7 @@ class CacheBuilder(
             && (config.isFinalBinary || config.produce.isFullCache)
             && (autoCacheableFrom.isNotEmpty() || icEnabled)
 
-    private val allLibraries by lazy { config.resolvedLibraries.getFullList().legacyKlibReverseTopoSort() }
+    private val allLibraries by lazy { config.loadedKlibs.all.legacyKlibReverseTopoSort() }
     private val uniqueNameToLibrary by lazy { allLibraries.associateBy { it.uniqueName } }
     private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 

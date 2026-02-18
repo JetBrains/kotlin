@@ -171,7 +171,7 @@ internal class DependenciesTrackerImpl(
                     usedWeakBitcodeOfFile.map { UsedLibraryFile(it, weak = true) }
 
     private val topSortedLibraries by lazy {
-        context.config.resolvedLibraries.getFullList().legacyKlibReverseTopoSort()
+        context.config.loadedKlibs.all.legacyKlibReverseTopoSort()
     }
 
     private inner class CachedBitcodeDependenciesComputer {
@@ -446,7 +446,7 @@ data class DependenciesTrackingResult(
             val allNativeLibs = DependenciesSerializer.deserialize(path, dependencies.subList(allNativeDepsIndex + 1, allCachedBitcodeDepsIndex)).map { it.libName }
             val allCachedBitcodeDeps = DependenciesSerializer.deserialize(path, dependencies.subList(allCachedBitcodeDepsIndex + 1, dependencies.size))
 
-            val topSortedLibraries = config.resolvedLibraries.getFullList().legacyKlibReverseTopoSort()
+            val topSortedLibraries = config.loadedKlibs.all.legacyKlibReverseTopoSort()
             val nativeDependenciesToLink = topSortedLibraries.mapNotNull { if (it.uniqueName in nativeLibsToLink) it else null }
             val allNativeDependencies = topSortedLibraries.mapNotNull { if (it.uniqueName in allNativeLibs) it else null }
             val allCachedBitcodeDependencies = allCachedBitcodeDeps.map { unresolvedDep ->

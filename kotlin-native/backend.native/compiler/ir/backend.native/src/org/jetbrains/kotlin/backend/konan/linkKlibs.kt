@@ -131,9 +131,7 @@ internal fun LinkKlibsContext.linkKlibs(
                 stubGenerator = stubGenerator,
         )
 
-        val friendModules = config.resolvedLibraries.getFullList()
-                .filter { it.libraryFile in config.friendModuleFiles }
-                .map { it.uniqueName }
+        val friendModules = config.loadedKlibs.friends.map { it.uniqueName }
 
         val friendModulesMap = (
                 listOf(moduleDescriptor.name.asStringStripSpecialMarkers()) +
