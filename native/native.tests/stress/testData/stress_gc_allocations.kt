@@ -45,9 +45,11 @@ class ArrayOfBytes(bytes: Int) {
 
 class ArrayOfBytesWithFinalizer(bytes: Int) {
     val impl = ArrayOfBytes(bytes)
+    /*
     val cleaner = createCleaner(impl) {
         Blackhole.consume(it)
     }
+    */
 }
 
 fun allocateGarbage() {
