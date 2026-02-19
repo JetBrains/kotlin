@@ -215,6 +215,12 @@ public class DecompiledJvmTextTestGenerated extends AbstractDecompiledJvmTextTes
   }
 
   @Test
+  @TestMetadata("companionExtension.kt")
+  public void testCompanionExtension() {
+    run("companionExtension.kt");
+  }
+
+  @Test
   @TestMetadata("complicateLTGT.kt")
   public void testComplicateLTGT() {
     run("complicateLTGT.kt");
@@ -2113,6 +2119,32 @@ public class DecompiledJvmTextTestGenerated extends AbstractDecompiledJvmTextTes
       public void testStringLiterals() {
         run("stringLiterals.kt");
       }
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/psi/companionBlocks")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionBlocks {
+    private void run(String fileName) {
+      runTest("compiler/testData/psi/companionBlocks/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionBlocks() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/companionBlocks"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("errors.kt")
+    public void testErrors() {
+      run("errors.kt");
+    }
+
+    @Test
+    @TestMetadata("smoke.kt")
+    public void testSmoke() {
+      run("smoke.kt");
     }
   }
 

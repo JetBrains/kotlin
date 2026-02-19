@@ -186,6 +186,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/CommentsBindingInStatementBlock.kt");
     }
 
+    @TestMetadata("companionExtension.kt")
+    public void testCompanionExtension() {
+      runTest("compiler/testData/psi/companionExtension.kt");
+    }
+
     @TestMetadata("complicateLTGT.kt")
     public void testComplicateLTGT() {
       runTest("compiler/testData/psi/complicateLTGT.kt");
@@ -1788,6 +1793,29 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         public void testStringLiterals() {
           runTest("compiler/testData/psi/annotation/values/stringLiterals.kt");
         }
+      }
+    }
+
+    @TestMetadata("compiler/testData/psi/companionBlocks")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CompanionBlocks extends AbstractParsingTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInCompanionBlocks() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/companionBlocks"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+      }
+
+      @TestMetadata("errors.kt")
+      public void testErrors() {
+        runTest("compiler/testData/psi/companionBlocks/errors.kt");
+      }
+
+      @TestMetadata("smoke.kt")
+      public void testSmoke() {
+        runTest("compiler/testData/psi/companionBlocks/smoke.kt");
       }
     }
 
