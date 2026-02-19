@@ -430,11 +430,23 @@ public interface IrExpressionOrBuilder extends
   int getType();
 
   /**
-   * <code>required int64 coordinates = 3;</code>
+   * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * The bizarre default value is an encoded form of coordinates [-3, -3]. Such coordinates will never be set (it's enforced),
+   * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
+   * </pre>
    */
   boolean hasCoordinates();
   /**
-   * <code>required int64 coordinates = 3;</code>
+   * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * The bizarre default value is an encoded form of coordinates [-3, -3]. Such coordinates will never be set (it's enforced),
+   * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
+   * </pre>
    */
   long getCoordinates();
 }

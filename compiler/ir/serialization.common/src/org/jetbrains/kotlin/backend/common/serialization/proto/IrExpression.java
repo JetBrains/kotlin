@@ -1496,13 +1496,25 @@ public final class IrExpression extends
   public static final int COORDINATES_FIELD_NUMBER = 3;
   private long coordinates_;
   /**
-   * <code>required int64 coordinates = 3;</code>
+   * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * The bizarre default value is an encoded form of coordinates [-3, -3]. Such coordinates will never be set (it's enforced),
+   * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
+   * </pre>
    */
   public boolean hasCoordinates() {
     return ((bitField1_ & 0x00000400) == 0x00000400);
   }
   /**
-   * <code>required int64 coordinates = 3;</code>
+   * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * The bizarre default value is an encoded form of coordinates [-3, -3]. Such coordinates will never be set (it's enforced),
+   * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
+   * </pre>
    */
   public long getCoordinates() {
     return coordinates_;
@@ -1511,7 +1523,7 @@ public final class IrExpression extends
   private void initFields() {
     operationPre240_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationPre_2_4_0.getDefaultInstance();
     type_ = -1;
-    coordinates_ = 0L;
+    coordinates_ = 6148914691236517201L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -1519,10 +1531,6 @@ public final class IrExpression extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (!hasCoordinates()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     if (hasOpGetValue()) {
       if (!getOpGetValue().isInitialized()) {
         memoizedIsInitialized = 0;
@@ -2172,7 +2180,7 @@ public final class IrExpression extends
       bitField1_ = (bitField1_ & ~0x00000100);
       type_ = -1;
       bitField1_ = (bitField1_ & ~0x00000200);
-      coordinates_ = 0L;
+      coordinates_ = 6148914691236517201L;
       bitField1_ = (bitField1_ & ~0x00000400);
       operationCase_ = 0;
       operation_ = null;
@@ -2521,10 +2529,6 @@ public final class IrExpression extends
     }
 
     public final boolean isInitialized() {
-      if (!hasCoordinates()) {
-        
-        return false;
-      }
       if (hasOpGetValue()) {
         if (!getOpGetValue().isInitialized()) {
           
@@ -5560,21 +5564,39 @@ public final class IrExpression extends
       return this;
     }
 
-    private long coordinates_ ;
+    private long coordinates_ = 6148914691236517201L;
     /**
-     * <code>required int64 coordinates = 3;</code>
+     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * The bizarre default value is an encoded form of coordinates [-3, -3]. Such coordinates will never be set (it's enforced),
+     * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
+     * </pre>
      */
     public boolean hasCoordinates() {
       return ((bitField1_ & 0x00000400) == 0x00000400);
     }
     /**
-     * <code>required int64 coordinates = 3;</code>
+     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * The bizarre default value is an encoded form of coordinates [-3, -3]. Such coordinates will never be set (it's enforced),
+     * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
+     * </pre>
      */
     public long getCoordinates() {
       return coordinates_;
     }
     /**
-     * <code>required int64 coordinates = 3;</code>
+     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * The bizarre default value is an encoded form of coordinates [-3, -3]. Such coordinates will never be set (it's enforced),
+     * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
+     * </pre>
      */
     public Builder setCoordinates(long value) {
       bitField1_ |= 0x00000400;
@@ -5583,11 +5605,17 @@ public final class IrExpression extends
       return this;
     }
     /**
-     * <code>required int64 coordinates = 3;</code>
+     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * The bizarre default value is an encoded form of coordinates [-3, -3]. Such coordinates will never be set (it's enforced),
+     * so, in turn, this field will always be serialized. For why does it matter see the explanation of field `type` above.
+     * </pre>
      */
     public Builder clearCoordinates() {
       bitField1_ = (bitField1_ & ~0x00000400);
-      coordinates_ = 0L;
+      coordinates_ = 6148914691236517201L;
       
       return this;
     }

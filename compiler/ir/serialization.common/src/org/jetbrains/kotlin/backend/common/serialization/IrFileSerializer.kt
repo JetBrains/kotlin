@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -234,22 +235,32 @@ open class IrFileSerializer(
             return 0
         }
 
-        return if (start > end) {
+        var serStart = start
+        var serEnd = end
+        if (start > end) {
             // Kotlin < 2.3 does not support deserializing coordinates where start < end. Such coordinates are generally invalid, but
             // so far we don't have a mechanism to ensure they are not created. So they might occur (especially in the case of
             // compiler plugins) and we need to "fix" them somehow. See also KT-80910.
             if (end >= 0) {
                 // We simply flip start with end, which still encompasses the same span, and is likely what was intended by the creator
                 // of this IR element.
-                BinaryCoordinates.encode(end, start)
+                serStart = end
+                serEnd = start
             } else {
                 // Here, endOffset is one of the special "unknown" offset values. It is quite fair to make the entire coordinates "unknown"
                 // in the same way.
-                BinaryCoordinates.encode(end, end)
+                serStart = serEnd
             }
-        } else {
-            BinaryCoordinates.encode(start, end)
         }
+
+        if (serStart == -3 && serEnd == -3) {
+            // Such coordinates should never occur. If they do for some reason, we have to remap them to avoid serializing these
+            // particular values. For why it's important, see the comment on IrExpression.coordinates in a file KotlinIr.proto.
+            serStart = UNDEFINED_OFFSET
+            serEnd = UNDEFINED_OFFSET
+        }
+
+        return BinaryCoordinates.encode(serStart, serEnd)
     }
 
     /* ------- Strings ---------------------------------------------------------- */
@@ -1085,12 +1096,6 @@ open class IrFileSerializer(
             val coordinates = serializeCoordinates(expression.startOffset, expression.endOffset)
             proto.setCoordinates(coordinates)
             proto.setType(serializeIrType(expression.type))
-        } else {
-            // Those field are `required` in the proto schema, so they need to be assigned some value to avoid serialization error.
-            // They will be ignored when deserialized.
-            // (They also cannot be migrated to `optional`, because then 0 values would be elided (as the default value), in which case the
-            // older compiler, which still sees them as `required`, would fail to deserialize then.)
-            proto.setCoordinates(0)
         }
 
         if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {

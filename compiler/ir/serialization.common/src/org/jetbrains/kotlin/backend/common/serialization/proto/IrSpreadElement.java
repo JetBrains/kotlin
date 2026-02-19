@@ -123,13 +123,23 @@ public final class IrSpreadElement extends
   public static final int COORDINATES_FIELD_NUMBER = 2;
   private long coordinates_;
   /**
-   * <code>required int64 coordinates = 2;</code>
+   * <code>optional int64 coordinates = 2 [default = 6148914691236517201];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * For explanation of the default value, see the comment on IrExpression.coordinates.
+   * </pre>
    */
   public boolean hasCoordinates() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required int64 coordinates = 2;</code>
+   * <code>optional int64 coordinates = 2 [default = 6148914691236517201];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * For explanation of the default value, see the comment on IrExpression.coordinates.
+   * </pre>
    */
   public long getCoordinates() {
     return coordinates_;
@@ -137,7 +147,7 @@ public final class IrSpreadElement extends
 
   private void initFields() {
     expression_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
-    coordinates_ = 0L;
+    coordinates_ = 6148914691236517201L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -146,10 +156,6 @@ public final class IrSpreadElement extends
     if (isInitialized == 0) return false;
 
     if (!hasExpression()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasCoordinates()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -283,7 +289,7 @@ public final class IrSpreadElement extends
       super.clear();
       expression_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      coordinates_ = 0L;
+      coordinates_ = 6148914691236517201L;
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
@@ -335,10 +341,6 @@ public final class IrSpreadElement extends
 
     public final boolean isInitialized() {
       if (!hasExpression()) {
-        
-        return false;
-      }
-      if (!hasCoordinates()) {
         
         return false;
       }
@@ -428,21 +430,36 @@ public final class IrSpreadElement extends
       return this;
     }
 
-    private long coordinates_ ;
+    private long coordinates_ = 6148914691236517201L;
     /**
-     * <code>required int64 coordinates = 2;</code>
+     * <code>optional int64 coordinates = 2 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * For explanation of the default value, see the comment on IrExpression.coordinates.
+     * </pre>
      */
     public boolean hasCoordinates() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required int64 coordinates = 2;</code>
+     * <code>optional int64 coordinates = 2 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * For explanation of the default value, see the comment on IrExpression.coordinates.
+     * </pre>
      */
     public long getCoordinates() {
       return coordinates_;
     }
     /**
-     * <code>required int64 coordinates = 2;</code>
+     * <code>optional int64 coordinates = 2 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * For explanation of the default value, see the comment on IrExpression.coordinates.
+     * </pre>
      */
     public Builder setCoordinates(long value) {
       bitField0_ |= 0x00000002;
@@ -451,11 +468,16 @@ public final class IrSpreadElement extends
       return this;
     }
     /**
-     * <code>required int64 coordinates = 2;</code>
+     * <code>optional int64 coordinates = 2 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * For explanation of the default value, see the comment on IrExpression.coordinates.
+     * </pre>
      */
     public Builder clearCoordinates() {
       bitField0_ = (bitField0_ & ~0x00000002);
-      coordinates_ = 0L;
+      coordinates_ = 6148914691236517201L;
       
       return this;
     }

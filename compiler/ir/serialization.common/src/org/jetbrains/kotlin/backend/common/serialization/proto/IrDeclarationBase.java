@@ -151,13 +151,23 @@ public final class IrDeclarationBase extends
   public static final int COORDINATES_FIELD_NUMBER = 3;
   private long coordinates_;
   /**
-   * <code>required int64 coordinates = 3;</code>
+   * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * For explanation of the default value, see the comment on IrExpression.coordinates.
+   * </pre>
    */
   public boolean hasCoordinates() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>required int64 coordinates = 3;</code>
+   * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+   *
+   * <pre>
+   * Was required before 2.4.0.
+   * For explanation of the default value, see the comment on IrExpression.coordinates.
+   * </pre>
    */
   public long getCoordinates() {
     return coordinates_;
@@ -216,7 +226,7 @@ public final class IrDeclarationBase extends
   private void initFields() {
     symbol_ = 0L;
     originName_ = 0;
-    coordinates_ = 0L;
+    coordinates_ = 6148914691236517201L;
     flags_ = 0L;
     annotation_ = java.util.Collections.emptyList();
   }
@@ -231,10 +241,6 @@ public final class IrDeclarationBase extends
       return false;
     }
     if (!hasOriginName()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasCoordinates()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -393,7 +399,7 @@ public final class IrDeclarationBase extends
       bitField0_ = (bitField0_ & ~0x00000001);
       originName_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
-      coordinates_ = 0L;
+      coordinates_ = 6148914691236517201L;
       bitField0_ = (bitField0_ & ~0x00000004);
       flags_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000008);
@@ -482,10 +488,6 @@ public final class IrDeclarationBase extends
         return false;
       }
       if (!hasOriginName()) {
-        
-        return false;
-      }
-      if (!hasCoordinates()) {
         
         return false;
       }
@@ -581,21 +583,36 @@ public final class IrDeclarationBase extends
       return this;
     }
 
-    private long coordinates_ ;
+    private long coordinates_ = 6148914691236517201L;
     /**
-     * <code>required int64 coordinates = 3;</code>
+     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * For explanation of the default value, see the comment on IrExpression.coordinates.
+     * </pre>
      */
     public boolean hasCoordinates() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required int64 coordinates = 3;</code>
+     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * For explanation of the default value, see the comment on IrExpression.coordinates.
+     * </pre>
      */
     public long getCoordinates() {
       return coordinates_;
     }
     /**
-     * <code>required int64 coordinates = 3;</code>
+     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * For explanation of the default value, see the comment on IrExpression.coordinates.
+     * </pre>
      */
     public Builder setCoordinates(long value) {
       bitField0_ |= 0x00000004;
@@ -604,11 +621,16 @@ public final class IrDeclarationBase extends
       return this;
     }
     /**
-     * <code>required int64 coordinates = 3;</code>
+     * <code>optional int64 coordinates = 3 [default = 6148914691236517201];</code>
+     *
+     * <pre>
+     * Was required before 2.4.0.
+     * For explanation of the default value, see the comment on IrExpression.coordinates.
+     * </pre>
      */
     public Builder clearCoordinates() {
       bitField0_ = (bitField0_ & ~0x00000004);
-      coordinates_ = 0L;
+      coordinates_ = 6148914691236517201L;
       
       return this;
     }
