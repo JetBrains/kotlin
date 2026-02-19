@@ -8962,7 +8962,7 @@
                                     "valueInVersions": []
                                 },
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.PathType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []
